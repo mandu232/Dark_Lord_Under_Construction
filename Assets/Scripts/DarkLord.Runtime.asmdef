@@ -1,0 +1,6 @@
+{
+  "name": "DarkLord.Runtime",
+  "rootNamespace": "DarkLord",
+  "references": ["Unity.InputSystem", "Unity.ugui"],
+  "autoReferenced": true
+}

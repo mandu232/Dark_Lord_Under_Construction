@@ -1,0 +1,991 @@
+fileFormatVersion: 2
+guid: 51b41692eed2fd248a58d886ea5d2052
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 7225700781722109820
+    second: Slash 2 Default Flame_0
+  - first:
+      213: -852207101329156976
+    second: Slash 2 Default Flame_1
+  - first:
+      213: -2562970670614429146
+    second: Slash 2 Default Flame_2
+  - first:
+      213: -6155407889870940438
+    second: Slash 2 Default Flame_3
+  - first:
+      213: -7198409752337760939
+    second: Slash 2 Default Flame_4
+  - first:
+      213: -2016847774536758561
+    second: Slash 2 Default Flame_5
+  - first:
+      213: -3158419165667716996
+    second: Slash 2 Default Flame_6
+  - first:
+      213: -3484109168438422749
+    second: Slash 2 Default Flame_7
+  - first:
+      213: -2644845550735980687
+    second: Slash 2 Default Flame_8
+  - first:
+      213: -7304084549407827368
+    second: Slash 2 Default Flame_9
+  - first:
+      213: 7311066646122739089
+    second: Slash 2 Default Flame_10
+  - first:
+      213: 1409015648080053173
+    second: Slash 2 Default Flame_11
+  - first:
+      213: 7318215034179260774
+    second: Slash 2 Default Flame_12
+  - first:
+      213: -8241785991185354854
+    second: Slash 2 Default Flame_13
+  - first:
+      213: 6592021896828681237
+    second: Slash 2 Default Flame_14
+  - first:
+      213: 629885324431770152
+    second: Slash 2 Default Flame_15
+  - first:
+      213: -8175704780890910644
+    second: Slash 2 Default Flame_16
+  - first:
+      213: -7048421735859058576
+    second: Slash 2 Default Flame_17
+  - first:
+      213: -5780266421468487625
+    second: Slash 2 Default Flame_18
+  - first:
+      213: -6681386552330807128
+    second: Slash 2 Default Flame_19
+  - first:
+      213: 1244451526545061675
+    second: Slash 2 Default Flame_20
+  - first:
+      213: -1620896409303974416
+    second: Slash 2 Default Flame_21
+  - first:
+      213: -4418161402320289116
+    second: Slash 2 Default Flame_22
+  - first:
+      213: -4945962583072139875
+    second: Slash 2 Default Flame_23
+  - first:
+      213: -3427658328961772561
+    second: Slash 2 Default Flame_24
+  - first:
+      213: 2574439659555706017
+    second: Slash 2 Default Flame_25
+  - first:
+      213: 2826512352255412227
+    second: Slash 2 Default Flame_26
+  - first:
+      213: 6271049710031900299
+    second: Slash 2 Default Flame_27
+  - first:
+      213: -8366200385451026780
+    second: Slash 2 Default Flame_28
+  - first:
+      213: 5314471447629633146
+    second: Slash 2 Default Flame_29
+  - first:
+      213: -8302955402762207276
+    second: Slash 2 Default Flame_30
+  - first:
+      213: 4970259839063084888
+    second: Slash 2 Default Flame_31
+  - first:
+      213: -8480073771213199703
+    second: Slash 2 Default Flame_32
+  - first:
+      213: -3720927794348700623
+    second: Slash 2 Default Flame_33
+  - first:
+      213: 8947315122690127278
+    second: Slash 2 Default Flame_34
+  - first:
+      213: 1090848648179188766
+    second: Slash 2 Default Flame_35
+  - first:
+      213: -7760224566587550369
+    second: Slash 2 Default Flame_36
+  - first:
+      213: 8897184055597495057
+    second: Slash 2 Default Flame_37
+  - first:
+      213: 557729582163808496
+    second: Slash 2 Default Flame_38
+  - first:
+      213: 6377952424144267605
+    second: Slash 2 Default Flame_39
+  - first:
+      213: -3428965346670644197
+    second: Slash 2 Default Flame_40
+  - first:
+      213: -5350828713188928134
+    second: Slash 2 Default Flame_41
+  - first:
+      213: 7689554297443698264
+    second: Slash 2 Default Flame_42
+  - first:
+      213: -7782562668680424113
+    second: Slash 2 Default Flame_43
+  - first:
+      213: -8222658257698402566
+    second: Slash 2 Default Flame_44
+  - first:
+      213: -4182194195464990769
+    second: Slash 2 Default Flame_45
+  - first:
+      213: 850210480888861211
+    second: Slash 2 Default Flame_46
+  - first:
+      213: 766587287066736912
+    second: Slash 2 Default Flame_47
+  - first:
+      213: 968493161866197154
+    second: Slash 2 Default Flame_48
+  - first:
+      213: 7243130865349341079
+    second: Slash 2 Default Flame_49
+  - first:
+      213: 6278809688137457027
+    second: Slash 2 Default Flame_50
+  - first:
+      213: -7172184526684938407
+    second: Slash 2 Default Flame_51
+  - first:
+      213: 5948092025004434421
+    second: Slash 2 Default Flame_52
+  - first:
+      213: 7229872623395905491
+    second: Slash 2 Default Flame_53
+  - first:
+      213: 4807969105769992636
+    second: Slash 2 Default Flame_54
+  - first:
+      213: -4512989388304719717
+    second: Slash 2 Default Flame_55
+  - first:
+      213: -118141323585050246
+    second: Slash 2 Default Flame_56
+  - first:
+      213: -7557072307926896832
+    second: Slash 2 Default Flame_57
+  - first:
+      213: -7010900920628414133
+    second: Slash 2 Default Flame_58
+  - first:
+      213: -4679460106773957953
+    second: Slash 2 Default Flame_59
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c770fcbd398d64460800000000000000
+      internalID: 7225700781722109820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 094d532182a5c24f0800000000000000
+      internalID: -852207101329156976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 622484811cf7e6cd0800000000000000
+      internalID: -2562970670614429146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae61b9c0329939aa0800000000000000
+      internalID: -6155407889870940438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_4
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55d3334187c1a1c90800000000000000
+      internalID: -7198409752337760939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_5
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fda03b082a7b204e0800000000000000
+      internalID: -2016847774536758561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c70179ab08a0b24d0800000000000000
+      internalID: -3158419165667716996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_7
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 323db80cb25f5afc0800000000000000
+      internalID: -3484109168438422749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_8
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1770c9e0cfe9b4bd0800000000000000
+      internalID: -2644845550735980687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_9
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85a902f0dcda2aa90800000000000000
+      internalID: -7304084549407827368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_10
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1953a530160267560800000000000000
+      internalID: 7311066646122739089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_11
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b347c24444dd8310800000000000000
+      internalID: 1409015648080053173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6619d2eccc58f8560800000000000000
+      internalID: 7318215034179260774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_13
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9f2b90de4b4f9d80800000000000000
+      internalID: -8241785991185354854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_14
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51cf1183df09b7b50800000000000000
+      internalID: 6592021896828681237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_15
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 822ccf38d5dcdb800800000000000000
+      internalID: 629885324431770152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_16
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c40d88a81df0a8e80800000000000000
+      internalID: -8175704780890910644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_17
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0788afe76c9fe2e90800000000000000
+      internalID: -7048421735859058576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 730a049905e58cfa0800000000000000
+      internalID: -5780266421468487625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_19
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a810458452f643a0800000000000000
+      internalID: -6681386552330807128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_20
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2739ebe11e254110800000000000000
+      internalID: 1244451526545061675
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_21
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0fdfab9bd4b6189e0800000000000000
+      internalID: -1620896409303974416
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_22
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a28b5eec998fa2c0800000000000000
+      internalID: -4418161402320289116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_23
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d959c9b4c396c5bb0800000000000000
+      internalID: -4945962583072139875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe313da09e28e60d0800000000000000
+      internalID: -3427658328961772561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_25
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a4de7bfa3f3ab320800000000000000
+      internalID: 2574439659555706017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_26
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3080075420ac93720800000000000000
+      internalID: 2826512352255412227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_27
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8e844f5c7e370750800000000000000
+      internalID: 6271049710031900299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_28
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a69471531945eb80800000000000000
+      internalID: -8366200385451026780
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 2 Default Flame_29
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a769be4df9bc0c940800000000000000
+      internalID: 5314471447629633146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: f29d3031db9608647910f32a3bf47fbe
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      Slash 2 Default Flame_0: 7225700781722109820
+      Slash 2 Default Flame_1: -852207101329156976
+      Slash 2 Default Flame_10: 7311066646122739089
+      Slash 2 Default Flame_11: 1409015648080053173
+      Slash 2 Default Flame_12: 7318215034179260774
+      Slash 2 Default Flame_13: -8241785991185354854
+      Slash 2 Default Flame_14: 6592021896828681237
+      Slash 2 Default Flame_15: 629885324431770152
+      Slash 2 Default Flame_16: -8175704780890910644
+      Slash 2 Default Flame_17: -7048421735859058576
+      Slash 2 Default Flame_18: -5780266421468487625
+      Slash 2 Default Flame_19: -6681386552330807128
+      Slash 2 Default Flame_2: -2562970670614429146
+      Slash 2 Default Flame_20: 1244451526545061675
+      Slash 2 Default Flame_21: -1620896409303974416
+      Slash 2 Default Flame_22: -4418161402320289116
+      Slash 2 Default Flame_23: -4945962583072139875
+      Slash 2 Default Flame_24: -3427658328961772561
+      Slash 2 Default Flame_25: 2574439659555706017
+      Slash 2 Default Flame_26: 2826512352255412227
+      Slash 2 Default Flame_27: 6271049710031900299
+      Slash 2 Default Flame_28: -8366200385451026780
+      Slash 2 Default Flame_29: 5314471447629633146
+      Slash 2 Default Flame_3: -6155407889870940438
+      Slash 2 Default Flame_4: -7198409752337760939
+      Slash 2 Default Flame_5: -2016847774536758561
+      Slash 2 Default Flame_6: -3158419165667716996
+      Slash 2 Default Flame_7: -3484109168438422749
+      Slash 2 Default Flame_8: -2644845550735980687
+      Slash 2 Default Flame_9: -7304084549407827368
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,6 @@
+{
+  "name": "DarkLord.PlayModeTests",
+  "references": ["DarkLord.Runtime", "Unity.InputSystem"],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "autoReferenced": false
+}

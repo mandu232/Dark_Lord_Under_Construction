@@ -1,0 +1,1030 @@
+fileFormatVersion: 2
+guid: b7aca708725f64e498d3a7eca3d05272
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -7734337867515211814
+    second: Slash 1 Default Flame Vfx_0
+  - first:
+      213: -5155630282678864932
+    second: Slash 1 Default Flame Vfx_1
+  - first:
+      213: -3222935597599316801
+    second: Slash 1 Default Flame Vfx_2
+  - first:
+      213: 5255693321539972866
+    second: Slash 1 Default Flame Vfx_3
+  - first:
+      213: -9159309754053591858
+    second: Slash 1 Default Flame Vfx_4
+  - first:
+      213: -3518265339966460894
+    second: Slash 1 Default Flame Vfx_5
+  - first:
+      213: 7719743707899516360
+    second: Slash 1 Default Flame Vfx_6
+  - first:
+      213: 8755647606036637043
+    second: Slash 1 Default Flame Vfx_7
+  - first:
+      213: 6241952982897736010
+    second: Slash 1 Default Flame Vfx_8
+  - first:
+      213: 5423028413612740325
+    second: Slash 1 Default Flame Vfx_9
+  - first:
+      213: 5446817792274663501
+    second: Slash 1 Default Flame Vfx_10
+  - first:
+      213: -4635439720571298505
+    second: Slash 1 Default Flame Vfx_11
+  - first:
+      213: 7480769485831693273
+    second: Slash 1 Default Flame Vfx_12
+  - first:
+      213: -588395261086695380
+    second: Slash 1 Default Flame Vfx_13
+  - first:
+      213: -6842472734820079934
+    second: Slash 1 Default Flame Vfx_14
+  - first:
+      213: -781623496299060813
+    second: Slash 1 Default Flame Vfx_15
+  - first:
+      213: -3504402713192158718
+    second: Slash 1 Default Flame Vfx_16
+  - first:
+      213: 1702643453489639023
+    second: Slash 1 Default Flame Vfx_17
+  - first:
+      213: 7454107509403907546
+    second: Slash 1 Default Flame Vfx_18
+  - first:
+      213: -3481375809766449270
+    second: Slash 1 Default Flame Vfx_19
+  - first:
+      213: 8707787705033767572
+    second: Slash 1 Default Flame Vfx_20
+  - first:
+      213: -971557901973933971
+    second: Slash 1 Default Flame Vfx_21
+  - first:
+      213: 416332894437543171
+    second: Slash 1 Default Flame Vfx_22
+  - first:
+      213: -503504212257564886
+    second: Slash 1 Default Flame Vfx_23
+  - first:
+      213: -3461098761455324596
+    second: Slash 1 Default Flame Vfx_24
+  - first:
+      213: -3441473884865472798
+    second: Slash 1 Default Flame Vfx_25
+  - first:
+      213: 32751087659582851
+    second: Slash 1 Default Flame Vfx_26
+  - first:
+      213: 2356341067428212936
+    second: Slash 1 Default Flame Vfx_27
+  - first:
+      213: -8829664599042987053
+    second: Slash 1 Default Flame Vfx_28
+  - first:
+      213: -2175351324899771478
+    second: Slash 1 Default Flame Vfx_29
+  - first:
+      213: -539997337721682750
+    second: Slash 1 Default Flame Vfx_30
+  - first:
+      213: -4408380441859538334
+    second: Slash 1 Default Flame Vfx_31
+  - first:
+      213: -7256767978955376955
+    second: Slash 1 Default Flame Vfx_32
+  - first:
+      213: 4931559999710882772
+    second: Slash 1 Default Flame Vfx_33
+  - first:
+      213: 6307595551286699738
+    second: Slash 1 Default Flame Vfx_34
+  - first:
+      213: -2374135715757126625
+    second: Slash 1 Default Flame Vfx_35
+  - first:
+      213: -1439978702270472023
+    second: Slash 1 Default Flame Vfx_36
+  - first:
+      213: -665714561419022031
+    second: Slash 1 Default Flame Vfx_37
+  - first:
+      213: 8367685657096481010
+    second: Slash 1 Default Flame Vfx_38
+  - first:
+      213: 277720345660490955
+    second: Slash 1 Default Flame Vfx_39
+  - first:
+      213: 6532615238939998115
+    second: Slash 1 Default Flame Vfx_40
+  - first:
+      213: 3659939263464196842
+    second: Slash 1 Default Flame Vfx_41
+  - first:
+      213: 4990201889225280835
+    second: Slash 1 Default Flame Vfx_42
+  - first:
+      213: -4178614506714319178
+    second: Slash 1 Default Flame Vfx_43
+  - first:
+      213: 2600301843457298823
+    second: Slash 1 Default Flame Vfx_44
+  - first:
+      213: 5244415130836458239
+    second: Slash 1 Default Flame Vfx_45
+  - first:
+      213: -2585606882347153851
+    second: Slash 1 Default Flame Vfx_46
+  - first:
+      213: 8568509962376041027
+    second: Slash 1 Default Flame Vfx_47
+  - first:
+      213: -9180957579644143278
+    second: Slash 1 Default Flame Vfx_48
+  - first:
+      213: -160310176772760518
+    second: Slash 1 Default Flame Vfx_49
+  - first:
+      213: -7779133461495008115
+    second: Slash 1 Default Flame Vfx_50
+  - first:
+      213: -1333197585590258698
+    second: Slash 1 Default Flame Vfx_51
+  - first:
+      213: -7044694274018760937
+    second: Slash 1 Default Flame Vfx_52
+  - first:
+      213: 1607086160188979474
+    second: Slash 1 Default Flame Vfx_53
+  - first:
+      213: -7744572687331220320
+    second: Slash 1 Default Flame Vfx_54
+  - first:
+      213: -5790298491361414771
+    second: Slash 1 Default Flame Vfx_55
+  - first:
+      213: 7858951395089912127
+    second: Slash 1 Default Flame Vfx_56
+  - first:
+      213: -8738684553972113912
+    second: Slash 1 Default Flame Vfx_57
+  - first:
+      213: 7457951837525415930
+    second: Slash 1 Default Flame Vfx_58
+  - first:
+      213: 6280272820842974022
+    second: Slash 1 Default Flame Vfx_59
+  - first:
+      213: -1186138347249358720
+    second: Slash 1 Default Flame Vfx_60
+  - first:
+      213: -8824012350757786670
+    second: Slash 1 Default Flame Vfx_61
+  - first:
+      213: 3172025825969928361
+    second: Slash 1 Default Flame Vfx_62
+  - first:
+      213: -177636857028847968
+    second: Slash 1 Default Flame Vfx_63
+  - first:
+      213: 266299800807280237
+    second: Slash 1 Default Flame Vfx_64
+  - first:
+      213: 540094546358071413
+    second: Slash 1 Default Flame Vfx_65
+  - first:
+      213: 2889126539541555471
+    second: Slash 1 Default Flame Vfx_66
+  - first:
+      213: 8944883846114889627
+    second: Slash 1 Default Flame Vfx_67
+  - first:
+      213: -4825112192479986711
+    second: Slash 1 Default Flame Vfx_68
+  - first:
+      213: -8519096291366711005
+    second: Slash 1 Default Flame Vfx_69
+  - first:
+      213: -608695322121613745
+    second: Slash 1 Default Flame Vfx_70
+  - first:
+      213: 6211373064221489384
+    second: Slash 1 Default Flame Vfx_71
+  - first:
+      213: 2191996904338540694
+    second: Slash 1 Default Flame Vfx_72
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: adf47e110bc1aa490800000000000000
+      internalID: -7734337867515211814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd3fda7d2958378b0800000000000000
+      internalID: -5155630282678864932
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb4a12b5625d543d0800000000000000
+      internalID: -3222935597599316801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20f68c6ea39ffe840800000000000000
+      internalID: 5255693321539972866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_4
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecc7dd98e4893e080800000000000000
+      internalID: -9159309754053591858
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_5
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22ceab9505c9c2fc0800000000000000
+      internalID: -3518265339966460894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c5586a500a022b60800000000000000
+      internalID: 7719743707899516360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_7
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3752058bb1f428970800000000000000
+      internalID: 8755647606036637043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_8
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a493f4aaa2fdf9650800000000000000
+      internalID: 6241952982897736010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_9
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5eecc381c97724b40800000000000000
+      internalID: 5423028413612740325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_10
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d480fc07cebf69b40800000000000000
+      internalID: 5446817792274663501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_11
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73d9c9d322c9bafb0800000000000000
+      internalID: -4635439720571298505
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d36499663801d760800000000000000
+      internalID: 7480769485831693273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_13
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c208763a0a995d7f0800000000000000
+      internalID: -588395261086695380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_14
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c6e0c7fc47aa01a0800000000000000
+      internalID: -6842472734820079934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_15
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b1eef2429d1725f0800000000000000
+      internalID: -781623496299060813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_16
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20a244aac4cdd5fc0800000000000000
+      internalID: -3504402713192158718
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_17
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6ee460333101a710800000000000000
+      internalID: 1702643453489639023
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad57797494f427760800000000000000
+      internalID: 7454107509403907546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_19
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8f9b39652bafafc0800000000000000
+      internalID: -3481375809766449270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_20
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49a3d0a28c648d870800000000000000
+      internalID: 8707787705033767572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_21
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d60be165c355482f0800000000000000
+      internalID: -971557901973933971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_22
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30d8249cf8c17c500800000000000000
+      internalID: 416332894437543171
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_23
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a27997d26913309f0800000000000000
+      internalID: -503504212257564886
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4239ee9305b7ffc0800000000000000
+      internalID: -3461098761455324596
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_25
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e65fc44cbd6d30d0800000000000000
+      internalID: -3441473884865472798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_26
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38505f1d0fa547000800000000000000
+      internalID: 32751087659582851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_27
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c039b567b763b020800000000000000
+      internalID: 2356341067428212936
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_28
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3db633824dab67580800000000000000
+      internalID: -8829664599042987053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Slash 1 Default Flame Vfx_29
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aab7ca9de799fc1e0800000000000000
+      internalID: -2175351324899771478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5324139c404d03344ae6112638e7df22
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      Slash 1 Default Flame Vfx_0: -7734337867515211814
+      Slash 1 Default Flame Vfx_1: -5155630282678864932
+      Slash 1 Default Flame Vfx_10: 5446817792274663501
+      Slash 1 Default Flame Vfx_11: -4635439720571298505
+      Slash 1 Default Flame Vfx_12: 7480769485831693273
+      Slash 1 Default Flame Vfx_13: -588395261086695380
+      Slash 1 Default Flame Vfx_14: -6842472734820079934
+      Slash 1 Default Flame Vfx_15: -781623496299060813
+      Slash 1 Default Flame Vfx_16: -3504402713192158718
+      Slash 1 Default Flame Vfx_17: 1702643453489639023
+      Slash 1 Default Flame Vfx_18: 7454107509403907546
+      Slash 1 Default Flame Vfx_19: -3481375809766449270
+      Slash 1 Default Flame Vfx_2: -3222935597599316801
+      Slash 1 Default Flame Vfx_20: 8707787705033767572
+      Slash 1 Default Flame Vfx_21: -971557901973933971
+      Slash 1 Default Flame Vfx_22: 416332894437543171
+      Slash 1 Default Flame Vfx_23: -503504212257564886
+      Slash 1 Default Flame Vfx_24: -3461098761455324596
+      Slash 1 Default Flame Vfx_25: -3441473884865472798
+      Slash 1 Default Flame Vfx_26: 32751087659582851
+      Slash 1 Default Flame Vfx_27: 2356341067428212936
+      Slash 1 Default Flame Vfx_28: -8829664599042987053
+      Slash 1 Default Flame Vfx_29: -2175351324899771478
+      Slash 1 Default Flame Vfx_3: 5255693321539972866
+      Slash 1 Default Flame Vfx_4: -9159309754053591858
+      Slash 1 Default Flame Vfx_5: -3518265339966460894
+      Slash 1 Default Flame Vfx_6: 7719743707899516360
+      Slash 1 Default Flame Vfx_7: 8755647606036637043
+      Slash 1 Default Flame Vfx_8: 6241952982897736010
+      Slash 1 Default Flame Vfx_9: 5423028413612740325
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
