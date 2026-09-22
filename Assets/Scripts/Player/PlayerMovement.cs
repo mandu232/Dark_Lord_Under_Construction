@@ -12,12 +12,14 @@ namespace DarkLord.Player
         private TopDownMotor motor;
         private ActorAnimation presentation;
         private ActorHealth health;
+        private MinionSummoning summoning;
 
         private void Awake()
         {
             motor = GetComponent<TopDownMotor>();
             presentation = GetComponent<ActorAnimation>();
             health = GetComponent<ActorHealth>();
+            summoning = GetComponent<MinionSummoning>();
             var asset = inputActions != null ? inputActions : InputSystem.actions;
             var source = asset != null ? asset.FindAction("Player/Move") : null;
             if (source == null)
@@ -36,7 +38,7 @@ namespace DarkLord.Player
 
         private void Update()
         {
-            if (Time.timeScale == 0 || (health != null && !health.IsAlive))
+            if (Time.timeScale == 0 || (health != null && !health.IsAlive) || (summoning != null && summoning.BlocksGameplayInput))
             {
                 motor.Stop();
                 presentation.Present(health != null && !health.IsAlive ? ActorState.Die : ActorState.Idle, motor.Facing);

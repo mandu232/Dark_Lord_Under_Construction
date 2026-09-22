@@ -17,6 +17,7 @@ namespace DarkLord.Tests
         private Keyboard testKeyboard;
         private InputSettings originalInputSettings;
         private InputSettings testInputSettings;
+        private HideFlags originalSettingsFlags;
 
         private GameObject Actor(Vector2 position, Faction faction, bool minion = false)
         {
@@ -37,7 +38,11 @@ namespace DarkLord.Tests
             objects.Clear();
             if (testKeyboard != null) InputSystem.RemoveDevice(testKeyboard);
             testKeyboard = null;
-            if (originalInputSettings != null) InputSystem.settings = originalInputSettings;
+            if (originalInputSettings != null)
+            {
+                InputSystem.settings = originalInputSettings;
+                originalInputSettings.hideFlags = originalSettingsFlags;
+            }
             if (testInputSettings != null) Object.DestroyImmediate(testInputSettings);
             originalInputSettings = null;
             testInputSettings = null;
@@ -50,6 +55,10 @@ namespace DarkLord.Tests
             Assert.IsNotNull(InputSystem.actions, "Project-wide input action asset must be assigned.");
             // Synthetic keyboard input must not depend on which editor tab has focus.
             originalInputSettings = InputSystem.settings;
+            // Input System 1.20 destroys HideAndDontSave settings when replacing them.
+            // Retain the original until teardown can restore it for the next test.
+            originalSettingsFlags = originalInputSettings.hideFlags;
+            originalInputSettings.hideFlags = HideFlags.None;
             testInputSettings = Object.Instantiate(originalInputSettings);
             testInputSettings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
 #if UNITY_EDITOR

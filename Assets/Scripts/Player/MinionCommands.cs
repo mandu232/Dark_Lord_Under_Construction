@@ -11,9 +11,19 @@ namespace DarkLord.Player
         [SerializeField] private MinionController[] minions = new MinionController[0];
         [SerializeField] private LayerMask obstacleLayers;
         private InputAction defend, rally, returnToPost;
+        private MinionSummoning summoning;
+
+        public void Register(MinionController minion)
+        {
+            var alive = new System.Collections.Generic.List<MinionController>();
+            foreach (var existing in minions) if (existing != null && existing.IsAlive && existing != minion) alive.Add(existing);
+            if (minion != null) alive.Add(minion);
+            minions = alive.ToArray();
+        }
 
         private void Awake()
         {
+            summoning = GetComponent<MinionSummoning>();
             defend = new InputAction("Defend", InputActionType.Button, "<Mouse>/rightButton");
             rally = new InputAction("Rally", InputActionType.Button, "<Keyboard>/q");
             returnToPost = new InputAction("Return", InputActionType.Button, "<Keyboard>/e");
@@ -26,7 +36,7 @@ namespace DarkLord.Player
 
         private void Update()
         {
-            if (Time.timeScale == 0) return;
+            if (Time.timeScale == 0 || (summoning != null && summoning.BlocksGameplayInput)) return;
             if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
             if (rally.WasPressedThisFrame())
                 for (int i = 0; i < minions.Length; i++)
