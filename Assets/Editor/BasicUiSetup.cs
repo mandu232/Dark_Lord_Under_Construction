@@ -23,8 +23,9 @@ namespace DarkLord.Editor
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
             if (!EnsureTextMeshProResources()) return;
+            StardustFontSetup.EnsureAssets();
             foreach (var importer in Resources.FindObjectsOfTypeAll<TMP_PackageResourceImporterWindow>()) importer.Close();
-            TMP_FontAsset uiFont = TMP_Settings.defaultFontAsset;
+            TMP_FontAsset uiFont = StardustFontSetup.Regular;
 
             var player = GameObject.Find("Player");
             if (player == null)
@@ -167,6 +168,7 @@ namespace DarkLord.Editor
             text.fontStyle = style;
             text.textWrappingMode = TextWrappingModes.NoWrap;
             text.raycastTarget = false;
+            StardustFontSetup.StyleLabel(text);
             return text;
         }
 

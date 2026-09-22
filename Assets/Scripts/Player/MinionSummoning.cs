@@ -178,6 +178,16 @@ namespace DarkLord.Player
 
         private void OnGUI()
         {
+            if (Time.timeScale == 0) return;
+            var previousSkin = GUI.skin;
+            try { if (uiSkin != null) GUI.skin = uiSkin; DrawGui(); }
+            finally { GUI.skin = previousSkin; }
+        }
+
+        [SerializeField] private GUISkin uiSkin;
+
+        private void DrawGui()
+        {
             if (IsPlacing)
             {
                 GUI.Box(PlacementPanel, selectedWorker ? "PLACE WORKER" : "PLACE GUARD");

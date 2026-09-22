@@ -1,7 +1,7 @@
 
 [mcp_servers.unity]
 command = "C:\\Users\\mandu252\\AppData\\Local\\Unity\\bin\\unity.exe"
-args = ["mcp","--project-path","C:\\Users\\mandu252\\Desktop\\Dark_Lord_Under_Construction"]
+args = ["mcp","--project-path","C:\\Users\\mandu252\\OneDrive\\Desktop\\Dark Lord Under Construction"]
 
 [sandbox_workspace_write]
 network_access = true

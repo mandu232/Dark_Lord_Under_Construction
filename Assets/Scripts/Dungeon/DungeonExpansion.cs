@@ -8,6 +8,7 @@ namespace DarkLord.Dungeon
 {
     public sealed class DungeonExpansion : MonoBehaviour
     {
+        [SerializeField] private GUISkin uiSkin;
         [SerializeField] private DungeonGrid dungeon;
         [SerializeField] private Camera worldCamera;
         [SerializeField] private WorkerMiner worker;
@@ -98,6 +99,14 @@ namespace DarkLord.Dungeon
         }
 
         private void OnGUI()
+        {
+            if (Time.timeScale == 0) return;
+            var previousSkin = GUI.skin;
+            try { if (uiSkin != null) GUI.skin = uiSkin; DrawGui(); }
+            finally { GUI.skin = previousSkin; }
+        }
+
+        private void DrawGui()
         {
             if (summoning != null && summoning.IsOpen) return;
             if (dungeon == null || dungeon.Layout == null) return;
