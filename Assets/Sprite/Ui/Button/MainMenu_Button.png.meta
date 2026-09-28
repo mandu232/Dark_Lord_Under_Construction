@@ -1,130 +1,100 @@
 fileFormatVersion: 2
-guid: f5db428d263105d4b88aee1663d8b8d1
+guid: e11cd739237a0dd48852a8b381474573
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3293341006382743974
-    second: MainMenu_Button_0
+      213: -1506151891341628445
+    second: MainMenu_Button 1_0
   - first:
-      213: 7101125600532227416
-    second: MainMenu_Button_1
+      213: -800771044122192656
+    second: MainMenu_Button 1_1
   - first:
-      213: -7330108634213814803
-    second: MainMenu_Button_2
+      213: -4317749107251661
+    second: MainMenu_Button 1_2
   - first:
-      213: -1197481469610460721
-    second: MainMenu_Button_3
+      213: 2206115329341852590
+    second: MainMenu_Button 1_3
   - first:
-      213: 2294768413972132383
-    second: MainMenu_Button_4
+      213: -8970588668871979760
+    second: MainMenu_Button 1_4
   - first:
-      213: -5446771145878266322
-    second: MainMenu_Button_5
+      213: -2861309503335211730
+    second: MainMenu_Button 1_5
   - first:
-      213: 6183994483361369327
-    second: MainMenu_Button_6
+      213: 4810150266759831993
+    second: MainMenu_Button 1_6
   - first:
-      213: 5635683110986289571
-    second: MainMenu_Button_7
+      213: -4328860621092586212
+    second: MainMenu_Button 1_7
   - first:
-      213: -7250601349111629923
-    second: MainMenu_Button_8
+      213: 8244007825988571622
+    second: MainMenu_Button 1_8
   - first:
-      213: -1827793151122373644
-    second: MainMenu_Button_9
+      213: 6246295797862868206
+    second: MainMenu_Button 1_9
   - first:
-      213: 6928724070585307488
-    second: MainMenu_Button_10
+      213: 3343207888601664355
+    second: MainMenu_Button 1_10
   - first:
-      213: 4121819043862435655
-    second: MainMenu_Button_11
+      213: -2673315295702791297
+    second: MainMenu_Button 1_11
   - first:
-      213: 6224024302854140423
-    second: MainMenu_Button_12
+      213: 7779957868695708334
+    second: MainMenu_Button 1_12
   - first:
-      213: -7811440018168810708
-    second: MainMenu_Button_13
+      213: -3863736979124560283
+    second: MainMenu_Button 1_13
   - first:
-      213: 3814027433697920900
-    second: MainMenu_Button_14
+      213: -29146768822828992
+    second: MainMenu_Button 1_14
   - first:
-      213: -4765738767343873856
-    second: MainMenu_Button_15
+      213: 4561264918091321983
+    second: MainMenu_Button 1_15
   - first:
-      213: 2695763532778439484
-    second: MainMenu_Button_16
+      213: -797235153835866942
+    second: MainMenu_Button 1_16
   - first:
-      213: 8320971954566951772
-    second: MainMenu_Button_17
+      213: -1882481040223764713
+    second: MainMenu_Button 1_17
   - first:
-      213: -2559918617465893059
-    second: MainMenu_Button_18
+      213: -941769644924915670
+    second: MainMenu_Button 1_18
   - first:
-      213: 3672260346763400796
-    second: MainMenu_Button_19
+      213: 6864744370858059771
+    second: MainMenu_Button 1_19
   - first:
-      213: -5405649785184346593
-    second: MainMenu_Button_20
+      213: 8900979111487317929
+    second: MainMenu_Button 1_20
   - first:
-      213: 7165169574552701171
-    second: MainMenu_Button_21
+      213: -7963070530954810777
+    second: MainMenu_Button 1_21
   - first:
-      213: 810646693191448879
-    second: MainMenu_Button_22
+      213: 8072342049912569465
+    second: MainMenu_Button 1_22
   - first:
-      213: 6152571354913342602
-    second: MainMenu_Button_23
+      213: -2609249674787612278
+    second: MainMenu_Button 1_23
   - first:
-      213: 1244926464337279090
-    second: MainMenu_Button_24
+      213: -1469972467710901586
+    second: MainMenu_Button 1_24
   - first:
-      213: 8625816126946102035
-    second: MainMenu_Button_25
+      213: -3033565736507993546
+    second: MainMenu_Button 1_25
   - first:
-      213: -7224798681862217593
-    second: MainMenu_Button_26
+      213: 4824215744419905635
+    second: MainMenu_Button 1_26
   - first:
-      213: 5090415443428949493
-    second: MainMenu_Button_27
+      213: 4507982533575123764
+    second: MainMenu_Button 1_27
   - first:
-      213: 9058949970282614205
-    second: MainMenu_Button_28
+      213: 2037420491744079606
+    second: MainMenu_Button 1_28
   - first:
-      213: 2228089147338961687
-    second: MainMenu_Button_29
+      213: -2019666607694995984
+    second: MainMenu_Button 1_29
   - first:
-      213: -2838814788015804500
-    second: MainMenu_Button_30
-  - first:
-      213: -6689553774074129940
-    second: MainMenu_Button_31
-  - first:
-      213: 2912341826720419548
-    second: MainMenu_Button_32
-  - first:
-      213: 1060920698226390594
-    second: MainMenu_Button_33
-  - first:
-      213: 8989424414347665607
-    second: MainMenu_Button_34
-  - first:
-      213: -5820622700932178128
-    second: MainMenu_Button_35
-  - first:
-      213: 2626475426333091405
-    second: MainMenu_Button_36
-  - first:
-      213: 8380291335901761143
-    second: MainMenu_Button_37
-  - first:
-      213: 4921034464463378867
-    second: MainMenu_Button_38
-  - first:
-      213: -1549146361861025384
-    second: MainMenu_Button_39
-  - first:
-      213: -2683305663549476332
-    second: MainMenu_Button_40
+      213: -120655935392918062
+    second: MainMenu_Button 1_30
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -235,10 +205,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: a5e3456bdc3bb42d0800000000000000
-      internalID: -3293341006382743974
+      spriteID: eadb6ced0c8c33545ad1ea6dcfadae5b
+      internalID: -2040637437
       vertices: []
       indices: 
       edges: []
@@ -257,10 +227,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 855e72d3c144c8260800000000000000
-      internalID: 7101125600532227416
+      spriteID: 061bb669c58f0654f9a4f412911cabc2
+      internalID: -1236900242
       vertices: []
       indices: 
       edges: []
@@ -279,10 +249,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: ded69a4a809364a90800000000000000
-      internalID: -7330108634213814803
+      spriteID: 7a500c43571889b4089f513b16abe74d
+      internalID: 1782753119
       vertices: []
       indices: 
       edges: []
@@ -301,10 +271,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: fc971caa2f0b16fe0800000000000000
-      internalID: -1197481469610460721
+      spriteID: 7f1046829c0a89246a16ca1470e8d64b
+      internalID: 782416715
       vertices: []
       indices: 
       edges: []
@@ -323,10 +293,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: f12789cd6b7a8df10800000000000000
-      internalID: 2294768413972132383
+      spriteID: 125092e71df8cd14fb59b063a21952f5
+      internalID: -680012931
       vertices: []
       indices: 
       edges: []
@@ -345,10 +315,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: e2e1415408e2964b0800000000000000
-      internalID: -5446771145878266322
+      spriteID: e9773958ac8673842a8058e81f6e8448
+      internalID: -1314274537
       vertices: []
       indices: 
       edges: []
@@ -367,10 +337,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: feccab9e736f1d550800000000000000
-      internalID: 6183994483361369327
+      spriteID: 7af01715a89e9c649b3ea491b0fa03c9
+      internalID: -1294197825
       vertices: []
       indices: 
       edges: []
@@ -389,10 +359,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 3a191092ee7f53e40800000000000000
-      internalID: 5635683110986289571
+      spriteID: b41e5af2a47631146b5425b1b870f947
+      internalID: 721850112
       vertices: []
       indices: 
       edges: []
@@ -411,10 +381,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d97bb320d70b06b90800000000000000
-      internalID: -7250601349111629923
+      spriteID: 0831c660aa04afe43b228e596799c5ab
+      internalID: -1169874517
       vertices: []
       indices: 
       edges: []
@@ -433,10 +403,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 4f3857820df52a6e0800000000000000
-      internalID: -1827793151122373644
+      spriteID: 597c218ae9d96c14592ce6ee95e7ba31
+      internalID: -968462073
       vertices: []
       indices: 
       edges: []
@@ -455,10 +425,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 0619fed05d5c72060800000000000000
-      internalID: 6928724070585307488
+      spriteID: b9ba1e2c5869af14d8981fb2b0b1dc90
+      internalID: 1970403224
       vertices: []
       indices: 
       edges: []
@@ -467,7 +437,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: f2832f27cfa60ee46bef9585bdcb8be9
+    spriteID: aa42294c881bf6444a91691807c7acb1
     internalID: 0
     vertices: []
     indices: 
@@ -476,20 +446,22 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries:
+      - key: SpriteEditor.SliceOnImport
+        value: False
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":192.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      MainMenu_Button_0: -3293341006382743974
-      MainMenu_Button_1: 7101125600532227416
-      MainMenu_Button_10: 6928724070585307488
-      MainMenu_Button_2: -7330108634213814803
-      MainMenu_Button_3: -1197481469610460721
-      MainMenu_Button_4: 2294768413972132383
-      MainMenu_Button_5: -5446771145878266322
-      MainMenu_Button_6: 6183994483361369327
-      MainMenu_Button_7: 5635683110986289571
-      MainMenu_Button_8: -7250601349111629923
-      MainMenu_Button_9: -1827793151122373644
+      MainMenu_Button_0: -2040637437
+      MainMenu_Button_1: -1236900242
+      MainMenu_Button_10: 1970403224
+      MainMenu_Button_2: 1782753119
+      MainMenu_Button_3: 782416715
+      MainMenu_Button_4: -680012931
+      MainMenu_Button_5: -1314274537
+      MainMenu_Button_6: -1294197825
+      MainMenu_Button_7: 721850112
+      MainMenu_Button_8: -1169874517
+      MainMenu_Button_9: -968462073
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

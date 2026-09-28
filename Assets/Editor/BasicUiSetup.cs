@@ -162,7 +162,7 @@ namespace DarkLord.Editor
             var text = go.GetComponent<TextMeshProUGUI>();
             text.text = value;
             text.font = font;
-            text.fontSize = size;
+            text.fontSize = Mathf.Max(12, size - 2);
             text.color = color;
             text.alignment = alignment;
             text.fontStyle = style;

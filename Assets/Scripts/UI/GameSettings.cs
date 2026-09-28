@@ -9,12 +9,14 @@ namespace DarkLord.UI
         public bool Fullscreen;
         public bool VSync;
         public int Quality;
+        public string LanguageCode;
         private const string Prefix = "DarkLord.Settings.";
 
         public static GameSettings Defaults => new GameSettings
         {
             MasterVolume = 0.8f, Fullscreen = true, VSync = true,
-            Quality = Mathf.Min(3, QualitySettings.names.Length - 1)
+            Quality = Mathf.Min(3, QualitySettings.names.Length - 1),
+            LanguageCode = "en"
         };
 
         public GameSettings Sanitized()
@@ -23,6 +25,7 @@ namespace DarkLord.UI
             result.MasterVolume = float.IsNaN(MasterVolume) || float.IsInfinity(MasterVolume)
                 ? Defaults.MasterVolume : Mathf.Clamp01(MasterVolume);
             result.Quality = Mathf.Clamp(Quality, 0, Mathf.Max(0, QualitySettings.names.Length - 1));
+            result.LanguageCode = LanguageService.Normalize(LanguageCode);
             return result;
         }
 
@@ -34,7 +37,8 @@ namespace DarkLord.UI
                 MasterVolume = PlayerPrefs.GetFloat(prefix + "Volume", defaults.MasterVolume),
                 Fullscreen = PlayerPrefs.GetInt(prefix + "Fullscreen", defaults.Fullscreen ? 1 : 0) != 0,
                 VSync = PlayerPrefs.GetInt(prefix + "VSync", defaults.VSync ? 1 : 0) != 0,
-                Quality = PlayerPrefs.GetInt(prefix + "Quality", defaults.Quality)
+                Quality = PlayerPrefs.GetInt(prefix + "Quality", defaults.Quality),
+                LanguageCode = PlayerPrefs.GetString(prefix + "Language", defaults.LanguageCode)
             }.Sanitized();
         }
 
@@ -45,6 +49,7 @@ namespace DarkLord.UI
             PlayerPrefs.SetInt(prefix + "Fullscreen", value.Fullscreen ? 1 : 0);
             PlayerPrefs.SetInt(prefix + "VSync", value.VSync ? 1 : 0);
             PlayerPrefs.SetInt(prefix + "Quality", value.Quality);
+            PlayerPrefs.SetString(prefix + "Language", value.LanguageCode);
             PlayerPrefs.Save();
         }
 
@@ -56,6 +61,7 @@ namespace DarkLord.UI
                 QualitySettings.SetQualityLevel(value.Quality, true);
             // Changing quality can reset vSync, so apply it last.
             QualitySettings.vSyncCount = value.VSync ? 1 : 0;
+            LanguageService.Apply(value.LanguageCode);
 #if !UNITY_EDITOR
             Screen.fullScreenMode = value.Fullscreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
 #endif

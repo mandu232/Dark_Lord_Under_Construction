@@ -11,7 +11,6 @@ namespace DarkLord.Editor
     public static class MainMenuSpriteSetup
     {
         private const string BackgroundPath = "Assets/Sprite/BackGround/MainMenu_Bg.png";
-        private const string ButtonsPath = "Assets/Sprite/Ui/Button/Button-Sheet.png";
         private const string HoverPath = "Assets/Sprite/Ui/Button/MainMenu_Button.png";
 
         [MenuItem("Tools/Dark Lord/Apply Main Menu Hover Animation")]
@@ -23,19 +22,28 @@ namespace DarkLord.Editor
             ConfigureTexture(HoverPath);
             var frames = AssetDatabase.LoadAllAssetsAtPath(HoverPath).OfType<Sprite>()
                 .OrderByDescending(s => s.rect.y).ThenBy(s => s.rect.x).ToArray();
-            if (frames.Length != 11) throw new System.InvalidOperationException("Expected the 11 sliced MainMenu_Button frames.");
+            if (frames.Length == 0) throw new System.InvalidOperationException("No sliced MainMenu_Button frames found.");
             foreach (var style in scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<MainMenuButtonStyle>(true)))
             {
                 Undo.RegisterFullObjectHierarchyUndo(style.gameObject, "Add menu hover animation");
                 var data = new SerializedObject(style);
+                var arrow = style.transform.Find("Arrow").GetComponent<UnityEngine.UI.Image>();
+                var glow = arrow.GetComponent<MainMenuButtonGlow>();
+                if (glow == null) glow = Undo.AddComponent<MainMenuButtonGlow>(arrow.gameObject);
+                data.FindProperty("glow").objectReferenceValue = glow;
                 var array = data.FindProperty("hoverFrames");
                 array.arraySize = frames.Length;
                 for (int i = 0; i < frames.Length; i++) array.GetArrayElementAtIndex(i).objectReferenceValue = frames[i];
                 data.FindProperty("framesPerSecond").floatValue = 15;
                 data.ApplyModifiedPropertiesWithoutUndo();
-                var arrow = style.transform.Find("Arrow").GetComponent<UnityEngine.UI.Image>();
                 arrow.sprite = frames[0]; arrow.rectTransform.anchoredPosition = Vector2.zero;
-                style.transform.Find("Selection Underline").gameObject.SetActive(false);
+                var oldUnderline = style.transform.Find("Selection Underline");
+                // Missing Unity objects compare equal to null; the Image setter can skip
+                // clearing an obsolete reference. Clear the serialized slot directly.
+                var underlineData = new SerializedObject(oldUnderline.GetComponent<UnityEngine.UI.Image>());
+                underlineData.FindProperty("m_Sprite").objectReferenceValue = null;
+                underlineData.ApplyModifiedPropertiesWithoutUndo();
+                oldUnderline.gameObject.SetActive(false);
             }
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
@@ -48,11 +56,10 @@ namespace DarkLord.Editor
             var scene = SceneManager.GetSceneByPath("Assets/Scenes/MainMenu.unity");
             if (!scene.isLoaded) scene = EditorSceneManager.OpenScene("Assets/Scenes/MainMenu.unity", OpenSceneMode.Additive);
             var menu = scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<GameMenu>(true)).Single();
-            ConfigureTexture(BackgroundPath); ConfigureTexture(ButtonsPath);
+            ConfigureTexture(BackgroundPath); ConfigureTexture(HoverPath);
             var background = AssetDatabase.LoadAllAssetsAtPath(BackgroundPath).OfType<Sprite>().Single();
-            var sprites = AssetDatabase.LoadAllAssetsAtPath(ButtonsPath).OfType<Sprite>().ToArray();
-            var arrow = sprites.Single(s => s.name == "Button-Sheet_0");
-            var underline = sprites.Single(s => s.name == "Button-Sheet_1");
+            var arrow = AssetDatabase.LoadAllAssetsAtPath(HoverPath).OfType<Sprite>()
+                .OrderByDescending(s => s.rect.y).ThenBy(s => s.rect.x).First();
             var main = menu.transform.Find("Main Screen").GetComponent<RectTransform>();
             var actions = main.Find("Main Actions").GetComponent<RectTransform>();
             Undo.RegisterFullObjectHierarchyUndo(menu.gameObject, "Apply supplied menu sprites");
@@ -68,7 +75,7 @@ namespace DarkLord.Editor
             Position(art.rectTransform, 0, 0, 1920, 1080);
             var layout = actions.GetComponent<UnityEngine.UI.VerticalLayoutGroup>();
             if (layout != null) Undo.DestroyObjectImmediate(layout);
-            Position(actions, 960, 224, 768, 656);
+            Position(actions, 576, 320, 768, 656);
             string[] names = { "Start", "Settings", "Quit" };
             string[] captions = { "게임 시작", "설정", "종료" };
             var buttons = names.Select(n => actions.Find(n).GetComponent<UnityEngine.UI.Button>()).ToArray();
@@ -81,9 +88,9 @@ namespace DarkLord.Editor
                 button.GetComponent<UnityEngine.UI.Image>().raycastTarget = true;
                 var arrowImage = Image(button.transform, "Arrow", arrow);
                 Position(arrowImage.rectTransform, i == 0 ? 0 : 32, 0, 768, 256);
-                var underlineImage = Image(button.transform, "Selection Underline", underline);
+                var underlineImage = Image(button.transform, "Selection Underline", null);
                 Position(underlineImage.rectTransform, 0, 0, 768, 256);
-                underlineImage.gameObject.SetActive(i == 0);
+                underlineImage.gameObject.SetActive(false);
                 var label = button.transform.Find("Label").GetComponent<TMP_Text>();
                 Position(label.rectTransform, 192, 72, 520, 112);
                 label.text = captions[i]; label.font = StardustFontSetup.Bold;

@@ -92,9 +92,10 @@ namespace DarkLord.Editor
             var fullscreen = SettingRow(settings.transform, "DISPLAY MODE", 405, menu.ToggleFullscreen);
             var quality = SettingRow(settings.transform, "GRAPHICS QUALITY", 493, menu.CycleQuality);
             var vsync = SettingRow(settings.transform, "VERTICAL SYNC", 581, menu.ToggleVSync);
-            Label("Note", settings.transform, "Select a value to change it. Display mode applies in the built game.", 18, Muted, 56, 678, 808, 38);
+            var language = SettingRow(settings.transform, "LANGUAGE", 653, menu.CycleLanguage);
+            Label("Note", settings.transform, "Select a value to change it. Display mode applies in the built game.", 18, Muted, 56, 728, 808, 38);
             var footer = Node("Actions", settings.transform);
-            Place(footer, 56, 756, 808, 64);
+            Place(footer, 56, 786, 808, 64);
             var row = footer.AddComponent<UnityEngine.UI.HorizontalLayoutGroup>();
             row.spacing = 16; row.childControlWidth = true; row.childControlHeight = true;
             row.childForceExpandWidth = true;
@@ -119,6 +120,7 @@ namespace DarkLord.Editor
             Set(menu, "keepPlayingButton", keep); Set(menu, "startLabel", start.GetComponentInChildren<TMP_Text>());
             Set(menu, "volumeSlider", slider); Set(menu, "volumeLabel", volumeLabel);
             Set(menu, "fullscreenLabel", fullscreen); Set(menu, "qualityLabel", quality); Set(menu, "vsyncLabel", vsync);
+            Set(menu, "languageLabel", language);
             Set(menu, "confirmationTitle", quit.transform.Find("Title").GetComponent<TMP_Text>());
             Set(menu, "confirmationDescription", quit.transform.Find("Description").GetComponent<TMP_Text>());
             Set(menu, "confirmationAction", quit.transform.Find("Quit Actions/Confirm Quit/Label").GetComponent<TMP_Text>());
@@ -221,7 +223,7 @@ namespace DarkLord.Editor
         {
             var go = Node(name, parent); Place(go, x, y, w, h);
             var label = go.AddComponent<TextMeshProUGUI>();
-            label.font = Font; label.text = text; label.fontSize = size; label.color = color;
+            label.font = Font; label.text = text; label.fontSize = Mathf.Max(12, size - 2); label.color = color;
             label.fontStyle = style; label.alignment = TextAlignmentOptions.Left;
             label.textWrappingMode = TextWrappingModes.NoWrap; label.raycastTarget = false;
             StardustFontSetup.StyleLabel(label);

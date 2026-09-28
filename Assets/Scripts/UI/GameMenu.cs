@@ -19,7 +19,7 @@ namespace DarkLord.UI
 
         [SerializeField] private GameObject backdrop, mainPanel, pausePanel, settingsPanel, quitPanel, hud;
         [SerializeField] private UnityEngine.UI.Button startButton, resumeButton, cancelButton, keepPlayingButton;
-        [SerializeField] private TMP_Text startLabel, volumeLabel, fullscreenLabel, qualityLabel, vsyncLabel;
+        [SerializeField] private TMP_Text startLabel, volumeLabel, fullscreenLabel, qualityLabel, vsyncLabel, languageLabel;
         [SerializeField] private TMP_Text confirmationTitle, confirmationDescription, confirmationAction;
         [SerializeField] private UnityEngine.UI.Slider volumeSlider;
         [SerializeField] private MinionSummoning summoning;
@@ -89,6 +89,7 @@ namespace DarkLord.UI
 
         public void ToggleFullscreen() { draft.Fullscreen = !draft.Fullscreen; RefreshSettings(); }
         public void ToggleVSync() { draft.VSync = !draft.VSync; RefreshSettings(); }
+        public void CycleLanguage() { draft.LanguageCode = LanguageService.Next(draft.LanguageCode); RefreshSettings(); }
         public void CycleQuality()
         {
             draft.Quality = (draft.Quality + 1) % Mathf.Max(1, QualitySettings.names.Length);
@@ -144,6 +145,7 @@ namespace DarkLord.UI
             fullscreenLabel.text = draft.Fullscreen ? "BORDERLESS FULLSCREEN" : "WINDOWED";
             vsyncLabel.text = draft.VSync ? "ON" : "OFF";
             qualityLabel.text = QualitySettings.names[draft.Sanitized().Quality].ToUpperInvariant();
+            if (languageLabel != null) languageLabel.text = LanguageService.DisplayName(draft.LanguageCode);
         }
 
         private void Show(ScreenState state)

@@ -1,0 +1,152 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using DarkLord.Actors;
+using DarkLord.Dungeon;
+using DarkLord.Minions;
+using DarkLord.Player;
+using UnityEngine;
+
+namespace DarkLord.Gameplay
+{
+    public enum WaveState { Preparing, Active, Defeated }
+
+    [DisallowMultipleComponent]
+    public sealed class WaveDirector : MonoBehaviour
+    {
+        [Header("Scene references")]
+        [SerializeField] private DungeonGrid dungeon;
+        [SerializeField] private ActorHealth dungeonLord;
+        [SerializeField] private CurrencyWallet wallet;
+        [SerializeField] private MinionController invaderPrefab;
+
+        [Header("Wave pacing")]
+        [SerializeField, Min(0)] private float firstWaveDelay = 6f;
+        [SerializeField, Min(0)] private float timeBetweenWaves = 12f;
+        [SerializeField, Min(0.05f)] private float spawnInterval = 0.7f;
+        [SerializeField, Min(1)] private int baseEnemyCount = 3;
+        [SerializeField, Min(0)] private int enemyGrowthPerWave = 2;
+
+        [Header("Difficulty and rewards")]
+        [SerializeField, Min(1)] private int baseEnemyHealth = 55;
+        [SerializeField, Min(0)] private int enemyHealthGrowth = 10;
+        [SerializeField, Min(0)] private int baseSoulReward = 12;
+        [SerializeField, Min(0)] private int soulRewardGrowth = 4;
+
+        private readonly List<ActorHealth> aliveInvaders = new List<ActorHealth>();
+        private readonly Dictionary<ActorHealth, Action> deathHandlers = new Dictionary<ActorHealth, Action>();
+        private Coroutine spawnRoutine;
+        private float countdown;
+        private int pendingSpawns;
+
+        public int CurrentWave { get; private set; }
+        public int RemainingEnemies => aliveInvaders.Count + pendingSpawns;
+        public float Countdown => Mathf.Max(0, countdown);
+        public WaveState State { get; private set; } = WaveState.Preparing;
+        public event Action Changed;
+
+        private void Start()
+        {
+            if (!ValidateConfiguration()) { enabled = false; return; }
+            dungeon.Initialize();
+            countdown = firstWaveDelay;
+            dungeonLord.Died += OnDungeonLordDied;
+            Changed?.Invoke();
+        }
+
+        private void Update()
+        {
+            if (State != WaveState.Preparing || Time.timeScale == 0) return;
+            countdown -= Time.deltaTime;
+            Changed?.Invoke();
+            if (countdown <= 0) BeginNextWave();
+        }
+
+        public void BeginNextWave()
+        {
+            if (State == WaveState.Defeated || spawnRoutine != null || invaderPrefab == null) return;
+            CurrentWave++;
+            State = WaveState.Active;
+            pendingSpawns = WaveProgression.EnemyCount(CurrentWave, baseEnemyCount, enemyGrowthPerWave);
+            spawnRoutine = StartCoroutine(SpawnWave());
+            Changed?.Invoke();
+        }
+
+        private IEnumerator SpawnWave()
+        {
+            while (pendingSpawns > 0 && State == WaveState.Active)
+            {
+                SpawnInvader(pendingSpawns);
+                pendingSpawns--;
+                Changed?.Invoke();
+                if (pendingSpawns > 0) yield return new WaitForSeconds(spawnInterval);
+            }
+            spawnRoutine = null;
+            CheckWaveCleared();
+        }
+
+        private void SpawnInvader(int sequence)
+        {
+            Vector3 spawn = dungeon.CellCenter(dungeon.Layout.Entrance);
+            spawn.y += ((sequence % 3) - 1) * 0.22f;
+            var invader = Instantiate(invaderPrefab, spawn, Quaternion.identity, transform);
+            invader.name = $"Wave {CurrentWave} Invader";
+            var health = invader.GetComponent<ActorHealth>();
+            health.Configure(Faction.Invader, WaveProgression.EnemyHealth(CurrentWave, baseEnemyHealth, enemyHealthGrowth));
+            foreach (var sprite in invader.GetComponentsInChildren<SpriteRenderer>())
+                sprite.color = new Color(1f, 0.32f, 0.28f, sprite.color.a);
+            invader.Defend(dungeonLord.transform.position);
+            Action handler = () => OnInvaderDied(health);
+            deathHandlers.Add(health, handler);
+            health.Died += handler;
+            aliveInvaders.Add(health);
+        }
+
+        private void OnInvaderDied(ActorHealth health)
+        {
+            if (health == null) return;
+            if (deathHandlers.TryGetValue(health, out Action handler))
+            {
+                health.Died -= handler;
+                deathHandlers.Remove(health);
+            }
+            aliveInvaders.Remove(health);
+            Destroy(health.gameObject, 1.5f);
+            Changed?.Invoke();
+            CheckWaveCleared();
+        }
+
+        private void CheckWaveCleared()
+        {
+            if (State != WaveState.Active || pendingSpawns > 0 || aliveInvaders.Count > 0) return;
+            wallet?.Add(CurrencyType.Souls, WaveProgression.ClearReward(CurrentWave, baseSoulReward, soulRewardGrowth));
+            State = WaveState.Preparing;
+            countdown = timeBetweenWaves;
+            Changed?.Invoke();
+        }
+
+        private void OnDungeonLordDied()
+        {
+            State = WaveState.Defeated;
+            pendingSpawns = 0;
+            if (spawnRoutine != null) StopCoroutine(spawnRoutine);
+            spawnRoutine = null;
+            Changed?.Invoke();
+        }
+
+        private bool ValidateConfiguration()
+        {
+            if (dungeon != null && dungeonLord != null && invaderPrefab != null) return true;
+            Debug.LogError("WaveDirector requires a dungeon, dungeon lord, and invader prefab.", this);
+            return false;
+        }
+
+        private void OnDestroy()
+        {
+            if (dungeonLord != null) dungeonLord.Died -= OnDungeonLordDied;
+            foreach (var pair in deathHandlers)
+                if (pair.Key != null) pair.Key.Died -= pair.Value;
+            deathHandlers.Clear();
+        }
+    }
+}

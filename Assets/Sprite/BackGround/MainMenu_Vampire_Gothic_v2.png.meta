@@ -1,28 +1,10 @@
 fileFormatVersion: 2
-guid: 5992d494190ebf54fa7c0e71c8f9a5ed
+guid: c4e3c46a94af72d47ad2e25f29308f47
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5908450235215022971
-    second: Button-Sheet_0
-  - first:
-      213: -1956322860838145807
-    second: Button-Sheet_1
-  - first:
-      213: -7610835196672595954
-    second: Button-Sheet_2
-  - first:
-      213: 8080923868374623456
-    second: Button-Sheet_3
-  - first:
-      213: 1710854424191970228
-    second: Button-Sheet_4
-  - first:
-      213: -721156306109795639
-    second: Button-Sheet_5
-  - first:
-      213: 6588114403388913904
-    second: Button-Sheet_6
+      213: -5135680229811204229
+    second: MainMenu_Vampire_Gothic_v2_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -55,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -94,8 +76,8 @@ TextureImporter:
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: 4
-    textureCompression: 0
+    textureFormat: -1
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -120,45 +102,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Button-Sheet_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 64
-        width: 192
-        height: 64
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: b7b80134f280ff150800000000000000
-      internalID: 5908450235215022971
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Button-Sheet_1
+      name: MainMenu_Vampire_Gothic_v2_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 192
-        height: 64
+        width: 1672
+        height: 941
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1f034cd19beb9d4e0800000000000000
-      internalID: -1956322860838145807
+      spriteID: b7f4b1e7a066ab8b0800000000000000
+      internalID: -5135680229811204229
       vertices: []
       indices: 
       edges: []
@@ -167,7 +127,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 8ee3018ebeb328d42a6cd688bbd9d3b2
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -175,12 +135,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":192.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      Button-Sheet_0: 5908450235215022971
-      Button-Sheet_1: -1956322860838145807
+      MainMenu_Vampire_Gothic_v2_0: -5135680229811204229
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

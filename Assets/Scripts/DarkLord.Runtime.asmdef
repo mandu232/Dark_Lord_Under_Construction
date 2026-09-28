@@ -1,6 +1,6 @@
 {
   "name": "DarkLord.Runtime",
   "rootNamespace": "DarkLord",
-  "references": ["Unity.InputSystem", "Unity.ugui", "Unity.TextMeshPro"],
+  "references": ["Unity.InputSystem", "Unity.ugui", "Unity.TextMeshPro", "Unity.Localization", "Unity.ResourceManager"],
   "autoReferenced": true
 }
