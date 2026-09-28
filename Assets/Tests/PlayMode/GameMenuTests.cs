@@ -29,6 +29,9 @@ namespace DarkLord.Tests
             quality = QualitySettings.GetQualityLevel(); vsync = QualitySettings.vSyncCount;
             originalInput = InputSystem.settings; inputFlags = originalInput.hideFlags;
             testInput = Object.Instantiate(originalInput);
+            // Input System destroys replaced settings marked HideAndDontSave.
+            // Retain this object until teardown restores its original flags.
+            originalInput.hideFlags = HideFlags.DontUnloadUnusedAsset;
             testInput.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
             testInput.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
             InputSystem.settings = testInput;

@@ -22,12 +22,12 @@ namespace DarkLord.Editor
             var workers = Object.FindObjectsByType<WorkerMiner>(FindObjectsSortMode.None).Where(w => w.gameObject.scene == scene).ToArray();
             var guards = Object.FindObjectsByType<MinionController>(FindObjectsSortMode.None)
                 .Where(g => g.gameObject.scene == scene && g.GetComponent<ActorHealth>().Faction == Faction.Dungeon).ToArray();
-            var workerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Gameplay/SummonWorker.prefab");
-            var guardPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Gameplay/SummonGuard.prefab");
+            var workerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Gameplay/Prefabs/Minions/SummonWorker.prefab");
+            var guardPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Gameplay/Prefabs/Minions/SummonGuard.prefab");
             if (workerPrefab == null && workers.Length == 0) throw new System.InvalidOperationException("An initial worker is needed to create the summoning prefab.");
             if (guardPrefab == null && guards.Length == 0) throw new System.InvalidOperationException("An initial guard is needed to create the summoning prefab.");
-            if (workerPrefab == null) workerPrefab = SaveTemplate(workers[0].gameObject, "Assets/Gameplay/SummonWorker.prefab");
-            if (guardPrefab == null) guardPrefab = SaveTemplate(guards[0].gameObject, "Assets/Gameplay/SummonGuard.prefab");
+            if (workerPrefab == null) workerPrefab = SaveTemplate(workers[0].gameObject, "Assets/Gameplay/Prefabs/Minions/SummonWorker.prefab");
+            if (guardPrefab == null) guardPrefab = SaveTemplate(guards[0].gameObject, "Assets/Gameplay/Prefabs/Minions/SummonGuard.prefab");
             Undo.IncrementCurrentGroup();
             int group = Undo.GetCurrentGroup();
             Undo.SetCurrentGroupName("Replace initial minions with summoning menu");

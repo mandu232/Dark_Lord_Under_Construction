@@ -10,3 +10,5 @@
 - 마왕이 사망하면 추가 웨이브 생성이 중단됩니다.
 
 화면 상단 중앙 HUD에서 현재 웨이브, 다음 침공까지 남은 시간, 생존한 적 수를 확인할 수 있습니다. 설정을 다시 연결해야 할 경우 `Tools > Dark Lord > Setup Wave System`을 실행합니다.
+
+침입자 외형은 `Assets/Gameplay/Prefabs/Enemies/WaveInvader.prefab`에서 편집합니다. 스폰 코드가 SpriteRenderer 색상을 덮어쓰지 않습니다. 웨이브 간격·수·체력 증가·보상은 SampleScene의 `Wave System`에 있는 `WaveDirector` Inspector에서 조정합니다.

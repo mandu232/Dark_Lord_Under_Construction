@@ -32,7 +32,7 @@ namespace DarkLord.Editor
                 layers.GetArrayElementAtIndex(terrain).stringValue = "DungeonTerrain";
                 tags.ApplyModifiedProperties();
             }
-            string materialPath = "Assets/Gameplay/DungeonPreview.mat";
+            string materialPath = "Assets/Gameplay/Materials/DungeonPreview.mat";
             var material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
             if (material == null) { material = new Material(shader); AssetDatabase.CreateAsset(material, materialPath); }
             Undo.IncrementCurrentGroup();
@@ -85,7 +85,7 @@ namespace DarkLord.Editor
 
         private static Mesh WorkerMesh()
         {
-            const string path = "Assets/Gameplay/WorkerPlaceholder.asset";
+            const string path = "Assets/Gameplay/Art/Placeholders/WorkerPlaceholder.asset";
             var existing = AssetDatabase.LoadAssetAtPath<Mesh>(path);
             if (existing != null) return existing;
             var vertices = new List<Vector3>();

@@ -21,9 +21,9 @@ namespace DarkLord.Editor
             var player = GameObject.Find("Player");
             var dungeon = Object.FindAnyObjectByType<DungeonGrid>();
             var hud = GameObject.Find("Game HUD");
-            var prefabObject = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Gameplay/SummonGuard.prefab");
+            var prefabObject = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Gameplay/Prefabs/Enemies/WaveInvader.prefab");
             if (player == null || dungeon == null || hud == null || prefabObject == null)
-                throw new System.InvalidOperationException("Wave setup needs Player, DungeonGrid, Game HUD, and SummonGuard.prefab.");
+                throw new System.InvalidOperationException("Wave setup needs Player, DungeonGrid, Game HUD, and WaveInvader.prefab.");
 
             var root = GameObject.Find("Wave System") ?? new GameObject("Wave System");
             var director = root.GetComponent<WaveDirector>() ?? root.AddComponent<WaveDirector>();

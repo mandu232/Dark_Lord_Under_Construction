@@ -93,8 +93,6 @@ namespace DarkLord.Gameplay
             invader.name = $"Wave {CurrentWave} Invader";
             var health = invader.GetComponent<ActorHealth>();
             health.Configure(Faction.Invader, WaveProgression.EnemyHealth(CurrentWave, baseEnemyHealth, enemyHealthGrowth));
-            foreach (var sprite in invader.GetComponentsInChildren<SpriteRenderer>())
-                sprite.color = new Color(1f, 0.32f, 0.28f, sprite.color.a);
             invader.Defend(dungeonLord.transform.position);
             Action handler = () => OnInvaderDied(health);
             deathHandlers.Add(health, handler);

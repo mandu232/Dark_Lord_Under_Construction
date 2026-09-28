@@ -1,5 +1,7 @@
 # Main menu and settings
 
+The title Canvas is now an instance of `Assets/Gameplay/Prefabs/UI/MainMenu.prefab`. Edit that prefab for visual changes; the scene retains its camera and EventSystem. The existing GameMenu component and persistent button actions remain connected inside the prefab. Setup tools are initial authoring/repair utilities, not the normal workflow for changing presentation.
+
 `Assets/Scenes/MainMenu.unity` is the separate title scene and the first enabled build scene. Open this scene and press Play to start from the menu; opening SampleScene directly remains useful for gameplay development and tests. MainMenu contains the menu canvas, camera and Input System EventSystem, with no gameplay objects. SampleScene retains only the pause/settings/confirmation panels and its own EventSystem.
 
 - **Begin your reign** asynchronously loads SampleScene as a fresh dungeon. SampleScene starts playing immediately. **Esc** pauses/resumes. Closing the minion popup consumes Esc before the pause menu.
@@ -18,4 +20,6 @@ Hover animation uses the 11 existing slices of `MainMenu_Button.png`, ordered to
 
 Each button's Arrow has a `MainMenuButtonGlow` UI mesh effect. It draws a soft red halo behind the original sprite, following every animation frame while keeping the original pixel edges sharp. Pointer hover or keyboard selection increases the glow; exit, deselection, or panel disable restores the idle strength. The Arrow Inspector exposes Glow Color, Idle Strength (0.004), Selected Strength (0.012), and Radius (6 canvas units). There is no pulse or camera bloom. `Apply Main Menu Hover Animation` also reconnects the glow and clears obsolete underline sprite references without changing button actions or layout.
 
-`Tools > Dark Lord > Setup Main Menu and Settings` configures both scenes, startup order and fonts while preserving existing panels. Runtime behavior lives in `Assets/Scripts/UI/GameMenu.cs`, preference persistence in `GameSettings.cs`, and authoring in `Assets/Editor/MenuSceneSetup.cs`, `MainMenuSetup.cs` and `StardustFontSetup.cs`. Setup closes the saved gameplay authoring scene to avoid duplicate EventSystems.
+`Tools > Dark Lord > Apply Main Menu Depth` keeps the solid `MainMenu_Bg.png` background and adds only local button depth: a soft contact shadow behind each label, a small downward shadow on each arrow, and slightly brighter red idle labels. The existing hover reveal, raised selected label position, actions and layout remain intact. The shadow mask is baked once; no additional runtime script is needed. The background stays free of landscape artwork, vignette or full-screen lighting so future decorative elements can be added independently.
+
+`Tools > Dark Lord > Setup Main Menu and Settings` configures both scenes, startup order and fonts while preserving existing panels. Runtime behavior lives in `Assets/Scripts/UI/GameMenu.cs`, preference persistence in `GameSettings.cs`, and authoring in `Assets/Editor/UI/MenuSceneSetup.cs`, `MainMenuSetup.cs` and `StardustFontSetup.cs`. Setup closes the saved gameplay authoring scene to avoid duplicate EventSystems.

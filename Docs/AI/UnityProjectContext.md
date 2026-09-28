@@ -1,9 +1,11 @@
 # Unity project context
 
+- 2026-09-28 organization update: `Assets/Gameplay` now separates Prefabs (UI/Minions/Enemies), Animations (Player/Minions), Materials and Art/Placeholders. Editor utilities are grouped under UI, Gameplay and Validation. MainMenu uses `Gameplay/Prefabs/UI/MainMenu.prefab`; waves use `Gameplay/Prefabs/Enemies/WaveInvader.prefab`, whose sprite colors are no longer overwritten by WaveDirector. Asset GUIDs are preserved. See `Docs/ProjectStructure.md` for the current authoring workflow.
+
 Updated 2026-09-20. Confirmed from ProjectSettings, Packages, SampleScene, and first-party assets.
 
 - Unity 6000.6.2f1, PC single-player, 2D top-down. URP 17.6 with Renderer2D is selected through QualitySettings (GraphicsSettings fallback is empty).
-- Input System 1.20 is active exclusively. Reuse Assets/Settings/InputSystem_Actions.inputactions, Player/Move. As of 2026-09-18 the user replaced the witch with Legacy Red. The active player controller is Assets/Gameplay/PlayerDirectional.controller, a copy of the user's Player.controller retaining action states. Float Speed controls Locomotion/Idle_Default and Walk; FacingX/FacingY select five sprite-sheet rows with horizontal mirroring for eight directions. ActorAnimation supports both legacy integer speed and float Speed.
+- Input System 1.20 is active exclusively. Reuse Assets/Settings/InputSystem_Actions.inputactions, Player/Move. As of 2026-09-18 the user replaced the witch with Legacy Red. The active player controller is Assets/Gameplay/Animations/Player/PlayerDirectional.controller, a copy of the user's Player.controller retaining action states. Float Speed controls Locomotion/Idle_Default and Walk; FacingX/FacingY select five sprite-sheet rows with horizontal mirroring for eight directions. ActorAnimation supports both legacy integer speed and float Speed.
 - Art convention: 16 pixels per unit; one 16x16 tile occupies one world unit. Existing witch sprites already use 16 PPU and Point filtering.
 - Main/build scene: Assets/Scenes/SampleScene.unity. It originally contained Player, Main Camera, Global Light 2D. No prior gameplay code or architecture documentation existed.
 - Runtime code: Assets/Scripts, assembly DarkLord.Runtime. Small MonoBehaviour components own movement, health, animation presentation, and minion decisions. Editor-only setup and validation are under Assets/Editor. PlayMode tests have their own assembly.

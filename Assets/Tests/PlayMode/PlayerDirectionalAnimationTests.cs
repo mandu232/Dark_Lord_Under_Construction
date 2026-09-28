@@ -25,7 +25,7 @@ namespace DarkLord.Tests
             var sprite = actor.AddComponent<SpriteRenderer>();
             var animator = actor.AddComponent<Animator>();
             animator.runtimeAnimatorController = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(
-                "Assets/Gameplay/PlayerDirectional.controller");
+                "Assets/Gameplay/Animations/Player/PlayerDirectional.controller");
             Assert.IsNotNull(animator.runtimeAnimatorController);
             var view = actor.AddComponent<ActorAnimation>();
             var config = new SerializedObject(view);

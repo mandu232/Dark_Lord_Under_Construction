@@ -26,7 +26,7 @@
 
 ## 하수인 애니메이션 추가
 
-`Assets/Gameplay/Minion.controller`의 Base Layer에 아래 다섯 상태를 만들어 두었습니다. 각 상태의 Motion에 원하는 클립을 넣으면 됩니다.
+`Assets/Gameplay/Animations/Minions/Minion.controller`의 Base Layer에 아래 다섯 상태를 만들어 두었습니다. 각 상태의 Motion에 원하는 클립을 넣으면 됩니다.
 
 | 상태 이름 | 조건 | 권장 반복 |
 |---|---|---|

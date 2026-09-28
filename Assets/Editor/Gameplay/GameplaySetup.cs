@@ -90,11 +90,13 @@ namespace DarkLord.Editor
 
         private static GameObject CreateMinionPrefab()
         {
-            string path = Root + "/GuardMinion.prefab";
+            string path = Root + "/Prefabs/Minions/GuardMinion.prefab";
             var existing = AssetDatabase.LoadAssetAtPath<GameObject>(path);
             if (existing != null) return existing;
-            Directory.CreateDirectory(Root);
-            string imagePath = Root + "/MinionPlaceholder.png";
+            Directory.CreateDirectory(Root + "/Prefabs/Minions");
+            Directory.CreateDirectory(Root + "/Art/Placeholders");
+            Directory.CreateDirectory(Root + "/Animations/Minions");
+            string imagePath = Root + "/Art/Placeholders/MinionPlaceholder.png";
             var texture = new Texture2D(16, 16, TextureFormat.RGBA32, false);
             for (int y = 0; y < 16; y++)
                 for (int x = 0; x < 16; x++)
@@ -110,7 +112,7 @@ namespace DarkLord.Editor
             importer.mipmapEnabled = false;
             importer.textureCompression = TextureImporterCompression.Uncompressed;
             importer.SaveAndReimport();
-            string controllerPath = Root + "/Minion.controller";
+            string controllerPath = Root + "/Animations/Minions/Minion.controller";
             var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(controllerPath);
             if (controller == null)
             {

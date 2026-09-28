@@ -43,8 +43,8 @@ namespace DarkLord.Tests
             data.FindProperty("dungeon").objectReferenceValue = grid;
             data.ApplyModifiedPropertiesWithoutUndo();
             summoning = player.AddComponent<MinionSummoning>();
-            var worker = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Gameplay/SummonWorker.prefab");
-            var guard = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Gameplay/SummonGuard.prefab");
+            var worker = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Gameplay/Prefabs/Minions/SummonWorker.prefab");
+            var guard = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Gameplay/Prefabs/Minions/SummonGuard.prefab");
             Assert.IsNotNull(worker); Assert.IsNotNull(guard);
             summoning.Configure(grid, worker.GetComponent<WorkerMiner>(), guard.GetComponent<MinionController>());
             player.SetActive(true);
