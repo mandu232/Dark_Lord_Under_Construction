@@ -17,6 +17,8 @@ GameObject:
   - component: {fileID: 2195268558675509829}
   - component: {fileID: 8480836728050208731}
   - component: {fileID: 4223288643587698073}
+  - component: {fileID: 831204534492192759}
+  - component: {fileID: 1114840709698733298}
   m_Layer: 0
   m_Name: WaveInvader
   m_TagString: Untagged
@@ -88,8 +90,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 3076118613561058659, guid: 1a934ec2e77e40146a79088bebeed0fb, type: 3}
-  m_Color: {r: 1, g: 0.32, b: 0.28, a: 1}
+  m_Sprite: {fileID: 4045183328143116537, guid: 1ad7b63523ae36e498f1ae551508ccdb, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -109,7 +111,7 @@ Animator:
   m_GameObject: {fileID: 8127221282076358520}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: a36128dc9623ae04f8d1c7dd91027ac4, type: 2}
+  m_Controller: {fileID: 9100000, guid: c1093a95a5b45a349a25ea1c8556043e, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -223,11 +225,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9a9dd337a1bdb240874067715917eba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Actors.ActorAnimation
-  animator: {fileID: 0}
-  spriteRenderer: {fileID: 0}
+  animator: {fileID: 9090221051958673996}
+  spriteRenderer: {fileID: 9118002938329109442}
   artworkFacesRight: 1
   useExistingSpeedParameter: 0
   useDirectionalParameters: 0
+  useActionParameters: 1
 --- !u!114 &4223288643587698073
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -256,3 +259,29 @@ MonoBehaviour:
   attackCooldown: 0.8
   hitDuration: 0.2
   scanInterval: 0.2
+--- !u!210 &831204534492192759
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8127221282076358520}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
+  m_Sort3DAs2D: 0
+--- !u!114 &1114840709698733298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8127221282076358520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 923d1e8de0b28e24c8b4760eca571a4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Actors.ActorDepthSorting
+  groundOffsetY: 0

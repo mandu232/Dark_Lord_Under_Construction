@@ -12,7 +12,7 @@ namespace DarkLord.UI
 
         public static string Normalize(string code) => code == Korean ? Korean : English;
         public static string Next(string code) => Normalize(code) == English ? Korean : English;
-        public static string DisplayName(string code) => Normalize(code) == Korean ? "한국어" : "ENGLISH";
+        public static string DisplayName(string code) => Normalize(code) == Korean ? "한국어" : "영어";
 
         public static void Apply(string code)
         {

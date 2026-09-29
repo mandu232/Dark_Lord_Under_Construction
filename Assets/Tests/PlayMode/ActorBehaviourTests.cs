@@ -176,6 +176,70 @@ namespace DarkLord.Tests
         }
 
         [UnityTest]
+        public IEnumerator InvaderIgnoresNearbyDefendersAndPursuesDistantCore()
+        {
+            var invader = Actor(Vector2.zero, Faction.Invader, true).GetComponent<MinionController>();
+            var core = Actor(new Vector2(12, 0), Faction.Dungeon).GetComponent<ActorHealth>();
+            var player = Actor(new Vector2(0, 0.7f), Faction.Dungeon).GetComponent<ActorHealth>();
+            invader.Assault(core);
+            yield return new WaitForSeconds(0.25f);
+            Assert.That(invader.Target, Is.SameAs(core));
+            Assert.That(invader.transform.position.x, Is.GreaterThan(0.1f));
+            Assert.That(player.CurrentHealth, Is.EqualTo(100));
+        }
+
+        [UnityTest]
+        public IEnumerator InvaderRetaliatesAgainstLatestAttackerThenReturnsToCore()
+        {
+            var invader = Actor(Vector2.zero, Faction.Invader, true).GetComponent<MinionController>();
+            var core = Actor(new Vector2(12, 0), Faction.Dungeon).GetComponent<ActorHealth>();
+            var player = Actor(new Vector2(0, 1), Faction.Dungeon).GetComponent<ActorHealth>();
+            var minion = Actor(new Vector2(0, -1), Faction.Dungeon).GetComponent<ActorHealth>();
+            invader.Assault(core);
+            invader.GetComponent<ActorHealth>().TakeDamage(1, player);
+            Assert.That(invader.Target, Is.SameAs(player), "Retaliation must work outside the core's defence radius.");
+            invader.GetComponent<ActorHealth>().TakeDamage(1, minion);
+            Assert.That(invader.Target, Is.SameAs(minion));
+            minion.TakeDamage(100);
+            yield return new WaitForSeconds(0.3f);
+            Assert.That(invader.Target, Is.SameAs(core));
+        }
+
+        [UnityTest]
+        public IEnumerator InvaderReturnsToCoreWhenAttackerIsDisabledOrDestroyed()
+        {
+            var invader = Actor(Vector2.zero, Faction.Invader, true).GetComponent<MinionController>();
+            var core = Actor(new Vector2(12, 0), Faction.Dungeon).GetComponent<ActorHealth>();
+            var attacker = Actor(Vector2.up, Faction.Dungeon).GetComponent<ActorHealth>();
+            invader.Assault(core);
+            invader.GetComponent<ActorHealth>().TakeDamage(1, attacker);
+            attacker.gameObject.SetActive(false);
+            yield return new WaitForSeconds(0.3f);
+            Assert.That(invader.Target, Is.SameAs(core));
+            attacker.gameObject.SetActive(true);
+            invader.GetComponent<ActorHealth>().TakeDamage(1, attacker);
+            Object.Destroy(attacker.gameObject);
+            yield return new WaitForSeconds(0.3f);
+            Assert.That(invader.Target, Is.SameAs(core));
+        }
+
+        [UnityTest]
+        public IEnumerator InvaderDamagesCoreAndDoesNotAcquireBystandersAfterCoreDies()
+        {
+            var invader = Actor(Vector2.zero, Faction.Invader, true).GetComponent<MinionController>();
+            var core = Actor(new Vector2(0.7f, 0), Faction.Dungeon).GetComponent<ActorHealth>();
+            var player = Actor(new Vector2(0, 0.7f), Faction.Dungeon).GetComponent<ActorHealth>();
+            invader.Assault(core);
+            yield return new WaitForSeconds(0.4f);
+            Assert.That(core.CurrentHealth, Is.EqualTo(90));
+            Assert.That(player.CurrentHealth, Is.EqualTo(100));
+            core.TakeDamage(100);
+            yield return new WaitForSeconds(0.4f);
+            Assert.That(invader.Target, Is.Null);
+            Assert.That(invader.GetComponent<TopDownMotor>().Velocity, Is.EqualTo(Vector2.zero));
+        }
+
+        [UnityTest]
         public IEnumerator GuardDoesNotChaseOutsideAssignedArea()
         {
             var guard = Actor(Vector2.zero, Faction.Dungeon, true).GetComponent<MinionController>();

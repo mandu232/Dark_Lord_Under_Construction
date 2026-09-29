@@ -71,6 +71,22 @@ namespace DarkLord.Tests
         }
 
         [Test]
+        public void GuardPlacementUsesCenterOfThirtyTwoPixelTile()
+        {
+            var chosen = grid.Layout.Core + Vector2Int.right;
+            Vector3 center = grid.CellCenter(chosen);
+            Assert.That(Vector3.Distance(center, grid.CellCenter(grid.Layout.Core)), Is.EqualTo(2));
+            summoning.SetOpen(true);
+            Assert.IsTrue(summoning.TrySummon(false));
+            Assert.IsTrue(summoning.TryPlace(chosen));
+            var guards = Object.FindObjectsByType<MinionController>(FindObjectsSortMode.None);
+            var guard = System.Array.Find(guards, g => Vector3.Distance(g.transform.position, center) < 0.001f);
+            Assert.IsNotNull(guard);
+            Assert.That(guard.GuardPosition, Is.EqualTo((Vector2)center));
+            Assert.That(guard.transform.localScale, Is.EqualTo(Vector3.one));
+        }
+
+        [Test]
         public void StartsEmptyAndSummonedWorkerReceivesMiningOrders()
         {
             Assert.IsFalse(summoning.HasWorker);

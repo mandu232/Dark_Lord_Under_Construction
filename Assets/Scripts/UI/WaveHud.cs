@@ -33,18 +33,18 @@ namespace DarkLord.UI
         private void Refresh()
         {
             if (director == null || waveText == null || statusText == null) return;
-            waveText.text = director.CurrentWave == 0 ? "WAVE  --" : $"WAVE  {director.CurrentWave}";
+            waveText.text = director.CurrentWave == 0 ? "습격  --" : $"습격  {director.CurrentWave}";
             switch (director.State)
             {
                 case WaveState.Preparing:
-                    statusText.text = $"NEXT ASSAULT  {Mathf.CeilToInt(director.Countdown)}s";
+                    statusText.text = $"다음 습격  {Mathf.CeilToInt(director.Countdown)}초";
                     break;
                 case WaveState.Active:
-                    statusText.text = $"INVADERS  {director.RemainingEnemies}";
+                    statusText.text = $"남은 침입자  {director.RemainingEnemies}";
                     break;
                 default:
-                    waveText.text = "DUNGEON FALLEN";
-                    statusText.text = "THE INVADERS HAVE WON";
+                    waveText.text = "성 함락";
+                    statusText.text = "침입자에게 패배했습니다";
                     break;
             }
         }

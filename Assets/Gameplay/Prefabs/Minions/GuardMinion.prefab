@@ -17,6 +17,8 @@ GameObject:
   - component: {fileID: 4977399411419387389}
   - component: {fileID: 7671931093682894451}
   - component: {fileID: 4882293382699081102}
+  - component: {fileID: 2995570845096791428}
+  - component: {fileID: 8435147433105327266}
   m_Layer: 0
   m_Name: GuardMinion
   m_TagString: Untagged
@@ -88,7 +90,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 3076118613561058659, guid: 1a934ec2e77e40146a79088bebeed0fb, type: 3}
+  m_Sprite: {fileID: -4186178531630634954, guid: 0e2b9562a2ee7f144b63cf54b678df31, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -109,7 +111,7 @@ Animator:
   m_GameObject: {fileID: 7245685803054280435}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: a36128dc9623ae04f8d1c7dd91027ac4, type: 2}
+  m_Controller: {fileID: 9100000, guid: bb7a7b22e915d7949b5db7d813faff4c, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -223,10 +225,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9a9dd337a1bdb240874067715917eba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Actors.ActorAnimation
-  animator: {fileID: 0}
-  spriteRenderer: {fileID: 0}
+  animator: {fileID: 8788299027285269419}
+  spriteRenderer: {fileID: 7036796189196960168}
   artworkFacesRight: 1
   useExistingSpeedParameter: 0
+  useDirectionalParameters: 0
+  useActionParameters: 1
 --- !u!114 &4882293382699081102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -255,3 +259,29 @@ MonoBehaviour:
   attackCooldown: 0.8
   hitDuration: 0.2
   scanInterval: 0.2
+--- !u!210 &2995570845096791428
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7245685803054280435}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
+  m_Sort3DAs2D: 0
+--- !u!114 &8435147433105327266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7245685803054280435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 923d1e8de0b28e24c8b4760eca571a4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Actors.ActorDepthSorting
+  groundOffsetY: 0

@@ -60,6 +60,23 @@ namespace DarkLord.Tests
         }
 
         [Test]
+        public void ThirtyTwoPixelCellsAlignMeshWallsAndPlacementCenters()
+        {
+            var grid = CreateGrid();
+            var cell = grid.Layout.Core;
+            Assert.That(Vector3.Distance(grid.CellCenter(cell), grid.CellCenter(cell + Vector2Int.right)), Is.EqualTo(2));
+            Vector3 center = grid.CellCenter(cell);
+            Assert.That(grid.WorldToCell(center + new Vector3(0.99f, 0.99f)), Is.EqualTo(cell));
+            Assert.That(grid.WorldToCell(center + Vector3.right * 1.01f), Is.EqualTo(cell + Vector2Int.right));
+            Physics2D.SyncTransforms();
+            var wall = Physics2D.OverlapPoint(grid.CellCenter(Vector2Int.zero));
+            Assert.IsNotNull(wall);
+            Assert.That(((BoxCollider2D)wall).size, Is.EqualTo(Vector2.one * 2));
+            var bounds = grid.GetComponentInChildren<MeshFilter>().sharedMesh.bounds;
+            Assert.That(bounds.size.x, Is.EqualTo(grid.Layout.Width * 2 - 0.05f).Within(0.001f));
+        }
+
+        [Test]
         public void InitialMapConnectsEntranceAndCoreAndProtectsBorder()
         {
             var map = new DungeonLayout(41, 31);

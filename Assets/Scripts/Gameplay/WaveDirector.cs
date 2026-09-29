@@ -17,12 +17,13 @@ namespace DarkLord.Gameplay
         [Header("Scene references")]
         [SerializeField] private DungeonGrid dungeon;
         [SerializeField] private ActorHealth dungeonLord;
+        [SerializeField] private ActorHealth dungeonCore;
         [SerializeField] private CurrencyWallet wallet;
         [SerializeField] private MinionController invaderPrefab;
 
         [Header("Wave pacing")]
-        [SerializeField, Min(0)] private float firstWaveDelay = 6f;
-        [SerializeField, Min(0)] private float timeBetweenWaves = 12f;
+        [SerializeField, Min(0)] private float firstWaveDelay = 60f;
+        [SerializeField, Min(0)] private float timeBetweenWaves = 60f;
         [SerializeField, Min(0.05f)] private float spawnInterval = 0.7f;
         [SerializeField, Min(1)] private int baseEnemyCount = 3;
         [SerializeField, Min(0)] private int enemyGrowthPerWave = 2;
@@ -51,6 +52,7 @@ namespace DarkLord.Gameplay
             dungeon.Initialize();
             countdown = firstWaveDelay;
             dungeonLord.Died += OnDungeonLordDied;
+            dungeonCore.Died += OnDungeonLordDied;
             Changed?.Invoke();
         }
 
@@ -93,7 +95,7 @@ namespace DarkLord.Gameplay
             invader.name = $"Wave {CurrentWave} Invader";
             var health = invader.GetComponent<ActorHealth>();
             health.Configure(Faction.Invader, WaveProgression.EnemyHealth(CurrentWave, baseEnemyHealth, enemyHealthGrowth));
-            invader.Defend(dungeonLord.transform.position);
+            invader.Assault(dungeonCore);
             Action handler = () => OnInvaderDied(health);
             deathHandlers.Add(health, handler);
             health.Died += handler;
@@ -129,19 +131,23 @@ namespace DarkLord.Gameplay
             pendingSpawns = 0;
             if (spawnRoutine != null) StopCoroutine(spawnRoutine);
             spawnRoutine = null;
+            foreach (var invader in aliveInvaders)
+                if (invader != null) invader.GetComponent<MinionController>().enabled = false;
             Changed?.Invoke();
         }
 
         private bool ValidateConfiguration()
         {
-            if (dungeon != null && dungeonLord != null && invaderPrefab != null) return true;
-            Debug.LogError("WaveDirector requires a dungeon, dungeon lord, and invader prefab.", this);
+            if (dungeon != null && dungeonLord != null && dungeonCore != null &&
+                dungeonCore != dungeonLord && dungeonCore.Faction == Faction.Dungeon && invaderPrefab != null) return true;
+            Debug.LogError("WaveDirector requires a dungeon, dungeon lord, separate dungeon core, and invader prefab.", this);
             return false;
         }
 
         private void OnDestroy()
         {
             if (dungeonLord != null) dungeonLord.Died -= OnDungeonLordDied;
+            if (dungeonCore != null) dungeonCore.Died -= OnDungeonLordDied;
             foreach (var pair in deathHandlers)
                 if (pair.Key != null) pair.Key.Died -= pair.Value;
             deathHandlers.Clear();

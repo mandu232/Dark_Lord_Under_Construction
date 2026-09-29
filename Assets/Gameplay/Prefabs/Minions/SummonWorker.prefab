@@ -16,6 +16,8 @@ GameObject:
   - component: {fileID: 8162870414675454610}
   - component: {fileID: 4084667679362159219}
   - component: {fileID: 6243689876982016160}
+  - component: {fileID: 3722078104234205319}
+  - component: {fileID: 683781928241842440}
   m_Layer: 0
   m_Name: SummonWorker
   m_TagString: Untagged
@@ -199,3 +201,29 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5754545002541581884}
   m_Mesh: {fileID: 4300000, guid: 54e848b9a5b21e542a7b5085cbdaa008, type: 2}
+--- !u!210 &3722078104234205319
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5754545002541581884}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
+  m_Sort3DAs2D: 0
+--- !u!114 &683781928241842440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5754545002541581884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 923d1e8de0b28e24c8b4760eca571a4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Actors.ActorDepthSorting
+  groundOffsetY: 0

@@ -1,16 +1,47 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace DarkLord.Actors
 {
-    [DisallowMultipleComponent, RequireComponent(typeof(Rigidbody2D))]
+    [DisallowMultipleComponent, RequireComponent(typeof(Rigidbody2D), typeof(ActorDepthSorting))]
     public sealed class TopDownMotor : MonoBehaviour
     {
         [SerializeField, Min(0)] private float moveSpeed = 3f;
         private Rigidbody2D body;
         private Vector2 desiredDirection;
+        private static readonly HashSet<TopDownMotor> ActiveMotors = new HashSet<TopDownMotor>();
+        private Collider2D[] actorColliders;
+        private ActorHealth health;
+        private Transform approachTarget;
+        private float stoppingDistance;
+        public ActorHealth BlockedBy { get; private set; }
         public Vector2 Facing { get; private set; } = Vector2.down;
         public Vector2 Velocity => body != null ? body.linearVelocity : Vector2.zero;
         public float MoveSpeed => moveSpeed;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetActors() => ActiveMotors.Clear();
+
+        private void OnEnable() => RegisterCollisions();
+        // Runtime-built actors may add their collider after adding the motor.
+        private void Start() => RegisterCollisions();
+
+        private void RegisterCollisions()
+        {
+            actorColliders = GetComponentsInChildren<Collider2D>();
+            health = GetComponent<ActorHealth>();
+            foreach (var other in ActiveMotors)
+                if (other != null && other != this) SetActorCollision(other, true);
+            ActiveMotors.Add(this);
+        }
+
+        private void SetActorCollision(TopDownMotor other, bool ignore)
+        {
+            if (actorColliders == null || other.actorColliders == null) return;
+            foreach (var own in actorColliders)
+                foreach (var theirs in other.actorColliders)
+                    if (own != null && theirs != null) Physics2D.IgnoreCollision(own, theirs, ignore);
+        }
 
         private void Awake()
         {
@@ -23,8 +54,17 @@ namespace DarkLord.Actors
 
         public void Move(Vector2 direction)
         {
+            approachTarget = null;
             desiredDirection = Vector2.ClampMagnitude(direction, 1);
             if (direction.sqrMagnitude > 0.001f) Face(direction);
+        }
+
+        public void Approach(Transform target, float distance)
+        {
+            approachTarget = target;
+            stoppingDistance = Mathf.Max(0, distance);
+            desiredDirection = target != null ? ((Vector2)target.position - body.position).normalized : Vector2.zero;
+            Face(desiredDirection);
         }
 
         public void Face(Vector2 direction)
@@ -35,10 +75,73 @@ namespace DarkLord.Actors
         public void Stop()
         {
             desiredDirection = Vector2.zero;
+            approachTarget = null;
             if (body != null) body.linearVelocity = Vector2.zero;
         }
 
-        private void FixedUpdate() => body.linearVelocity = desiredDirection * moveSpeed;
-        private void OnDisable() => Stop();
+        private void FixedUpdate()
+        {
+            BlockedBy = null;
+            Vector2 velocity = desiredDirection * moveSpeed;
+            if (approachTarget != null)
+            {
+                Vector2 delta = (Vector2)approachTarget.position - body.position;
+                float remaining = Mathf.Max(0, delta.magnitude - stoppingDistance);
+                velocity = delta.normalized * Mathf.Min(moveSpeed, remaining / Time.fixedDeltaTime);
+            }
+            float step = velocity.magnitude * Time.fixedDeltaTime;
+            if (step > 0 && health != null && health.IsAlive)
+            {
+                Vector2 direction = velocity.normalized;
+                foreach (var other in ActiveMotors)
+                {
+                    if (other == null || other == this || other.health == null || !other.health.isActiveAndEnabled ||
+                        !other.health.IsAlive || other.health.Faction == health.Faction || !other.HasSolidBody()) continue;
+                    // Sweep the actor footprint before physics, preventing passage without imparting impulses.
+                    Vector2 delta = other.body.position - body.position;
+                    float along = Vector2.Dot(delta, direction);
+                    if (along <= 0) continue; // Always permit retreat from contact.
+                    float radius = BodyRadius() + other.BodyRadius() + 0.04f;
+                    float sideSquared = Mathf.Max(0, delta.sqrMagnitude - along * along);
+                    if (sideSquared >= radius * radius) continue;
+                    float clearance = Mathf.Max(0, along - Mathf.Sqrt(radius * radius - sideSquared));
+                    // Both moving actors reserve half the available gap for this physics step.
+                    if (other.desiredDirection.sqrMagnitude > 0 && Vector2.Dot(other.desiredDirection, -direction) > 0)
+                        clearance *= 0.5f;
+                    if (clearance < step)
+                    {
+                        step = clearance;
+                        BlockedBy = other.health;
+                    }
+                }
+                velocity = direction * (step / Time.fixedDeltaTime);
+            }
+            body.linearVelocity = velocity;
+        }
+
+        private bool HasSolidBody()
+        {
+            if (actorColliders != null)
+                foreach (var collider in actorColliders)
+                    if (collider != null && collider.enabled && !collider.isTrigger) return true;
+            return false;
+        }
+
+        private float BodyRadius()
+        {
+            float radius = 0;
+            if (actorColliders != null)
+                foreach (var collider in actorColliders)
+                    if (collider != null && collider.enabled && !collider.isTrigger)
+                        radius = Mathf.Max(radius, collider.bounds.extents.x, collider.bounds.extents.y);
+            return radius;
+        }
+        private void OnDisable()
+        {
+            Stop();
+            ActiveMotors.Remove(this);
+            foreach (var other in ActiveMotors)
+                if (other != null) SetActorCollision(other, false);
+        }
     }
 }

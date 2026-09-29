@@ -7,6 +7,9 @@ namespace DarkLord.Dungeon
     [DisallowMultipleComponent, RequireComponent(typeof(Grid))]
     public sealed class DungeonGrid : MonoBehaviour
     {
+        // Sprites remain at 16 PPU: a 32px tile occupies two world units.
+        public const float CellSize = 2f;
+        public static Vector3 GridCellSize => new Vector3(CellSize, CellSize, 1);
         [SerializeField, Range(15, 101)] private int width = 41;
         [SerializeField, Range(11, 101)] private int height = 31;
         [SerializeField] private Material previewMaterial;
@@ -25,7 +28,7 @@ namespace DarkLord.Dungeon
         {
             if (Layout != null) return;
             grid = GetComponent<Grid>();
-            grid.cellSize = Vector3.one;
+            grid.cellSize = GridCellSize;
             grid.cellGap = Vector3.zero;
             Layout = new DungeonLayout(Mathf.Clamp(width, 15, 101), Mathf.Clamp(height, 11, 101));
             generated = new GameObject("Generated dungeon cells");
@@ -95,10 +98,12 @@ namespace DarkLord.Dungeon
                     int index = y * Layout.Width + x;
                     int v = index * 4;
                     // A small gap draws the grid without a texture or sprite asset.
-                    vertices[v] = new Vector3(x + 0.025f, y + 0.025f, 0);
-                    vertices[v + 1] = new Vector3(x + 0.025f, y + 0.975f, 0);
-                    vertices[v + 2] = new Vector3(x + 0.975f, y + 0.975f, 0);
-                    vertices[v + 3] = new Vector3(x + 0.975f, y + 0.025f, 0);
+                    float left = x * CellSize + 0.025f, bottom = y * CellSize + 0.025f;
+                    float right = (x + 1) * CellSize - 0.025f, top = (y + 1) * CellSize - 0.025f;
+                    vertices[v] = new Vector3(left, bottom, 0);
+                    vertices[v + 1] = new Vector3(left, top, 0);
+                    vertices[v + 2] = new Vector3(right, top, 0);
+                    vertices[v + 3] = new Vector3(right, bottom, 0);
                     Paint(index, CellColor(cell));
                     int t = index * 6;
                     triangles[t] = v; triangles[t + 1] = v + 1; triangles[t + 2] = v + 2;
@@ -106,8 +111,8 @@ namespace DarkLord.Dungeon
                     if (!Layout.IsFloor(cell))
                     {
                         var collider = generated.AddComponent<BoxCollider2D>();
-                        collider.offset = new Vector2(x + 0.5f, y + 0.5f);
-                        collider.size = Vector2.one;
+                        collider.offset = new Vector2((x + 0.5f) * CellSize, (y + 0.5f) * CellSize);
+                        collider.size = Vector2.one * CellSize;
                         blockers[x, y] = collider;
                     }
                 }
@@ -120,7 +125,7 @@ namespace DarkLord.Dungeon
             generated.AddComponent<MeshFilter>().sharedMesh = mesh;
             var renderer = generated.AddComponent<MeshRenderer>();
             renderer.sharedMaterial = previewMaterial;
-            renderer.sortingOrder = -100;
+            renderer.sortingOrder = short.MinValue;
             renderer.shadowCastingMode = ShadowCastingMode.Off;
             renderer.receiveShadows = false;
         }

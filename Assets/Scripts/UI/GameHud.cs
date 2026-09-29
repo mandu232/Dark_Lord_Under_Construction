@@ -88,7 +88,7 @@ namespace DarkLord.UI
         {
             if (playerHealth == null || healthText == null) return;
             lastHealth = playerHealth.CurrentHealth;
-            healthText.text = $"HP  {lastHealth} / {playerHealth.MaximumHealth}";
+            healthText.text = $"체력  {lastHealth} / {playerHealth.MaximumHealth}";
         }
 
         private void RefreshMinions()
@@ -96,7 +96,7 @@ namespace DarkLord.UI
             if (summoning == null || minionsText == null) return;
             lastGuardCount = summoning.GuardCount;
             lastHasWorker = summoning.HasWorker;
-            minionsText.text = $"WORKER  {(lastHasWorker ? 1 : 0)}/1    GUARD  {lastGuardCount}/4";
+            minionsText.text = $"일꾼  {(lastHasWorker ? 1 : 0)}/1    호위병  {lastGuardCount}/4";
         }
 
         private static void SetAmount(TMP_Text label, int amount)

@@ -1141,6 +1141,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 236769434103942998, guid: 096b38148b2be204c928cae9adca8aad, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4291946997
+      objectReference: {fileID: 0}
     - target: {fileID: 311652546104591673, guid: 096b38148b2be204c928cae9adca8aad, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1164,6 +1168,10 @@ PrefabInstance:
     - target: {fileID: 311652546104591673, guid: 096b38148b2be204c928cae9adca8aad, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1497081556656807588, guid: 096b38148b2be204c928cae9adca8aad, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4291946997
       objectReference: {fileID: 0}
     - target: {fileID: 2195262880985430821, guid: 096b38148b2be204c928cae9adca8aad, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1316,6 +1324,10 @@ PrefabInstance:
     - target: {fileID: 7248564939581285134, guid: 096b38148b2be204c928cae9adca8aad, type: 3}
       propertyPath: m_Name
       value: Main Menu
+      objectReference: {fileID: 0}
+    - target: {fileID: 8759611537225059793, guid: 096b38148b2be204c928cae9adca8aad, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4291946997
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

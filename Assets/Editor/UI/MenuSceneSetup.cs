@@ -74,15 +74,24 @@ namespace DarkLord.Editor
             data.FindProperty("gameplayScene").stringValue = GamePath;
             data.FindProperty("titleScene").stringValue = MenuPath;
             var confirmation = (GameObject)data.FindProperty("quitPanel").objectReferenceValue;
-            data.FindProperty("confirmationTitle").objectReferenceValue = confirmation.transform.Find("Title").GetComponent<TMP_Text>();
-            data.FindProperty("confirmationDescription").objectReferenceValue = confirmation.transform.Find("Description").GetComponent<TMP_Text>();
-            data.FindProperty("confirmationAction").objectReferenceValue = confirmation.transform.Find("Quit Actions/Confirm Quit/Label").GetComponent<TMP_Text>();
+            if (title)
+            {
+                foreach (var field in new[] { "quitPanel", "keepPlayingButton", "confirmationTitle", "confirmationDescription", "confirmationAction" })
+                    data.FindProperty(field).objectReferenceValue = null;
+            }
+            else
+            {
+                data.FindProperty("confirmationTitle").objectReferenceValue = confirmation.transform.Find("Title").GetComponent<TMP_Text>();
+                data.FindProperty("confirmationDescription").objectReferenceValue = confirmation.transform.Find("Description").GetComponent<TMP_Text>();
+                data.FindProperty("confirmationAction").objectReferenceValue = confirmation.transform.Find("Quit Actions/Confirm Quit/Label").GetComponent<TMP_Text>();
+            }
             string panelField = title ? "pausePanel" : "mainPanel";
             var obsolete = (GameObject)data.FindProperty(panelField).objectReferenceValue;
             data.FindProperty(panelField).objectReferenceValue = null;
             foreach (var field in title ? new[] { "hud", "summoning", "expansion", "resumeButton" } : new[] { "startButton", "startLabel" })
                 data.FindProperty(field).objectReferenceValue = null;
             data.ApplyModifiedPropertiesWithoutUndo();
+            if (title && confirmation != null) Object.DestroyImmediate(confirmation);
             if (obsolete != null) Object.DestroyImmediate(obsolete);
             ((GameObject)data.FindProperty("backdrop").objectReferenceValue).SetActive(title);
             if (title) ((GameObject)data.FindProperty("mainPanel").objectReferenceValue).SetActive(true);

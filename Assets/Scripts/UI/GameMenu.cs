@@ -67,9 +67,9 @@ namespace DarkLord.UI
         {
             returnToTitle = true;
             returnScreen = ScreenState.Pause;
-            confirmationTitle.text = "RETURN TO MAIN MENU?";
-            confirmationDescription.text = "This dungeon session will end. Progress is not saved.\nYour settings will be kept.";
-            confirmationAction.text = "MAIN MENU";
+            confirmationTitle.text = "메인 메뉴로 돌아갈까요?";
+            confirmationDescription.text = "현재 진행 상황은 저장되지 않습니다.\n설정은 유지됩니다.";
+            confirmationAction.text = "메인 메뉴";
             Show(ScreenState.Quit);
         }
 
@@ -89,7 +89,7 @@ namespace DarkLord.UI
 
         public void ToggleFullscreen() { draft.Fullscreen = !draft.Fullscreen; RefreshSettings(); }
         public void ToggleVSync() { draft.VSync = !draft.VSync; RefreshSettings(); }
-        public void CycleLanguage() { draft.LanguageCode = LanguageService.Next(draft.LanguageCode); RefreshSettings(); }
+        public void CycleLanguage() { draft.LanguageCode = LanguageService.Korean; RefreshSettings(); }
         public void CycleQuality()
         {
             draft.Quality = (draft.Quality + 1) % Mathf.Max(1, QualitySettings.names.Length);
@@ -108,12 +108,7 @@ namespace DarkLord.UI
         public void AskQuit()
         {
             returnToTitle = false;
-            confirmationTitle.text = "QUIT GAME?";
-            confirmationDescription.text = isTitleScene ? "Return to your desktop?\nYour settings will be kept." :
-                "Dungeon progress is not saved in this prototype.\nYour settings will be kept.";
-            confirmationAction.text = "QUIT GAME";
-            returnScreen = State == ScreenState.Pause ? ScreenState.Pause : ScreenState.Main;
-            Show(ScreenState.Quit);
+            QuitGame();
         }
         public void CancelQuit() => Show(returnScreen);
         public void QuitGame()
@@ -133,18 +128,32 @@ namespace DarkLord.UI
             if (!Application.CanStreamedLevelBeLoaded(path))
             { Debug.LogError("Menu scene is missing from Build Settings: " + path, this); return; }
             isLoading = true;
-            if (isTitleScene && startLabel != null) startLabel.text = "LOADING...";
+            if (isTitleScene && startLabel != null) startLabel.text = "불러오는 중...";
             ReleasePause();
             SceneManager.LoadSceneAsync(path, LoadSceneMode.Single);
+        }
+
+        private static string QualityName(string name)
+        {
+            switch (name)
+            {
+                case "Very Low": return "매우 낮음";
+                case "Low": return "낮음";
+                case "Medium": return "보통";
+                case "High": return "높음";
+                case "Very High": return "매우 높음";
+                case "Ultra": return "최고";
+                default: return name;
+            }
         }
 
         private void RefreshSettings()
         {
             volumeSlider.SetValueWithoutNotify(draft.MasterVolume);
             volumeLabel.text = Mathf.RoundToInt(draft.MasterVolume * 100) + "%";
-            fullscreenLabel.text = draft.Fullscreen ? "BORDERLESS FULLSCREEN" : "WINDOWED";
-            vsyncLabel.text = draft.VSync ? "ON" : "OFF";
-            qualityLabel.text = QualitySettings.names[draft.Sanitized().Quality].ToUpperInvariant();
+            fullscreenLabel.text = draft.Fullscreen ? "전체 화면" : "창 모드";
+            vsyncLabel.text = draft.VSync ? "켜짐" : "꺼짐";
+            qualityLabel.text = QualityName(QualitySettings.names[draft.Sanitized().Quality]);
             if (languageLabel != null) languageLabel.text = LanguageService.DisplayName(draft.LanguageCode);
         }
 
@@ -158,7 +167,7 @@ namespace DarkLord.UI
             if (mainPanel != null) mainPanel.SetActive(state == ScreenState.Main);
             if (pausePanel != null) pausePanel.SetActive(state == ScreenState.Pause);
             settingsPanel.SetActive(state == ScreenState.Settings);
-            quitPanel.SetActive(state == ScreenState.Quit);
+            if (quitPanel != null) quitPanel.SetActive(state == ScreenState.Quit);
             if (EventSystem.current == null) return;
             EventSystem.current.SetSelectedGameObject(null);
             if (playing) return;

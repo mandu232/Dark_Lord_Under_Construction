@@ -26,7 +26,7 @@ namespace DarkLord.Tests
             Assert.That(value.MasterVolume, Is.EqualTo(GameSettings.Defaults.MasterVolume));
             Assert.That(value.Fullscreen, Is.True);
             Assert.That(value.VSync, Is.True);
-            Assert.That(value.LanguageCode, Is.EqualTo("en"));
+            Assert.That(value.LanguageCode, Is.EqualTo("ko"));
         }
 
         [Test]
@@ -51,7 +51,7 @@ namespace DarkLord.Tests
             var loaded = GameSettings.Load(prefix);
             Assert.That(loaded.MasterVolume, Is.Zero);
             Assert.That(loaded.Quality, Is.EqualTo(QualitySettings.names.Length - 1));
-            Assert.That(loaded.LanguageCode, Is.EqualTo("en"));
+            Assert.That(loaded.LanguageCode, Is.EqualTo("ko"));
             PlayerPrefs.SetFloat(prefix + "Volume", float.NaN);
             Assert.That(GameSettings.Load(prefix).MasterVolume, Is.EqualTo(GameSettings.Defaults.MasterVolume));
         }

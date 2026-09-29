@@ -43,10 +43,12 @@ namespace DarkLord.Editor
             {
                 var root = new GameObject("Dungeon");
                 Undo.RegisterCreatedObjectUndo(root, "Create dungeon");
-                root.transform.position = new Vector3(player.transform.position.x - 20.5f, player.transform.position.y - 15.5f, 0);
+                root.transform.position = new Vector3(player.transform.position.x - 20.5f * DungeonGrid.CellSize, player.transform.position.y - 15.5f * DungeonGrid.CellSize, 0);
                 dungeon = Undo.AddComponent<DungeonGrid>(root);
             }
             Undo.RecordObject(dungeon.gameObject, "Assign terrain layer");
+            Undo.RecordObject(dungeon.GetComponent<Grid>(), "Configure 32px dungeon cells");
+            dungeon.GetComponent<Grid>().cellSize = DungeonGrid.GridCellSize;
             dungeon.gameObject.layer = terrain;
             Set(dungeon, "previewMaterial", p => p.objectReferenceValue = material);
             var expansion = player.GetComponent<DungeonExpansion>();

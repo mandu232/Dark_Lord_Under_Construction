@@ -13,6 +13,13 @@ namespace DarkLord.Actors
         [SerializeField] private bool artworkFacesRight = true;
         [SerializeField] private bool useExistingSpeedParameter;
         [SerializeField] private bool useDirectionalParameters;
+        [SerializeField] private bool useActionParameters;
+        private static readonly int MoveSpeedId = Animator.StringToHash("Move_Speed");
+        private static readonly int AttackId = Animator.StringToHash("Attack_1");
+        private static readonly int HitId = Animator.StringToHash("Hit");
+        private static readonly int DieId = Animator.StringToHash("Die");
+        private static readonly int[] ActionTriggers = { AttackId, Animator.StringToHash("Attack_2"),
+            Animator.StringToHash("Block"), HitId, DieId };
         private ActorState? lastState;
         private RuntimeAnimatorController lastController;
         private int speedType;
@@ -51,7 +58,16 @@ namespace DarkLord.Actors
                 animator.SetFloat(FacingYId, direction.y);
             }
             if (lastState == state) return;
-            if (useExistingSpeedParameter && (state == ActorState.Idle || state == ActorState.Run))
+            if (useActionParameters)
+            {
+                animator.SetFloat(MoveSpeedId, state == ActorState.Run ? 1f : 0f);
+                // Clear unconsumed requests so an interruption cannot replay an old action.
+                foreach (int trigger in ActionTriggers) animator.ResetTrigger(trigger);
+                if (state == ActorState.Attack) animator.SetTrigger(AttackId);
+                else if (state == ActorState.Hit) animator.SetTrigger(HitId);
+                else if (state == ActorState.Die) animator.SetTrigger(DieId);
+            }
+            else if (useExistingSpeedParameter && (state == ActorState.Idle || state == ActorState.Run))
             {
                 int speed = state == ActorState.Run ? 1 : 0;
                 if (speedType == (int)AnimatorControllerParameterType.Int) animator.SetInteger(speedId, speed);

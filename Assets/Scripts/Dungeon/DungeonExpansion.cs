@@ -18,7 +18,7 @@ namespace DarkLord.Dungeon
         private InputAction toggle, expand, cancel;
         private Vector2Int? previousCell;
         private bool previousAllowed;
-        private string message = "B: expand dungeon";
+        private string message = "B: 성 확장";
         private string counter;
         private int previousCount = -1;
         public bool ExpansionMode { get; private set; }
@@ -46,7 +46,7 @@ namespace DarkLord.Dungeon
         {
             ExpansionMode = active && dungeon != null;
             ClearHighlight();
-            message = ExpansionMode ? "Left click rock: assign / cancel worker mining." : "B: assign worker mining";
+            message = ExpansionMode ? "바위 좌클릭: 채굴 지정 / 취소" : "B: 일꾼에게 채굴 지시";
         }
 
         public ExpansionResult TryExpand(Vector2Int cell)
@@ -84,11 +84,11 @@ namespace DarkLord.Dungeon
             }
             switch (result)
             {
-                case ExpansionResult.Success: message = worker.IsQueued(cell) ? "Mining queued. Click again to cancel." : "Left click: assign rock to the worker."; break;
-                case ExpansionResult.OutOfReach: message = "Move onto the floor directly beside this rock."; break;
-                case ExpansionResult.NoAdjacentFloor: message = "Expand from an existing floor tile first."; break;
-                case ExpansionResult.NotRock: message = "Only rock can be expanded. Floor / bedrock protected."; break;
-                default: message = "Outside dungeon or no available worker."; break;
+                case ExpansionResult.Success: message = worker.IsQueued(cell) ? "채굴을 예약했습니다. 다시 클릭하면 취소합니다." : "좌클릭: 일꾼에게 채굴 지시"; break;
+                case ExpansionResult.OutOfReach: message = "바위 바로 옆의 바닥으로 이동하세요."; break;
+                case ExpansionResult.NoAdjacentFloor: message = "기존 바닥과 연결된 바위부터 확장하세요."; break;
+                case ExpansionResult.NotRock: message = "바위만 채굴할 수 있습니다. 바닥과 기반암은 보호됩니다."; break;
+                default: message = "성 밖이거나 작업할 일꾼이 없습니다."; break;
             }
         }
 
@@ -106,20 +106,34 @@ namespace DarkLord.Dungeon
             finally { GUI.skin = previousSkin; }
         }
 
+        private static string WorkerStateName(WorkerState state)
+        {
+            switch (state)
+            {
+                case WorkerState.Idle: return "대기";
+                case WorkerState.Moving: return "이동 중";
+                case WorkerState.Mining: return "채굴 중";
+                case WorkerState.WaitingForPath: return "경로 대기";
+                case WorkerState.Interrupted: return "작업 중단";
+                case WorkerState.Dead: return "사망";
+                default: return "대기";
+            }
+        }
+
         private void DrawGui()
         {
             if (summoning != null && summoning.IsOpen) return;
             if (dungeon == null || dungeon.Layout == null) return;
-            GUI.Box(Panel, ExpansionMode ? "DUNGEON EXPANSION  [B / Esc: close]" : "DUNGEON  [B: expand]");
+            GUI.Box(Panel, ExpansionMode ? "성 확장  [B / Esc: 닫기]" : "성 관리  [B: 확장]");
             GUI.Label(new Rect(24, 38, 376, 24), message);
             if (previousCount != dungeon.Layout.ExpandedCells)
             {
                 previousCount = dungeon.Layout.ExpandedCells;
-                counter = "Expanded cells: " + previousCount + "  |  WASD: move";
+                counter = "확장한 칸: " + previousCount + "  |  WASD: 이동";
             }
             GUI.Label(new Rect(24, 62, 376, 22), counter);
-            GUI.Label(new Rect(24, 84, 416, 22), worker != null ? "Worker: " + worker.State + " | Jobs: " + worker.PendingCount + " | " + Mathf.RoundToInt(worker.WorkProgress * 100) + "%" : "Worker not assigned");
-            GUI.Label(new Rect(24, 106, 416, 22), "Gold: queued   Cyan: mining   Click again: cancel");
+            GUI.Label(new Rect(24, 84, 416, 22), worker != null ? "일꾼: " + WorkerStateName(worker.State) + " | 작업: " + worker.PendingCount + " | " + Mathf.RoundToInt(worker.WorkProgress * 100) + "%" : "일꾼이 없습니다");
+            GUI.Label(new Rect(24, 106, 416, 22), "노랑: 예약 / 청록: 채굴 중 / 다시 클릭: 취소");
         }
     }
 }

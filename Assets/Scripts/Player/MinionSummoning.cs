@@ -28,7 +28,7 @@ namespace DarkLord.Player
         private Vector2Int? highlightedCell;
         private bool highlightedAllowed;
         private static readonly Vector2Int[] Directions = { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
-        private string message = "Choose a minion. Summoning is free in this prototype.";
+        private string message = "권속을 선택하세요. 현재 소환 비용은 무료입니다.";
         public bool IsOpen { get; private set; }
         public bool IsPlacing { get; private set; }
         public bool BlocksGameplayInput => IsOpen || consumedFrame == Time.frameCount;
@@ -94,15 +94,15 @@ namespace DarkLord.Player
         {
             if (!IsOpen || !isActiveAndEnabled || Time.timeScale == 0 || (health != null && !health.IsAlive)) return false;
             if (dungeon == null || (summonWorker ? workerPrefab == null : guardPrefab == null))
-            { message = "Summoning setup is missing."; return false; }
+            { message = "소환 정보를 찾을 수 없습니다."; return false; }
             if (summonWorker ? HasWorker : GuardCount >= guardLimit)
-            { message = summonWorker ? "Only one worker can be active." : "Guard limit reached."; return false; }
+            { message = summonWorker ? "일꾼은 한 명만 소환할 수 있습니다." : "호위병 소환 한도에 도달했습니다."; return false; }
             ClearPreview();
             selectedWorker = summonWorker;
             IsPlacing = true;
             placementStartedFrame = Time.frameCount;
             worldCamera = Camera.main;
-            message = "Left click a free floor tile within 3 tiles. Right click / Esc: cancel.";
+            message = "3칸 이내의 빈 바닥을 클릭하세요. 우클릭 / Esc: 취소";
             return true;
         }
 
@@ -117,7 +117,7 @@ namespace DarkLord.Player
                 worker.name = "Worker Minion";
                 worker.Configure(dungeon);
                 if (expansion != null) expansion.AssignWorker(worker);
-                message = "Worker summoned. Close this window, then B to assign mining.";
+                message = "일꾼을 소환했습니다. B를 눌러 채굴을 지시하세요.";
             }
             else
             {
@@ -129,7 +129,7 @@ namespace DarkLord.Player
                 if (worker != null)
                     foreach (var collider in guard.GetComponentsInChildren<Collider2D>())
                         Physics2D.IgnoreCollision(worker.GetComponent<CircleCollider2D>(), collider);
-                message = "Guard summoned. Right click: defend. Q: rally. E: return.";
+                message = "호위병을 소환했습니다. 우클릭: 방어 / Q: 집결 / E: 복귀";
             }
             SetOpen(false);
             return true;
@@ -137,21 +137,21 @@ namespace DarkLord.Player
 
         public bool CanPlace(Vector2Int target, out string reason)
         {
-            reason = "Summoning unavailable.";
+            reason = "지금은 소환할 수 없습니다.";
             if (!IsOpen || !IsPlacing || !isActiveAndEnabled || dungeon == null || !dungeon.isActiveAndEnabled ||
                 Time.timeScale == 0 || (health != null && !health.IsAlive)) return false;
             if (selectedWorker ? workerPrefab == null || HasWorker : guardPrefab == null || GuardCount >= guardLimit)
-            { reason = "Minion limit reached or prefab unavailable."; return false; }
+            { reason = "소환 한도에 도달했거나 소환 정보가 없습니다."; return false; }
             dungeon.Initialize();
-            if (!dungeon.Layout.IsFloor(target)) { reason = "Choose floor, not rock, bedrock or outside the dungeon."; return false; }
+            if (!dungeon.Layout.IsFloor(target)) { reason = "바위나 기반암이 아닌 성 안의 바닥을 선택하세요."; return false; }
             var start = dungeon.WorldToCell(transform.position);
             if (Mathf.Abs(target.x - start.x) + Mathf.Abs(target.y - start.y) > 3)
-            { reason = "Too far. Choose a tile within 3 tiles of the player."; return false; }
+            { reason = "너무 멉니다. 주인공으로부터 3칸 이내를 선택하세요."; return false; }
             Physics2D.SyncTransforms();
             var filter = new ContactFilter2D { useTriggers = false, useLayerMask = true, layerMask = ~0 };
             Vector3 center = dungeon.CellCenter(target);
             if (Physics2D.OverlapCircle(center, 0.35f, filter, overlaps) != 0 || Vector2.Distance(center, transform.position) <= 0.6f)
-            { reason = "This tile is occupied."; return false; }
+            { reason = "이미 다른 대상이 있는 위치입니다."; return false; }
             var queue = new Queue<Vector2Int>();
             var visited = new HashSet<Vector2Int>();
             queue.Enqueue(start); visited.Add(start);
@@ -159,14 +159,14 @@ namespace DarkLord.Player
             {
                 var cell = queue.Dequeue();
                 if (!dungeon.Layout.IsFloor(cell)) continue;
-                if (cell == target) { reason = "Left click: summon here. Right click / Esc: cancel."; return true; }
+                if (cell == target) { reason = "좌클릭: 이곳에 소환 / 우클릭·Esc: 취소"; return true; }
                 foreach (var direction in Directions)
                 {
                     var next = cell + direction;
                     if (Mathf.Abs(next.x - start.x) + Mathf.Abs(next.y - start.y) <= 3 && visited.Add(next)) queue.Enqueue(next);
                 }
             }
-            reason = "This floor tile is not connected to the player.";
+            reason = "주인공이 있는 바닥과 연결되지 않은 위치입니다.";
             return false;
         }
 
@@ -190,29 +190,29 @@ namespace DarkLord.Player
         {
             if (IsPlacing)
             {
-                GUI.Box(PlacementPanel, selectedWorker ? "PLACE WORKER" : "PLACE GUARD");
+                GUI.Box(PlacementPanel, selectedWorker ? "일꾼 배치" : "호위병 배치");
                 GUI.Label(new Rect(24, Screen.height - 58, PlacementPanel.width - 24, 24), message);
-                GUI.Label(new Rect(24, Screen.height - 34, PlacementPanel.width - 24, 22), "Green: valid  |  Red: blocked  |  V: choose another minion");
+                GUI.Label(new Rect(24, Screen.height - 34, PlacementPanel.width - 24, 22), "초록: 배치 가능 / 빨강: 배치 불가 / V: 다른 권속 선택");
                 return;
             }
             if (!IsOpen)
             {
-                GUI.Label(new Rect(12, Screen.height - 32, 260, 24), "[V] Summon minions");
+                GUI.Label(new Rect(12, Screen.height - 32, 260, 24), "[V] 권속 소환");
                 return;
             }
             float width = Mathf.Min(520, Screen.width - 24);
             var rect = new Rect((Screen.width - width) / 2, (Screen.height - 290) / 2, width, 290);
-            GUI.Box(rect, "SUMMON MINIONS  [V / Esc: close]");
+            GUI.Box(rect, "권속 소환  [V / Esc: 닫기]");
             GUILayout.BeginArea(new Rect(rect.x + 18, rect.y + 32, rect.width - 36, rect.height - 44));
-            GUILayout.Label("Choose a minion, then click the floor tile to summon it.");
+            GUILayout.Label("권속을 선택한 뒤 바닥을 클릭해 소환하세요.");
             GUILayout.Space(12);
             GUI.enabled = !HasWorker;
-            if (GUILayout.Button("Summon worker   (" + (HasWorker ? "1" : "0") + "/1)\nMines the rock tiles you designate with B", GUILayout.Height(55))) TrySummon(true);
+            if (GUILayout.Button("일꾼 소환   (" + (HasWorker ? "1" : "0") + "/1)\nB로 지정한 바위를 채굴합니다", GUILayout.Height(55))) TrySummon(true);
             GUI.enabled = GuardCount < guardLimit;
-            if (GUILayout.Button("Summon guard   (" + GuardCount + "/" + guardLimit + ")\nDefends, rallies and fights nearby enemies", GUILayout.Height(55))) TrySummon(false);
+            if (GUILayout.Button("호위병 소환   (" + GuardCount + "/" + guardLimit + ")\n주변을 방어하고 침입자와 전투합니다", GUILayout.Height(55))) TrySummon(false);
             GUI.enabled = true;
             GUILayout.Label(message, GUILayout.Height(42));
-            if (GUILayout.Button("Close", GUILayout.Height(28))) SetOpen(false);
+            if (GUILayout.Button("닫기", GUILayout.Height(28))) SetOpen(false);
             GUILayout.EndArea();
         }
     }

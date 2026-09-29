@@ -16,7 +16,7 @@ namespace DarkLord.UI
         {
             MasterVolume = 0.8f, Fullscreen = true, VSync = true,
             Quality = Mathf.Min(3, QualitySettings.names.Length - 1),
-            LanguageCode = "en"
+            LanguageCode = "ko"
         };
 
         public GameSettings Sanitized()
@@ -25,7 +25,8 @@ namespace DarkLord.UI
             result.MasterVolume = float.IsNaN(MasterVolume) || float.IsInfinity(MasterVolume)
                 ? Defaults.MasterVolume : Mathf.Clamp01(MasterVolume);
             result.Quality = Mathf.Clamp(Quality, 0, Mathf.Max(0, QualitySettings.names.Length - 1));
-            result.LanguageCode = LanguageService.Normalize(LanguageCode);
+            // The current UI is Korean-only; migrate previously saved English preferences too.
+            result.LanguageCode = LanguageService.Korean;
             return result;
         }
 

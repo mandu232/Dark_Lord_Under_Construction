@@ -5,17 +5,17 @@ namespace DarkLord.Player
 {
     public enum CurrencyType
     {
-        Gold,
-        Souls,
-        DarkCrystals
+        [InspectorName("금화")] Gold,
+        [InspectorName("혈액")] Souls,
+        [InspectorName("혈석")] DarkCrystals
     }
 
     [DisallowMultipleComponent]
     public sealed class CurrencyWallet : MonoBehaviour
     {
-        [SerializeField, Min(0)] private int gold = 250;
-        [SerializeField, Min(0)] private int souls = 40;
-        [SerializeField, Min(0)] private int darkCrystals = 5;
+        [SerializeField, Min(0), InspectorName("금화")] private int gold = 250;
+        [SerializeField, Min(0), InspectorName("혈액")] private int souls = 40;
+        [SerializeField, Min(0), InspectorName("혈석")] private int darkCrystals = 5;
 
         public int Gold => gold;
         public int Souls => souls;

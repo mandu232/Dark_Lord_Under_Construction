@@ -31,13 +31,14 @@ namespace DarkLord.Editor
             Set(director, "dungeonLord", player.GetComponent<ActorHealth>());
             Set(director, "wallet", player.GetComponent<CurrencyWallet>());
             Set(director, "invaderPrefab", prefabObject.GetComponent<MinionController>());
+            ConfigureCore(director, dungeon);
 
             var oldPanel = hud.transform.Find("Wave Status");
             if (oldPanel != null) Object.DestroyImmediate(oldPanel.gameObject);
             var panel = CreatePanel(hud.transform);
-            var wave = CreateLabel("Wave", panel.transform, "WAVE  --", 21, TextAlignmentOptions.Center, FontStyles.Bold);
+            var wave = CreateLabel("Wave", panel.transform, "습격  --", 21, TextAlignmentOptions.Center, FontStyles.Bold);
             Anchor(wave.rectTransform, new Vector2(0, 0.5f), new Vector2(0.48f, 1), new Vector2(0, 1), new Vector2(14, -8), new Vector2(-14, -8));
-            var status = CreateLabel("Status", panel.transform, "NEXT ASSAULT  6s", 15, TextAlignmentOptions.Center, FontStyles.Normal);
+            var status = CreateLabel("Status", panel.transform, "다음 습격  60초", 15, TextAlignmentOptions.Center, FontStyles.Normal);
             Anchor(status.rectTransform, new Vector2(0.48f, 0), Vector2.one, new Vector2(0, 0), new Vector2(4, 8), new Vector2(-18, -8));
             var presenter = panel.AddComponent<WaveHud>();
             Set(presenter, "director", director); Set(presenter, "waveText", wave); Set(presenter, "statusText", status);
@@ -46,6 +47,30 @@ namespace DarkLord.Editor
             EditorSceneManager.SaveScene(root.scene);
             Selection.activeGameObject = root;
             Debug.Log("Wave system created. Invaders enter through the dungeon entrance and waves scale indefinitely.");
+        }
+
+        public static void ConfigureCore(WaveDirector director, DungeonGrid dungeon)
+        {
+            var data = new SerializedObject(director);
+            var core = data.FindProperty("dungeonCore").objectReferenceValue as ActorHealth;
+            if (core == null)
+            {
+                var node = new GameObject("Dungeon Core");
+                Undo.RegisterCreatedObjectUndo(node, "Create dungeon core target");
+                node.transform.SetParent(dungeon.transform, false);
+                core = node.AddComponent<ActorHealth>();
+                core.Configure(Faction.Dungeon, 300);
+                // The existing purple tile is the core's visual. No solid collider is
+                // needed: invaders receive this target directly, and the player spawns here.
+                var gridData = new SerializedObject(dungeon);
+                var layout = new DungeonLayout(gridData.FindProperty("width").intValue, gridData.FindProperty("height").intValue);
+                node.transform.position = dungeon.GetComponent<Grid>().GetCellCenterWorld(new Vector3Int(layout.Core.x, layout.Core.y, 0));
+                data.FindProperty("dungeonCore").objectReferenceValue = core;
+            }
+            data.FindProperty("firstWaveDelay").floatValue = 60;
+            data.FindProperty("timeBetweenWaves").floatValue = 60;
+            data.ApplyModifiedProperties();
+            EditorSceneManager.MarkSceneDirty(director.gameObject.scene);
         }
 
         private static GameObject CreatePanel(Transform parent)
