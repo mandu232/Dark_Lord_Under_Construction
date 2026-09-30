@@ -73,14 +73,19 @@ namespace DarkLord.Editor
             var settings = (GameObject)serialized.FindProperty("settingsPanel").objectReferenceValue;
             if (settings == null) throw new System.InvalidOperationException("GameMenu settings panel is missing.");
 
-            var languageValue = settings.transform.Find("LANGUAGE Value/Label")?.GetComponent<TMP_Text>();
+            var languageValue = serialized.FindProperty("languageLabel").objectReferenceValue as TMP_Text;
+            if (languageValue == null)
+                languageValue = settings.transform.Find("LANGUAGE Value/Label")?.GetComponent<TMP_Text>();
             if (languageValue == null)
                 languageValue = CreateLanguageRow(settings.transform, menu);
             serialized.FindProperty("languageLabel").objectReferenceValue = languageValue;
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
-            Move(settings.transform.Find("Note") as RectTransform, 56, 728, 808, 38);
-            Move(settings.transform.Find("Actions") as RectTransform, 56, 786, 808, 64);
+            if (settings.GetComponent<SettingsPanelView>() == null)
+            {
+                Move(settings.transform.Find("Note") as RectTransform, 56, 728, 808, 38);
+                Move(settings.transform.Find("Actions") as RectTransform, 56, 786, 808, 64);
+            }
 
             if (menu.transform.Find("UI Font Reduction v1") == null)
             {
@@ -127,7 +132,7 @@ namespace DarkLord.Editor
             Move(go.GetComponent<RectTransform>(), x, y, width, height);
             var label = go.GetComponent<TextMeshProUGUI>();
             label.font = StardustFontSetup.Regular;
-            label.text = value; label.fontSize = size; label.color = color; label.alignment = alignment;
+            label.text = KoreanUiText.Translate(value); label.fontSize = size; label.color = color; label.alignment = alignment;
             label.fontStyle = FontStyles.Bold; label.textWrappingMode = TextWrappingModes.NoWrap; label.raycastTarget = false;
             StardustFontSetup.StyleLabel(label);
             return label;

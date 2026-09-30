@@ -90,7 +90,7 @@ namespace DarkLord.Editor
             var go = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
             go.transform.SetParent(parent, false);
             var text = go.GetComponent<TextMeshProUGUI>();
-            text.font = StardustFontSetup.Regular; text.text = value; text.fontSize = size;
+            text.font = StardustFontSetup.Regular; text.text = KoreanUiText.Translate(value); text.fontSize = size;
             text.color = new Color32(244, 230, 202, 255); text.alignment = alignment; text.fontStyle = style;
             text.textWrappingMode = TextWrappingModes.NoWrap; text.raycastTarget = false;
             StardustFontSetup.StyleLabel(text);

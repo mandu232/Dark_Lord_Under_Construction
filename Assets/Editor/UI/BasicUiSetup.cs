@@ -160,7 +160,7 @@ namespace DarkLord.Editor
         {
             var go = CreateUiObject(name, parent, typeof(TextMeshProUGUI));
             var text = go.GetComponent<TextMeshProUGUI>();
-            text.text = value;
+            text.text = KoreanUiText.Translate(value);
             text.font = font;
             text.fontSize = Mathf.Max(12, size - 2);
             text.color = color;

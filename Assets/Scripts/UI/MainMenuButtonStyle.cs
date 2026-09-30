@@ -12,7 +12,7 @@ namespace DarkLord.UI
         [SerializeField] private TMP_Text label;
         [SerializeField] private Sprite[] hoverFrames = new Sprite[0];
         [SerializeField, Min(1)] private float framesPerSecond = 15;
-        [SerializeField] private MainMenuButtonGlow glow;
+
         [SerializeField] private Vector2 selectedLabelOffset = new Vector2(16, 8);
         [SerializeField] private Color idleLabelColor = new Color32(180, 57, 57, 255);
         [SerializeField] private Color selectedLabelColor = new Color32(255, 208, 188, 255);
@@ -97,7 +97,7 @@ namespace DarkLord.UI
         private void SetSelected(bool selected)
         {
             visuallySelected = selected;
-            if (glow != null) glow.SetSelected(selected);
+
             // Layout uses a 4x version of the supplied 480x270 artwork.
             if (arrow != null) arrow.anchoredPosition = new Vector2(hoverFrames.Length > 0 || selected ? 0 : 32, 0);
             // The new frames contain both arrow and underline, so do not double-render them.

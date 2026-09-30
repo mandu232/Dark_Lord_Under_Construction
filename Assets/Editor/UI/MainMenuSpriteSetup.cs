@@ -105,9 +105,9 @@ namespace DarkLord.Editor
                 Undo.RegisterFullObjectHierarchyUndo(style.gameObject, "Add menu hover animation");
                 var data = new SerializedObject(style);
                 var arrow = style.transform.Find("Arrow").GetComponent<UnityEngine.UI.Image>();
-                var glow = arrow.GetComponent<MainMenuButtonGlow>();
-                if (glow == null) glow = Undo.AddComponent<MainMenuButtonGlow>(arrow.gameObject);
-                data.FindProperty("glow").objectReferenceValue = glow;
+
+
+
                 var array = data.FindProperty("hoverFrames");
                 array.arraySize = frames.Length;
                 for (int i = 0; i < frames.Length; i++) array.GetArrayElementAtIndex(i).objectReferenceValue = frames[i];

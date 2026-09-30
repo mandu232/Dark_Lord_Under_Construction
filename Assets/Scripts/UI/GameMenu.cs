@@ -22,6 +22,8 @@ namespace DarkLord.UI
         [SerializeField] private TMP_Text startLabel, volumeLabel, fullscreenLabel, qualityLabel, vsyncLabel, languageLabel;
         [SerializeField] private TMP_Text confirmationTitle, confirmationDescription, confirmationAction;
         [SerializeField] private UnityEngine.UI.Slider volumeSlider;
+        [SerializeField] private UnityEngine.UI.Slider characterVolumeSlider, musicVolumeSlider, effectsVolumeSlider;
+        [SerializeField] private TMP_Text characterVolumeLabel, musicVolumeLabel, effectsVolumeLabel;
         [SerializeField] private MinionSummoning summoning;
         [SerializeField] private DungeonExpansion expansion;
 
@@ -88,6 +90,9 @@ namespace DarkLord.UI
         }
 
         public void ToggleFullscreen() { draft.Fullscreen = !draft.Fullscreen; RefreshSettings(); }
+        public void SetCharacterVolume(float value) { draft.CharacterVolume = Mathf.Clamp01(value); RefreshSettings(); }
+        public void SetMusicVolume(float value) { draft.MusicVolume = Mathf.Clamp01(value); RefreshSettings(); }
+        public void SetEffectsVolume(float value) { draft.EffectsVolume = Mathf.Clamp01(value); RefreshSettings(); }
         public void ToggleVSync() { draft.VSync = !draft.VSync; RefreshSettings(); }
         public void CycleLanguage() { draft.LanguageCode = LanguageService.Korean; RefreshSettings(); }
         public void CycleQuality()
@@ -133,28 +138,39 @@ namespace DarkLord.UI
             SceneManager.LoadSceneAsync(path, LoadSceneMode.Single);
         }
 
-        private static string QualityName(string name)
-        {
-            switch (name)
-            {
-                case "Very Low": return "매우 낮음";
-                case "Low": return "낮음";
-                case "Medium": return "보통";
-                case "High": return "높음";
-                case "Very High": return "매우 높음";
-                case "Ultra": return "최고";
-                default: return name;
-            }
-        }
-
         private void RefreshSettings()
         {
             volumeSlider.SetValueWithoutNotify(draft.MasterVolume);
             volumeLabel.text = Mathf.RoundToInt(draft.MasterVolume * 100) + "%";
             fullscreenLabel.text = draft.Fullscreen ? "전체 화면" : "창 모드";
+            RefreshVolume(characterVolumeSlider, characterVolumeLabel, draft.CharacterVolume);
+            RefreshVolume(musicVolumeSlider, musicVolumeLabel, draft.MusicVolume);
+            RefreshVolume(effectsVolumeSlider, effectsVolumeLabel, draft.EffectsVolume);
             vsyncLabel.text = draft.VSync ? "켜짐" : "꺼짐";
             qualityLabel.text = QualityName(QualitySettings.names[draft.Sanitized().Quality]);
             if (languageLabel != null) languageLabel.text = LanguageService.DisplayName(draft.LanguageCode);
+        }
+
+        private static void RefreshVolume(UnityEngine.UI.Slider slider, TMP_Text label, float value)
+        {
+            if (slider != null) slider.SetValueWithoutNotify(value);
+            if (label != null) label.text = Mathf.RoundToInt(value * 100) + "%";
+        }
+
+        private static string QualityName(string name)
+        {
+            switch (name.ToLowerInvariant())
+            {
+                case "very low": return "매우 낮음";
+                case "low": return "낮음";
+                case "medium": return "보통";
+                case "high": return "높음";
+                case "very high": return "매우 높음";
+                case "ultra": return "최고";
+                case "performant": return "성능 우선";
+                case "balanced": return "균형";
+                default: return "품질 단계 " + (System.Array.IndexOf(QualitySettings.names, name) + 1);
+            }
         }
 
         private void Show(ScreenState state)

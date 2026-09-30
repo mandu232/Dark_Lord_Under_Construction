@@ -128,6 +128,7 @@ namespace DarkLord.Editor
             pause.SetActive(false); settings.SetActive(false); quit.SetActive(false);
             // Keep the authoring view uncluttered; GameMenu activates this on Play.
             main.SetActive(false); backdrop.SetActive(false);
+            KoreanSettingsSetup.PatchRoot(root);
             Undo.CollapseUndoOperations(group);
             EditorSceneManager.MarkSceneDirty(root.scene);
             EditorSceneManager.SaveScene(root.scene);
@@ -223,7 +224,7 @@ namespace DarkLord.Editor
         {
             var go = Node(name, parent); Place(go, x, y, w, h);
             var label = go.AddComponent<TextMeshProUGUI>();
-            label.font = Font; label.text = text; label.fontSize = Mathf.Max(12, size - 2); label.color = color;
+            label.font = Font; label.text = KoreanUiText.Translate(text); label.fontSize = Mathf.Max(12, size - 2); label.color = color;
             label.fontStyle = style; label.alignment = TextAlignmentOptions.Left;
             label.textWrappingMode = TextWrappingModes.NoWrap; label.raycastTarget = false;
             StardustFontSetup.StyleLabel(label);
