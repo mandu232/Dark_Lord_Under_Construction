@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abf6566f8160eab4c885caec8b2423d5, type: 3}
+  m_Name: SpikeTrap
+  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Dungeon.BuildItemDefinition
+  category: 2
+  displayName: "\uAC00\uC2DC \uD568\uC815"
+  description: "\uCE68\uC785\uC790\uC5D0\uAC8C 1\uCD08 \uAC04\uACA9\uC73C\uB85C 12 \uD53C\uD574\uB97C \uC90D\uB2C8\uB2E4.\n\n\uC644\uC131\uB41C \uBE48 \uBC14\uB2E5\uC5D0 \uC124\uCE58\uD558\uC138\uC694. \uC544\uAD70\uC740 \uD53C\uD574\uB97C \uBC1B\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4. \uD30C\uAD34 \uBAA8\uB4DC\uB85C \uC81C\uAC70\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+  icon: {fileID: -4942689117923840017, guid: bcd2e65225e189845b109d78fc002409, type: 3}
+  constructionKind: 0
+  prefab: {fileID: 9106936835444414585, guid: fd06161338d51094eb1fd00e7f5ea010, type: 3}
+  available: 1

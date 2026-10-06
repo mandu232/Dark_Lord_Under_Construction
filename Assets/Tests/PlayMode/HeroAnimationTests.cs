@@ -16,7 +16,7 @@ namespace DarkLord.Tests
         [Test]
         public void AllHeroTransitionsIncludingNestedStatesHaveAnExitTimeOrCondition()
         {
-            var assets = AssetDatabase.LoadAllAssetsAtPath("Assets/Gameplay/Animations/Hero/Hero.controller");
+            var assets = AssetDatabase.LoadAllAssetsAtPath("Assets/Animations/Enemies/SwordSoldier/SwordSoldier.controller");
             foreach (var asset in assets)
             {
                 if (!(asset is UnityEditor.Animations.AnimatorState state)) continue;
@@ -35,7 +35,7 @@ namespace DarkLord.Tests
         private void Spawn()
         {
             actor = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(
-                "Assets/Gameplay/Prefabs/Enemies/WaveInvader.prefab"));
+                "Assets/Prefabs/Enemies/WaveInvader.prefab"));
             actor.transform.position = new Vector3(1000, 1000, 0);
         }
 
@@ -62,7 +62,7 @@ namespace DarkLord.Tests
                 Assert.That(renderer.sprite, Is.Not.EqualTo(first), states[i].ToString());
             }
             animator.Update(2);
-            Assert.That(renderer.sprite.name, Is.EqualTo("Death_9"));
+            Assert.That(renderer.sprite.name, Is.EqualTo("SwordSoldierDeathFrame009"));
             Object.DestroyImmediate(actor);
             Spawn();
             actor.GetComponent<MinionController>().enabled = false;
@@ -117,7 +117,7 @@ namespace DarkLord.Tests
             // Fatal damage can arrive before the Animator consumes the attack trigger.
             view.Present(ActorState.Die, Vector2.right);
             for (int frame = 0; frame < 100; frame++) animator.Update(0.02f);
-            Assert.That(renderer.sprite.name, Is.EqualTo("Death_9"));
+            Assert.That(renderer.sprite.name, Is.EqualTo("SwordSoldierDeathFrame009"));
             yield return null;
         }
 
@@ -139,7 +139,7 @@ namespace DarkLord.Tests
             animator.Update(0);
             Assert.That(controller.State, Is.EqualTo(ActorState.Die));
             animator.Update(1.2f);
-            Assert.That(renderer.sprite.name, Is.EqualTo("Death_9"));
+            Assert.That(renderer.sprite.name, Is.EqualTo("SwordSoldierDeathFrame009"));
             Assert.That(actor.GetComponent<Collider2D>().enabled, Is.False);
             yield return null;
         }

@@ -22,12 +22,9 @@ namespace DarkLord.Editor
             var workers = Object.FindObjectsByType<WorkerMiner>(FindObjectsSortMode.None).Where(w => w.gameObject.scene == scene).ToArray();
             var guards = Object.FindObjectsByType<MinionController>(FindObjectsSortMode.None)
                 .Where(g => g.gameObject.scene == scene && g.GetComponent<ActorHealth>().Faction == Faction.Dungeon).ToArray();
-            var workerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Gameplay/Prefabs/Minions/SummonWorker.prefab");
-            var guardPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Gameplay/Prefabs/Minions/SummonGuard.prefab");
-            if (workerPrefab == null && workers.Length == 0) throw new System.InvalidOperationException("An initial worker is needed to create the summoning prefab.");
+            var guardPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Minions/BloodSlimeGuard.prefab");
             if (guardPrefab == null && guards.Length == 0) throw new System.InvalidOperationException("An initial guard is needed to create the summoning prefab.");
-            if (workerPrefab == null) workerPrefab = SaveTemplate(workers[0].gameObject, "Assets/Gameplay/Prefabs/Minions/SummonWorker.prefab");
-            if (guardPrefab == null) guardPrefab = SaveTemplate(guards[0].gameObject, "Assets/Gameplay/Prefabs/Minions/SummonGuard.prefab");
+            if (guardPrefab == null) guardPrefab = SaveTemplate(guards[0].gameObject, "Assets/Prefabs/Minions/BloodSlimeGuard.prefab");
             Undo.IncrementCurrentGroup();
             int group = Undo.GetCurrentGroup();
             Undo.SetCurrentGroupName("Replace initial minions with summoning menu");
@@ -35,22 +32,18 @@ namespace DarkLord.Editor
             if (summon == null) summon = Undo.AddComponent<MinionSummoning>(player.gameObject);
             var serialized = new SerializedObject(summon);
             serialized.FindProperty("dungeon").objectReferenceValue = dungeon;
-            serialized.FindProperty("workerPrefab").objectReferenceValue = workerPrefab.GetComponent<WorkerMiner>();
             serialized.FindProperty("guardPrefab").objectReferenceValue = guardPrefab.GetComponent<MinionController>();
             serialized.ApplyModifiedProperties();
             var commands = new SerializedObject(player.GetComponent<MinionCommands>());
             commands.FindProperty("minions").arraySize = 0;
             commands.ApplyModifiedProperties();
-            var expansion = new SerializedObject(player.GetComponent<DungeonExpansion>());
-            expansion.FindProperty("worker").objectReferenceValue = null;
-            expansion.ApplyModifiedProperties();
             // Their full configuration is preserved in prefabs before removing startup instances.
             foreach (var worker in workers) Undo.DestroyObjectImmediate(worker.gameObject);
             foreach (var guard in guards) Undo.DestroyObjectImmediate(guard.gameObject);
             Undo.CollapseUndoOperations(group);
             EditorSceneManager.MarkSceneDirty(scene);
             AssetDatabase.SaveAssets();
-            Debug.Log("Summoning ready. No starting minions. Press V to summon worker or guards.");
+            Debug.Log("Summoning ready. Press B and choose the Minions category; construction needs no worker.");
         }
 
         private static GameObject SaveTemplate(GameObject source, string path)
@@ -58,7 +51,7 @@ namespace DarkLord.Editor
             var copy = Object.Instantiate(source);
             try
             {
-                copy.name = source.GetComponent<WorkerMiner>() != null ? "SummonWorker" : "SummonGuard";
+                copy.name = source.GetComponent<WorkerMiner>() != null ? "WorkerMiner" : "BloodSlimeGuard";
                 copy.transform.position = Vector3.zero;
                 var worker = copy.GetComponent<WorkerMiner>();
                 if (worker != null)

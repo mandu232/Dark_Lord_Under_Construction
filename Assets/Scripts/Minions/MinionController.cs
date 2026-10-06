@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DarkLord.Minions
 {
-    public enum MinionOrder { Defend, Rally, Return }
+    public enum MinionOrder { Defend = 0, Return = 2 }
 
     [RequireComponent(typeof(TopDownMotor), typeof(ActorHealth), typeof(ActorAnimation))]
     public sealed class MinionController : MonoBehaviour
@@ -30,8 +30,9 @@ namespace DarkLord.Minions
         private ActorHealth target;
         private ActorHealth assaultObjective;
         private bool assaultMode;
-        private Transform rallyLeader;
-        private Vector2 rallyOffset;
+        private InvaderDungeonRoute dungeonRoute;
+        private ActorHealth routeBlocker;
+        private DarkLord.Dungeon.DungeonGrid defenceDungeon;
         private Vector2 guardPosition;
         private float nextScan, stateEnds, damageAt, nextAttack;
         private bool damagePending;
@@ -41,8 +42,15 @@ namespace DarkLord.Minions
         public Vector2 GuardPosition => guardPosition;
         public ActorHealth Target => target;
         public bool IsAlive => health != null && health.IsAlive;
-        private Vector2 Anchor => Order == MinionOrder.Rally && rallyLeader != null
-            ? (Vector2)rallyLeader.position + rallyOffset : guardPosition;
+        public ActorHealth Health => health;
+        public int AttackDamage => attackDamage;
+        public float AttackInterval => Mathf.Max(attackCooldown, attackDuration, attackWindup);
+        public float AttackRange => attackRange;
+        public float DetectionRange => detectionRange;
+        public float MoveSpeed => motor != null ? motor.MoveSpeed : 0;
+        public InvaderDungeonRoute DungeonRoute => dungeonRoute;
+        internal void AssignDefenceDungeon(DarkLord.Dungeon.DungeonGrid dungeon) => defenceDungeon = dungeon;
+        private Vector2 Anchor => guardPosition;
 
         private void Awake()
         {
@@ -79,12 +87,10 @@ namespace DarkLord.Minions
             target = objective;
         }
 
-        public void Rally(Transform leader, Vector2 offset)
+        public void Assault(ActorHealth objective, DarkLord.Dungeon.DungeonGrid dungeon)
         {
-            if (!IsAlive || leader == null) return;
-            rallyLeader = leader;
-            rallyOffset = offset;
-            SetOrder(MinionOrder.Rally);
+            Assault(objective);
+            if (assaultMode && dungeon != null) dungeonRoute = new InvaderDungeonRoute(dungeon, objective);
         }
 
         public void ReturnToPost()
@@ -96,6 +102,8 @@ namespace DarkLord.Minions
         {
             Order = order;
             assaultMode = false;
+            dungeonRoute = null;
+            routeBlocker = null;
             assaultObjective = null;
             target = null;
             damagePending = false;
@@ -120,7 +128,6 @@ namespace DarkLord.Minions
                 if (Time.time < stateEnds) return;
             }
 
-            if (Order == MinionOrder.Rally && rallyLeader == null) Order = MinionOrder.Return;
             if (Order == MinionOrder.Return)
             {
                 if (MoveTo(guardPosition)) Order = MinionOrder.Defend;
@@ -130,9 +137,28 @@ namespace DarkLord.Minions
             // Invaders return to their objective after losing a retaliatory target.
             // Guards retain their existing local detection and defence-area leash.
             // A defender physically blocking an assault becomes the immediate combat target.
-            if (assaultMode && ValidTarget(motor.BlockedBy)) target = motor.BlockedBy;
+            if (dungeonRoute != null)
+            {
+                dungeonRoute.Update(transform.position, motor.BlockedBy);
+                target = dungeonRoute.Target;
+                // A player or worker can physically obstruct a corridor as well.
+                // Deal with nearby blockers without releasing the current room gate.
+                if (ValidTarget(motor.BlockedBy) && InAttackRange(motor.BlockedBy) && AllowedRouteBlocker(motor.BlockedBy))
+                    routeBlocker = motor.BlockedBy;
+                if (ValidTarget(routeBlocker) && AllowedRouteBlocker(routeBlocker) &&
+                    Vector2.Distance(transform.position, routeBlocker.transform.position) <= attackRange + 0.2f)
+                    target = routeBlocker;
+                else routeBlocker = null;
+                if (target == null)
+                {
+                    if (dungeonRoute.HasWaypoint) MoveTo(dungeonRoute.NextWaypoint);
+                    else { motor.Stop(); SetState(ActorState.Idle); }
+                    return;
+                }
+            }
+            else if (assaultMode && ValidTarget(motor.BlockedBy)) target = motor.BlockedBy;
             if (!ValidTarget(target)) target = null;
-            if (assaultMode && target == null)
+            if (dungeonRoute == null && assaultMode && target == null)
                 target = ValidTarget(assaultObjective) ? assaultObjective : null;
             if (!assaultMode && target == null && Time.time >= nextScan)
             {
@@ -160,17 +186,31 @@ namespace DarkLord.Minions
                 }
                 else SetState(ActorState.Idle);
             }
+            else if (dungeonRoute != null)
+            {
+                if (routeBlocker != null || dungeonRoute.CanApproachTargetDirectly) MoveTo(target.transform.position, target);
+                else if (dungeonRoute.HasWaypoint) MoveTo(dungeonRoute.NextWaypoint);
+                else { motor.Stop(); SetState(ActorState.Idle); }
+            }
             else MoveTo(target.transform.position, target);
         }
 
         private bool ValidTarget(ActorHealth candidate)
         {
+            if (!assaultMode && defenceDungeon != null)
+            {
+                var room = defenceDungeon.Construction.RoomAt(defenceDungeon.WorldToCell(guardPosition));
+                if (room != null && (candidate == null || !room.Bounds.Contains(defenceDungeon.WorldToCell(candidate.transform.position)))) return false;
+            }
             return IsHostile(candidate) && (assaultMode ||
                 ((Vector2)candidate.transform.position - Anchor).sqrMagnitude <= chaseRange * chaseRange);
         }
 
         private bool IsHostile(ActorHealth candidate) => candidate != null
             && candidate.isActiveAndEnabled && candidate.IsAlive && candidate.Faction != health.Faction;
+
+        private bool AllowedRouteBlocker(ActorHealth candidate) => dungeonRoute.LockedRoom == null ||
+            dungeonRoute.ContainsInLockedRoom(candidate.transform.position);
 
         private ActorHealth FindTarget()
         {
@@ -224,7 +264,7 @@ namespace DarkLord.Minions
             motor.Stop();
             stateEnds = Time.time + hitDuration;
             SetState(ActorState.Hit);
-            if (Order != MinionOrder.Return && ValidTarget(source)) target = source;
+            if (dungeonRoute == null && Order != MinionOrder.Return && ValidTarget(source)) target = source;
         }
 
         private void OnDied()
@@ -234,6 +274,8 @@ namespace DarkLord.Minions
             motor.Stop();
             foreach (var collider in GetComponentsInChildren<Collider2D>()) collider.enabled = false;
             SetState(ActorState.Die);
+            defenceDungeon?.UnregisterGuard(this);
+            Destroy(gameObject, 1.5f);
         }
 
         private void SetState(ActorState state)

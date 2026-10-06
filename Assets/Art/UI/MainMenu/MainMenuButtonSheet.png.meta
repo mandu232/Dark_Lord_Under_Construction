@@ -1,0 +1,469 @@
+fileFormatVersion: 2
+guid: e11cd739237a0dd48852a8b381474573
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1506151891341628445
+    second: MainMenu_Button 1_0
+  - first:
+      213: -800771044122192656
+    second: MainMenu_Button 1_1
+  - first:
+      213: -4317749107251661
+    second: MainMenu_Button 1_2
+  - first:
+      213: 2206115329341852590
+    second: MainMenu_Button 1_3
+  - first:
+      213: -8970588668871979760
+    second: MainMenu_Button 1_4
+  - first:
+      213: -2861309503335211730
+    second: MainMenu_Button 1_5
+  - first:
+      213: 4810150266759831993
+    second: MainMenu_Button 1_6
+  - first:
+      213: -4328860621092586212
+    second: MainMenu_Button 1_7
+  - first:
+      213: 8244007825988571622
+    second: MainMenu_Button 1_8
+  - first:
+      213: 6246295797862868206
+    second: MainMenu_Button 1_9
+  - first:
+      213: 3343207888601664355
+    second: MainMenu_Button 1_10
+  - first:
+      213: -2673315295702791297
+    second: MainMenu_Button 1_11
+  - first:
+      213: 7779957868695708334
+    second: MainMenu_Button 1_12
+  - first:
+      213: -3863736979124560283
+    second: MainMenu_Button 1_13
+  - first:
+      213: -29146768822828992
+    second: MainMenu_Button 1_14
+  - first:
+      213: 4561264918091321983
+    second: MainMenu_Button 1_15
+  - first:
+      213: -797235153835866942
+    second: MainMenu_Button 1_16
+  - first:
+      213: -1882481040223764713
+    second: MainMenu_Button 1_17
+  - first:
+      213: -941769644924915670
+    second: MainMenu_Button 1_18
+  - first:
+      213: 6864744370858059771
+    second: MainMenu_Button 1_19
+  - first:
+      213: 8900979111487317929
+    second: MainMenu_Button 1_20
+  - first:
+      213: -7963070530954810777
+    second: MainMenu_Button 1_21
+  - first:
+      213: 8072342049912569465
+    second: MainMenu_Button 1_22
+  - first:
+      213: -2609249674787612278
+    second: MainMenu_Button 1_23
+  - first:
+      213: -1469972467710901586
+    second: MainMenu_Button 1_24
+  - first:
+      213: -3033565736507993546
+    second: MainMenu_Button 1_25
+  - first:
+      213: 4824215744419905635
+    second: MainMenu_Button 1_26
+  - first:
+      213: 4507982533575123764
+    second: MainMenu_Button 1_27
+  - first:
+      213: 2037420491744079606
+    second: MainMenu_Button 1_28
+  - first:
+      213: -2019666607694995984
+    second: MainMenu_Button 1_29
+  - first:
+      213: -120655935392918062
+    second: MainMenu_Button 1_30
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: MainMenuButtonFrame000
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 640
+        width: 192
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eadb6ced0c8c33545ad1ea6dcfadae5b
+      internalID: -2040637437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MainMenuButtonFrame001
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 576
+        width: 192
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 061bb669c58f0654f9a4f412911cabc2
+      internalID: -1236900242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MainMenuButtonFrame002
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 512
+        width: 192
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7a500c43571889b4089f513b16abe74d
+      internalID: 1782753119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MainMenuButtonFrame003
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 448
+        width: 192
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7f1046829c0a89246a16ca1470e8d64b
+      internalID: 782416715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MainMenuButtonFrame004
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 384
+        width: 192
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 125092e71df8cd14fb59b063a21952f5
+      internalID: -680012931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MainMenuButtonFrame005
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 320
+        width: 192
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e9773958ac8673842a8058e81f6e8448
+      internalID: -1314274537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MainMenuButtonFrame006
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 256
+        width: 192
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7af01715a89e9c649b3ea491b0fa03c9
+      internalID: -1294197825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MainMenuButtonFrame007
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 192
+        width: 192
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b41e5af2a47631146b5425b1b870f947
+      internalID: 721850112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MainMenuButtonFrame008
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 128
+        width: 192
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0831c660aa04afe43b228e596799c5ab
+      internalID: -1169874517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MainMenuButtonFrame009
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 64
+        width: 192
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 597c218ae9d96c14592ce6ee95e7ba31
+      internalID: -968462073
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MainMenuButtonFrame010
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 192
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b9ba1e2c5869af14d8981fb2b0b1dc90
+      internalID: 1970403224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: aa42294c881bf6444a91691807c7acb1
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceOnImport
+        value: False
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":192.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      MainMenuButtonFrame000: -2040637437
+      MainMenuButtonFrame001: -1236900242
+      MainMenuButtonFrame002: 1782753119
+      MainMenuButtonFrame003: 782416715
+      MainMenuButtonFrame004: -680012931
+      MainMenuButtonFrame005: -1314274537
+      MainMenuButtonFrame006: -1294197825
+      MainMenuButtonFrame007: 721850112
+      MainMenuButtonFrame008: -1169874517
+      MainMenuButtonFrame009: -968462073
+      MainMenuButtonFrame010: 1970403224
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

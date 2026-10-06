@@ -22,8 +22,6 @@ namespace DarkLord.Gameplay
         [SerializeField] private MinionController invaderPrefab;
 
         [Header("Wave pacing")]
-        [SerializeField, Min(0)] private float firstWaveDelay = 60f;
-        [SerializeField, Min(0)] private float timeBetweenWaves = 60f;
         [SerializeField, Min(0.05f)] private float spawnInterval = 0.7f;
         [SerializeField, Min(1)] private int baseEnemyCount = 3;
         [SerializeField, Min(0)] private int enemyGrowthPerWave = 2;
@@ -37,12 +35,12 @@ namespace DarkLord.Gameplay
         private readonly List<ActorHealth> aliveInvaders = new List<ActorHealth>();
         private readonly Dictionary<ActorHealth, Action> deathHandlers = new Dictionary<ActorHealth, Action>();
         private Coroutine spawnRoutine;
-        private float countdown;
         private int pendingSpawns;
 
         public int CurrentWave { get; private set; }
+        public bool HasEntrance => dungeon != null && dungeon.Layout != null && dungeon.Layout.HasEntrance;
         public int RemainingEnemies => aliveInvaders.Count + pendingSpawns;
-        public float Countdown => Mathf.Max(0, countdown);
+        public bool CanStartWave => isActiveAndEnabled && State == WaveState.Preparing && Time.timeScale > 0 && HasEntrance;
         public WaveState State { get; private set; } = WaveState.Preparing;
         public event Action Changed;
 
@@ -50,23 +48,16 @@ namespace DarkLord.Gameplay
         {
             if (!ValidateConfiguration()) { enabled = false; return; }
             dungeon.Initialize();
-            countdown = firstWaveDelay;
+            foreach (var guard in FindObjectsByType<MinionController>(FindObjectsSortMode.None))
+                if (guard.gameObject.scene == gameObject.scene && guard.Health.Faction == Faction.Dungeon) dungeon.RegisterGuard(guard);
             dungeonLord.Died += OnDungeonLordDied;
             dungeonCore.Died += OnDungeonLordDied;
             Changed?.Invoke();
         }
 
-        private void Update()
-        {
-            if (State != WaveState.Preparing || Time.timeScale == 0) return;
-            countdown -= Time.deltaTime;
-            Changed?.Invoke();
-            if (countdown <= 0) BeginNextWave();
-        }
-
         public void BeginNextWave()
         {
-            if (State == WaveState.Defeated || spawnRoutine != null || invaderPrefab == null) return;
+            if (!CanStartWave || spawnRoutine != null || invaderPrefab == null) return;
             CurrentWave++;
             State = WaveState.Active;
             pendingSpawns = WaveProgression.EnemyCount(CurrentWave, baseEnemyCount, enemyGrowthPerWave);
@@ -78,6 +69,8 @@ namespace DarkLord.Gameplay
         {
             while (pendingSpawns > 0 && State == WaveState.Active)
             {
+                while (!dungeon.Layout.HasEntrance && State == WaveState.Active) yield return null;
+                if (State != WaveState.Active) break;
                 SpawnInvader(pendingSpawns);
                 pendingSpawns--;
                 Changed?.Invoke();
@@ -95,7 +88,7 @@ namespace DarkLord.Gameplay
             invader.name = $"Wave {CurrentWave} Invader";
             var health = invader.GetComponent<ActorHealth>();
             health.Configure(Faction.Invader, WaveProgression.EnemyHealth(CurrentWave, baseEnemyHealth, enemyHealthGrowth));
-            invader.Assault(dungeonCore);
+            invader.Assault(dungeonCore, dungeon);
             Action handler = () => OnInvaderDied(health);
             deathHandlers.Add(health, handler);
             health.Died += handler;
@@ -111,7 +104,6 @@ namespace DarkLord.Gameplay
                 deathHandlers.Remove(health);
             }
             aliveInvaders.Remove(health);
-            Destroy(health.gameObject, 1.5f);
             Changed?.Invoke();
             CheckWaveCleared();
         }
@@ -121,7 +113,6 @@ namespace DarkLord.Gameplay
             if (State != WaveState.Active || pendingSpawns > 0 || aliveInvaders.Count > 0) return;
             wallet?.Add(CurrencyType.Souls, WaveProgression.ClearReward(CurrentWave, baseSoulReward, soulRewardGrowth));
             State = WaveState.Preparing;
-            countdown = timeBetweenWaves;
             Changed?.Invoke();
         }
 

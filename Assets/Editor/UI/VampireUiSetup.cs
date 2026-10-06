@@ -42,7 +42,7 @@ namespace DarkLord.Editor
         public static void Apply()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
-            var prefabPath = "Assets/Gameplay/Prefabs/UI/MainMenu.prefab";
+            var prefabPath = "Assets/Prefabs/UI/MainMenu.prefab";
             var prefab = PrefabUtility.LoadPrefabContents(prefabPath);
             try
             {

@@ -32,7 +32,7 @@ namespace DarkLord.Editor
                 layers.GetArrayElementAtIndex(terrain).stringValue = "DungeonTerrain";
                 tags.ApplyModifiedProperties();
             }
-            string materialPath = "Assets/Gameplay/Materials/DungeonPreview.mat";
+            string materialPath = "Assets/Materials/DungeonPreview.mat";
             var material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
             if (material == null) { material = new Material(shader); AssetDatabase.CreateAsset(material, materialPath); }
             Undo.IncrementCurrentGroup();
@@ -55,26 +55,6 @@ namespace DarkLord.Editor
             if (expansion == null) expansion = Undo.AddComponent<DungeonExpansion>(player.gameObject);
             Set(expansion, "dungeon", p => p.objectReferenceValue = dungeon);
             Set(expansion, "worldCamera", p => p.objectReferenceValue = Camera.main);
-            var worker = Object.FindObjectsByType<WorkerMiner>(FindObjectsSortMode.None).FirstOrDefault(w => w.gameObject.scene == scene);
-            if (worker == null && player.GetComponent<MinionSummoning>() == null)
-            {
-                var workerObject = new GameObject("Worker Minion");
-                Undo.RegisterCreatedObjectUndo(workerObject, "Create worker minion");
-                workerObject.transform.position = player.transform.position + Vector3.up;
-                worker = Undo.AddComponent<WorkerMiner>(workerObject);
-                var renderer = Undo.AddComponent<MeshRenderer>(workerObject);
-                renderer.sharedMaterial = material;
-                renderer.sortingOrder = 2;
-                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-                Undo.AddComponent<MeshFilter>(workerObject).sharedMesh = WorkerMesh();
-                var body = workerObject.GetComponent<Rigidbody2D>();
-                body.gravityScale = 0;
-                body.constraints = RigidbodyConstraints2D.FreezeRotation;
-                body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
-                workerObject.GetComponent<CircleCollider2D>().radius = 0.22f;
-            }
-            if (worker != null) Set(worker, "dungeon", p => p.objectReferenceValue = dungeon);
-            Set(expansion, "worker", p => p.objectReferenceValue = worker);
             foreach (var minion in Object.FindObjectsByType<MinionController>(FindObjectsSortMode.None).Where(m => m.gameObject.scene == scene))
                 Set(minion, "obstacleLayers", p => p.intValue |= 1 << terrain);
             foreach (var commands in Object.FindObjectsByType<MinionCommands>(FindObjectsSortMode.None).Where(m => m.gameObject.scene == scene))
@@ -82,12 +62,12 @@ namespace DarkLord.Editor
             Undo.CollapseUndoOperations(group);
             EditorSceneManager.MarkSceneDirty(scene);
             AssetDatabase.SaveAssets();
-            Debug.Log("Dungeon ready. B: mining orders. Left click rock: queue / cancel. Worker moves and mines automatically.");
+            Debug.Log("Dungeon ready. B: construction window. Connected rooms/corridors crumble open sequentially.");
         }
 
         private static Mesh WorkerMesh()
         {
-            const string path = "Assets/Gameplay/Art/Placeholders/WorkerPlaceholder.asset";
+            const string path = "Assets/Art/Placeholders/WorkerPlaceholder.asset";
             var existing = AssetDatabase.LoadAssetAtPath<Mesh>(path);
             if (existing != null) return existing;
             var vertices = new List<Vector3>();

@@ -1,6 +1,6 @@
 # 피의 슬라임 애니메이션
 
-Assets/Sprite/Minion/Blood_Slime.png를 사용해 Gameplay/Animations/Minions/BloodSlime 아래에 Idle, Walk, Block, Attack, Attack2, Hit, Die 클립과 BloodSlime.controller를 생성했습니다. Run은 사용하지 않습니다.
+Assets/Art/Characters/Minions/BloodSlimeSheet.png를 사용해 Gameplay/Animations/Minions/BloodSlime 아래에 Idle, Walk, Block, Attack, Attack2, Hit, Die 클립과 BloodSlime.controller를 생성했습니다. Run은 사용하지 않습니다.
 
 GuardMinion.prefab과 실제 소환에 사용하는 SummonGuard.prefab에 연결했습니다. 소환 일꾼은 별도 WorkerMiner 유닛이므로 이번 전투 슬라임 적용 대상에 포함하지 않습니다.
 

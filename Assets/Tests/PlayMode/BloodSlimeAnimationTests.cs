@@ -22,7 +22,7 @@ namespace DarkLord.Tests
         private void Spawn()
         {
             actor = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(
-                "Assets/Gameplay/Prefabs/Minions/SummonGuard.prefab"));
+                "Assets/Prefabs/Minions/BloodSlimeGuard.prefab"));
             actor.transform.position = new Vector3(1000, 1000, 0);
         }
 
@@ -49,7 +49,7 @@ namespace DarkLord.Tests
                 Assert.That(renderer.sprite, Is.Not.EqualTo(first), states[i].ToString());
             }
             animator.Update(2);
-            Assert.That(renderer.sprite.name, Is.EqualTo("Blood_Slime_55"));
+            Assert.That(renderer.sprite.name, Is.EqualTo("BloodSlimeFrame055"));
             Object.DestroyImmediate(actor);
             Spawn();
             actor.GetComponent<MinionController>().enabled = false;
@@ -104,7 +104,7 @@ namespace DarkLord.Tests
             // Fatal damage can arrive before the Animator consumes the attack trigger.
             view.Present(ActorState.Die, Vector2.right);
             for (int frame = 0; frame < 100; frame++) animator.Update(0.02f);
-            Assert.That(renderer.sprite.name, Is.EqualTo("Blood_Slime_55"));
+            Assert.That(renderer.sprite.name, Is.EqualTo("BloodSlimeFrame055"));
             yield return null;
         }
 
@@ -126,7 +126,7 @@ namespace DarkLord.Tests
             animator.Update(0);
             Assert.That(controller.State, Is.EqualTo(ActorState.Die));
             animator.Update(1.2f);
-            Assert.That(renderer.sprite.name, Is.EqualTo("Blood_Slime_55"));
+            Assert.That(renderer.sprite.name, Is.EqualTo("BloodSlimeFrame055"));
             Assert.That(actor.GetComponent<Collider2D>().enabled, Is.False);
             yield return null;
         }

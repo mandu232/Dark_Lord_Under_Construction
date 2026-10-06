@@ -57,12 +57,8 @@ namespace DarkLord.Editor
 
             var resources = CreateResourceBar(root.transform, uiFont, out TMP_Text gold, out TMP_Text souls, out TMP_Text crystals);
             var healthPanel = CreateHealthPanel(root.transform, uiFont, out TMP_Text healthText);
-            var minionPanel = CreateMinionPanel(root.transform, uiFont, out TMP_Text minionsText);
-            var controls = CreateControlsPanel(root.transform, uiFont);
             resources.transform.SetAsLastSibling();
             healthPanel.transform.SetAsLastSibling();
-            minionPanel.transform.SetAsLastSibling();
-            controls.transform.SetAsLastSibling();
 
             var hud = root.GetComponent<GameHud>();
             Set(hud, "wallet", wallet);
@@ -72,13 +68,14 @@ namespace DarkLord.Editor
             Set(hud, "soulsText", souls);
             Set(hud, "crystalsText", crystals);
             Set(hud, "healthText", healthText);
-            Set(hud, "minionsText", minionsText);
+            ConstructionUiSetup.Setup();
+            MinionInspectionUiSetup.Setup();
 
             Undo.CollapseUndoOperations(undoGroup);
             EditorSceneManager.MarkSceneDirty(root.scene);
             EditorSceneManager.SaveScene(root.scene);
             Selection.activeGameObject = root;
-            Debug.Log("Basic game UI created: Gold, Souls, Dark Crystals, health, minion status, and controls.");
+            Debug.Log("Basic game UI created: resources, health, minions, and construction window.");
         }
 
         private static GameObject CreateResourceBar(Transform parent, TMP_FontAsset font, out TMP_Text gold, out TMP_Text souls, out TMP_Text crystals)
@@ -117,7 +114,7 @@ namespace DarkLord.Editor
         private static GameObject CreateHealthPanel(Transform parent, TMP_FontAsset font, out TMP_Text health)
         {
             var panel = CreatePanel("Player Status", parent, Ink);
-            Anchor(panel.GetComponent<RectTransform>(), Vector2.zero, Vector2.zero, Vector2.zero, new Vector2(24, 44), new Vector2(340, 82));
+            Anchor(panel.GetComponent<RectTransform>(), new Vector2(0, 1), new Vector2(0, 1), new Vector2(0, 1), new Vector2(24, -24), new Vector2(340, 82));
             var title = CreateLabel("Title", panel.transform, font, "DARK LORD", 15, new Color32(201, 139, 170, 255), TextAlignmentOptions.Left, FontStyles.Bold);
             Anchor(title.rectTransform, new Vector2(0, 1), Vector2.one, new Vector2(0, 1), new Vector2(16, -8), new Vector2(-32, 22));
             health = CreateLabel("Health", panel.transform, font, "HP  100 / 100", 27, Text, TextAlignmentOptions.Left, FontStyles.Bold);
@@ -129,18 +126,8 @@ namespace DarkLord.Editor
         {
             var panel = CreatePanel("Minion Status", parent, Ink);
             Anchor(panel.GetComponent<RectTransform>(), new Vector2(1, 0), new Vector2(1, 0), new Vector2(1, 0), new Vector2(-24, 24), new Vector2(470, 64));
-            minions = CreateLabel("Minions", panel.transform, font, "WORKER  0/1    GUARD  0/4", 20, Text, TextAlignmentOptions.Center, FontStyles.Bold);
+            minions = CreateLabel("Minions", panel.transform, font, "호위병  0/4", 20, Text, TextAlignmentOptions.Center, FontStyles.Bold);
             Stretch(minions.rectTransform, 12);
-            return panel;
-        }
-
-        private static GameObject CreateControlsPanel(Transform parent, TMP_FontAsset font)
-        {
-            var panel = CreatePanel("Controls", parent, new Color32(20, 15, 28, 220));
-            Anchor(panel.GetComponent<RectTransform>(), new Vector2(1, 0), new Vector2(1, 0), new Vector2(1, 0), new Vector2(-24, 102), new Vector2(470, 78));
-            var controls = CreateLabel("Hints", panel.transform, font, "[WASD] MOVE     [V] SUMMON\n[B] MINING      [Q/E] MINION ORDERS", 17, new Color32(205, 190, 201, 255), TextAlignmentOptions.Center, FontStyles.Normal);
-            controls.lineSpacing = 8;
-            Stretch(controls.rectTransform, 10);
             return panel;
         }
 

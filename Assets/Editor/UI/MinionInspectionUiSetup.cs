@@ -1,0 +1,72 @@
+using DarkLord.Dungeon;
+using DarkLord.Player;
+using DarkLord.UI;
+using TMPro;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace DarkLord.Editor
+{
+    public static class MinionInspectionUiSetup
+    {
+        [MenuItem("Tools/Dark Lord/Setup Minion Inspection")]
+        public static void Setup()
+        {
+            var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            GameHud hud = null; DungeonExpansion expansion = null; DungeonGrid grid = null; Camera camera = null;
+            foreach (var root in scene.GetRootGameObjects())
+            {
+                hud = hud ?? root.GetComponentInChildren<GameHud>(true);
+                expansion = expansion ?? root.GetComponentInChildren<DungeonExpansion>(true);
+                grid = grid ?? root.GetComponentInChildren<DungeonGrid>(true);
+                camera = camera ?? root.GetComponentInChildren<Camera>(true);
+            }
+            if (hud == null || expansion == null || grid == null) throw new System.InvalidOperationException("Requires gameplay HUD and dungeon.");
+            var old = hud.transform.Find("Minion Inspection UI");
+            if (old != null) Object.DestroyImmediate(old.gameObject);
+            var owner = new GameObject("Minion Inspection UI", typeof(RectTransform));
+            owner.transform.SetParent(hud.transform, false);
+            var ownerRect = owner.GetComponent<RectTransform>();
+            ownerRect.anchorMin = Vector2.zero; ownerRect.anchorMax = Vector2.one; ownerRect.offsetMin = ownerRect.offsetMax = Vector2.zero;
+            var window = new GameObject("Information", typeof(RectTransform), typeof(Image));
+            window.transform.SetParent(owner.transform, false);
+            var rect = window.GetComponent<RectTransform>();
+            rect.anchorMin = rect.anchorMax = new Vector2(1, 0.5f); rect.pivot = new Vector2(1, 0.5f);
+            rect.anchoredPosition = new Vector2(-24, -20); rect.sizeDelta = new Vector2(400, 420);
+            window.GetComponent<Image>().color = new Color32(24, 21, 31, 250);
+            var title = Label(window.transform, "Title", new Vector2(24, -24), new Vector2(310, 42), 26);
+            var stats = Label(window.transform, "Stats", new Vector2(24, -88), new Vector2(352, 310), 22);
+            var close = new GameObject("Close", typeof(RectTransform), typeof(Image), typeof(Button));
+            close.transform.SetParent(window.transform, false);
+            var cr = close.GetComponent<RectTransform>(); cr.anchorMin = cr.anchorMax = cr.pivot = new Vector2(1, 1);
+            cr.anchoredPosition = new Vector2(-12, -12); cr.sizeDelta = new Vector2(40, 40);
+            close.GetComponent<Image>().color = new Color32(80, 53, 68, 255);
+            var x = Label(close.transform, "Label", Vector2.zero, new Vector2(40, 40), 24);
+            x.text = "×"; x.alignment = TextAlignmentOptions.Center;
+            var panel = owner.AddComponent<MinionInspectionPanel>();
+            var so = new SerializedObject(panel);
+            Set(so, "dungeon", grid); Set(so, "construction", expansion);
+            Set(so, "summoning", expansion.GetComponent<MinionSummoning>());
+            Set(so, "worldCamera", camera); Set(so, "window", window); Set(so, "titleText", title);
+            Set(so, "statsText", stats); Set(so, "closeButton", close.GetComponent<Button>());
+            Set(so, "outlineShader", Shader.Find("DarkLord/SpriteHoverOutline"));
+            so.ApplyModifiedPropertiesWithoutUndo();
+            window.SetActive(false);
+            EditorSceneManager.MarkSceneDirty(scene);
+        }
+        private static void Set(SerializedObject so, string name, Object value) => so.FindProperty(name).objectReferenceValue = value;
+        private static TextMeshProUGUI Label(Transform parent, string name, Vector2 position, Vector2 size, float fontSize)
+        {
+            var go = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
+            go.transform.SetParent(parent, false);
+            var text = go.GetComponent<TextMeshProUGUI>();
+            var rect = text.rectTransform; rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0, 1);
+            rect.anchoredPosition = position; rect.sizeDelta = size;
+            text.font = StardustFontSetup.Regular; text.fontSize = fontSize; text.color = new Color32(240, 230, 236, 255);
+            text.raycastTarget = false; StardustFontSetup.StyleLabel(text);
+            return text;
+        }
+    }
+}

@@ -13,7 +13,8 @@ namespace DarkLord.Dungeon
         public int Width { get; }
         public int Height { get; }
         public Vector2Int Core { get; }
-        public Vector2Int Entrance { get; }
+        public Vector2Int Entrance { get; private set; }
+        public bool HasEntrance { get; private set; } = true;
         public int ExpandedCells { get; private set; }
         public event Action<Vector2Int> CellChanged;
 
@@ -38,6 +39,21 @@ namespace DarkLord.Dungeon
         public bool Contains(Vector2Int cell) => cell.x >= 0 && cell.y >= 0 && cell.x < Width && cell.y < Height;
         public DungeonCell GetCell(Vector2Int cell) => Contains(cell) ? cells[cell.x, cell.y] : DungeonCell.Bedrock;
         public bool IsFloor(Vector2Int cell) => Contains(cell) && GetCell(cell) == DungeonCell.Floor;
+
+        public bool SetEntrance(Vector2Int cell)
+        {
+            if (!IsFloor(cell) || cell == Core) return false;
+            var previous = Entrance;
+            Entrance = cell; HasEntrance = true;
+            CellChanged?.Invoke(previous); CellChanged?.Invoke(cell);
+            return true;
+        }
+        public bool RemoveEntrance()
+        {
+            if (!HasEntrance) return false;
+            HasEntrance = false; CellChanged?.Invoke(Entrance);
+            return true;
+        }
 
         public ExpansionResult CanExpand(Vector2Int cell)
         {

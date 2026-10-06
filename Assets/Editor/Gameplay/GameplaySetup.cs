@@ -15,7 +15,7 @@ namespace DarkLord.Editor
 {
     public static class GameplaySetup
     {
-        private const string Root = "Assets/Gameplay";
+        private const string Root = "Assets";
 
         [MenuItem("Tools/Dark Lord/Setup Player and Minions")]
         public static void Setup()
@@ -70,7 +70,7 @@ namespace DarkLord.Editor
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             Selection.activeGameObject = go;
-            Debug.Log("Dark Lord setup complete. WASD/arrows: move. Right click: defend. Q: rally. E: return. Animation clips can now be assigned to Gameplay/Minion.controller.");
+            Debug.Log("Dark Lord setup complete. WASD/arrows: move. B: construction. E: return to post. Animation clips can now be assigned to Animations/Minions/Minion.controller.");
         }
 
         [MenuItem("Tools/Dark Lord/Add Sparring Invader")]
@@ -90,7 +90,7 @@ namespace DarkLord.Editor
 
         private static GameObject CreateMinionPrefab()
         {
-            string path = Root + "/Prefabs/Minions/GuardMinion.prefab";
+            string path = Root + "/Prefabs/Minions/GuardTemplate.prefab";
             var existing = AssetDatabase.LoadAssetAtPath<GameObject>(path);
             if (existing != null) return existing;
             Directory.CreateDirectory(Root + "/Prefabs/Minions");

@@ -43,10 +43,9 @@ namespace DarkLord.Tests
             data.FindProperty("dungeon").objectReferenceValue = grid;
             data.ApplyModifiedPropertiesWithoutUndo();
             summoning = player.AddComponent<MinionSummoning>();
-            var worker = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Gameplay/Prefabs/Minions/SummonWorker.prefab");
-            var guard = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Gameplay/Prefabs/Minions/SummonGuard.prefab");
-            Assert.IsNotNull(worker); Assert.IsNotNull(guard);
-            summoning.Configure(grid, worker.GetComponent<WorkerMiner>(), guard.GetComponent<MinionController>());
+            var guard = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Minions/BloodSlimeGuard.prefab");
+            Assert.IsNotNull(guard);
+            summoning.Configure(grid, guard.GetComponent<MinionController>());
             player.SetActive(true);
         }
 
@@ -70,6 +69,14 @@ namespace DarkLord.Tests
             Time.timeScale = 1;
         }
 
+        private MinionController FindGuardAt(Vector2Int cell)
+        {
+            foreach (var guard in Object.FindObjectsByType<MinionController>(FindObjectsSortMode.None))
+                if (grid.WorldToCell(guard.transform.position) == cell) return guard;
+            Assert.Fail("Expected a guard at the chosen tile.");
+            return null;
+        }
+
         [Test]
         public void GuardPlacementUsesCenterOfThirtyTwoPixelTile()
         {
@@ -86,27 +93,40 @@ namespace DarkLord.Tests
             Assert.That(guard.transform.localScale, Is.EqualTo(Vector3.one));
         }
 
-        [Test]
-        public void StartsEmptyAndSummonedWorkerReceivesMiningOrders()
+        [UnityTest]
+        public IEnumerator GuardPostStaysReservedUntilDeathAndCorpseIsRemoved()
         {
-            Assert.IsFalse(summoning.HasWorker);
+            var cell = grid.Layout.Core + Vector2Int.right;
+            summoning.SetOpen(true);
+            Assert.IsTrue(summoning.TrySummon(false));
+            Assert.IsTrue(summoning.TryPlace(cell));
+            var guard = FindGuardAt(cell);
+            guard.transform.position = grid.CellCenter(cell + Vector2Int.up * 2);
+            summoning.SetOpen(true);
+            Assert.IsTrue(summoning.TrySummon(false));
+            Assert.IsFalse(summoning.TryPlace(cell), "A guard away in combat still owns its post.");
+            Assert.IsFalse(grid.CanPlaceTrap(cell));
+            guard.Health.TakeDamage(guard.Health.MaximumHealth);
+            Assert.IsNull(grid.GuardPostAt(cell));
             Assert.That(summoning.GuardCount, Is.Zero);
-            Assert.IsFalse(summoning.TrySummon(true));
+            Assert.IsTrue(summoning.TryPlace(cell), "Death releases the post immediately.");
+            Assert.IsTrue(guard != null, "Leave time for the death animation.");
+            yield return new WaitForSeconds(1.7f);
+            Assert.IsTrue(guard == null, "The corpse must be removed after its death animation.");
+        }
+
+        [Test]
+        public void StartsEmptyAndConstructionNeedsNoSummonedMinion()
+        {
+            Assert.That(summoning.GuardCount, Is.Zero);
             summoning.SetOpen(true);
-            Assert.IsTrue(summoning.TrySummon(true));
-            Assert.IsFalse(summoning.HasWorker, "Choosing a type must not spawn until a tile is clicked.");
-            Assert.IsTrue(summoning.TryPlace(grid.Layout.Core + Vector2Int.up));
-            summoning.SetOpen(true);
             Assert.IsFalse(summoning.TrySummon(true));
-            Assert.IsTrue(grid.Layout.IsFloor(grid.WorldToCell(summoning.Worker.transform.position)));
             var expansion = player.GetComponent<DungeonExpansion>();
+            expansion.Select(ConstructionKind.HorizontalCorridor);
             expansion.SetExpansionMode(true);
-            var rock = grid.Layout.Core + Vector2Int.right * 4;
-            Assert.That(expansion.TryExpand(rock), Is.EqualTo(ExpansionResult.Unavailable));
-            summoning.SetOpen(false);
-            expansion.SetExpansionMode(true);
-            Assert.That(expansion.TryExpand(rock), Is.EqualTo(ExpansionResult.Success));
-            Assert.IsTrue(summoning.Worker.IsQueued(rock));
+            Assert.IsFalse(summoning.IsOpen);
+            Assert.That(expansion.TryBuild(grid.Layout.Core + Vector2Int.right * 6), Is.EqualTo(ConstructionResult.Success));
+            Assert.That(grid.RemainingConstructionTiles, Is.EqualTo(15));
         }
 
         [Test]
@@ -136,21 +156,13 @@ namespace DarkLord.Tests
         }
 
         [Test]
-        public void DeadWorkerCanBeReplacedAndItsOldMiningMarkersAreCleared()
+        public void WorkerRequestsNeverEnterPlacementOrCreateAWorker()
         {
             summoning.SetOpen(true);
-            Assert.IsTrue(summoning.TrySummon(true));
-            Assert.IsTrue(summoning.TryPlace(grid.Layout.Core + Vector2Int.up));
-            var old = summoning.Worker;
-            var rock = grid.Layout.Core + Vector2Int.up * 4;
-            old.QueueMining(rock);
-            old.GetComponent<ActorHealth>().TakeDamage(100);
-            Assert.IsFalse(summoning.HasWorker);
-            summoning.SetOpen(true);
-            Assert.IsTrue(summoning.TrySummon(true));
-            Assert.IsTrue(summoning.TryPlace(grid.Layout.Core + Vector2Int.right));
-            Assert.AreNotSame(old, summoning.Worker);
-            Assert.That(old.PendingCount, Is.Zero);
+            Assert.IsFalse(summoning.TrySummon(true));
+            Assert.IsFalse(summoning.IsPlacing);
+            Assert.IsFalse(summoning.TryPlace(grid.Layout.Core + Vector2Int.up));
+            Assert.That(Object.FindObjectsByType<WorkerMiner>(FindObjectsSortMode.None).Length, Is.Zero);
         }
 
         [Test]
@@ -164,17 +176,17 @@ namespace DarkLord.Tests
             Assert.IsFalse(summoning.TryPlace(grid.Layout.Core + Vector2Int.up));
             Object.DestroyImmediate(obstruction);
             Time.timeScale = 0;
-            Assert.IsFalse(summoning.TrySummon(true));
+            Assert.IsFalse(summoning.TrySummon(false));
             Time.timeScale = 1;
             player.GetComponent<ActorHealth>().TakeDamage(100);
-            Assert.IsFalse(summoning.TrySummon(true));
+            Assert.IsFalse(summoning.TrySummon(false));
         }
 
         [Test]
         public void PlacementRejectsOccupiedRockAndDistantTilesAndSpawnsAtExactChosenCenter()
         {
             summoning.SetOpen(true);
-            Assert.IsTrue(summoning.TrySummon(true));
+            Assert.IsTrue(summoning.TrySummon(false));
             Assert.IsFalse(summoning.TryPlace(grid.Layout.Core));
             Assert.IsFalse(summoning.TryPlace(grid.Layout.Core + Vector2Int.up * 4));
             Assert.IsFalse(summoning.TryPlace(grid.Layout.Entrance));
@@ -182,7 +194,7 @@ namespace DarkLord.Tests
             Assert.IsTrue(summoning.IsPlacing, "Invalid clicks should keep placement active.");
             var chosen = grid.Layout.Core + new Vector2Int(1, 2);
             Assert.IsTrue(summoning.TryPlace(chosen));
-            Assert.That(summoning.Worker.transform.position, Is.EqualTo(grid.CellCenter(chosen)));
+            Assert.That(FindGuardAt(chosen).transform.position, Is.EqualTo(grid.CellCenter(chosen)));
             Assert.IsFalse(summoning.IsOpen);
             Assert.IsFalse(summoning.TryPlace(chosen + Vector2Int.right));
         }
@@ -219,14 +231,15 @@ namespace DarkLord.Tests
             camera.transform.position = player.transform.position + Vector3.back * 10;
             var cell = grid.Layout.Core + Vector2Int.right;
             summoning.SetOpen(true);
-            summoning.TrySummon(true);
+            summoning.TrySummon(false);
             yield return null;
             yield return null;
             InputSystem.QueueStateEvent(mouse, new MouseState { position = camera.WorldToScreenPoint(grid.CellCenter(cell)), buttons = 1 });
             yield return null;
             yield return null;
-            Assert.IsTrue(summoning.HasWorker);
-            Assert.That(Vector2.Distance(summoning.Worker.transform.position, grid.CellCenter(cell)), Is.LessThan(0.01f));
+            Assert.That(summoning.GuardCount, Is.EqualTo(1));
+            var guard = FindGuardAt(cell);
+            Assert.That(Vector2.Distance(guard.transform.position, grid.CellCenter(cell)), Is.LessThan(0.01f));
             Assert.IsFalse(summoning.IsOpen);
             InputSystem.QueueStateEvent(mouse, new MouseState());
             yield return null;
@@ -237,11 +250,18 @@ namespace DarkLord.Tests
             yield return null;
             yield return null;
             Assert.IsFalse(summoning.IsOpen);
-            Assert.That(summoning.GuardCount, Is.Zero);
+            Assert.That(summoning.GuardCount, Is.EqualTo(1));
+            InputSystem.QueueStateEvent(mouse, new MouseState());
+            yield return null;
+            Vector2 post = guard.GuardPosition;
+            InputSystem.QueueStateEvent(mouse, new MouseState { position = camera.WorldToScreenPoint(grid.CellCenter(cell + Vector2Int.up)), buttons = 2 });
+            yield return null;
+            yield return null;
+            Assert.That(guard.GuardPosition, Is.EqualTo(post));
         }
 
         [UnityTest]
-        public IEnumerator VOpensWindowBlocksMovementAndEscapeCloses()
+        public IEnumerator BOpensUnifiedWindowAllowsMovementAndEscapeCloses()
         {
             originalSettings = InputSystem.settings;
             originalFlags = originalSettings.hideFlags;
@@ -252,17 +272,28 @@ namespace DarkLord.Tests
             InputSystem.settings = testSettings;
             keyboard = InputSystem.AddDevice<Keyboard>();
             Vector3 start = player.transform.position;
-            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.V, Key.W));
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.B, Key.W));
             yield return null;
             yield return new WaitForSeconds(0.1f);
-            Assert.IsTrue(summoning.IsOpen);
+            Assert.IsTrue(player.GetComponent<DungeonExpansion>().ExpansionMode);
+            Assert.That(Vector2.Distance(start, player.transform.position), Is.GreaterThan(0.1f));
+            summoning.SetOpen(true);
+            Assert.IsTrue(summoning.TrySummon(false));
+            start = player.transform.position;
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.D));
+            yield return new WaitForSeconds(0.1f);
+            Assert.That(Vector2.Distance(start, player.transform.position), Is.GreaterThan(0.1f), "Guard placement in construction mode must also allow movement.");
+            Time.timeScale = 0;
+            start = player.transform.position;
+            yield return new WaitForSecondsRealtime(0.1f);
             Assert.That(Vector2.Distance(start, player.transform.position), Is.LessThan(0.01f));
+            Time.timeScale = 1;
             InputSystem.QueueStateEvent(keyboard, new KeyboardState());
             yield return null;
             InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.Escape));
             yield return null;
             yield return null;
-            Assert.IsFalse(summoning.IsOpen);
+            Assert.IsFalse(player.GetComponent<DungeonExpansion>().ExpansionMode);
         }
     }
 }

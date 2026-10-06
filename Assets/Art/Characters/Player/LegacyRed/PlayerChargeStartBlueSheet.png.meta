@@ -1,0 +1,1953 @@
+fileFormatVersion: 2
+guid: c5c86f36257c6e040a7522b4b8ace5d7
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6954142171567338746
+    second: Charge Start Blue_0
+  - first:
+      213: 3217155124186074176
+    second: Charge Start Blue_1
+  - first:
+      213: -7578816021792930474
+    second: Charge Start Blue_2
+  - first:
+      213: -7037487909503181183
+    second: Charge Start Blue_3
+  - first:
+      213: -3204303712636349138
+    second: Charge Start Blue_4
+  - first:
+      213: -503558466152600234
+    second: Charge Start Blue_5
+  - first:
+      213: -6474974192624729723
+    second: Charge Start Blue_6
+  - first:
+      213: -7666054869745826750
+    second: Charge Start Blue_7
+  - first:
+      213: -4260550720026385221
+    second: Charge Start Blue_8
+  - first:
+      213: -5055843057279489044
+    second: Charge Start Blue_9
+  - first:
+      213: 3961586529144545838
+    second: Charge Start Blue_10
+  - first:
+      213: 199733604196498188
+    second: Charge Start Blue_11
+  - first:
+      213: -4906389806791460200
+    second: Charge Start Blue_12
+  - first:
+      213: -2869513539862485149
+    second: Charge Start Blue_13
+  - first:
+      213: -1637893019000996676
+    second: Charge Start Blue_14
+  - first:
+      213: 8785563011650369874
+    second: Charge Start Blue_15
+  - first:
+      213: -2877286881863004065
+    second: Charge Start Blue_16
+  - first:
+      213: -3459881495428146303
+    second: Charge Start Blue_17
+  - first:
+      213: -8159756656163273796
+    second: Charge Start Blue_18
+  - first:
+      213: -5827275390447167869
+    second: Charge Start Blue_19
+  - first:
+      213: 8223292293077136033
+    second: Charge Start Blue_20
+  - first:
+      213: 4828673896553703172
+    second: Charge Start Blue_21
+  - first:
+      213: 1720480298603318173
+    second: Charge Start Blue_22
+  - first:
+      213: -2672727494752815752
+    second: Charge Start Blue_23
+  - first:
+      213: -5054347628977965262
+    second: Charge Start Blue_24
+  - first:
+      213: 8587650867298306484
+    second: Charge Start Blue_25
+  - first:
+      213: -5021819527658712168
+    second: Charge Start Blue_26
+  - first:
+      213: -2311971877010271409
+    second: Charge Start Blue_27
+  - first:
+      213: -6769134235061089063
+    second: Charge Start Blue_28
+  - first:
+      213: 2028095902629912673
+    second: Charge Start Blue_29
+  - first:
+      213: 5849638916122430637
+    second: Charge Start Blue_30
+  - first:
+      213: 6752062203586902345
+    second: Charge Start Blue_31
+  - first:
+      213: 6002362415111528651
+    second: Charge Start Blue_32
+  - first:
+      213: -8713098752697172216
+    second: Charge Start Blue_33
+  - first:
+      213: -2433596833731074375
+    second: Charge Start Blue_34
+  - first:
+      213: -8412827180766117428
+    second: Charge Start Blue_35
+  - first:
+      213: -2789375779347401276
+    second: Charge Start Blue_36
+  - first:
+      213: -3725382296090772696
+    second: Charge Start Blue_37
+  - first:
+      213: -7377142891597048916
+    second: Charge Start Blue_38
+  - first:
+      213: -6468261515859944261
+    second: Charge Start Blue_39
+  - first:
+      213: 7090055605983852812
+    second: Charge Start Blue_40
+  - first:
+      213: 6158148193071965146
+    second: Charge Start Blue_41
+  - first:
+      213: -425641545131250806
+    second: Charge Start Blue_42
+  - first:
+      213: -7537583220441818423
+    second: Charge Start Blue_43
+  - first:
+      213: 1680757911974660361
+    second: Charge Start Blue_44
+  - first:
+      213: 5129605258600085259
+    second: Charge Start Blue_45
+  - first:
+      213: 7050727686451596464
+    second: Charge Start Blue_46
+  - first:
+      213: -2907027417634337205
+    second: Charge Start Blue_47
+  - first:
+      213: -209895178495212829
+    second: Charge Start Blue_48
+  - first:
+      213: 8850362101977278304
+    second: Charge Start Blue_49
+  - first:
+      213: 4484083620399144228
+    second: Charge Start Blue_50
+  - first:
+      213: -5914706929253276112
+    second: Charge Start Blue_51
+  - first:
+      213: 4763189379024675545
+    second: Charge Start Blue_52
+  - first:
+      213: -4616949739927780363
+    second: Charge Start Blue_53
+  - first:
+      213: -4704616401843235839
+    second: Charge Start Blue_54
+  - first:
+      213: 6807472579035856163
+    second: Charge Start Blue_55
+  - first:
+      213: -6537633084274245511
+    second: Charge Start Blue_56
+  - first:
+      213: 1553165542534004226
+    second: Charge Start Blue_57
+  - first:
+      213: -2508167414340320074
+    second: Charge Start Blue_58
+  - first:
+      213: -5411833725993850805
+    second: Charge Start Blue_59
+  - first:
+      213: -9192131506090778087
+    second: Charge Start Blue_60
+  - first:
+      213: -5057069237926460349
+    second: Charge Start Blue_61
+  - first:
+      213: 7405039664486137500
+    second: Charge Start Blue_62
+  - first:
+      213: -2795890036924248231
+    second: Charge Start Blue_63
+  - first:
+      213: -6073208315210854181
+    second: Charge Start Blue_64
+  - first:
+      213: 8097587048511947559
+    second: Charge Start Blue_65
+  - first:
+      213: 1542783552388380649
+    second: Charge Start Blue_66
+  - first:
+      213: -7906235139087087334
+    second: Charge Start Blue_67
+  - first:
+      213: -5628526598537941916
+    second: Charge Start Blue_68
+  - first:
+      213: 6377773220352997411
+    second: Charge Start Blue_69
+  - first:
+      213: -181503513426136900
+    second: Charge Start Blue_70
+  - first:
+      213: 4269348671228855582
+    second: Charge Start Blue_71
+  - first:
+      213: -6685155361283046162
+    second: Charge Start Blue_72
+  - first:
+      213: 2744931551368703512
+    second: Charge Start Blue_73
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 4
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame000
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60b4a222a8ced7f90800000000000000
+      internalID: -6954142171567338746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame001
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04c407c4a81a5ac20800000000000000
+      internalID: 3217155124186074176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame002
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6554ef28bf2a2d690800000000000000
+      internalID: -7578816021792930474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame003
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18ed4f25802d55e90800000000000000
+      internalID: -7037487909503181183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame004
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2558df10c60883d0800000000000000
+      internalID: -3204303712636349138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame005
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65d65553e300309f0800000000000000
+      internalID: -503558466152600234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame006
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58108c617454426a0800000000000000
+      internalID: -6474974192624729723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame007
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 244852466b3bc9590800000000000000
+      internalID: -7666054869745826750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame008
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb4ea4981bb7fd4c0800000000000000
+      internalID: -4260550720026385221
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame009
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ceb2bb2c68906d9b0800000000000000
+      internalID: -5055843057279489044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame010
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2222a875f16af630800000000000000
+      internalID: 3961586529144545838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame011
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0b37df97a895c200800000000000000
+      internalID: 199733604196498188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame012
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89af894477009ebb0800000000000000
+      internalID: -4906389806791460200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame013
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 256
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 367a25a83a07d28d0800000000000000
+      internalID: -2869513539862485149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame014
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbc7a562af80549e0800000000000000
+      internalID: -1637893019000996676
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame015
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2593b3dd2079ce970800000000000000
+      internalID: 8785563011650369874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame016
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f501aa153d2d118d0800000000000000
+      internalID: -2877286881863004065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame017
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18bde047c180cffc0800000000000000
+      internalID: -3459881495428146303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame018
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb342cfad88b2ce80800000000000000
+      internalID: -8159756656163273796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame019
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 386550818eb512fa0800000000000000
+      internalID: -5827275390447167869
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame020
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a2f11d85c00f1270800000000000000
+      internalID: 8223292293077136033
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame021
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 407e8445355e20340800000000000000
+      internalID: 4828673896553703172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame022
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9b0f4157bf50e710800000000000000
+      internalID: 1720480298603318173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame023
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 875b6d5118098ead0800000000000000
+      internalID: -2672727494752815752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame024
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2373e6b4c995bd9b0800000000000000
+      internalID: -5054347628977965262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame025
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b90468e6f67d2770800000000000000
+      internalID: 8587650867298306484
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame026
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89358cf0fb9ee4ab0800000000000000
+      internalID: -5021819527658712168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame027
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 192
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f431c14c3d93aefd0800000000000000
+      internalID: -2311971877010271409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame028
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9dc8f3217443f02a0800000000000000
+      internalID: -6769134235061089063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame029
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1606ea66a7e352c10800000000000000
+      internalID: 2028095902629912673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame030
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dac47cbf9971e2150800000000000000
+      internalID: 5849638916122430637
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame031
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 949732adcc424bd50800000000000000
+      internalID: 6752062203586902345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame032
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc0e0ed80dcac4350800000000000000
+      internalID: 6002362415111528651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame033
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80ff59039dad41780800000000000000
+      internalID: -8713098752697172216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame034
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b6a1fec2902a3ed0800000000000000
+      internalID: -2433596833731074375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame035
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc14fad8042af3b80800000000000000
+      internalID: -8412827180766117428
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame036
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c57be6e1852a49d0800000000000000
+      internalID: -2789375779347401276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame037
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82bfaf42a88cc4cc0800000000000000
+      internalID: -3725382296090772696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame038
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca35f0930af1f9990800000000000000
+      internalID: -7377142891597048916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame039
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbc96d0fb6e1c36a0800000000000000
+      internalID: -6468261515859944261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame040
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c093f684200f46260800000000000000
+      internalID: 7090055605983852812
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame041
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad3a4428723267550800000000000000
+      internalID: 6158148193071965146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame042
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8badc41541d71af0800000000000000
+      internalID: -425641545131250806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame043
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9cade903fff156790800000000000000
+      internalID: -7537583220441818423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame044
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9094da87a60435710800000000000000
+      internalID: 1680757911974660361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame045
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0775dc0ec4003740800000000000000
+      internalID: 5129605258600085259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame046
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bc85f6797739d160800000000000000
+      internalID: 7050727686451596464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame047
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4e859b37f928a7d0800000000000000
+      internalID: -2907027417634337205
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame048
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e2c9bd727d461df0800000000000000
+      internalID: -209895178495212829
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame049
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0676fe5c07dc2da70800000000000000
+      internalID: 8850362101977278304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame050
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42dd9098b4aaa3e30800000000000000
+      internalID: 4484083620399144228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame051
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0362153a26dbaeda0800000000000000
+      internalID: -5914706929253276112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame052
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d2eda6f08f3a1240800000000000000
+      internalID: 4763189379024675545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame053
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f3c5c55cac4defb0800000000000000
+      internalID: -4616949739927780363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame054
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10458a30f48d5beb0800000000000000
+      internalID: -4704616401843235839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame055
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32df4ab3e30097e50800000000000000
+      internalID: 6807472579035856163
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame056
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9700ef30959a545a0800000000000000
+      internalID: -6537633084274245511
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame057
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20ebd18f4d3fd8510800000000000000
+      internalID: 1553165542534004226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame058
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b409078603313dd0800000000000000
+      internalID: -2508167414340320074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame059
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4868aa36ed45e4b0800000000000000
+      internalID: -5411833725993850805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame060
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91268c2e81dfe6080800000000000000
+      internalID: -9192131506090778087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame061
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34486d4525ea1d9b0800000000000000
+      internalID: -5057069237926460349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame062
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9ebf5d575cf3c660800000000000000
+      internalID: 7405039664486137500
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame063
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95f831e13d00339d0800000000000000
+      internalID: -2795890036924248231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame064
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd098ece631a7bba0800000000000000
+      internalID: -6073208315210854181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame065
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 723cb5c8488606070800000000000000
+      internalID: 8097587048511947559
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame066
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e7bc658771196510800000000000000
+      internalID: 1542783552388380649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame067
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a19c000b709674290800000000000000
+      internalID: -7906235139087087334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame068
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46cee4d31e473e1b0800000000000000
+      internalID: -5628526598537941916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayerChargeStartBlueFrame069
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 328b329f3f6628850800000000000000
+      internalID: 6377773220352997411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 7894766ef5d9b374faff0976d308341e
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      PlayerChargeStartBlueFrame000: -6954142171567338746
+      PlayerChargeStartBlueFrame001: 3217155124186074176
+      PlayerChargeStartBlueFrame002: -7578816021792930474
+      PlayerChargeStartBlueFrame003: -7037487909503181183
+      PlayerChargeStartBlueFrame004: -3204303712636349138
+      PlayerChargeStartBlueFrame005: -503558466152600234
+      PlayerChargeStartBlueFrame006: -6474974192624729723
+      PlayerChargeStartBlueFrame007: -7666054869745826750
+      PlayerChargeStartBlueFrame008: -4260550720026385221
+      PlayerChargeStartBlueFrame009: -5055843057279489044
+      PlayerChargeStartBlueFrame010: 3961586529144545838
+      PlayerChargeStartBlueFrame011: 199733604196498188
+      PlayerChargeStartBlueFrame012: -4906389806791460200
+      PlayerChargeStartBlueFrame013: -2869513539862485149
+      PlayerChargeStartBlueFrame014: -1637893019000996676
+      PlayerChargeStartBlueFrame015: 8785563011650369874
+      PlayerChargeStartBlueFrame016: -2877286881863004065
+      PlayerChargeStartBlueFrame017: -3459881495428146303
+      PlayerChargeStartBlueFrame018: -8159756656163273796
+      PlayerChargeStartBlueFrame019: -5827275390447167869
+      PlayerChargeStartBlueFrame020: 8223292293077136033
+      PlayerChargeStartBlueFrame021: 4828673896553703172
+      PlayerChargeStartBlueFrame022: 1720480298603318173
+      PlayerChargeStartBlueFrame023: -2672727494752815752
+      PlayerChargeStartBlueFrame024: -5054347628977965262
+      PlayerChargeStartBlueFrame025: 8587650867298306484
+      PlayerChargeStartBlueFrame026: -5021819527658712168
+      PlayerChargeStartBlueFrame027: -2311971877010271409
+      PlayerChargeStartBlueFrame028: -6769134235061089063
+      PlayerChargeStartBlueFrame029: 2028095902629912673
+      PlayerChargeStartBlueFrame030: 5849638916122430637
+      PlayerChargeStartBlueFrame031: 6752062203586902345
+      PlayerChargeStartBlueFrame032: 6002362415111528651
+      PlayerChargeStartBlueFrame033: -8713098752697172216
+      PlayerChargeStartBlueFrame034: -2433596833731074375
+      PlayerChargeStartBlueFrame035: -8412827180766117428
+      PlayerChargeStartBlueFrame036: -2789375779347401276
+      PlayerChargeStartBlueFrame037: -3725382296090772696
+      PlayerChargeStartBlueFrame038: -7377142891597048916
+      PlayerChargeStartBlueFrame039: -6468261515859944261
+      PlayerChargeStartBlueFrame040: 7090055605983852812
+      PlayerChargeStartBlueFrame041: 6158148193071965146
+      PlayerChargeStartBlueFrame042: -425641545131250806
+      PlayerChargeStartBlueFrame043: -7537583220441818423
+      PlayerChargeStartBlueFrame044: 1680757911974660361
+      PlayerChargeStartBlueFrame045: 5129605258600085259
+      PlayerChargeStartBlueFrame046: 7050727686451596464
+      PlayerChargeStartBlueFrame047: -2907027417634337205
+      PlayerChargeStartBlueFrame048: -209895178495212829
+      PlayerChargeStartBlueFrame049: 8850362101977278304
+      PlayerChargeStartBlueFrame050: 4484083620399144228
+      PlayerChargeStartBlueFrame051: -5914706929253276112
+      PlayerChargeStartBlueFrame052: 4763189379024675545
+      PlayerChargeStartBlueFrame053: -4616949739927780363
+      PlayerChargeStartBlueFrame054: -4704616401843235839
+      PlayerChargeStartBlueFrame055: 6807472579035856163
+      PlayerChargeStartBlueFrame056: -6537633084274245511
+      PlayerChargeStartBlueFrame057: 1553165542534004226
+      PlayerChargeStartBlueFrame058: -2508167414340320074
+      PlayerChargeStartBlueFrame059: -5411833725993850805
+      PlayerChargeStartBlueFrame060: -9192131506090778087
+      PlayerChargeStartBlueFrame061: -5057069237926460349
+      PlayerChargeStartBlueFrame062: 7405039664486137500
+      PlayerChargeStartBlueFrame063: -2795890036924248231
+      PlayerChargeStartBlueFrame064: -6073208315210854181
+      PlayerChargeStartBlueFrame065: 8097587048511947559
+      PlayerChargeStartBlueFrame066: 1542783552388380649
+      PlayerChargeStartBlueFrame067: -7906235139087087334
+      PlayerChargeStartBlueFrame068: -5628526598537941916
+      PlayerChargeStartBlueFrame069: 6377773220352997411
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -21,7 +21,7 @@ namespace DarkLord.Editor
             var player = GameObject.Find("Player");
             var dungeon = Object.FindAnyObjectByType<DungeonGrid>();
             var hud = GameObject.Find("Game HUD");
-            var prefabObject = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Gameplay/Prefabs/Enemies/WaveInvader.prefab");
+            var prefabObject = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Enemies/WaveInvader.prefab");
             if (player == null || dungeon == null || hud == null || prefabObject == null)
                 throw new System.InvalidOperationException("Wave setup needs Player, DungeonGrid, Game HUD, and WaveInvader.prefab.");
 
@@ -38,10 +38,11 @@ namespace DarkLord.Editor
             var panel = CreatePanel(hud.transform);
             var wave = CreateLabel("Wave", panel.transform, "습격  --", 21, TextAlignmentOptions.Center, FontStyles.Bold);
             Anchor(wave.rectTransform, new Vector2(0, 0.5f), new Vector2(0.48f, 1), new Vector2(0, 1), new Vector2(14, -8), new Vector2(-14, -8));
-            var status = CreateLabel("Status", panel.transform, "다음 습격  60초", 15, TextAlignmentOptions.Center, FontStyles.Normal);
+            var status = CreateLabel("Status", panel.transform, "시작 버튼을 눌러 습격 시작", 15, TextAlignmentOptions.Center, FontStyles.Normal);
             Anchor(status.rectTransform, new Vector2(0.48f, 0), Vector2.one, new Vector2(0, 0), new Vector2(4, 8), new Vector2(-18, -8));
             var presenter = panel.AddComponent<WaveHud>();
             Set(presenter, "director", director); Set(presenter, "waveText", wave); Set(presenter, "statusText", status);
+            ConfigureStartButton(presenter, hud.transform);
 
             EditorSceneManager.MarkSceneDirty(root.scene);
             EditorSceneManager.SaveScene(root.scene);
@@ -67,10 +68,27 @@ namespace DarkLord.Editor
                 node.transform.position = dungeon.GetComponent<Grid>().GetCellCenterWorld(new Vector3Int(layout.Core.x, layout.Core.y, 0));
                 data.FindProperty("dungeonCore").objectReferenceValue = core;
             }
-            data.FindProperty("firstWaveDelay").floatValue = 60;
-            data.FindProperty("timeBetweenWaves").floatValue = 60;
             data.ApplyModifiedProperties();
             EditorSceneManager.MarkSceneDirty(director.gameObject.scene);
+        }
+
+        public static void ConfigureStartButton(WaveHud presenter, Transform hud)
+        {
+            var existing = hud.Find("Start Wave Button");
+            var node = existing != null ? existing.gameObject : new GameObject("Start Wave Button", typeof(RectTransform), typeof(UnityEngine.UI.Image), typeof(UnityEngine.UI.Button));
+            node.transform.SetParent(hud, false);
+            var rect = node.GetComponent<RectTransform>();
+            rect.anchorMin = rect.anchorMax = rect.pivot = Vector2.right;
+            rect.anchoredPosition = new Vector2(-24, 24);
+            rect.sizeDelta = new Vector2(250, 64);
+            node.GetComponent<UnityEngine.UI.Image>().color = new Color32(100, 35, 65, 255);
+            var label = node.GetComponentInChildren<TMP_Text>() ?? CreateLabel("Label", node.transform, "웨이브 1 시작", 24, TextAlignmentOptions.Center, FontStyles.Bold);
+            label.rectTransform.anchorMin = Vector2.zero; label.rectTransform.anchorMax = Vector2.one;
+            label.rectTransform.offsetMin = Vector2.zero; label.rectTransform.offsetMax = Vector2.zero;
+            label.raycastTarget = false;
+            Set(presenter, "startButton", node.GetComponent<UnityEngine.UI.Button>());
+            Set(presenter, "startButtonText", label);
+            EditorSceneManager.MarkSceneDirty(hud.gameObject.scene);
         }
 
         private static GameObject CreatePanel(Transform parent)

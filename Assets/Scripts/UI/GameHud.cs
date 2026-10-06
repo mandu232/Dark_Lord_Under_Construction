@@ -22,7 +22,6 @@ namespace DarkLord.UI
 
         private int lastHealth = -1;
         private int lastGuardCount = -1;
-        private bool lastHasWorker;
 
         public void Configure(CurrencyWallet currencyWallet, ActorHealth health, MinionSummoning minionSummoning)
         {
@@ -45,7 +44,7 @@ namespace DarkLord.UI
         private void LateUpdate()
         {
             if (playerHealth != null && playerHealth.CurrentHealth != lastHealth) RefreshHealth();
-            if (summoning != null && (summoning.GuardCount != lastGuardCount || summoning.HasWorker != lastHasWorker)) RefreshMinions();
+            if (summoning != null && summoning.GuardCount != lastGuardCount) RefreshMinions();
         }
 
         private void Subscribe()
@@ -95,8 +94,7 @@ namespace DarkLord.UI
         {
             if (summoning == null || minionsText == null) return;
             lastGuardCount = summoning.GuardCount;
-            lastHasWorker = summoning.HasWorker;
-            minionsText.text = $"일꾼  {(lastHasWorker ? 1 : 0)}/1    호위병  {lastGuardCount}/4";
+            minionsText.text = $"호위병  {lastGuardCount}/4";
         }
 
         private static void SetAmount(TMP_Text label, int amount)

@@ -101,7 +101,7 @@ namespace DarkLord.Editor
                 { legacy.font = skin.font; EditorUtility.SetDirty(legacy); }
                 foreach (var component in root.GetComponentsInChildren<MonoBehaviour>(true))
                 {
-                    if (component is DarkLord.Player.MinionSummoning || component is DarkLord.Dungeon.DungeonExpansion)
+                    if (component is DarkLord.Player.MinionSummoning)
                     {
                         var data = new SerializedObject(component);
                         data.FindProperty("uiSkin").objectReferenceValue = skin;

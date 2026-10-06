@@ -16,7 +16,7 @@ namespace DarkLord.Editor
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
             var original = SceneManager.GetActiveScene().path;
             EditorSceneManager.SaveOpenScenes();
-            const string prefabPath = "Assets/Gameplay/Prefabs/UI/MainMenu.prefab";
+            const string prefabPath = "Assets/Prefabs/UI/MainMenu.prefab";
             var prefab = PrefabUtility.LoadPrefabContents(prefabPath);
             try
             {

@@ -83,6 +83,7 @@ namespace DarkLord.Tests
         {
             worker.Configure(grid, 1);
             var target = grid.Layout.Core + Vector2Int.right * 4;
+            worker.transform.position = grid.CellCenter(target + Vector2Int.left);
             worker.GetComponent<Rigidbody2D>().position = grid.CellCenter(target + Vector2Int.left);
             Physics2D.SyncTransforms();
             worker.QueueMining(target);

@@ -10,8 +10,8 @@ namespace DarkLord.Editor
 {
     public static class MainMenuSpriteSetup
     {
-        private const string BackgroundPath = "Assets/Sprite/BackGround/MainMenu_Bg.png";
-        private const string HoverPath = "Assets/Sprite/Ui/Button/MainMenu_Button.png";
+        private const string BackgroundPath = "Assets/Art/UI/MainMenu/MainMenuBackground.png";
+        private const string HoverPath = "Assets/Art/UI/MainMenu/MainMenuButtonSheet.png";
 
         [MenuItem("Tools/Dark Lord/Apply Main Menu Depth")]
         public static void ApplyDepth()
@@ -58,7 +58,7 @@ namespace DarkLord.Editor
 
         private static Sprite CreateDepthMask()
         {
-            const string path = "Assets/Sprite/Ui/MainMenuSoftShadow.png";
+            const string path = "Assets/Art/UI/MainMenu/MainMenuSoftShadow.png";
             if (!System.IO.File.Exists(path))
             {
                 const int width = 256, height = 256;

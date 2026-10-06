@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abf6566f8160eab4c885caec8b2423d5, type: 3}
+  m_Name: Room
+  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Dungeon.BuildItemDefinition
+  category: 0
+  displayName: "\uD30C\uC218\uAFBC\uC758 \uBC29"
+  description: "5 \xD7 5\uCE78 \xB7 \uBCF5\uB3C4\uC640 \uC5F0\uACB0\n\n\uD0C0\uC77C\uC774 \uC21C\uCC28\uC801\uC73C\uB85C \uBD80\uC11C\uC9C4 \uB4A4 \uC0AC\uC804 \uC815\uC758\uB41C \uBC29 \uB514\uC790\uC778\uC774 \uC0DD\uC131\uB429\uB2C8\uB2E4. \uBC29 \uC548\uC758 \uD30C\uC218\uAFBC\uC744 \uBAA8\uB450 \uCC98\uCE58\uD574\uC57C \uC6A9\uC0AC\uAC00 \uB2E4\uC74C \uBC29\uC73C\uB85C \uC774\uB3D9\uD569\uB2C8\uB2E4.\n\n\uBC29 \uC0AC\uC774\uC5D0\uB294 \uCD5C\uC18C 1\uCE78 \uAC04\uACA9\uC774 \uD544\uC694\uD569\uB2C8\uB2E4. \uC2DC\uC791 \uBC29\uACFC \uC608\uC57D\uB41C \uBC29\uB3C4 \uD3EC\uD568\uD558\uBA70 \uBAA8\uC11C\uB9AC\uAC00 \uB9DE\uB2FF\uB294 \uBC30\uCE58\uB294 \uBD88\uAC00\uB2A5\uD569\uB2C8\uB2E4."
+  icon: {fileID: -1026144962751251527, guid: 886554f42df0dc74b93c4c19ddec9eeb, type: 3}
+  constructionKind: 0
+  prefab: {fileID: 6473741763347481952, guid: 2cf4dc9f7b87f8d4ab175ea94c77c5ac, type: 3}
+  available: 1

@@ -1,139 +1,290 @@
 using DarkLord.Actors;
-using DarkLord.Minions;
+using DarkLord.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 namespace DarkLord.Dungeon
 {
+    [DefaultExecutionOrder(-40)]
     public sealed class DungeonExpansion : MonoBehaviour
     {
-        [SerializeField] private GUISkin uiSkin;
         [SerializeField] private DungeonGrid dungeon;
         [SerializeField] private Camera worldCamera;
-        [SerializeField] private WorkerMiner worker;
+        [SerializeField] private ConstructionPanel constructionPanel;
         private ActorHealth health;
         private DarkLord.Player.MinionSummoning summoning;
-        public void AssignWorker(WorkerMiner value) => worker = value;
-        private InputAction toggle, expand, cancel;
-        private Vector2Int? previousCell;
-        private bool previousAllowed;
-        private string message = "B: 성 확장";
-        private string counter;
-        private int previousCount = -1;
+        private InputAction toggle, build, cancel, cancelPlacement;
+        private Camera placementCamera;
+        private UnityEngine.Rendering.Universal.PixelPerfectCamera placementPixelCamera;
+        private float originalCameraSize;
+        private int originalResolutionX, originalResolutionY;
+        public bool IsPlacementView { get; private set; }
+        private Vector2Int? previewCell;
+        private Vector2Int? corridorStart;
+        public bool IsDraggingCorridor => corridorStart.HasValue;
+        private bool previewAllowed;
+        private int consumedFrame = -1, openedFrame;
+        private BuildItemDefinition selectedItem;
+        private bool hasSelection = true;
+        public bool DemolitionMode { get; private set; }
+        private ConstructionKind selectedKind = ConstructionKind.Room;
         public bool ExpansionMode { get; private set; }
-        private static Rect Panel => new Rect(12, 12, 440, 130);
+        public bool BlocksGameplayInput => ExpansionMode || consumedFrame == Time.frameCount;
+        public ConstructionKind SelectedKind => selectedKind;
+        public DungeonGrid Dungeon => dungeon;
+        public string Message { get; private set; } = "방 또는 복도를 선택하고 연결할 위치를 클릭하세요.";
 
         private void Awake()
         {
             health = GetComponent<ActorHealth>();
             summoning = GetComponent<DarkLord.Player.MinionSummoning>();
             if (worldCamera == null) worldCamera = Camera.main;
-            toggle = new InputAction("Dungeon expansion mode", InputActionType.Button, "<Keyboard>/b");
-            expand = new InputAction("Expand dungeon cell", InputActionType.Button, "<Mouse>/leftButton");
-            cancel = new InputAction("Exit expansion mode", InputActionType.Button, "<Keyboard>/escape");
+            toggle = new InputAction("Construction menu", InputActionType.Button, "<Keyboard>/b");
+            build = new InputAction("Plan room or corridor", InputActionType.Button, "<Mouse>/leftButton");
+            cancel = new InputAction("Close construction", InputActionType.Button, "<Keyboard>/escape");
+            cancelPlacement = new InputAction("Return to construction menu", InputActionType.Button, "<Mouse>/rightButton");
         }
-
-        private void OnEnable() { toggle.Enable(); expand.Enable(); cancel.Enable(); }
-        private void OnDisable()
-        {
-            toggle.Disable(); expand.Disable(); cancel.Disable();
-            SetExpansionMode(false);
-        }
-        private void OnDestroy() { toggle.Dispose(); expand.Dispose(); cancel.Dispose(); }
+        private void Start() { if (constructionPanel != null) constructionPanel.Configure(this); }
+        private void OnEnable() { toggle.Enable(); build.Enable(); cancel.Enable(); cancelPlacement.Enable(); }
+        private void OnDisable() { toggle.Disable(); build.Disable(); cancel.Disable(); cancelPlacement.Disable(); SetExpansionMode(false); }
+        private void OnDestroy() { RestorePlacementView(); toggle.Dispose(); build.Dispose(); cancel.Dispose(); cancelPlacement.Dispose(); }
 
         public void SetExpansionMode(bool active)
         {
-            ExpansionMode = active && dungeon != null;
-            ClearHighlight();
-            message = ExpansionMode ? "바위 좌클릭: 채굴 지정 / 취소" : "B: 일꾼에게 채굴 지시";
+            RestorePlacementView();
+            if (ExpansionMode) consumedFrame = Time.frameCount;
+            ClearPreview();
+            ExpansionMode = active && isActiveAndEnabled && dungeon != null && Time.timeScale > 0 && (health == null || health.IsAlive);
+            if (ExpansionMode)
+            {
+                summoning?.SetOpen(false);
+                if (constructionPanel != null) CancelSelection();
+                openedFrame = Time.frameCount;
+                Message = constructionPanel == null ? "방은 복도 옆에, 복도는 기존 구역 옆에 배치하세요." : "항목을 선택한 뒤 위쪽 던전을 클릭하세요.";
+            }
+            if (!ExpansionMode) summoning?.SetOpen(false);
+            constructionPanel?.SetVisible(ExpansionMode);
         }
 
-        public ExpansionResult TryExpand(Vector2Int cell)
+        public void Select(ConstructionKind kind)
         {
-            if (!isActiveAndEnabled || !ExpansionMode || Time.timeScale == 0 || dungeon == null || (summoning != null && summoning.IsOpen) ||
-                (health != null && !health.IsAlive)) return ExpansionResult.Unavailable;
-            if (worker == null || worker.Dungeon != dungeon) return ExpansionResult.Unavailable;
-            if (worker.IsQueued(cell)) return worker.CancelMining(cell) ? ExpansionResult.Success : ExpansionResult.Unavailable;
-            return worker.QueueMining(cell);
+            DemolitionMode = false; summoning?.SetOpen(false); selectedItem = null; hasSelection = true; selectedKind = kind; ClearPreview();
+            if (ExpansionMode) EnterPlacementView();
         }
+        public void Select(BuildItemDefinition item)
+        {
+            DemolitionMode = false;
+            selectedItem = item; selectedKind = item.constructionKind; hasSelection = item.available;
+            Message = "위쪽 던전에서 배치할 위치를 클릭하세요.";
+            ClearPreview();
+            if (ExpansionMode && item.available && item.category == BuildCategory.Rooms) EnterPlacementView();
+        }
+        public void CancelSelection()
+        {
+            RestorePlacementView();
+            DemolitionMode = false; hasSelection = false; selectedItem = null; summoning?.SetOpen(false); ClearPreview();
+            Message = "카테고리에서 배치할 항목을 선택하세요.";
+        }
+
+        private void EnterPlacementView()
+        {
+            if (IsPlacementView) return;
+            IsPlacementView = true;
+            constructionPanel?.HideForPlacement();
+            placementCamera = worldCamera != null ? worldCamera : Camera.main;
+            if (placementCamera == null || !placementCamera.orthographic) return;
+            originalCameraSize = placementCamera.orthographicSize;
+            placementPixelCamera = placementCamera.GetComponent<UnityEngine.Rendering.Universal.PixelPerfectCamera>();
+            if (placementPixelCamera != null && placementPixelCamera.isActiveAndEnabled)
+            {
+                originalResolutionX = placementPixelCamera.refResolutionX;
+                originalResolutionY = placementPixelCamera.refResolutionY;
+                placementPixelCamera.refResolutionX = originalResolutionX * 2;
+                placementPixelCamera.refResolutionY = originalResolutionY * 2;
+            }
+            else placementPixelCamera = null;
+            placementCamera.orthographicSize = originalCameraSize * 2;
+        }
+        private void RestorePlacementView()
+        {
+            if (!IsPlacementView) return;
+            IsPlacementView = false;
+            if (placementPixelCamera != null)
+            {
+                placementPixelCamera.refResolutionX = originalResolutionX;
+                placementPixelCamera.refResolutionY = originalResolutionY;
+            }
+            if (placementCamera != null && placementCamera.orthographic) placementCamera.orthographicSize = originalCameraSize;
+            placementCamera = null; placementPixelCamera = null;
+        }
+        public void ReturnToConstructionMenu()
+        {
+            if (!ExpansionMode || !IsPlacementView) return;
+            CancelSelection();
+            consumedFrame = Time.frameCount;
+            openedFrame = Time.frameCount;
+            constructionPanel?.SetVisible(true);
+        }
+
+        public void SetDemolitionMode()
+        {
+            CancelSelection(); DemolitionMode = true; hasSelection = true;
+            Message = "좌클릭: 하수인·함정·입구 제거 / 다른 항목 선택: 파괴 종료";
+        }
+        public bool CanDemolish(Vector2Int cell) => (dungeon.Layout.HasEntrance && cell == dungeon.Layout.Entrance) || dungeon.HasTrap(cell) || dungeon.GuardAt(cell) != null;
+        public bool TryDemolish(Vector2Int cell)
+        {
+            if (!ExpansionMode || !DemolitionMode || Time.timeScale == 0 || (health != null && !health.IsAlive)) return false;
+            if (dungeon.Layout.HasEntrance && cell == dungeon.Layout.Entrance) return dungeon.RemoveEntrance();
+            var guard = dungeon.GuardAt(cell);
+            if (guard != null)
+            {
+                dungeon.UnregisterGuard(guard);
+                if (summoning == null || !summoning.RemoveGuard(guard))
+                {
+                    GetComponent<DarkLord.Player.MinionCommands>()?.Unregister(guard);
+                    guard.gameObject.SetActive(false); Destroy(guard.gameObject);
+                }
+                return true;
+            }
+            return dungeon.RemoveTrap(cell);
+        }
+
+        public ConstructionResult TryBuild(Vector2Int center)
+        {
+            if (!ExpansionMode || DemolitionMode || !hasSelection || (selectedItem != null && selectedItem.category != BuildCategory.Rooms) || !isActiveAndEnabled || dungeon == null || Time.timeScale == 0 ||
+                (health != null && !health.IsAlive) || !dungeon.isActiveAndEnabled)
+            {
+                Message = "지금은 건설할 수 없습니다.";
+                return ConstructionResult.Unavailable;
+            }
+            dungeon.Initialize();
+            var result = dungeon.Construction.TryPlan(selectedKind, center, out var section);
+            Message = ResultMessage(result);
+            if (result != ConstructionResult.Success) return result;
+            dungeon.QueueConstruction(section, selectedItem == null ? null : selectedItem.prefab);
+            Message = "건설을 예약했습니다. 타일이 순서대로 부서지며 확장됩니다.";
+            ClearPreview();
+            return result;
+        }
+
+        public ConstructionResult TryBuildCorridor(Vector2Int start, Vector2Int end)
+        {
+            if (!ExpansionMode || !hasSelection || DemolitionMode || selectedKind != ConstructionKind.Corridor ||
+                !isActiveAndEnabled || dungeon == null || !dungeon.isActiveAndEnabled || Time.timeScale == 0 ||
+                (health != null && !health.IsAlive)) return ConstructionResult.Unavailable;
+            dungeon.Initialize();
+            var result = dungeon.Construction.TryPlanCorridor(start, end, out var section);
+            Message = ResultMessage(result);
+            if (result != ConstructionResult.Success) return result;
+            dungeon.QueueConstruction(section, selectedItem == null ? null : selectedItem.prefab);
+            ClearPreview();
+            Message = "폭 3칸 복도를 예약했습니다. 시작점을 다시 드래그하면 계속 연결할 수 있습니다.";
+            return result;
+        }
+
+        // Former expansion callers now reserve a whole room/corridor footprint.
+        public ExpansionResult TryExpand(Vector2Int cell) => TryBuild(cell) == ConstructionResult.Success ? ExpansionResult.Success : ExpansionResult.Unavailable;
 
         private void Update()
         {
-            if (dungeon == null) return;
-            if (summoning != null && summoning.BlocksGameplayInput) { ClearHighlight(); return; }
-            if (Time.timeScale == 0 || (health != null && !health.IsAlive)) { ClearHighlight(); return; }
+            if (Time.timeScale == 0 || (health != null && !health.IsAlive)) { SetExpansionMode(false); return; }
             if (toggle.WasPressedThisFrame()) SetExpansionMode(!ExpansionMode);
-            if (cancel.WasPressedThisFrame()) SetExpansionMode(false);
-            if (!ExpansionMode || worldCamera == null || Mouse.current == null) return;
+            if (cancel.WasPressedThisFrame() && ExpansionMode) { SetExpansionMode(false); return; }
+            if (ExpansionMode && IsPlacementView && cancelPlacement.WasPressedThisFrame()) { ReturnToConstructionMenu(); return; }
+            if (!ExpansionMode || !hasSelection || (summoning != null && summoning.IsPlacing) || Mouse.current == null || worldCamera == null) return;
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) { ClearPreview(); return; }
             Vector2 screen = Mouse.current.position.ReadValue();
-            if (!worldCamera.pixelRect.Contains(screen) || Panel.Contains(new Vector2(screen.x, Screen.height - screen.y)) ||
-                (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()))
-            { ClearHighlight(); return; }
-            var plane = new Plane(dungeon.transform.forward, dungeon.transform.position);
-            if (!plane.Raycast(worldCamera.ScreenPointToRay(screen), out float distance)) { ClearHighlight(); return; }
-            var cell = dungeon.WorldToCell(worldCamera.ScreenPointToRay(screen).GetPoint(distance));
-            var result = worker != null && worker.Dungeon == dungeon ? worker.CanQueue(cell) : ExpansionResult.Unavailable;
-            if (expand.WasPressedThisFrame()) result = TryExpand(cell);
-            bool allowed = result == ExpansionResult.Success;
-            if (previousCell != cell || previousAllowed != allowed || expand.WasPressedThisFrame())
+            if (!worldCamera.pixelRect.Contains(screen)) { ClearPreview(); return; }
+            Ray ray = worldCamera.ScreenPointToRay(screen);
+            if (!new Plane(dungeon.transform.forward, dungeon.transform.position).Raycast(ray, out float distance)) return;
+            dungeon.Initialize();
+            var cell = dungeon.WorldToCell(ray.GetPoint(distance));
+            if (DemolitionMode)
             {
-                dungeon.Highlight(cell, allowed);
-                previousCell = cell;
-                previousAllowed = allowed;
+                bool available = CanDemolish(cell);
+                dungeon.Highlight(cell, false); previewCell = cell;
+                Message = available ? "좌클릭: 대상 제거" : "하수인·함정·입구를 선택하세요. 방과 코어는 유지됩니다.";
+                if (Time.frameCount > openedFrame && build.WasPressedThisFrame()) TryDemolish(cell);
+                return;
             }
+            if (selectedItem != null && selectedItem.category == BuildCategory.Entrances)
+            {
+                bool available = dungeon.CanPlaceEntrance(cell);
+                dungeon.Highlight(cell, available); previewCell = cell;
+                Message = available ? "좌클릭: 입구 지정 · 기존 입구는 이동됩니다." : "코어로 연결된 완성된 빈 바닥을 선택하세요.";
+                if (Time.frameCount > openedFrame && build.WasPressedThisFrame()) dungeon.TryPlaceEntrance(cell);
+                return;
+            }
+            if (selectedItem != null && selectedItem.category == BuildCategory.Traps)
+            {
+                bool canPlace = selectedItem.prefab != null && dungeon.CanPlaceTrap(cell);
+                dungeon.Highlight(cell, canPlace); previewCell = cell;
+                Message = canPlace ? "좌클릭: 함정 배치" : "완성된 빈 바닥에만 배치할 수 있습니다.";
+                if (canPlace && Time.frameCount > openedFrame && build.WasPressedThisFrame())
+                {
+                    dungeon.TryPlaceTrap(cell, selectedItem.prefab);
+                }
+                return;
+            }
+            if (selectedKind == ConstructionKind.Corridor)
+            {
+                UpdateCorridorDrag(cell);
+                return;
+            }
+            var result = dungeon.Construction.CanPlan(selectedKind, cell);
+            bool allowed = result == ConstructionResult.Success;
+            Message = ResultMessage(result);
+            if (previewCell != cell || previewAllowed != allowed)
+            {
+                dungeon.HighlightArea(DungeonConstruction.Footprint(selectedKind, cell), allowed);
+                previewCell = cell; previewAllowed = allowed;
+            }
+            if (Time.frameCount > openedFrame && build.WasPressedThisFrame()) TryBuild(cell);
+        }
+
+        private void ClearPreview()
+        {
+            if (previewCell.HasValue && dungeon != null) dungeon.Highlight(null, false);
+            previewCell = null;
+            corridorStart = null;
+        }
+
+        private void UpdateCorridorDrag(Vector2Int cell)
+        {
+            if (!corridorStart.HasValue)
+            {
+                bool allowed = dungeon.Construction.IsWalkable(cell);
+                dungeon.Highlight(cell, allowed); previewCell = cell;
+                Message = allowed ? "좌클릭을 누른 채 끝점까지 드래그하세요. 폭 3칸 복도로 연결됩니다." : "기존 방 또는 복도의 바닥에서 드래그를 시작하세요.";
+                if (allowed && Time.frameCount > openedFrame && build.WasPressedThisFrame()) corridorStart = cell;
+                return;
+            }
+            var start = corridorStart.Value;
+            var result = dungeon.Construction.CanPlanCorridor(start, cell);
+            dungeon.HighlightCells(DungeonConstruction.CorridorCells(start, cell), result == ConstructionResult.Success);
+            previewCell = cell;
+            Message = result == ConstructionResult.Success ? "좌클릭을 놓으면 폭 3칸 복도가 생성됩니다. 우클릭: 취소" : ResultMessage(result);
+            if (build.WasReleasedThisFrame())
+            {
+                TryBuildCorridor(start, cell);
+                ClearPreview();
+            }
+        }
+
+        private static string ResultMessage(ConstructionResult result)
+        {
             switch (result)
             {
-                case ExpansionResult.Success: message = worker.IsQueued(cell) ? "채굴을 예약했습니다. 다시 클릭하면 취소합니다." : "좌클릭: 일꾼에게 채굴 지시"; break;
-                case ExpansionResult.OutOfReach: message = "바위 바로 옆의 바닥으로 이동하세요."; break;
-                case ExpansionResult.NoAdjacentFloor: message = "기존 바닥과 연결된 바위부터 확장하세요."; break;
-                case ExpansionResult.NotRock: message = "바위만 채굴할 수 있습니다. 바닥과 기반암은 보호됩니다."; break;
-                default: message = "성 밖이거나 작업할 일꾼이 없습니다."; break;
+                case ConstructionResult.Success: return "좌클릭: 건설 예약 / B 또는 Esc: 창 닫기";
+                case ConstructionResult.OutsideMap: return "맵 경계 밖에는 건설할 수 없습니다.";
+                case ConstructionResult.Occupied: return "기존 구역이나 예약된 구역과 겹칩니다.";
+                case ConstructionResult.Disconnected: return "기존 방 또는 복도와 연결해야 합니다.";
+                case ConstructionResult.NeedsCorridor: return "방은 복도에 연결해야 합니다. 복도를 먼저 배치하세요.";
+                case ConstructionResult.TooCloseToRoom: return "방 사이에는 최소 1칸의 간격이 필요합니다. 모서리가 맞닿는 배치도 불가능합니다.";
+                default: return "지금은 건설할 수 없습니다.";
             }
-        }
-
-        private void ClearHighlight()
-        {
-            if (dungeon != null && previousCell.HasValue) dungeon.Highlight(null, false);
-            previousCell = null;
-        }
-
-        private void OnGUI()
-        {
-            if (Time.timeScale == 0) return;
-            var previousSkin = GUI.skin;
-            try { if (uiSkin != null) GUI.skin = uiSkin; DrawGui(); }
-            finally { GUI.skin = previousSkin; }
-        }
-
-        private static string WorkerStateName(WorkerState state)
-        {
-            switch (state)
-            {
-                case WorkerState.Idle: return "대기";
-                case WorkerState.Moving: return "이동 중";
-                case WorkerState.Mining: return "채굴 중";
-                case WorkerState.WaitingForPath: return "경로 대기";
-                case WorkerState.Interrupted: return "작업 중단";
-                case WorkerState.Dead: return "사망";
-                default: return "대기";
-            }
-        }
-
-        private void DrawGui()
-        {
-            if (summoning != null && summoning.IsOpen) return;
-            if (dungeon == null || dungeon.Layout == null) return;
-            GUI.Box(Panel, ExpansionMode ? "성 확장  [B / Esc: 닫기]" : "성 관리  [B: 확장]");
-            GUI.Label(new Rect(24, 38, 376, 24), message);
-            if (previousCount != dungeon.Layout.ExpandedCells)
-            {
-                previousCount = dungeon.Layout.ExpandedCells;
-                counter = "확장한 칸: " + previousCount + "  |  WASD: 이동";
-            }
-            GUI.Label(new Rect(24, 62, 376, 22), counter);
-            GUI.Label(new Rect(24, 84, 416, 22), worker != null ? "일꾼: " + WorkerStateName(worker.State) + " | 작업: " + worker.PendingCount + " | " + Mathf.RoundToInt(worker.WorkProgress * 100) + "%" : "일꾼이 없습니다");
-            GUI.Label(new Rect(24, 106, 416, 22), "노랑: 예약 / 청록: 채굴 중 / 다시 클릭: 취소");
         }
     }
 }

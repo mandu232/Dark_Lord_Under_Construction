@@ -38,9 +38,28 @@ namespace DarkLord.UI
 
         private void Start()
         {
+            var bindings = settingsPanel.GetComponent<SettingsPanelBindings>();
+            if (bindings != null) bindings.Bind(this);
             saved = GameSettings.Load();
             saved.Apply();
             Show(isTitleScene ? ScreenState.Main : ScreenState.Playing);
+        }
+
+        internal void BindSettingsControls(SettingsPanelBindings view)
+        {
+            cancelButton = view.CancelButton;
+            volumeSlider = view.VolumeSlider;
+            characterVolumeSlider = view.CharacterVolumeSlider;
+            musicVolumeSlider = view.MusicVolumeSlider;
+            effectsVolumeSlider = view.EffectsVolumeSlider;
+            volumeLabel = view.VolumeLabel;
+            characterVolumeLabel = view.CharacterVolumeLabel;
+            musicVolumeLabel = view.MusicVolumeLabel;
+            effectsVolumeLabel = view.EffectsVolumeLabel;
+            fullscreenLabel = view.FullscreenLabel;
+            qualityLabel = view.QualityLabel;
+            vsyncLabel = view.VsyncLabel;
+            languageLabel = view.LanguageLabel;
         }
 
         private void LateUpdate()
@@ -50,6 +69,7 @@ namespace DarkLord.UI
             {
                 case ScreenState.Playing:
                     if (summoning != null && summoning.BlocksGameplayInput) return;
+                    if (expansion != null && expansion.BlocksGameplayInput) return;
                     PauseGame();
                     break;
                 case ScreenState.Pause: StartGame(); break;

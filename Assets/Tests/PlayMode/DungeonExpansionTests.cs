@@ -139,16 +139,14 @@ namespace DarkLord.Tests
         }
 
         [Test]
-        public void ExpansionRequiresModeAndLivingUnpausedWorker()
+        public void ExpansionRequiresModeAndLivingUnpausedPlayer()
         {
             var grid = CreateGrid();
-            var next = grid.Layout.Core + Vector2Int.right * 4;
+            var next = grid.Layout.Core + Vector2Int.right * 6;
             var worker = CreateWorker(grid.CellCenter(next + Vector2Int.left));
             var input = worker.gameObject.AddComponent<DungeonExpansion>();
             typeof(DungeonExpansion).GetField("dungeon", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(input, grid);
-            var miner = CreateWorker(grid.CellCenter(grid.Layout.Core)).gameObject.AddComponent<WorkerMiner>();
-            miner.Configure(grid);
-            typeof(DungeonExpansion).GetField("worker", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(input, miner);
+            input.Select(ConstructionKind.HorizontalCorridor);
             Assert.That(input.TryExpand(next), Is.EqualTo(ExpansionResult.Unavailable));
             input.SetExpansionMode(true);
             Time.timeScale = 0;
@@ -159,13 +157,13 @@ namespace DarkLord.Tests
             worker.GetComponent<ActorHealth>().Configure(Faction.Dungeon, 100);
             Assert.That(input.TryExpand(next), Is.EqualTo(ExpansionResult.Success));
             Assert.IsFalse(grid.Layout.IsFloor(next), "Player click must not directly destroy rock.");
-            Assert.IsTrue(miner.IsQueued(next));
+            Assert.That(grid.RemainingConstructionTiles, Is.GreaterThan(0));
             input.enabled = false;
             Assert.IsFalse(input.ExpansionMode);
         }
 
         [UnityTest]
-        public IEnumerator KeyboardAndMouseQueueMiningAndEscapeKeepsJob()
+        public IEnumerator KeyboardAndMouseQueueCorridorAndEscapeKeepsConstruction()
         {
             originalSettings = InputSystem.settings;
             originalSettingsFlags = originalSettings.hideFlags;
@@ -179,7 +177,7 @@ namespace DarkLord.Tests
             keyboard = InputSystem.AddDevice<Keyboard>();
             mouse = InputSystem.AddDevice<Mouse>();
             var grid = CreateGrid();
-            var next = grid.Layout.Core + Vector2Int.right * 4;
+            var next = grid.Layout.Core + Vector2Int.right * 6;
             var worker = CreateWorker(grid.CellCenter(next + Vector2Int.left));
             var cameraObject = new GameObject("Test dungeon camera");
             objects.Add(cameraObject);
@@ -190,9 +188,7 @@ namespace DarkLord.Tests
             var input = worker.gameObject.AddComponent<DungeonExpansion>();
             typeof(DungeonExpansion).GetField("dungeon", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(input, grid);
             typeof(DungeonExpansion).GetField("worldCamera", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(input, camera);
-            var miner = CreateWorker(grid.CellCenter(grid.Layout.Core)).gameObject.AddComponent<WorkerMiner>();
-            miner.Configure(grid);
-            typeof(DungeonExpansion).GetField("worker", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(input, miner);
+            input.Select(ConstructionKind.HorizontalCorridor);
             InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.B));
             yield return null;
             yield return null;
@@ -202,13 +198,13 @@ namespace DarkLord.Tests
             yield return null;
             yield return null;
             Assert.IsFalse(grid.Layout.IsFloor(next));
-            Assert.That(miner.PendingCount, Is.EqualTo(1));
+            Assert.That(grid.RemainingConstructionTiles, Is.InRange(1, 15));
             InputSystem.QueueStateEvent(mouse, new MouseState());
             InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.Escape));
             yield return null;
             yield return null;
             Assert.IsFalse(input.ExpansionMode);
-            Assert.IsTrue(miner.IsQueued(next));
+            Assert.That(grid.RemainingConstructionTiles, Is.GreaterThan(0));
         }
     }
 }

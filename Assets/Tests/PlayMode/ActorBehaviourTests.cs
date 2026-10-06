@@ -155,20 +155,16 @@ namespace DarkLord.Tests
             guard.GetComponent<ActorHealth>().TakeDamage(100, enemy);
             Assert.That(guard.State, Is.EqualTo(ActorState.Die));
             guard.Defend(Vector2.one * 10);
-            guard.Rally(enemy.transform, Vector2.zero);
             yield return new WaitForFixedUpdate();
             Assert.That(guard.GetComponent<TopDownMotor>().Velocity, Is.EqualTo(Vector2.zero));
             Assert.IsFalse(guard.GetComponent<Collider2D>().enabled);
         }
 
         [UnityTest]
-        public IEnumerator RallyAndReturnPreserveDefencePost()
+        public IEnumerator ReturnPreservesDefencePost()
         {
             var guard = Actor(Vector2.zero, Faction.Dungeon, true).GetComponent<MinionController>();
-            var leader = Actor(new Vector2(2, 0), Faction.Dungeon);
-            guard.Rally(leader.transform, new Vector2(-0.7f, 0));
-            yield return new WaitForSeconds(0.65f);
-            Assert.That(guard.transform.position.x, Is.GreaterThan(0.7f));
+            guard.transform.position = new Vector2(1.3f, 0);
             guard.ReturnToPost();
             yield return new WaitForSeconds(0.65f);
             Assert.That(Vector2.Distance(guard.transform.position, Vector2.zero), Is.LessThan(0.2f));
