@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using DarkLord.Dungeon;
 using DarkLord.Player;
@@ -10,7 +11,8 @@ namespace DarkLord.UI
     {
         [SerializeField] private GameObject window, detailsWindow;
         [SerializeField] private UnityEngine.UI.Button openButton, closeButton, roomsTab, minionsTab, trapsTab, entrancesTab, demolitionButton;
-        [SerializeField] private TMP_Text statusText, selectionText, progressText, detailTitle, detailText;
+        [SerializeField] private UnityEngine.UI.Button buildingsTab;
+        [SerializeField] private TMP_Text statusText, selectionText, detailTitle, detailText;
         [SerializeField] private UnityEngine.UI.Image detailIcon;
         [SerializeField] private Transform itemsRoot;
         [SerializeField] private BuildItemButton itemTemplate;
@@ -21,17 +23,118 @@ namespace DarkLord.UI
         private BuildItemDefinition selected;
         private BuildCategory category;
         private float nextRefresh;
+        [SerializeField, Min(0)] private float openingDuration = 0.28f;
+        private RectTransform windowRect;
+        private Vector2 restingPosition;
+        private CanvasGroup detailsGroup;
+        private Coroutine opening;
+
+        private void InitializePresentation()
+        {
+            if (windowRect != null || window == null) return;
+            windowRect = window.GetComponent<RectTransform>();
+            restingPosition = windowRect.anchoredPosition;
+            if (detailsWindow != null)
+            {
+                detailsGroup = detailsWindow.GetComponent<CanvasGroup>();
+                if (detailsGroup == null) detailsGroup = detailsWindow.AddComponent<CanvasGroup>();
+            }
+        }
+
+        [SerializeField, Min(0)] private float closingDuration = 0.22f;
+        [SerializeField] private GameObject demolitionOverlay;
+        private CanvasGroup windowGroup;
+        private float visibility;
+        private bool requestedVisible;
+
+        private void AnimateVisibility(bool visible, bool immediate = false)
+        {
+            InitializePresentation();
+            if (windowRect == null) return;
+            if (windowGroup == null)
+            {
+                windowGroup = window.GetComponent<CanvasGroup>();
+                if (windowGroup == null) windowGroup = window.AddComponent<CanvasGroup>();
+            }
+            if (!immediate && requestedVisible == visible && (opening != null || window.activeSelf == visible)) return;
+            requestedVisible = visible;
+            if (opening != null) StopCoroutine(opening);
+            opening = null;
+            windowGroup.blocksRaycasts = visible;
+            windowGroup.interactable = visible;
+            if (detailsGroup != null) { detailsGroup.blocksRaycasts = visible; detailsGroup.interactable = visible; }
+            if (visible && !window.activeSelf) visibility = 0;
+            if (immediate || !isActiveAndEnabled || (visible ? openingDuration : closingDuration) <= 0)
+            {
+                FinishVisibility(visible);
+                return;
+            }
+            window.SetActive(true);
+            if (detailsWindow != null) detailsWindow.SetActive(visible && selected != null);
+            opening = StartCoroutine(AnimateTo(visible));
+        }
+
+        private IEnumerator AnimateTo(bool visible)
+        {
+            Canvas.ForceUpdateCanvases();
+            float start = visibility, end = visible ? 1 : 0;
+            float duration = (visible ? openingDuration : closingDuration) * Mathf.Abs(end - start);
+            float distance = windowRect.rect.height + Mathf.Max(0, restingPosition.y) + 8;
+            for (float elapsed = 0; elapsed < duration; elapsed += Time.unscaledDeltaTime)
+            {
+                float t = 1 - Mathf.Pow(1 - elapsed / duration, 3);
+                visibility = Mathf.Lerp(start, end, t);
+                windowRect.anchoredPosition = restingPosition + Vector2.down * (distance * (1 - visibility));
+                if (detailsGroup != null) detailsGroup.alpha = visibility;
+                yield return null;
+            }
+            FinishVisibility(visible);
+            opening = null;
+        }
+
+        private void FinishVisibility(bool visible)
+        {
+            visibility = visible ? 1 : 0;
+            window.SetActive(visible);
+            if (detailsWindow != null) detailsWindow.SetActive(visible && selected != null);
+            windowRect.anchoredPosition = restingPosition;
+            if (detailsGroup != null) detailsGroup.alpha = 1;
+        }
+
+        private void OnDisable()
+        {
+            if (opening != null) StopCoroutine(opening);
+            opening = null;
+            if (windowRect != null) FinishVisibility(requestedVisible);
+            if (demolitionOverlay != null) demolitionOverlay.SetActive(false);
+        }
+
+        public void ShowDemolition()
+        {
+            selected = null;
+            if (detailsWindow != null) detailsWindow.SetActive(false);
+            if (demolitionOverlay != null) demolitionOverlay.SetActive(true);
+            if (openButton != null) openButton.gameObject.SetActive(false);
+            AnimateVisibility(false);
+        }
+
+        public void ClearDemolitionPresentation()
+        {
+            if (demolitionOverlay != null) demolitionOverlay.SetActive(false);
+        }
         public BuildCategory Category => category;
         public string DetailDescription => detailText.text;
 
         private void Awake()
         {
+            InitializePresentation();
             openButton.onClick.AddListener(Toggle);
             closeButton.onClick.AddListener(Close);
             roomsTab.onClick.AddListener(Rooms);
             minionsTab.onClick.AddListener(Minions);
             trapsTab.onClick.AddListener(Traps);
             entrancesTab.onClick.AddListener(Entrances);
+            if (buildingsTab != null) buildingsTab.onClick.AddListener(Buildings);
             demolitionButton.onClick.AddListener(Demolish);
             foreach (var item in items)
             {
@@ -51,23 +154,23 @@ namespace DarkLord.UI
         }
         public void SetVisible(bool visible)
         {
-            if (window != null) window.SetActive(visible);
-            if (detailsWindow != null) detailsWindow.SetActive(visible);
+            ClearDemolitionPresentation();
             if (openButton != null) openButton.gameObject.SetActive(!visible);
-            if (visible) ShowCategory(category);
+            if (visible && !requestedVisible) ShowCategory(category);
+            AnimateVisibility(visible);
         }
         public void HideForPlacement()
         {
-            window.SetActive(false);
-            detailsWindow.SetActive(false);
+            ClearDemolitionPresentation();
+            AnimateVisibility(false, true);
             openButton.gameObject.SetActive(false);
-        }
-        private void Toggle() { if (expansion != null) expansion.SetExpansionMode(!expansion.ExpansionMode); }
+        }        private void Toggle() { if (expansion != null) expansion.SetExpansionMode(!expansion.ExpansionMode); }
         private void Close() => expansion?.SetExpansionMode(false);
         private void Rooms() => ShowCategory(BuildCategory.Rooms);
         private void Minions() => ShowCategory(BuildCategory.Minions);
         private void Traps() => ShowCategory(BuildCategory.Traps);
         private void Entrances() => ShowCategory(BuildCategory.Entrances);
+        private void Buildings() => ShowCategory(BuildCategory.Buildings);
         public void Demolish()
         {
             selected = null;
@@ -81,17 +184,18 @@ namespace DarkLord.UI
             category = value;
             selected = null;
             expansion?.CancelSelection();
-            foreach (var card in cards) card.gameObject.SetActive(card.Item.category == value);
+            foreach (var card in cards) card.gameObject.SetActive(card.Item.category == value && !card.Item.repairTool);
             roomsTab.GetComponent<UnityEngine.UI.Image>().color = TabColor(value == BuildCategory.Rooms);
             minionsTab.GetComponent<UnityEngine.UI.Image>().color = TabColor(value == BuildCategory.Minions);
             trapsTab.GetComponent<UnityEngine.UI.Image>().color = TabColor(value == BuildCategory.Traps);
             entrancesTab.GetComponent<UnityEngine.UI.Image>().color = TabColor(value == BuildCategory.Entrances);
+            if (buildingsTab != null) buildingsTab.image.color = TabColor(value == BuildCategory.Buildings);
             ShowSelectedDetails();
         }
-        private static Color TabColor(bool active) => active ? new Color32(119, 72, 104, 255) : new Color32(48, 39, 57, 255);
+        private static Color TabColor(bool active) => active ? new Color32(155, 62, 51, 255) : new Color32(70, 54, 84, 255);
         public void Choose(BuildItemDefinition item)
         {
-            if (expansion == null || !expansion.ExpansionMode) return;
+            if (expansion == null || !expansion.ExpansionMode || item == null || item.repairTool) return;
             selected = item;
             expansion.CancelSelection();
             if (item.available)
@@ -107,17 +211,22 @@ namespace DarkLord.UI
         }
         public void ShowSelectedDetails()
         {
-            if (expansion != null && expansion.DemolitionMode) { Demolish(); return; }
+            if (expansion != null && expansion.DemolitionMode) return;
             if (selected != null) { ShowDetails(selected); return; }
-            detailTitle.text = category == BuildCategory.Rooms ? "방과 복도" : category == BuildCategory.Minions ? "하수인" : category == BuildCategory.Traps ? "함정" : "입구";
-            detailText.text = "항목에 마우스를 올리면 자세한 설명이 표시됩니다.\n\n항목을 선택한 뒤 위쪽 던전에서 배치할 위치를 클릭하세요.";
+            detailTitle.text = "";
+            detailText.text = "";
+            detailIcon.sprite = null;
             detailIcon.enabled = false;
+            if (detailsWindow != null) detailsWindow.SetActive(false);
         }
         public void ShowDetails(BuildItemDefinition item)
         {
+            if (selected == null || item != selected) return;
             detailTitle.text = item.displayName;
             detailText.text = item.description + (item.available ? "" : "\n\n아직 준비 중인 항목입니다.");
-            detailIcon.sprite = item.icon; detailIcon.enabled = item.icon != null;
+            detailIcon.sprite = item.icon;
+            detailIcon.enabled = item.icon != null;
+            if (detailsWindow != null) detailsWindow.SetActive(requestedVisible && window.activeSelf);
         }
         private void Update()
         {
@@ -125,7 +234,6 @@ namespace DarkLord.UI
             nextRefresh = Time.unscaledTime + 0.1f;
             statusText.text = summoning != null && summoning.IsOpen ? summoning.Message : expansion.Message;
             selectionText.text = expansion.DemolitionMode ? "파괴 모드 · 대상을 클릭하세요" : selected == null ? "항목을 선택하세요" : "선택: " + selected.displayName;
-            progressText.text = $"건설 중 {expansion.Dungeon.Construction.PendingCount}구역 · 남은 타일 {expansion.Dungeon.RemainingConstructionTiles}칸";
         }
         private void OnDestroy()
         {
@@ -136,6 +244,10 @@ namespace DarkLord.UI
             if (trapsTab != null) trapsTab.onClick.RemoveListener(Traps);
             if (entrancesTab != null) entrancesTab.onClick.RemoveListener(Entrances);
             if (demolitionButton != null) demolitionButton.onClick.RemoveListener(Demolish);
+            if (buildingsTab != null) buildingsTab.onClick.RemoveListener(Buildings);
         }
     }
 }
+
+
+

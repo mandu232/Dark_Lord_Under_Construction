@@ -53,8 +53,8 @@ namespace DarkLord.Editor
                 largeRoom,
                 Item("Corridor", "복도", BuildCategory.Rooms, ConstructionKind.Corridor,
                     "폭 3칸 · 드래그로 연결\n\n기존 방이나 복도에서 좌클릭을 누르고 끝점까지 드래그하세요. 같은 축에서는 직선, 위치가 어긋나면 ㄱ자로 연결합니다. 놓으면 타일이 순차적으로 열립니다. 빈 곳까지 확장한 뒤 방을 붙일 수도 있습니다.\n\n우클릭: 취소", Design("CorridorTileDesign", 1, 1), 1),
-                Item("Guard", "호위병", BuildCategory.Minions, ConstructionKind.Room,
-                    "최대 4명 · 주인공 주변 3칸\n\n빈 바닥을 클릭해 소환합니다. 방을 지키며 침입한 용사와 전투합니다. 전투 중에도 원래 배치 자리는 예약됩니다.\n\nE: 복귀\n우클릭: 배치 취소", null, 3),
+                Item("Guard", "혈액 슬라임", BuildCategory.Minions, ConstructionKind.Room,
+                    "일반 방 2명 · 큰 방 4명 · 주인공 주변 3칸\n\n빈 바닥을 클릭해 소환합니다. 방을 지키며 침입한 용사와 전투합니다. 전투 중에도 원래 배치 자리는 예약됩니다.\n\nE: 복귀\n우클릭: 배치 취소", null, 3),
                 spike, entrance
             };
             var owner = Ui("Construction UI", hud.transform); Stretch(owner.GetComponent<RectTransform>(), 0);
@@ -98,18 +98,18 @@ namespace DarkLord.Editor
             detailText.alignment = TextAlignmentOptions.TopLeft;
             var selection = Label(window.transform, font, "Selection", "항목을 선택하세요", 17, 210, 222, 650, 28);
             var status = Label(window.transform, font, "Status", "항목을 선택한 뒤 던전을 클릭하세요.", 17, 210, 266, 1200, 28);
-            var progress = Label(window.transform, font, "Progress", "건설 중 0구역 · 남은 타일 0칸", 15, 20, 306, 1400, 24);
             var open = Button(owner.transform, font, "Open Construction", "[B] 던전 설계", 0, 0, 190, 44);
             Rect(open.GetComponent<RectTransform>(), Vector2.zero, new Vector2(24, 46), new Vector2(190, 44));
             var view = owner.GetComponent<ConstructionPanel>() ?? owner.AddComponent<ConstructionPanel>();
             Set(view, "window", window); Set(view, "openButton", open); Set(view, "closeButton", close);
             Set(view, "roomsTab", rooms); Set(view, "minionsTab", minions); Set(view, "trapsTab", traps); Set(view, "entrancesTab", entrances); Set(view, "demolitionButton", demolition); Set(view, "detailsWindow", detail);
-            Set(view, "selectionText", selection); Set(view, "statusText", status); Set(view, "progressText", progress);
+            Set(view, "selectionText", selection); Set(view, "statusText", status);
             Set(view, "detailTitle", detailTitle); Set(view, "detailText", detailText); Set(view, "detailIcon", detailIcon);
             Set(view, "itemsRoot", items.transform); Set(view, "itemTemplate", card);
             var data = new SerializedObject(view); var list = data.FindProperty("items"); list.arraySize = definitions.Length;
             for (int i = 0; i < definitions.Length; i++) list.GetArrayElementAtIndex(i).objectReferenceValue = definitions[i];
             data.ApplyModifiedPropertiesWithoutUndo(); Set(expansion, "constructionPanel", view);
+            ApplyDesign(owner);
             Set(expansion.Dungeon != null ? expansion.Dungeon : Object.FindFirstObjectByType<DungeonGrid>(), "initialRoomPrefab", largeRoom.prefab);
             var grid = expansion.Dungeon != null ? expansion.Dungeon : Object.FindFirstObjectByType<DungeonGrid>();
             Set(grid, "initialCorridorPrefab", Design("HorizontalCorridorDesign", 5, 3)); Set(grid, "entrancePrefab", entrance.prefab);
@@ -216,6 +216,43 @@ namespace DarkLord.Editor
             var text = Label(go.transform, font, "Label", value, 19, 0, 0, width, height);
             text.alignment = TextAlignmentOptions.Center; Stretch(text.rectTransform, 4);
             return go.GetComponent<UnityEngine.UI.Button>();
+        }
+        // Restyle in place: authored item assets and gameplay bindings are preserved.
+        public static void ApplyDesign(GameObject owner)
+        {
+            var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(IconFolder + "/ConstructionFrame.png");
+            if (sprite == null) throw new System.InvalidOperationException("Construction frame sprite is missing.");
+            var window = owner.transform.Find("Construction Window");
+            var rect = window.GetComponent<RectTransform>();
+            rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.right; rect.pivot = new Vector2(0.5f, 0);
+            rect.offsetMin = Vector2.zero; rect.offsetMax = new Vector2(0, 312);
+            var frame = window.GetComponent<UnityEngine.UI.Image>();
+            frame.sprite = sprite; frame.type = UnityEngine.UI.Image.Type.Sliced;
+            frame.color = Color.white; frame.pixelsPerUnitMultiplier = 0.25f;
+            var settings = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/SettingsPanel.prefab");
+            var normal = settings.transform.Find("Actions/Cancel").GetComponent<UnityEngine.UI.Button>();
+            var primary = settings.transform.Find("Actions/Apply").GetComponent<UnityEngine.UI.Button>();
+            var category = settings.GetComponentInChildren<SettingsPanelView>(true);
+            var categoryButton = category.transform.Find("Category 0").GetComponent<UnityEngine.UI.Button>();
+            foreach (var button in owner.GetComponentsInChildren<UnityEngine.UI.Button>(true))
+            {
+                bool tab = button == window.Find("Rooms Tab").GetComponent<UnityEngine.UI.Button>() ||
+                    button == window.Find("Minions Tab").GetComponent<UnityEngine.UI.Button>() ||
+                    button == window.Find("Traps Tab").GetComponent<UnityEngine.UI.Button>() ||
+                    button == window.Find("Entrances Tab").GetComponent<UnityEngine.UI.Button>();
+                var reference = tab ? categoryButton : button.name == "Demolition" ? primary : normal;
+                var colors = reference.colors; colors.normalColor = Color.white;
+                button.colors = colors;
+                button.image.color = reference.image.color;
+            }
+            window.Find("Rooms Tab").GetComponent<UnityEngine.UI.Image>().color = new Color32(155, 62, 51, 255);
+            string[] tabs = { "Rooms Tab", "Minions Tab", "Traps Tab", "Entrances Tab" };
+            for (int i = 0; i < tabs.Length; i++)
+                Rect(window.Find(tabs[i]).GetComponent<RectTransform>(), Vector2.up, new Vector2(20, -68 - i * 52), new Vector2(162, 44));
+            var status = window.Find("Status").GetComponent<RectTransform>();
+            status.anchoredPosition = new Vector2(210, -254); status.sizeDelta = new Vector2(1200, 24);
+            var detailImage = owner.transform.Find("Details").GetComponent<UnityEngine.UI.Image>();
+            detailImage.color = new Color32(46, 34, 47, 255);
         }
         private static void Set(Object owner, string field, Object value)
         { var data = new SerializedObject(owner); data.FindProperty(field).objectReferenceValue = value; data.ApplyModifiedPropertiesWithoutUndo(); }

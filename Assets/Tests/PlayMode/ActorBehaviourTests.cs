@@ -50,6 +50,38 @@ namespace DarkLord.Tests
         }
 
         [UnityTest]
+        public IEnumerator GuardPoliciesDistinguishDetectionRadiusFromAssignedRoom()
+        {
+            var root = new GameObject("AI policy dungeon"); objects.Add(root); root.transform.position = new Vector3(400, 400, 0);
+            var dungeon = root.AddComponent<DarkLord.Dungeon.DungeonGrid>();
+            var post = dungeon.Layout.Core + Vector2Int.left * 2;
+            var guard = Actor(dungeon.CellCenter(post), Faction.Dungeon, true).GetComponent<MinionController>();
+            dungeon.RegisterGuard(guard);
+            var enemy = Actor(dungeon.CellCenter(dungeon.Layout.Core + Vector2Int.right * 2), Faction.Invader).GetComponent<ActorHealth>();
+            Assert.AreEqual(MinionBehaviour.Defensive, guard.Behaviour);
+            yield return new WaitForSeconds(.25f);
+            Assert.IsNull(guard.Target, "Defensive guards ignore enemies beyond their post's detection radius.");
+            guard.SetBehaviour(MinionBehaviour.Aggressive);
+            yield return new WaitForSeconds(.25f);
+            Assert.AreSame(enemy, guard.Target, "Aggressive guards detect the entire assigned room.");
+            guard.SetBehaviour(MinionBehaviour.Defensive);
+            Assert.IsNull(guard.Target, "Switching policy discards the previous target immediately.");
+            yield return new WaitForSeconds(.25f); Assert.IsNull(guard.Target);
+            var nearby = dungeon.CellCenter(post + Vector2Int.right);
+            enemy.GetComponent<Rigidbody2D>().position = nearby; enemy.transform.position = nearby;
+            Physics2D.SyncTransforms(); yield return new WaitForSeconds(.25f);
+            Assert.AreSame(enemy, guard.Target, "Defensive guards attack enemies inside their post radius.");
+            guard.SetBehaviour(MinionBehaviour.Aggressive);
+            var outside = dungeon.CellCenter(dungeon.Layout.Core + Vector2Int.right * 4);
+            enemy.GetComponent<Rigidbody2D>().position = outside; enemy.transform.position = outside;
+            Physics2D.SyncTransforms(); yield return new WaitForSeconds(.25f);
+            Assert.IsNull(guard.Target, "Aggressive guards do not chase into another room or corridor.");
+            Assert.AreEqual((Vector2)dungeon.CellCenter(post), guard.GuardPosition);
+            guard.Relocate(dungeon.CellCenter(dungeon.Layout.Core + Vector2Int.down));
+            Assert.AreEqual(MinionBehaviour.Aggressive, guard.Behaviour, "Relocation preserves the selected policy.");
+        }
+
+        [UnityTest]
         public IEnumerator PlayerUsesProjectMoveActionAndStopsWhenReleased()
         {
             Assert.IsNotNull(InputSystem.actions, "Project-wide input action asset must be assigned.");

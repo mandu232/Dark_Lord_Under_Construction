@@ -53,9 +53,70 @@ namespace DarkLord.Editor
             Set(so, "statsText", stats); Set(so, "closeButton", close.GetComponent<Button>());
             Set(so, "outlineShader", Shader.Find("DarkLord/SpriteHoverOutline"));
             so.ApplyModifiedPropertiesWithoutUndo();
+            AddRelocationControls(panel);
+            AddBehaviourControls(panel);
+            InspectionPanelStyleSetup.Apply(panel);
             window.SetActive(false);
             EditorSceneManager.MarkSceneDirty(scene);
         }
+        public static void AddRelocationControls(MinionInspectionPanel panel)
+        {
+            var data = new SerializedObject(panel);
+            var window = (GameObject)data.FindProperty("window").objectReferenceValue;
+            if (window == null) return;
+            var rect = window.GetComponent<RectTransform>();
+            rect.sizeDelta = new Vector2(rect.sizeDelta.x, Mathf.Max(rect.sizeDelta.y, 520));
+            var stats = (TMP_Text)data.FindProperty("statsText").objectReferenceValue;
+            stats.rectTransform.sizeDelta = new Vector2(stats.rectTransform.sizeDelta.x, 340);
+            var existing = window.transform.Find("Relocate");
+            UnityEngine.UI.Button button;
+            if (existing == null)
+            {
+                var close = (UnityEngine.UI.Button)data.FindProperty("closeButton").objectReferenceValue;
+                button = Object.Instantiate(close, window.transform);
+                button.name = "Relocate";
+                button.onClick = new UnityEngine.UI.Button.ButtonClickedEvent();
+                var br = button.GetComponent<RectTransform>();
+                br.anchorMin = br.anchorMax = new Vector2(0.5f, 0); br.pivot = new Vector2(0.5f, 0);
+                br.anchoredPosition = new Vector2(0, 20); br.sizeDelta = new Vector2(352, 52);
+                var label = button.GetComponentInChildren<TMP_Text>();
+                label.text = "재배치";
+                label.rectTransform.anchorMin = Vector2.zero; label.rectTransform.anchorMax = Vector2.one;
+                label.rectTransform.offsetMin = label.rectTransform.offsetMax = Vector2.zero;
+            }
+            else button = existing.GetComponent<UnityEngine.UI.Button>();
+            Set(data, "relocateButton", button);
+            var hintTransform = panel.transform.Find("Placement Hint");
+            TMP_Text hint = hintTransform != null ? hintTransform.GetComponent<TMP_Text>() : Label(panel.transform, "Placement Hint", Vector2.zero, new Vector2(960, 64), 24);
+            hint.rectTransform.anchorMin = hint.rectTransform.anchorMax = hint.rectTransform.pivot = new Vector2(0.5f, 0);
+            hint.rectTransform.anchoredPosition = new Vector2(0, 40);
+            hint.alignment = TextAlignmentOptions.Center;
+            hint.gameObject.SetActive(false);
+            Set(data, "placementHint", hint);
+            data.ApplyModifiedPropertiesWithoutUndo();
+            EditorSceneManager.MarkSceneDirty(panel.gameObject.scene);
+        }
+
+        public static void AddBehaviourControls(MinionInspectionPanel panel)
+        {
+            var data = new SerializedObject(panel);
+            var window = (GameObject)data.FindProperty("window").objectReferenceValue;
+            var rect = window.GetComponent<RectTransform>(); rect.sizeDelta = new Vector2(rect.sizeDelta.x, Mathf.Max(rect.sizeDelta.y, 600));
+            var template = (UnityEngine.UI.Button)data.FindProperty("relocateButton").objectReferenceValue;
+            string[] names = { "Aggressive", "Defensive" }, labels = { "공격적", "수비적" }, fields = { "aggressiveButton", "defensiveButton" };
+            for (int i = 0; i < 2; i++)
+            {
+                var existing = window.transform.Find(names[i]);
+                var button = existing != null ? existing.GetComponent<UnityEngine.UI.Button>() : Object.Instantiate(template, window.transform);
+                button.name = names[i]; button.onClick = new UnityEngine.UI.Button.ButtonClickedEvent();
+                var br = button.GetComponent<RectTransform>(); br.anchorMin = br.anchorMax = new Vector2(0.5f, 0); br.pivot = new Vector2(0.5f, 0);
+                br.anchoredPosition = new Vector2(i == 0 ? -90 : 90, 92); br.sizeDelta = new Vector2(172, 44);
+                var label = button.GetComponentInChildren<TMP_Text>(); label.text = labels[i]; label.fontSize = 22;
+                Set(data, fields[i], button);
+            }
+            data.ApplyModifiedPropertiesWithoutUndo(); EditorSceneManager.MarkSceneDirty(panel.gameObject.scene);
+        }
+
         private static void Set(SerializedObject so, string name, Object value) => so.FindProperty(name).objectReferenceValue = value;
         private static TextMeshProUGUI Label(Transform parent, string name, Vector2 position, Vector2 size, float fontSize)
         {

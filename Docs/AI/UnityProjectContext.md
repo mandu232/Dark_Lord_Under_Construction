@@ -2,7 +2,7 @@
 
 Updated 2026-10-06. See Docs/ProjectStructure.md for asset ownership and Docs/AssetMigration.md for previous paths.
 
-- Unity 6000.6.2f1, PC single-player 2D top-down, URP Renderer2D, Input System 1.20. No multiplayer or gameplay save system.
+- Unity 6000.6.2f1, PC single-player 2D top-down, URP Renderer2D, Input System 1.20. No multiplayer. Three-slot gameplay persistence is described in Docs/SaveGames.md.
 - Build scenes: Assets/Scenes/MainMenu.unity and Assets/Scenes/SampleScene.unity. Editor Play uses the open scene. GameMenu loads these paths; pause/settings reuse Assets/Prefabs/UI/SettingsPanel.prefab. Settings persist only on Apply & Save.
 - Assets are organized into Art, Animations, Prefabs, Data, Materials. Scripts have DarkLord.Runtime assembly; Editor setup tools and PlayMode tests remain separate. Do not regenerate scene UI or authored animation assets merely to repair references.
 - Player uses Assets/Animations/Player/PlayerDirectional.controller. Original Legacy Red actions are in Animations/Player/Source; textures in Art/Characters/Player/LegacyRed. Float Speed/FacingX/FacingY control movement. Preserve animator state and parameter names.
@@ -26,3 +26,6 @@ Organization validation: 162 asset GUIDs and 1,647 sprite local IDs/rects/pivots
 2026-10-06 room spacing: DungeonConstruction.CanPlan expands a room footprint by one tile and rejects overlap with any room section, including the initial core and pending rooms. Both edge/corner contact are rejected; exactly one intervening tile is allowed. Corridor connection requirements remain. TooCloseToRoom is appended to ConstructionResult and shown in placement feedback. Room/LargeRoom descriptions mention the rule.
 
 - 하수인 검사: MinionInspectionPanel이 아군 hover 흰 테두리/우클릭 우측 실시간 체력·능력치 창을 제공. 건설/배치/일시정지 입력 차단 우선. Docs/MinionInspection.md 참고.
+
+2026-10-08 resource buildings: ConstructionPanel now has a Buildings category (three production prefabs and a repair tool). DungeonBuildings extends DungeonGrid with one building per completed non-core room, reserved rubble tiles and per-clear income. ResourceBuilding uses ActorHealth plus a damage filter to keep invaders from harming it while room guards live. InvaderDungeonRoute keeps the room locked through guard clearance and building destruction. GoldMint/BloodAltar/BloodstoneExtractor use editable intact and rubble visuals. Version 1 saves optionally contain buildings with GUID, HP and last paid wave; absent arrays remain compatible. Docs/ResourceBuildings.md describes costs and yields.
+

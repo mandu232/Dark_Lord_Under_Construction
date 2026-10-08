@@ -12,7 +12,7 @@ namespace DarkLord.Gameplay
     public enum WaveState { Preparing, Active, Defeated }
 
     [DisallowMultipleComponent]
-    public sealed class WaveDirector : MonoBehaviour
+    public sealed partial class WaveDirector : MonoBehaviour
     {
         [Header("Scene references")]
         [SerializeField] private DungeonGrid dungeon;
@@ -112,6 +112,7 @@ namespace DarkLord.Gameplay
         {
             if (State != WaveState.Active || pendingSpawns > 0 || aliveInvaders.Count > 0) return;
             wallet?.Add(CurrencyType.Souls, WaveProgression.ClearReward(CurrentWave, baseSoulReward, soulRewardGrowth));
+            dungeon.PayBuildingIncome(wallet, CurrentWave);
             State = WaveState.Preparing;
             Changed?.Invoke();
         }

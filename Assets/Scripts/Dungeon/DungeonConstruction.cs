@@ -6,7 +6,7 @@ namespace DarkLord.Dungeon
     public enum ConstructionKind { Room, HorizontalCorridor, VerticalCorridor, LargeRoom, Corridor }
     public enum ConstructionResult { Success, OutsideMap, Occupied, Disconnected, NeedsCorridor, Unavailable, TooCloseToRoom }
 
-    public sealed class DungeonSection
+    public sealed partial class DungeonSection
     {
         public ConstructionKind Kind { get; }
         public RectInt Bounds { get; }
@@ -28,7 +28,7 @@ namespace DarkLord.Dungeon
     }
 
     // A planned footprint reserves its cells; DungeonGrid opens the queued rock.
-    public sealed class DungeonConstruction
+    public sealed partial class DungeonConstruction
     {
         private readonly DungeonLayout layout;
         private readonly List<DungeonSection> sections = new List<DungeonSection>();

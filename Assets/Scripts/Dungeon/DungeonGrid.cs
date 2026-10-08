@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace DarkLord.Dungeon
 {
     [DisallowMultipleComponent, RequireComponent(typeof(Grid))]
-    public sealed class DungeonGrid : MonoBehaviour
+    public sealed partial class DungeonGrid : MonoBehaviour
     {
         // Sprites remain at 16 PPU: a 32px tile occupies two world units.
         public const float CellSize = 2f;
@@ -55,7 +55,7 @@ namespace DarkLord.Dungeon
             foreach (var section in Construction.Sections)
             {
                 var prefab = section.IsCore ? initialRoomPrefab : initialCorridorPrefab;
-                if (prefab == null) continue;
+                if (prefab == null || UsesArtTiles) continue;
                 var design = Instantiate(prefab, CellCenter(section.Center), transform.rotation, generated.transform);
                 if (!section.IsCore) design.transform.localScale = new Vector3(section.Bounds.width / 5f, 1, 1);
                 design.name = "Initial " + prefab.name;
@@ -100,6 +100,7 @@ namespace DarkLord.Dungeon
             if (breakingCell == cell) return new Color(1f, 0.92f, 0.68f);
             if (Layout.GetCell(cell) == DungeonCell.Rock && miningMarks.TryGetValue(cell, out float progress))
                 return Color.Lerp(new Color(0.95f, 0.65f, 0.12f), new Color(0.2f, 0.85f, 0.9f), progress);
+            if (UsesArtTiles) return Color.clear;
             if (cell == Layout.Core) return new Color(0.60f, 0.28f, 0.78f);
             if (Layout.HasEntrance && cell == Layout.Entrance) return new Color(0.25f, 0.65f, 0.85f);
             switch (Layout.GetCell(cell))
@@ -151,13 +152,15 @@ namespace DarkLord.Dungeon
             generated.AddComponent<MeshFilter>().sharedMesh = mesh;
             var renderer = generated.AddComponent<MeshRenderer>();
             renderer.sharedMaterial = previewMaterial;
-            renderer.sortingOrder = short.MinValue;
+            renderer.sortingOrder = UsesArtTiles ? -31000 : short.MinValue;
             renderer.shadowCastingMode = ShadowCastingMode.Off;
             renderer.receiveShadows = false;
+            BuildArtTiles();
         }
 
         private void Paint(int index, Color color)
         {
+            if (UsesArtTiles && color.a > 0) color.a = 0.42f;
             for (int i = 0; i < 4; i++) colors[index * 4 + i] = color;
         }
 
@@ -179,7 +182,7 @@ namespace DarkLord.Dungeon
             if (section != null && section.IsComplete && sectionPrefabs.TryGetValue(section, out var prefab))
             {
                 sectionPrefabs.Remove(section);
-                if (prefab != null)
+                if (prefab != null && !UsesArtTiles)
                 {
                     if (section.Kind == ConstructionKind.Corridor)
                     {
@@ -194,6 +197,8 @@ namespace DarkLord.Dungeon
                     }
                 }
             }
+            RefreshArtTile(cell);
+            if (section != null && section.IsComplete) foreach (var part in section.Cells) RefreshArtTile(part);
             var collider = blockers[cell.x, cell.y];
             if (collider != null) collider.enabled = false;
             Paint(cell.y * Layout.Width + cell.x, CellColor(cell));
@@ -213,6 +218,7 @@ namespace DarkLord.Dungeon
         public void QueueConstruction(DungeonSection section, GameObject prefab = null)
         {
             Initialize();
+            savedDesigns[section] = prefab;
             if (prefab != null) sectionPrefabs[section] = prefab;
             foreach (var cell in section.Cells)
                 if (Layout.GetCell(cell) == DungeonCell.Rock && !constructionTiles.Contains(cell))
@@ -330,7 +336,7 @@ namespace DarkLord.Dungeon
         public bool HasTrap(Vector2Int cell) => traps.TryGetValue(cell, out var trap) && trap != null && trap.activeSelf;
         private bool EmptyFloor(Vector2Int cell)
         {
-            if (!Construction.IsWalkable(cell) || cell == Layout.Core || HasTrap(cell) || GuardPostAt(cell) != null) return false;
+            if (!Construction.IsWalkable(cell) || cell == Layout.Core || BuildingAt(cell) != null || HasTrap(cell) || GuardPostAt(cell) != null) return false;
             Physics2D.SyncTransforms();
             var hits = Physics2D.OverlapCircleAll(CellCenter(cell), 0.65f);
             foreach (var hit in hits) if (hit.GetComponentInParent<ActorHealth>() != null) return false;
@@ -362,12 +368,13 @@ namespace DarkLord.Dungeon
         {
             if (!isActiveAndEnabled || Time.timeScale == 0 || prefab == null || !CanPlaceTrap(cell)) return false;
             traps[cell] = Instantiate(prefab, CellCenter(cell), transform.rotation, generated.transform);
+            savedTrapDesigns[cell] = prefab;
             return true;
         }
         public bool RemoveTrap(Vector2Int cell)
         {
             if (!HasTrap(cell)) return false;
-            var trap = traps[cell]; traps.Remove(cell); trap.SetActive(false); Destroy(trap); return true;
+            var trap = traps[cell]; traps.Remove(cell); savedTrapDesigns.Remove(cell); trap.SetActive(false); Destroy(trap); return true;
         }
         public DarkLord.Minions.MinionController GuardAt(Vector2Int cell)
         {
@@ -406,3 +413,4 @@ namespace DarkLord.Dungeon
         }
     }
 }
+

@@ -63,6 +63,13 @@ namespace DarkLord.Player
             darkCrystals = Mathf.Max(0, darkCrystals);
         }
 
+        public void RestoreAmounts(int savedGold, int savedSouls, int savedCrystals)
+        {
+            SetAmount(CurrencyType.Gold, savedGold);
+            SetAmount(CurrencyType.Souls, savedSouls);
+            SetAmount(CurrencyType.DarkCrystals, savedCrystals);
+        }
+
         private void SetAmount(CurrencyType currency, int amount)
         {
             amount = Mathf.Max(0, amount);

@@ -122,7 +122,7 @@ namespace DarkLord.Editor
         private static void StyleMenu(Transform menu, Transform reference)
         {
             var settings = menu.Find("Settings Screen");
-            Frame(settings, reference.GetComponent<UnityEngine.UI.Image>().sprite, .2f);
+            Frame(settings, reference.GetComponent<UnityEngine.UI.Image>().sprite, .25f);
             settings.GetComponent<RectTransform>().sizeDelta = reference.GetComponent<RectTransform>().sizeDelta;
             foreach (Transform child in settings)
             {
@@ -141,7 +141,7 @@ namespace DarkLord.Editor
             {
                 var panel = menu.Find(name);
                 if (panel == null) continue;
-                Frame(panel, reference.GetComponent<UnityEngine.UI.Image>().sprite, .5f);
+                Frame(panel, reference.GetComponent<UnityEngine.UI.Image>().sprite, .25f);
                 var rule = panel.Find("Top Rule"); if (rule != null) rule.gameObject.SetActive(false);
                 var eyebrow = panel.Find("Eyebrow"); if (eyebrow != null) eyebrow.gameObject.SetActive(false);
                 var title = panel.Find("Title").GetComponent<TMP_Text>();

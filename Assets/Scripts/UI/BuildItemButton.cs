@@ -19,9 +19,10 @@ namespace DarkLord.UI
             GetComponent<UnityEngine.UI.Button>().onClick.AddListener(Choose);
         }
         private void Choose() => panel.Choose(Item);
-        public void OnPointerEnter(PointerEventData data) => panel.ShowDetails(Item);
-        public void OnSelect(BaseEventData data) => panel.ShowDetails(Item);
+        public void OnPointerEnter(PointerEventData data) => panel.ShowSelectedDetails();
+        public void OnSelect(BaseEventData data) => panel.ShowSelectedDetails();
         public void OnPointerExit(PointerEventData data) => panel.ShowSelectedDetails();
         private void OnDestroy() { GetComponent<UnityEngine.UI.Button>().onClick.RemoveListener(Choose); }
     }
 }
+

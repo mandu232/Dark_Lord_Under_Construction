@@ -1,3 +1,4 @@
+using DarkLord.Persistence;
 using DarkLord.Dungeon;
 using DarkLord.Player;
 using TMPro;
@@ -11,7 +12,7 @@ namespace DarkLord.UI
     [DisallowMultipleComponent]
     public sealed class GameMenu : MonoBehaviour
     {
-        public enum ScreenState { Main, Playing, Pause, Settings, Quit }
+        public enum ScreenState { Main, Playing, Pause, Settings, Quit, Slots }
 
         [SerializeField] private bool isTitleScene;
         [SerializeField] private string gameplayScene = "Assets/Scenes/SampleScene.unity";
@@ -27,6 +28,14 @@ namespace DarkLord.UI
         [SerializeField] private MinionSummoning summoning;
         [SerializeField] private DungeonExpansion expansion;
 
+        [SerializeField] private SaveSlotPanel slotPanel;
+        [SerializeField] private GameSaveSession saveSession;
+        [SerializeField] private UnityEngine.UI.Button continueButton;
+        [SerializeField] private TMP_Text saveStatus;
+        private SaveSlotMode slotMode;
+        private ScreenState slotReturnScreen;
+        private int selectedSlot;
+        private bool saveThenExit, confirmedExit, loadErrorShown;
         private ScreenState returnScreen = ScreenState.Main;
         private GameSettings saved, draft;
         private bool ownsPause, previousHud, previousAudioPause;
@@ -38,13 +47,60 @@ namespace DarkLord.UI
 
         private void Start()
         {
+            if (pausePanel != null) pausePanel.GetComponent<PausePanelBindings>()?.Bind(this);
             var bindings = settingsPanel.GetComponent<SettingsPanelBindings>();
             if (bindings != null) bindings.Bind(this);
+            slotPanel?.Bind(this);
+            if (isTitleScene)
+            {
+                if (startLabel != null) startLabel.text="새 게임";
+                bool any=false;
+                for(int i=0;i<3;i++) if(SaveSlotStore.Default.TryRead(i,out _,out _)) any=true;
+                if(continueButton!=null)
+                {
+                    continueButton.gameObject.SetActive(any);
+                    ArrangeTitleButtons(any);
+                }
+            }
             saved = GameSettings.Load();
             saved.Apply();
             Show(isTitleScene ? ScreenState.Main : ScreenState.Playing);
         }
 
+        // Three actions keep the original vertical placement; four use two columns.
+        private void ArrangeTitleButtons(bool hasContinue)
+        {
+            var actions = (RectTransform)startButton.transform.parent;
+            var startRect = (RectTransform)startButton.transform;
+            float spacing = Mathf.Abs(((RectTransform)continueButton.transform).anchoredPosition.y - startRect.anchoredPosition.y);
+            int index = 0;
+            if (hasContinue)
+            {
+                float buttonWidth = startRect.rect.width * startRect.localScale.x;
+                float columnSpacing = buttonWidth + 36;
+                float rowSpacing = 160;
+                float totalWidth = columnSpacing + buttonWidth;
+                float availableWidth = ((RectTransform)actions.parent).rect.width;
+                actions.anchoredPosition = new Vector2((availableWidth - totalWidth) * .5f, -520);
+                actions.sizeDelta = new Vector2(totalWidth, rowSpacing + startRect.rect.height * startRect.localScale.y);
+                foreach (Transform child in actions)
+                {
+                    if (!child.gameObject.activeSelf || child.GetComponent<UnityEngine.UI.Button>() == null) continue;
+                    ((RectTransform)child).anchoredPosition = new Vector2((index % 2) * columnSpacing, -(index / 2) * rowSpacing);
+                    index++;
+                }
+            }
+            else
+            {
+                actions.anchoredPosition -= new Vector2(0, spacing * .5f);
+                foreach (Transform child in actions)
+                {
+                    if (!child.gameObject.activeSelf || child.GetComponent<UnityEngine.UI.Button>() == null) continue;
+                    var rect = (RectTransform)child;
+                    rect.anchoredPosition = new Vector2(rect.anchoredPosition.x, -spacing * index++);
+                }
+            }
+        }
         internal void BindSettingsControls(SettingsPanelBindings view)
         {
             cancelButton = view.CancelButton;
@@ -64,6 +120,12 @@ namespace DarkLord.UI
 
         private void LateUpdate()
         {
+            if (!isTitleScene && saveSession != null && !saveSession.Ready && saveSession.Message.Length > 0 && !loadErrorShown)
+            {
+                loadErrorShown = true;
+                if (saveStatus != null) saveStatus.text = saveSession.Message;
+                PauseGame();
+            }
             if (isLoading || Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame) return;
             switch (State)
             {
@@ -75,26 +137,73 @@ namespace DarkLord.UI
                 case ScreenState.Pause: StartGame(); break;
                 case ScreenState.Settings: CancelSettings(); break;
                 case ScreenState.Quit: CancelQuit(); break;
+                case ScreenState.Slots: if(!slotPanel.CancelOverwriteIfOpen())CancelSlots(); break;
             }
         }
 
         public void StartGame()
         {
-            if (isTitleScene) LoadScene(gameplayScene);
+            if (isTitleScene) OpenSlots(SaveSlotMode.New);
             else Show(ScreenState.Playing);
         }
 
         public void PauseGame() => Show(ScreenState.Pause);
-        public void ReturnToMain()
+        public void ReturnToMain() { returnToTitle=true; RequestExit(); }
+        public void ContinueGame() => OpenSlots(SaveSlotMode.Continue);
+        public void SaveGame()
         {
-            returnToTitle = true;
-            returnScreen = ScreenState.Pause;
-            confirmationTitle.text = "메인 메뉴로 돌아갈까요?";
-            confirmationDescription.text = "현재 진행 상황은 저장되지 않습니다.\n설정은 유지됩니다.";
-            confirmationAction.text = "메인 메뉴";
+            saveThenExit=false;
+            if(GameSaveSession.ActiveSlot<0) { OpenSlots(SaveSlotMode.Save); return; }
+            SaveCurrent(GameSaveSession.ActiveSlot);
+        }
+        private bool SaveCurrent(int slot)
+        {
+            bool success=saveSession!=null && saveSession.Save(slot);
+            string message=saveSession!=null?saveSession.Message:"저장할 게임이 없습니다.";
+            if(saveStatus!=null)saveStatus.text=message;
+            slotPanel?.Error(message);
+            if(!success && State==ScreenState.Quit)confirmationDescription.text=message;
+            return success;
+        }
+        private void OpenSlots(SaveSlotMode mode)
+        { slotMode=mode;slotReturnScreen=State;slotPanel.Refresh(mode);Show(ScreenState.Slots); }
+        public void CancelSlots() {saveThenExit=false;Show(slotReturnScreen);}
+        public void SelectSlot(int slot)
+        {
+            selectedSlot=slot;
+            if(slotMode!=SaveSlotMode.Continue && SaveSlotStore.Default.Exists(slot) && (slotMode==SaveSlotMode.New || slot!=GameSaveSession.ActiveSlot))
+            {slotPanel.Overwrite(slot,slotMode==SaveSlotMode.New);return;}
+            ConfirmSlot();
+        }
+        public void ConfirmSlot()
+        {
+            if(slotMode==SaveSlotMode.New) {GameSaveSession.BeginNew(selectedSlot);LoadScene(gameplayScene);}
+            else if(slotMode==SaveSlotMode.Continue)
+            {
+                if(GameSaveSession.BeginContinue(selectedSlot,out var error))LoadScene(gameplayScene);
+                else slotPanel.Error(error);
+            }
+            else if(SaveCurrent(selectedSlot))
+            {if(saveThenExit)QuitGame();else Show(ScreenState.Pause);}
+        }
+        public void SaveAndExit()
+        {
+            saveThenExit=true;
+            if(GameSaveSession.ActiveSlot<0) {OpenSlots(SaveSlotMode.Save);return;}
+            if(SaveCurrent(GameSaveSession.ActiveSlot))QuitGame();
+        }
+        private void RequestExit()
+        {
+            if(isTitleScene || saveSession!=null && !saveSession.HasUnsavedChanges){QuitGame();return;}
+            returnScreen=ScreenState.Pause;
+            confirmationTitle.text=returnToTitle?"메인 메뉴로 돌아갈까요?":"게임을 종료할까요?";
+            confirmationDescription.text="저장하지 않은 진행 상황이 있습니다.\n저장 없이 나가면 마지막 저장 이후의 진행을 잃습니다.";
+            confirmationAction.text="저장 없이 나가기";
             Show(ScreenState.Quit);
         }
-
+        private void OnEnable() => Application.wantsToQuit+=WantsToQuit;
+        private bool WantsToQuit()
+        {if(confirmedExit || isTitleScene || saveSession!=null && !saveSession.HasUnsavedChanges)return true;returnToTitle=false;RequestExit();return false;}
         public void OpenSettings()
         {
             returnScreen = State == ScreenState.Pause ? ScreenState.Pause : ScreenState.Main;
@@ -133,12 +242,13 @@ namespace DarkLord.UI
         public void AskQuit()
         {
             returnToTitle = false;
-            QuitGame();
+            RequestExit();
         }
         public void CancelQuit() => Show(returnScreen);
         public void QuitGame()
         {
             if (returnToTitle) { LoadScene(titleScene); return; }
+            confirmedExit=true;
             ReleasePause();
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
@@ -204,12 +314,13 @@ namespace DarkLord.UI
             if (pausePanel != null) pausePanel.SetActive(state == ScreenState.Pause);
             settingsPanel.SetActive(state == ScreenState.Settings);
             if (quitPanel != null) quitPanel.SetActive(state == ScreenState.Quit);
+            if(slotPanel!=null)slotPanel.gameObject.SetActive(state==ScreenState.Slots);
             if (EventSystem.current == null) return;
             EventSystem.current.SetSelectedGameObject(null);
             if (playing) return;
-            var focus = state == ScreenState.Main ? startButton : state == ScreenState.Pause ? resumeButton :
+            var focus = state==ScreenState.Slots ? slotPanel.Focus : state == ScreenState.Main ? startButton : state == ScreenState.Pause ? resumeButton :
                 state == ScreenState.Settings ? cancelButton : keepPlayingButton;
-            EventSystem.current.SetSelectedGameObject(focus.gameObject);
+            if(focus!=null)EventSystem.current.SetSelectedGameObject(focus.gameObject);
         }
 
         private void AcquirePause()
@@ -241,6 +352,13 @@ namespace DarkLord.UI
             if (hud != null) hud.SetActive(previousHud);
         }
 
-        private void OnDisable() => ReleasePause();
+        private void OnDisable() { Application.wantsToQuit-=WantsToQuit;ReleasePause(); }
     }
 }
+
+
+
+
+
+
+

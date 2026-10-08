@@ -156,6 +156,94 @@ namespace DarkLord.Tests
         }
 
         [Test]
+        public void RelocationKeepsInstanceHealthAndUpdatesDefencePost()
+        {
+            var source = grid.Layout.Core + Vector2Int.right;
+            var destination = grid.Layout.Core + Vector2Int.up;
+            summoning.SetOpen(true); Assert.IsTrue(summoning.TrySummon(false));
+            Assert.IsTrue(summoning.TryPlace(source));
+            var guard = FindGuardAt(source);
+            guard.Health.TakeDamage(7);
+            int hp = guard.Health.CurrentHealth;
+            Assert.IsTrue(summoning.BeginRelocation(guard));
+            Assert.IsTrue(summoning.TryPlace(destination));
+            Assert.AreSame(guard, grid.GuardPostAt(destination));
+            Assert.IsNull(grid.GuardPostAt(source));
+            Assert.AreEqual(hp, guard.Health.CurrentHealth);
+            Assert.AreEqual(1, summoning.GuardCount);
+            Assert.AreEqual((Vector2)grid.CellCenter(destination), guard.GuardPosition);
+            Assert.AreEqual(grid.CellCenter(destination), guard.transform.position);
+        }
+
+        [Test]
+        public void FullRoomAllowsRelocationAndCancellationKeepsOriginalPost()
+        {
+            var offsets = new[] { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
+            foreach (var offset in offsets)
+            {
+                summoning.SetOpen(true); Assert.IsTrue(summoning.TrySummon(false));
+                Assert.IsTrue(summoning.TryPlace(grid.Layout.Core + offset));
+            }
+            var guard = FindGuardAt(grid.Layout.Core + Vector2Int.right);
+            var original = guard.GuardPosition;
+            Assert.IsTrue(summoning.BeginRelocation(guard));
+            Assert.IsFalse(summoning.TryPlace(grid.Layout.Core + Vector2Int.up));
+            summoning.SetOpen(false);
+            Assert.AreEqual(original, guard.GuardPosition);
+            Assert.IsTrue(summoning.BeginRelocation(guard));
+            Assert.IsTrue(summoning.TryPlace(grid.Layout.Core + new Vector2Int(1, 1)));
+            Assert.AreEqual(4, summoning.GuardCount);
+        }
+
+        [Test]
+        public void RoomQuotaUsesAssignedPostsEvenWhileGuardsAreAway()
+        {
+            var source = grid.Layout.Core + Vector2Int.right;
+            summoning.SetOpen(true); summoning.TrySummon(false); Assert.IsTrue(summoning.TryPlace(source));
+            var guard = FindGuardAt(source);
+            var room = grid.Construction.RoomAt(source);
+            guard.transform.position += Vector3.right * 20;
+            Assert.AreEqual(1, summoning.RoomGuardCount(room));
+            Assert.AreEqual(4, summoning.RoomCapacity(room));
+            guard.Health.TakeDamage(guard.Health.MaximumHealth);
+            Assert.AreEqual(0, summoning.RoomGuardCount(room));
+        }
+
+        [Test]
+        public void SmallRoomQuotaIsIndependentAndMovingOutReleasesItsSlot()
+        {
+            Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlan(ConstructionKind.HorizontalCorridor, grid.Layout.Core + Vector2Int.right * 6, out var corridor));
+            for (int pass = 0; pass < corridor.Cells.Count; pass++) foreach (var cell in corridor.Cells) grid.Layout.TryExpand(cell);
+            Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlan(ConstructionKind.Room, corridor.Center + Vector2Int.right * 5, out var room));
+            for (int pass = 0; pass < room.Cells.Count; pass++) foreach (var cell in room.Cells) grid.Layout.TryExpand(cell);
+            Assert.IsTrue(room.IsComplete);
+            var offsets = new[] { Vector2Int.up, Vector2Int.right, Vector2Int.down };
+            var moving = new MinionController[3];
+            for (int i = 0; i < offsets.Length; i++)
+            {
+                summoning.SetOpen(true); Assert.IsTrue(summoning.TrySummon(false));
+                var source = grid.Layout.Core + offsets[i]; Assert.IsTrue(summoning.TryPlace(source));
+                moving[i] = FindGuardAt(source);
+            }
+            for (int i = 0; i < 2; i++)
+            {
+                Assert.IsTrue(summoning.BeginRelocation(moving[i]));
+                Assert.IsTrue(summoning.TryPlace(room.Center + offsets[i]));
+            }
+            Assert.AreEqual(2, summoning.RoomCapacity(room));
+            Assert.AreEqual(2, summoning.RoomGuardCount(room));
+            Assert.IsTrue(summoning.BeginRelocation(moving[2]));
+            Assert.IsFalse(summoning.TryPlace(room.Center + Vector2Int.down));
+            summoning.SetOpen(false);
+            Assert.IsTrue(summoning.BeginRelocation(moving[0]));
+            Assert.IsTrue(summoning.TryPlace(grid.Layout.Core + Vector2Int.up * 2));
+            Assert.AreEqual(1, summoning.RoomGuardCount(room));
+            Assert.IsTrue(summoning.BeginRelocation(moving[2]));
+            Assert.IsTrue(summoning.TryPlace(room.Center + Vector2Int.down));
+            Assert.AreEqual(3, summoning.GuardCount);
+        }
+
+        [Test]
         public void WorkerRequestsNeverEnterPlacementOrCreateAWorker()
         {
             summoning.SetOpen(true);

@@ -19,6 +19,7 @@ namespace DarkLord.Actors
         public bool IsAlive => CurrentHealth > 0;
         public event Action<ActorHealth> Damaged;
         public event Action Died;
+        internal Func<ActorHealth, bool> DamageFilter;
 
         private void Awake() => Initialize();
 
@@ -33,10 +34,18 @@ namespace DarkLord.Actors
         {
             if (amount <= 0 || !IsAlive || !isActiveAndEnabled) return false;
             if (source != null && (!source.IsAlive || source.Faction == faction)) return false;
+            if (DamageFilter != null && !DamageFilter(source)) return false;
             currentHealth = Mathf.Max(0, currentHealth - amount);
             if (currentHealth == 0) Died?.Invoke();
             else Damaged?.Invoke(source);
             return true;
+        }
+
+        public void RestoreHealth(int maximum, int current)
+        {
+            maximumHealth = Mathf.Max(1, maximum);
+            currentHealth = Mathf.Clamp(current, 0, maximumHealth);
+            initialized = true;
         }
 
         public void Configure(Faction team, int health)

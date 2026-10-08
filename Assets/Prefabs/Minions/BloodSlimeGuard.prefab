@@ -243,6 +243,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 531af384ea567834aa31e6e85ec28ab1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Minions.MinionController
+  displayName: "\uD608\uC561 \uC2AC\uB77C\uC784"
   detectionRange: 4
   chaseRange: 5
   attackRange: 0.85
@@ -259,6 +260,7 @@ MonoBehaviour:
   attackCooldown: 0.8
   hitDuration: 0.2
   scanInterval: 0.2
+  behaviour: 0
 --- !u!210 &1782063178111732759
 SortingGroup:
   m_ObjectHideFlags: 0

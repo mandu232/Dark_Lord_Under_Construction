@@ -12,11 +12,12 @@ namespace DarkLord.UI
         [SerializeField] private TMP_Text statusText;
         [SerializeField] private UnityEngine.UI.Button startButton;
         [SerializeField] private TMP_Text startButtonText;
+        [SerializeField] private DarkLord.Dungeon.DungeonExpansion construction;
         private bool lastEntrance;
         private void LateUpdate()
         {
             if (director != null && lastEntrance != director.HasEntrance) Refresh();
-            if (startButton != null) startButton.interactable = director != null && director.CanStartWave;
+            if (startButton != null) startButton.interactable = director != null && director.CanStartWave && (construction == null || !construction.ExpansionMode);
         }
 
         private void OnEnable()
@@ -32,7 +33,7 @@ namespace DarkLord.UI
             if (startButton != null) startButton.onClick.RemoveListener(StartWave);
         }
 
-        private void StartWave() { if (director != null) director.BeginNextWave(); }
+        private void StartWave() { if (director != null && (construction == null || !construction.ExpansionMode)) director.BeginNextWave(); }
 
         public void Configure(WaveDirector source, TMP_Text wave, TMP_Text status)
         {

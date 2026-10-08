@@ -5910,7 +5910,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &6247854286218881891
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5976,7 +5976,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 0.2
+  m_PixelsPerUnitMultiplier: 0.25
 --- !u!225 &2100643504928039521
 CanvasGroup:
   m_ObjectHideFlags: 0

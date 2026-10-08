@@ -7,7 +7,7 @@ namespace DarkLord.Dungeon
     public enum ExpansionResult { Success, OutsideMap, NotRock, NoAdjacentFloor, OutOfReach, Unavailable }
 
     // Tile coordinates and rules are independent of the temporary mesh presentation.
-    public sealed class DungeonLayout
+    public sealed partial class DungeonLayout
     {
         private readonly DungeonCell[,] cells;
         public int Width { get; }

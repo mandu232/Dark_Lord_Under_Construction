@@ -15,10 +15,7 @@ namespace DarkLord.Dungeon
         private ActorHealth health;
         private DarkLord.Player.MinionSummoning summoning;
         private InputAction toggle, build, cancel, cancelPlacement;
-        private Camera placementCamera;
-        private UnityEngine.Rendering.Universal.PixelPerfectCamera placementPixelCamera;
-        private float originalCameraSize;
-        private int originalResolutionX, originalResolutionY;
+        private DarkLord.Player.PlacementCameraZoom placementZoom;
         public bool IsPlacementView { get; private set; }
         private Vector2Int? previewCell;
         private Vector2Int? corridorStart;
@@ -63,7 +60,7 @@ namespace DarkLord.Dungeon
                 openedFrame = Time.frameCount;
                 Message = constructionPanel == null ? "방은 복도 옆에, 복도는 기존 구역 옆에 배치하세요." : "항목을 선택한 뒤 위쪽 던전을 클릭하세요.";
             }
-            if (!ExpansionMode) summoning?.SetOpen(false);
+            if (!ExpansionMode) { DemolitionMode = false; summoning?.SetOpen(false); }
             constructionPanel?.SetVisible(ExpansionMode);
         }
 
@@ -83,6 +80,7 @@ namespace DarkLord.Dungeon
         public void CancelSelection()
         {
             RestorePlacementView();
+            constructionPanel?.ClearDemolitionPresentation();
             DemolitionMode = false; hasSelection = false; selectedItem = null; summoning?.SetOpen(false); ClearPreview();
             Message = "카테고리에서 배치할 항목을 선택하세요.";
         }
@@ -92,35 +90,18 @@ namespace DarkLord.Dungeon
             if (IsPlacementView) return;
             IsPlacementView = true;
             constructionPanel?.HideForPlacement();
-            placementCamera = worldCamera != null ? worldCamera : Camera.main;
-            if (placementCamera == null || !placementCamera.orthographic) return;
-            originalCameraSize = placementCamera.orthographicSize;
-            placementPixelCamera = placementCamera.GetComponent<UnityEngine.Rendering.Universal.PixelPerfectCamera>();
-            if (placementPixelCamera != null && placementPixelCamera.isActiveAndEnabled)
-            {
-                originalResolutionX = placementPixelCamera.refResolutionX;
-                originalResolutionY = placementPixelCamera.refResolutionY;
-                placementPixelCamera.refResolutionX = originalResolutionX * 2;
-                placementPixelCamera.refResolutionY = originalResolutionY * 2;
-            }
-            else placementPixelCamera = null;
-            placementCamera.orthographicSize = originalCameraSize * 2;
+            placementZoom = DarkLord.Player.PlacementCameraZoom.Acquire(worldCamera != null ? worldCamera : Camera.main, this);
         }
         private void RestorePlacementView()
         {
             if (!IsPlacementView) return;
             IsPlacementView = false;
-            if (placementPixelCamera != null)
-            {
-                placementPixelCamera.refResolutionX = originalResolutionX;
-                placementPixelCamera.refResolutionY = originalResolutionY;
-            }
-            if (placementCamera != null && placementCamera.orthographic) placementCamera.orthographicSize = originalCameraSize;
-            placementCamera = null; placementPixelCamera = null;
+            if (placementZoom != null) placementZoom.Release(this);
+            placementZoom = null;
         }
         public void ReturnToConstructionMenu()
         {
-            if (!ExpansionMode || !IsPlacementView) return;
+            if (!ExpansionMode || (!IsPlacementView && !DemolitionMode)) return;
             CancelSelection();
             consumedFrame = Time.frameCount;
             openedFrame = Time.frameCount;
@@ -129,8 +110,10 @@ namespace DarkLord.Dungeon
 
         public void SetDemolitionMode()
         {
+            if (!ExpansionMode) return;
             CancelSelection(); DemolitionMode = true; hasSelection = true;
-            Message = "좌클릭: 하수인·함정·입구 제거 / 다른 항목 선택: 파괴 종료";
+            constructionPanel?.ShowDemolition();
+            Message = "좌클릭: 하수인·함정·입구 제거 / 우클릭: 건설창으로 / B·Esc: 종료";
         }
         public bool CanDemolish(Vector2Int cell) => (dungeon.Layout.HasEntrance && cell == dungeon.Layout.Entrance) || dungeon.HasTrap(cell) || dungeon.GuardAt(cell) != null;
         public bool TryDemolish(Vector2Int cell)
@@ -187,12 +170,21 @@ namespace DarkLord.Dungeon
         // Former expansion callers now reserve a whole room/corridor footprint.
         public ExpansionResult TryExpand(Vector2Int cell) => TryBuild(cell) == ConstructionResult.Success ? ExpansionResult.Success : ExpansionResult.Unavailable;
 
+        public bool TryBuildOrRepairBuilding(Vector2Int cell)
+        {
+            if (!ExpansionMode || DemolitionMode || !hasSelection || selectedItem == null || selectedItem.category != BuildCategory.Buildings || selectedItem.repairTool ||
+                Time.timeScale <= 0 || !isActiveAndEnabled || health != null && !health.IsAlive) return false;
+            var wallet = GetComponent<DarkLord.Player.CurrencyWallet>();
+            bool success = dungeon.TryPlaceBuilding(cell, selectedItem.prefab, wallet);
+            Message = success ? "생산 건물을 설치했습니다. 라운드 클리어 시 자원을 제공합니다." : "완성된 방의 빈 바닥과 금화를 확인하세요. 건물 수리는 우클릭 정보창에서 가능합니다.";
+            return success;
+        }
         private void Update()
         {
             if (Time.timeScale == 0 || (health != null && !health.IsAlive)) { SetExpansionMode(false); return; }
             if (toggle.WasPressedThisFrame()) SetExpansionMode(!ExpansionMode);
             if (cancel.WasPressedThisFrame() && ExpansionMode) { SetExpansionMode(false); return; }
-            if (ExpansionMode && IsPlacementView && cancelPlacement.WasPressedThisFrame()) { ReturnToConstructionMenu(); return; }
+            if (ExpansionMode && (IsPlacementView || DemolitionMode) && cancelPlacement.WasPressedThisFrame()) { ReturnToConstructionMenu(); return; }
             if (!ExpansionMode || !hasSelection || (summoning != null && summoning.IsPlacing) || Mouse.current == null || worldCamera == null) return;
             if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) { ClearPreview(); return; }
             Vector2 screen = Mouse.current.position.ReadValue();
@@ -215,6 +207,19 @@ namespace DarkLord.Dungeon
                 dungeon.Highlight(cell, available); previewCell = cell;
                 Message = available ? "좌클릭: 입구 지정 · 기존 입구는 이동됩니다." : "코어로 연결된 완성된 빈 바닥을 선택하세요.";
                 if (Time.frameCount > openedFrame && build.WasPressedThisFrame()) dungeon.TryPlaceEntrance(cell);
+                return;
+            }
+            if (selectedItem != null && selectedItem.category == BuildCategory.Buildings)
+            {
+                var wallet = GetComponent<DarkLord.Player.CurrencyWallet>();
+                var building = dungeon.BuildingAt(cell);
+                var definition = selectedItem.prefab != null ? selectedItem.prefab.GetComponent<ResourceBuilding>() : null;
+                bool buildingAllowed = !selectedItem.repairTool && definition != null && dungeon.CanPlaceBuilding(cell) && wallet.CanAfford(DarkLord.Player.CurrencyType.Gold, definition.ConstructionCost);
+                dungeon.Highlight(cell, buildingAllowed); previewCell = cell;
+                if (building != null)
+                    Message = building.IsRuined ? $"{building.DisplayName} 잔해 · 건설 모드를 종료하고 우클릭 정보창에서 수리하세요." : $"{building.DisplayName} · 체력 {building.Health.CurrentHealth}/{building.Health.MaximumHealth} · 매 라운드 +{building.ProductionPerRound}";
+                else Message = "코어를 제외한 완성된 방에 1개씩 설치할 수 있습니다. 금화가 필요합니다.";
+                if (Time.frameCount > openedFrame && build.WasPressedThisFrame()) TryBuildOrRepairBuilding(cell);
                 return;
             }
             if (selectedItem != null && selectedItem.category == BuildCategory.Traps)

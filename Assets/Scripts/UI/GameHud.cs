@@ -94,7 +94,7 @@ namespace DarkLord.UI
         {
             if (summoning == null || minionsText == null) return;
             lastGuardCount = summoning.GuardCount;
-            minionsText.text = $"호위병  {lastGuardCount}/4";
+            minionsText.text = $"하수인  {lastGuardCount}";
         }
 
         private static void SetAmount(TMP_Text label, int amount)

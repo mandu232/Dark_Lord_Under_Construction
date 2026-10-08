@@ -57,6 +57,142 @@ namespace DarkLord.Tests
         }
 
         [UnityTest]
+        public IEnumerator DungeonArtworkUsesCarpetOnlyInCorridorsAndRestoresAfterLoad()
+        {
+            var roots = scene.GetRootGameObjects();
+            var dungeon = roots.SelectMany(r => r.GetComponentsInChildren<DungeonGrid>()).Single();
+            var session = roots.SelectMany(r => r.GetComponentsInChildren<DarkLord.Persistence.GameSaveSession>()).Single();
+            Assert.IsTrue(dungeon.UsesArtTiles);
+            var core = dungeon.Layout.Core;
+            var corridor = dungeon.Construction.Sections.First(s => !DungeonConstruction.IsRoom(s.Kind));
+            Assert.IsNotNull(dungeon.FloorArtAt(core)); Assert.IsNull(dungeon.CarpetArtAt(core));
+            Assert.IsNotNull(dungeon.CarpetArtAt(corridor.Center));
+            var carpetTile = (UnityEngine.Tilemaps.Tile)dungeon.CarpetArtAt(corridor.Center);
+            Assert.AreEqual(16, carpetTile.sprite.pixelsPerUnit);
+            Assert.AreEqual(new Vector2(16, 16), carpetTile.sprite.rect.size);
+            Assert.AreEqual(Matrix4x4.identity, carpetTile.transform);
+            Assert.AreEqual("Carpet_1_1", carpetTile.sprite.name, "Interior carpet has no gold border.");
+            var upperEdge = corridor.Cells.Where(c => c.x == corridor.Center.x).OrderByDescending(c => c.y).First();
+            var edgeTile = (UnityEngine.Tilemaps.Tile)dungeon.CarpetPieceAt(upperEdge * 2 + Vector2Int.up * 3);
+            Assert.AreEqual("Carpet_0_1", edgeTile.sprite.name, "Only the outside edge has gold trim.");
+            var lowerWall = (UnityEngine.Tilemaps.Tile)dungeon.WallArtAt(core + Vector2Int.down * 4);
+            Assert.AreEqual("Wall_0_2", lowerWall.sprite.name, "The lower wall shows its plain top surface.");
+            var northWall = (UnityEngine.Tilemaps.Tile)dungeon.WallArtAt(core + Vector2Int.up * 4);
+            StringAssert.StartsWith("Wall_4_", northWall.sprite.name, "Only north walls have an upright face.");
+            var wall = core + Vector2Int.up * 4;
+            Assert.IsNotNull(dungeon.WallArtAt(wall)); Assert.IsNotNull(dungeon.FloorArtAt(wall));
+            Assert.IsFalse(dungeon.Layout.IsFloor(wall), "The floor backing behind the wall must stay non-walkable.");
+            var saved = session.Capture(); session.Restore(saved);
+            yield return null; yield return null;
+            Assert.IsNull(dungeon.CarpetArtAt(core)); Assert.IsNotNull(dungeon.CarpetArtAt(corridor.Center));
+            Assert.IsNotNull(dungeon.WallArtAt(wall));
+            Assert.AreEqual(ConstructionResult.Success,dungeon.Construction.TryPlan(ConstructionKind.HorizontalCorridor,core+Vector2Int.right*6,out var expansion));
+            for(int pass=0;pass<expansion.Cells.Count;pass++)foreach(var cell in expansion.Cells)dungeon.Layout.TryExpand(cell);
+            Assert.IsTrue(expansion.IsComplete); Assert.IsNotNull(dungeon.CarpetArtAt(expansion.Center));
+            Assert.IsNull(dungeon.WallArtAt(expansion.Center));
+            Assert.AreEqual(ConstructionResult.Success,dungeon.Construction.TryPlan(ConstructionKind.Room,expansion.Center+Vector2Int.right*5,out var room));
+            for(int pass=0;pass<room.Cells.Count;pass++)foreach(var cell in room.Cells)dungeon.Layout.TryExpand(cell);
+            Assert.IsTrue(room.IsComplete); Assert.IsNotNull(dungeon.FloorArtAt(room.Center)); Assert.IsNull(dungeon.CarpetArtAt(room.Center));
+        }
+
+        [UnityTest]
+        public IEnumerator SelectedMinionKeepsOutlineAlongsideHoveredMinionAndUsesItsName()
+        {
+            var roots = scene.GetRootGameObjects();
+            var inspector = roots.SelectMany(r => r.GetComponentsInChildren<MinionInspectionPanel>(true)).Single();
+            var summoning = roots.SelectMany(r => r.GetComponentsInChildren<MinionSummoning>()).Single();
+            var grid = summoning.Dungeon;
+            foreach (var offset in new[] { Vector2Int.right, Vector2Int.down })
+            {
+                summoning.SetOpen(true); Assert.IsTrue(summoning.TrySummon(false)); Assert.IsTrue(summoning.TryPlace(grid.Layout.Core + offset));
+            }
+            mouse = InputSystem.AddDevice<Mouse>(); InputSystem.QueueStateEvent(mouse, new MouseState());
+            yield return null; yield return null;
+            var first = grid.GuardPostAt(grid.Layout.Core + Vector2Int.right);
+            var second = grid.GuardPostAt(grid.Layout.Core + Vector2Int.down);
+            var a = first.GetComponentInChildren<SpriteRenderer>(); var b = second.GetComponentInChildren<SpriteRenderer>();
+            var originalA = a.sharedMaterial; var originalB = b.sharedMaterial;
+            inspector.Show(first); inspector.SetHovered(null);
+            yield return null; yield return null;
+            Assert.AreEqual("혈액 슬라임", inspector.Title);
+            Assert.AreEqual(first.DisplayName, inspector.Title);
+            Assert.IsNull(inspector.Hovered);
+            Assert.AreEqual("DarkLord/SpriteHoverOutline", a.sharedMaterial.shader.name, "The inspected guard stays outlined after the pointer leaves.");
+            inspector.SetHovered(second);
+            Assert.AreEqual("DarkLord/SpriteHoverOutline", a.sharedMaterial.shader.name);
+            Assert.AreEqual("DarkLord/SpriteHoverOutline", b.sharedMaterial.shader.name);
+            Assert.AreNotSame(a.sharedMaterial, b.sharedMaterial, "Each actor needs its own animated sprite UV bounds.");
+            inspector.Close();
+            Assert.AreSame(originalA, a.sharedMaterial);
+            Assert.AreEqual("DarkLord/SpriteHoverOutline", b.sharedMaterial.shader.name, "Closing information keeps the normal hover outline.");
+            inspector.SetHovered(null); Assert.AreSame(originalB, b.sharedMaterial);
+            inspector.Show(first); inspector.Show(second);
+            Assert.AreSame(originalA, a.sharedMaterial);
+            Assert.AreEqual("DarkLord/SpriteHoverOutline", b.sharedMaterial.shader.name);
+            second.Health.TakeDamage(second.Health.MaximumHealth);
+            yield return null; yield return null;
+            Assert.IsFalse(inspector.IsOpen); Assert.AreSame(originalB, b.sharedMaterial);
+            inspector.Show(first); inspector.gameObject.SetActive(false);
+            Assert.AreSame(originalA, a.sharedMaterial);
+        }
+
+        [UnityTest]
+        public IEnumerator RelocationShowsLiftedPreviewZoomAndRoomCapacityThenRestores()
+        {
+            var roots = scene.GetRootGameObjects();
+            var expansion = roots.SelectMany(r => r.GetComponentsInChildren<DungeonExpansion>()).Single();
+            var summoning = expansion.GetComponent<MinionSummoning>();
+            var overlay = roots.SelectMany(r => r.GetComponentsInChildren<RoomCapacityOverlay>(true)).Single();
+            var camera = roots.SelectMany(r => r.GetComponentsInChildren<Camera>()).Single();
+            var room = expansion.Dungeon.Construction.RoomAt(expansion.Dungeon.Layout.Core);
+            expansion.SetExpansionMode(true);
+            yield return null; yield return null;
+            Assert.IsTrue(overlay.IsVisible);
+            Assert.AreEqual("0 / 4", overlay.LabelFor(room).CountText);
+            Assert.IsFalse(overlay.LabelFor(room).GetComponent<UnityEngine.UI.Image>().raycastTarget);
+            expansion.SetExpansionMode(false);
+            summoning.SetOpen(true); Assert.IsTrue(summoning.TrySummon(false));
+            Assert.IsTrue(summoning.TryPlace(expansion.Dungeon.Layout.Core + Vector2Int.right));
+            yield return null; yield return null;
+            var guard = expansion.Dungeon.Guards.Single();
+            var renderer = guard.GetComponentInChildren<SpriteRenderer>();
+            var originalColor = renderer.color;
+            float size = camera.orthographicSize;
+            var pixels = camera.GetComponent("PixelPerfectCamera");
+            var resolutionProperty = pixels.GetType().GetProperty("refResolutionY");
+            int resolution = (int)resolutionProperty.GetValue(pixels);
+            mouse = InputSystem.AddDevice<Mouse>();
+            Assert.IsTrue(summoning.BeginRelocation(guard));
+            yield return null; yield return null;
+            var targetCell = expansion.Dungeon.Layout.Core + Vector2Int.down;
+            var target = expansion.Dungeon.CellCenter(targetCell);
+            InputSystem.QueueStateEvent(mouse, new MouseState { position = camera.WorldToScreenPoint(target) });
+            yield return null; yield return null;
+            var visual = summoning.GetComponent<MinionRelocationVisuals>();
+            Assert.Greater(camera.orthographicSize, size);
+            Assert.AreEqual(resolution * 2, (int)resolutionProperty.GetValue(pixels));
+            Assert.IsTrue(visual.CarriedSprite.enabled);
+            Assert.IsTrue(visual.GroundShadow.enabled);
+            Assert.Greater(visual.CarriedSprite.transform.position.y, visual.GroundShadow.transform.position.y + 0.3f);
+            Assert.Less(renderer.color.a, originalColor.a);
+            Assert.IsTrue(overlay.IsVisible);
+            Assert.AreEqual("1 / 4", overlay.LabelFor(room).CountText);
+            var first = visual.CarriedSprite.transform.position;
+            InputSystem.QueueStateEvent(mouse, new MouseState { position = camera.WorldToScreenPoint(target + Vector3.right) });
+            yield return null; yield return null;
+            Assert.Greater(visual.CarriedSprite.transform.position.x, first.x + 0.5f);
+            summoning.SetOpen(false);
+            yield return null; yield return null;
+            Assert.AreEqual(originalColor, renderer.color);
+            Assert.IsNull(visual.CarriedSprite);
+            Assert.AreEqual(size, camera.orthographicSize, 0.001f);
+            Assert.AreEqual(resolution, (int)resolutionProperty.GetValue(pixels));
+            Assert.IsFalse(overlay.IsVisible);
+            Assert.IsFalse(overlay.LabelFor(room).gameObject.activeSelf);
+            Assert.AreSame(guard, expansion.Dungeon.GuardPostAt(expansion.Dungeon.Layout.Core + Vector2Int.right));
+        }
+
+        [UnityTest]
         public IEnumerator MinionHoverInspectionUpdatesHealthAndHonoursConstructionInput()
         {
             var roots = scene.GetRootGameObjects();
@@ -84,9 +220,17 @@ namespace DarkLord.Tests
             Assert.AreSame(guard, inspector.Selected);
             Assert.That(inspector.StatsText, Does.Contain($"체력  {guard.Health.CurrentHealth} / {guard.Health.MaximumHealth}"));
             Assert.That(inspector.StatsText, Does.Contain($"공격력  {guard.AttackDamage}"));
+            var aggressive = inspector.GetComponentsInChildren<UnityEngine.UI.Button>(true).Single(b => b.name == "Aggressive");
+            var defensive = inspector.GetComponentsInChildren<UnityEngine.UI.Button>(true).Single(b => b.name == "Defensive");
+            var relocationButton = inspector.GetComponentsInChildren<UnityEngine.UI.Button>(true).Single(b => b.name == "Relocate");
+            Assert.Greater(aggressive.GetComponent<RectTransform>().anchoredPosition.y, relocationButton.GetComponent<RectTransform>().anchoredPosition.y);
+            aggressive.onClick.Invoke(); Assert.AreEqual(DarkLord.Minions.MinionBehaviour.Aggressive, guard.Behaviour);
+            Assert.AreNotEqual(aggressive.image.color, defensive.image.color);
+            defensive.onClick.Invoke(); Assert.AreEqual(DarkLord.Minions.MinionBehaviour.Defensive, guard.Behaviour);
             InputSystem.QueueStateEvent(mouse, new MouseState { position = position });
             guard.Health.TakeDamage(13);
             yield return new WaitForSeconds(0.15f);
+            Assert.AreEqual((float)guard.Health.CurrentHealth / guard.Health.MaximumHealth, inspector.HealthBar.Ratio, 0.001f);
             Assert.That(inspector.StatsText, Does.Contain($"체력  {guard.Health.CurrentHealth} / {guard.Health.MaximumHealth}"));
             construction.SetExpansionMode(true);
             yield return null;
@@ -99,11 +243,90 @@ namespace DarkLord.Tests
             yield return null; yield return null;
             inspector.Show(guard);
             Assert.IsTrue(inspector.IsOpen);
+            int hpBeforeMove = guard.Health.CurrentHealth;
+            var relocate = inspector.GetComponentsInChildren<UnityEngine.UI.Button>(true).Single(b => b.name == "Relocate");
+            relocate.onClick.Invoke();
+            Assert.IsTrue(summoning.IsRelocating);
+            var movedCell = construction.Dungeon.Layout.Core + Vector2Int.right;
+            Assert.IsTrue(summoning.TryPlace(movedCell));
+            Assert.AreSame(guard, construction.Dungeon.GuardPostAt(movedCell));
+            Assert.AreEqual(hpBeforeMove, guard.Health.CurrentHealth);
+            yield return null; yield return null;
+            position = camera.WorldToScreenPoint(renderer.bounds.center);
+            InputSystem.QueueStateEvent(mouse, new MouseState { position = position, buttons = 1 });
+            yield return new WaitForSecondsRealtime(0.4f);
+            Assert.IsTrue(summoning.IsRelocating, "Holding the placed guard starts relocation.");
+            var dragCell = construction.Dungeon.Layout.Core + Vector2Int.down;
+            InputSystem.QueueStateEvent(mouse, new MouseState { position = camera.WorldToScreenPoint(construction.Dungeon.CellCenter(dragCell)), buttons = 1 });
+            yield return null; yield return null;
+            InputSystem.QueueStateEvent(mouse, new MouseState { position = camera.WorldToScreenPoint(construction.Dungeon.CellCenter(dragCell)) });
+            yield return null; yield return null;
+            Assert.IsFalse(summoning.IsRelocating);
+            Assert.AreSame(guard, construction.Dungeon.GuardPostAt(dragCell));
+            Assert.AreEqual(hpBeforeMove, guard.Health.CurrentHealth);
             guard.Health.TakeDamage(guard.Health.MaximumHealth);
             yield return null; yield return null;
             Assert.IsFalse(inspector.IsOpen);
         }
 
+        [UnityTest]
+        public IEnumerator DemolitionLowersWindowShowsBorderAndBlocksWaveStart()
+        {
+            var roots = scene.GetRootGameObjects();
+            var construction = roots.SelectMany(r => r.GetComponentsInChildren<DungeonExpansion>()).Single();
+            var view = roots.SelectMany(r => r.GetComponentsInChildren<ConstructionPanel>(true)).Single();
+            var director = roots.SelectMany(r => r.GetComponentsInChildren<DarkLord.Gameplay.WaveDirector>()).Single();
+            var button = roots.SelectMany(r => r.GetComponentsInChildren<UnityEngine.UI.Button>(true)).Single(b => b.name == "Start Wave Button");
+            var window = view.transform.Find("Construction Window").GetComponent<RectTransform>();
+            construction.SetExpansionMode(true);
+            yield return new WaitForSecondsRealtime(0.35f);
+            Assert.IsFalse(button.interactable);
+            button.onClick.Invoke();
+            Assert.That(director.CurrentWave, Is.Zero);
+            view.Demolish();
+            Assert.IsTrue(view.transform.Find("Demolition Overlay").gameObject.activeSelf);
+            Assert.IsFalse(view.transform.Find("Demolition Overlay").GetComponent<CanvasGroup>().blocksRaycasts);
+            Assert.IsTrue(window.gameObject.activeSelf);
+            yield return new WaitForSecondsRealtime(0.3f);
+            Assert.IsFalse(window.gameObject.activeSelf);
+            Assert.IsTrue(construction.DemolitionMode);
+            construction.ReturnToConstructionMenu();
+            Assert.IsFalse(construction.DemolitionMode);
+            Assert.IsFalse(view.transform.Find("Demolition Overlay").gameObject.activeSelf);
+            yield return new WaitForSecondsRealtime(0.35f);
+            Assert.IsTrue(window.gameObject.activeSelf);
+            Time.timeScale = 0;
+            view.SetVisible(false);
+            Assert.IsTrue(window.gameObject.activeSelf);
+            yield return new WaitForSecondsRealtime(0.3f);
+            Assert.IsFalse(window.gameObject.activeSelf);
+        }
+        [UnityTest]
+        public IEnumerator ConstructionSlidesWhilePausedAndResetsAfterInterruptedOpening()
+        {
+            var view = scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<ConstructionPanel>(true)).Single();
+            var window = view.transform.Find("Construction Window").GetComponent<RectTransform>();
+            var resting = window.anchoredPosition;
+            Time.timeScale = 0;
+            view.SetVisible(true);
+            Assert.That(window.anchoredPosition.y, Is.LessThan(resting.y - window.rect.height));
+            var during = window.anchoredPosition;
+            view.SetVisible(true);
+            Assert.That(window.anchoredPosition, Is.EqualTo(during), "Repeated visibility must not restart the slide.");
+            view.HideForPlacement();
+            Assert.IsFalse(window.gameObject.activeSelf);
+            Assert.That(window.anchoredPosition, Is.EqualTo(resting));
+            yield return new WaitForSecondsRealtime(0.35f);
+            Assert.That(window.anchoredPosition, Is.EqualTo(resting), "Hidden windows must not keep animating.");
+            view.SetVisible(true);
+            yield return new WaitForSecondsRealtime(0.35f);
+            Assert.That(window.anchoredPosition, Is.EqualTo(resting));
+            Assert.That(view.transform.Find("Details").GetComponent<CanvasGroup>().alpha, Is.EqualTo(1));
+            view.SetVisible(false);
+            view.SetVisible(true);
+            view.gameObject.SetActive(false);
+            Assert.That(window.anchoredPosition, Is.EqualTo(resting));
+        }
         [UnityTest]
         public IEnumerator CorridorPlacementHidesWindowsZoomsOutAndRightClickRestoresMenu()
         {
@@ -130,7 +353,7 @@ namespace DarkLord.Tests
             Assert.IsFalse(construction.IsPlacementView);
             Assert.IsTrue(construction.ExpansionMode);
             Assert.IsTrue(view.transform.Find("Construction Window").gameObject.activeSelf);
-            Assert.IsTrue(view.transform.Find("Details").gameObject.activeSelf);
+            Assert.IsFalse(view.transform.Find("Details").gameObject.activeSelf);
             Assert.That(camera.orthographicSize, Is.EqualTo(originalSize).Within(0.001f));
             Assert.That(construction.TryBuild(construction.Dungeon.Layout.Core + Vector2Int.right * 6), Is.EqualTo(ConstructionResult.Unavailable));
             Assert.That(construction.Dungeon.Construction.PendingCount, Is.Zero);
@@ -202,6 +425,7 @@ namespace DarkLord.Tests
             Assert.IsTrue(view.transform.Find("Construction Window").gameObject.activeSelf);
             yield return PressEscape();
             Assert.IsFalse(construction.ExpansionMode);
+            yield return new WaitForSecondsRealtime(0.3f);
             Assert.IsFalse(view.transform.Find("Construction Window").gameObject.activeSelf);
             Assert.That(menu.State, Is.EqualTo(GameMenu.ScreenState.Playing));
             construction.SetExpansionMode(true);
@@ -216,7 +440,7 @@ namespace DarkLord.Tests
         }
 
         [UnityTest]
-        public IEnumerator CategoriesHoverDetailsAndGuardPlacementShareOneWindow()
+        public IEnumerator OnlyChosenItemShowsDetailsAndCategoryChangeHidesWindow()
         {
             var roots = scene.GetRootGameObjects();
             var construction = roots.SelectMany(r => r.GetComponentsInChildren<DungeonExpansion>()).Single();
@@ -230,8 +454,11 @@ namespace DarkLord.Tests
             UnityEngine.EventSystems.ExecuteEvents.Execute(guard.gameObject,
                 new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current),
                 UnityEngine.EventSystems.ExecuteEvents.pointerEnterHandler);
-            Assert.That(view.DetailDescription, Is.EqualTo(guard.Item.description));
+            Assert.That(view.DetailDescription, Is.Empty);
+            Assert.IsFalse(view.transform.Find("Details").gameObject.activeSelf);
             view.Choose(guard.Item);
+            Assert.That(view.DetailDescription, Is.EqualTo(guard.Item.description));
+            Assert.IsTrue(view.transform.Find("Details").gameObject.activeSelf);
             var summoning = construction.GetComponent<MinionSummoning>();
             Assert.IsTrue(summoning.IsPlacing);
             Assert.IsTrue(construction.ExpansionMode);
@@ -239,6 +466,8 @@ namespace DarkLord.Tests
             Assert.That(summoning.GuardCount, Is.EqualTo(1));
             Assert.IsTrue(construction.ExpansionMode);
             view.ShowCategory(BuildCategory.Traps);
+            Assert.IsFalse(view.transform.Find("Details").gameObject.activeSelf);
+            Assert.That(view.DetailDescription, Is.Empty);
             var trap = view.GetComponentsInChildren<BuildItemButton>().Single();
             view.Choose(trap.Item);
             Assert.IsFalse(summoning.IsPlacing);
@@ -419,3 +648,8 @@ namespace DarkLord.Tests
     }
 }
 #endif
+
+
+
+
+

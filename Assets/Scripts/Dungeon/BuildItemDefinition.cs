@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace DarkLord.Dungeon
 {
-    public enum BuildCategory { Rooms, Minions, Traps, Entrances }
+    public enum BuildCategory { Rooms, Minions, Traps, Entrances, Buildings }
 
     [CreateAssetMenu(menuName = "Dark Lord/Build Item")]
     public sealed class BuildItemDefinition : ScriptableObject
@@ -15,5 +15,6 @@ namespace DarkLord.Dungeon
         [Tooltip("Section: centered on the completed footprint. Trap: centered on the selected floor tile.")]
         public GameObject prefab;
         public bool available = true;
+        public bool repairTool;
     }
 }
