@@ -71,6 +71,8 @@ namespace DarkLord.UI
         private void ArrangeTitleButtons(bool hasContinue)
         {
             var actions = (RectTransform)startButton.transform.parent;
+            // Authored compact menus use a layout group, including when Continue is hidden.
+            if (actions.GetComponent<UnityEngine.UI.VerticalLayoutGroup>() != null) return;
             var startRect = (RectTransform)startButton.transform;
             float spacing = Mathf.Abs(((RectTransform)continueButton.transform).anchoredPosition.y - startRect.anchoredPosition.y);
             int index = 0;
