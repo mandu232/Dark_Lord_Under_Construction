@@ -9,6 +9,9 @@ namespace DarkLord.UI
     {
         [SerializeField] private GameObject[] pages;
         [SerializeField] private UnityEngine.UI.Button[] categoryButtons;
+        [SerializeField] private bool fullScreenPresentation;
+        [SerializeField] private bool externalPresentation;
+        [SerializeField] private CanvasGroup[] openingContent = new CanvasGroup[0];
         private CanvasGroup group;
         private RectTransform rect;
         private Vector2 restingPosition;
@@ -27,6 +30,13 @@ namespace DarkLord.UI
         private void OnEnable()
         {
             SelectCategory(0);
+            if (externalPresentation) { ResetPresentation(); return; }
+            if (fullScreenPresentation)
+            {
+                ResetPresentation();
+                opening = StartCoroutine(AnimateContent());
+                return;
+            }
             opening = StartCoroutine(AnimateOpen());
         }
 
@@ -39,10 +49,27 @@ namespace DarkLord.UI
                 pages[i].SetActive(i == index);
                 var colors = categoryButtons[i].colors;
                 colors.normalColor = Color.white;
+                colors.highlightedColor = new Color(1.25f, 1.25f, 1.25f, 1);
+                colors.selectedColor = colors.highlightedColor;
+                colors.pressedColor = new Color(.85f, .85f, .85f, 1);
                 categoryButtons[i].colors = colors;
                 categoryButtons[i].image.color = i == index
-                    ? new Color32(155, 62, 51, 255) : new Color32(70, 54, 84, 255);
+                    ? new Color32(126, 55, 68, 255) : new Color32(49, 39, 54, 255);
             }
+        }
+
+        private IEnumerator AnimateContent()
+        {
+            // Fade the artwork and controls together, using real time while paused.
+            const float duration = .3f;
+            for (float elapsed = 0; elapsed < duration; elapsed += Time.unscaledDeltaTime)
+            {
+                float t = Mathf.SmoothStep(0, 1, elapsed / duration);
+                group.alpha = t;
+                yield return null;
+            }
+            ResetPresentation();
+            opening = null;
         }
 
         private IEnumerator AnimateOpen()
@@ -52,8 +79,8 @@ namespace DarkLord.UI
             {
                 float t = 1f - Mathf.Pow(1f - elapsed / duration, 3f);
                 group.alpha = t;
-                rect.localScale = restingScale * Mathf.Lerp(0.96f, 1f, t);
-                rect.anchoredPosition = restingPosition + Vector2.down * (24f * (1f - t));
+                rect.localScale = restingScale;
+                rect.anchoredPosition = restingPosition + Vector2.down * (Mathf.Round(24f * (1f - t) / 4f) * 4f);
                 yield return null;
             }
             ResetPresentation();
@@ -72,6 +99,8 @@ namespace DarkLord.UI
             group.alpha = 1;
             rect.localScale = restingScale;
             rect.anchoredPosition = restingPosition;
+            foreach (var content in openingContent)
+                if (content != null) content.alpha = 1;
         }
     }
 }

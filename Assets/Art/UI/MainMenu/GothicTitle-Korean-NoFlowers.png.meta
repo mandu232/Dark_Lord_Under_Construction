@@ -1,61 +1,64 @@
 fileFormatVersion: 2
-guid: fc4478a9e1443434f99e91bbc4f98a2d
+guid: 2f7231726115def469d14e875c9f4e58
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1934061819023045819
-    second: CrimsonTitle_0
+      213: -5960683419140857494
+    second: GothicTitle-Korean-NoFlowers_0
   - first:
-      213: 2910374759017314888
-    second: CrimsonTitle_1
+      213: 6025439796672371397
+    second: GothicTitle-Korean-NoFlowers_1
   - first:
-      213: -5848830365982229198
-    second: CrimsonTitle_2
+      213: 2158347883018904722
+    second: GothicTitle-Korean-NoFlowers_2
   - first:
-      213: 7901643225058454340
-    second: CrimsonTitle_3
+      213: 7591214725442535022
+    second: GothicTitle-Korean-NoFlowers_3
   - first:
-      213: 1457907092673256568
-    second: CrimsonTitle_4
+      213: 3834215999394692114
+    second: GothicTitle-Korean-NoFlowers_4
   - first:
-      213: 384428451584159351
-    second: CrimsonTitle_5
+      213: -3733651631785023823
+    second: GothicTitle-Korean-NoFlowers_5
   - first:
-      213: 863533098184148706
-    second: CrimsonTitle_6
+      213: 7997283718497783202
+    second: GothicTitle-Korean-NoFlowers_6
   - first:
-      213: 865413070037929848
-    second: CrimsonTitle_7
+      213: -2595239701670039311
+    second: GothicTitle-Korean-NoFlowers_7
   - first:
-      213: 1238684848311179601
-    second: CrimsonTitle_8
+      213: -1753838834404386231
+    second: GothicTitle-Korean-NoFlowers_8
   - first:
-      213: -4563600385650180491
-    second: CrimsonTitle_9
+      213: -6853653010659107052
+    second: GothicTitle-Korean-NoFlowers_9
   - first:
-      213: 3157638982934465238
-    second: CrimsonTitle_10
+      213: -8390342364794024858
+    second: GothicTitle-Korean-NoFlowers_10
   - first:
-      213: -2380229164006353432
-    second: CrimsonTitle_11
+      213: 4157763107749494696
+    second: GothicTitle-Korean-NoFlowers_11
   - first:
-      213: 1403951399955949449
-    second: CrimsonTitle_12
+      213: 7852615064390634160
+    second: GothicTitle-Korean-NoFlowers_12
   - first:
-      213: -6487687225608086899
-    second: CrimsonTitle_13
+      213: 4351957926237291372
+    second: GothicTitle-Korean-NoFlowers_13
   - first:
-      213: -5257447192531393954
-    second: CrimsonTitle_14
+      213: 2184598854349662656
+    second: GothicTitle-Korean-NoFlowers_14
   - first:
-      213: -531574994166209964
-    second: CrimsonTitle_15
+      213: -4028062908897856480
+    second: GothicTitle-Korean-NoFlowers_15
   - first:
-      213: -7538891514038387787
-    second: CrimsonTitle_16
+      213: -5164988666463266551
+    second: GothicTitle-Korean-NoFlowers_16
   - first:
-      213: 3059917236280481934
-    second: CrimsonTitle_17
+      213: 4851768352451654567
+    second: GothicTitle-Korean-NoFlowers_17
+  - first:
+      213: 6416577772451760119
+    second: GothicTitle-Korean-NoFlowers_18
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -153,13 +156,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: CrimsonTitle_0
+      name: GothicTitle-Korean-NoFlowers_0
       rect:
         serializedVersion: 2
-        x: 97
-        y: 47
-        width: 1861
-        height: 702
+        x: 30
+        y: 19
+        width: 1253
+        height: 995
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -168,20 +171,152 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bb4b3803afa27da10800000000000000
-      internalID: 1934061819023045819
+      spriteID: a616c87e206674da0800000000000000
+      internalID: -5960683419140857494
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CrimsonTitle_1
+      name: GothicTitle-Korean-NoFlowers_1
       rect:
         serializedVersion: 2
-        x: 206
-        y: 112
+        x: 422
+        y: 975
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ca98282299ae9350800000000000000
+      internalID: 6025439796672371397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GothicTitle-Korean-NoFlowers_2
+      rect:
+        serializedVersion: 2
+        x: 660
+        y: 973
+        width: 17
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 294ee05d6fdf3fd10800000000000000
+      internalID: 2158347883018904722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GothicTitle-Korean-NoFlowers_3
+      rect:
+        serializedVersion: 2
+        x: 1201
+        y: 963
+        width: 6
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6e77b3a299695960800000000000000
+      internalID: 7591214725442535022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GothicTitle-Korean-NoFlowers_4
+      rect:
+        serializedVersion: 2
+        x: 1206
+        y: 959
+        width: 9
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21c3a0c032fd53530800000000000000
+      internalID: 3834215999394692114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GothicTitle-Korean-NoFlowers_5
+      rect:
+        serializedVersion: 2
+        x: 1262
+        y: 893
+        width: 11
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b665646f976f2cc0800000000000000
+      internalID: -3733651631785023823
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GothicTitle-Korean-NoFlowers_6
+      rect:
+        serializedVersion: 2
+        x: 1272
+        y: 897
+        width: 7
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ad4319ab2f0cfe60800000000000000
+      internalID: 7997283718497783202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GothicTitle-Korean-NoFlowers_7
+      rect:
+        serializedVersion: 2
+        x: 1278
+        y: 794
         width: 69
-        height: 82
+        height: 133
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -190,20 +325,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 84a7d7a6c6ab36820800000000000000
-      internalID: 2910374759017314888
+      spriteID: 1f077f2dd3bdbfbd0800000000000000
+      internalID: -2595239701670039311
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CrimsonTitle_2
+      name: GothicTitle-Korean-NoFlowers_8
       rect:
         serializedVersion: 2
-        x: 298
-        y: 117
-        width: 68
-        height: 77
+        x: 1294
+        y: 893
+        width: 19
+        height: 21
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -212,20 +347,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 23d7c1445c7c4dea0800000000000000
-      internalID: -5848830365982229198
+      spriteID: 94a9a025fdc19a7e0800000000000000
+      internalID: -1753838834404386231
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CrimsonTitle_3
+      name: GothicTitle-Korean-NoFlowers_9
       rect:
         serializedVersion: 2
-        x: 385
-        y: 112
-        width: 78
-        height: 80
+        x: 1324
+        y: 847
+        width: 189
+        height: 117
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -234,20 +369,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 44b2b7306a648ad60800000000000000
-      internalID: 7901643225058454340
+      spriteID: 41f90e526eee2e0a0800000000000000
+      internalID: -6853653010659107052
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CrimsonTitle_4
+      name: GothicTitle-Korean-NoFlowers_10
       rect:
         serializedVersion: 2
-        x: 482
-        y: 119
-        width: 67
-        height: 74
+        x: 48
+        y: 615
+        width: 15
+        height: 16
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -256,20 +391,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 87cdf46c6c68b3410800000000000000
-      internalID: 1457907092673256568
+      spriteID: 66c8a8ab2148f8b80800000000000000
+      internalID: -8390342364794024858
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CrimsonTitle_5
+      name: GothicTitle-Korean-NoFlowers_11
       rect:
         serializedVersion: 2
-        x: 570
-        y: 112
-        width: 65
-        height: 78
+        x: 58
+        y: 621
+        width: 17
+        height: 19
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -278,20 +413,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 77e2a32d3a3c55500800000000000000
-      internalID: 384428451584159351
+      spriteID: 8aff1a9848753b930800000000000000
+      internalID: 4157763107749494696
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CrimsonTitle_6
+      name: GothicTitle-Korean-NoFlowers_12
       rect:
         serializedVersion: 2
-        x: 715
-        y: 112
-        width: 76
-        height: 82
+        x: 1201
+        y: 325
+        width: 316
+        height: 476
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -300,20 +435,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2e60f0117c2ebfb00800000000000000
-      internalID: 863533098184148706
+      spriteID: 0ba82eecbc71afc60800000000000000
+      internalID: 7852615064390634160
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CrimsonTitle_7
+      name: GothicTitle-Korean-NoFlowers_13
       rect:
         serializedVersion: 2
-        x: 819
-        y: 114
-        width: 71
-        height: 80
+        x: 36
+        y: 613
+        width: 7
+        height: 7
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -322,20 +457,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 87f479f1a90920c00800000000000000
-      internalID: 865413070037929848
+      spriteID: c63c1de1da2456c30800000000000000
+      internalID: 4351957926237291372
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CrimsonTitle_8
+      name: GothicTitle-Korean-NoFlowers_14
       rect:
         serializedVersion: 2
-        x: 917
-        y: 112
-        width: 100
-        height: 216
+        x: 71
+        y: 433
+        width: 8
+        height: 9
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -344,20 +479,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1591f348e41b03110800000000000000
-      internalID: 1238684848311179601
+      spriteID: 0c9ac326511415e10800000000000000
+      internalID: 2184598854349662656
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CrimsonTitle_9
+      name: GothicTitle-Korean-NoFlowers_15
       rect:
         serializedVersion: 2
-        x: 1012
-        y: 112
-        width: 53
-        height: 77
+        x: 1278
+        y: 367
+        width: 19
+        height: 19
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -366,20 +501,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 57e3c74d0a5daa0c0800000000000000
-      internalID: -4563600385650180491
+      spriteID: 024773e30227918c0800000000000000
+      internalID: -4028062908897856480
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CrimsonTitle_10
+      name: GothicTitle-Korean-NoFlowers_16
       rect:
         serializedVersion: 2
-        x: 1093
-        y: 114
-        width: 63
-        height: 80
+        x: 1298
+        y: 377
+        width: 21
+        height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -388,20 +523,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6da0cb2dcef22db20800000000000000
-      internalID: 3157638982934465238
+      spriteID: 909d9825c264258b0800000000000000
+      internalID: -5164988666463266551
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CrimsonTitle_11
+      name: GothicTitle-Korean-NoFlowers_17
       rect:
         serializedVersion: 2
-        x: 1186
-        y: 112
-        width: 65
-        height: 78
+        x: 1446
+        y: 247
+        width: 41
+        height: 35
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -410,20 +545,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8e55063bf2ab7fed0800000000000000
-      internalID: -2380229164006353432
+      spriteID: 7a3fc5c5c91f45340800000000000000
+      internalID: 4851768352451654567
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: CrimsonTitle_12
+      name: GothicTitle-Korean-NoFlowers_18
       rect:
         serializedVersion: 2
-        x: 1274
-        y: 114
-        width: 69
-        height: 80
+        x: 1290
+        y: 165
+        width: 23
+        height: 53
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -432,118 +567,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 987694c1c56db7310800000000000000
-      internalID: 1403951399955949449
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: CrimsonTitle_13
-      rect:
-        serializedVersion: 2
-        x: 1369
-        y: 116
-        width: 60
-        height: 77
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d8a5acf67da17f5a0800000000000000
-      internalID: -6487687225608086899
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: CrimsonTitle_14
-      rect:
-        serializedVersion: 2
-        x: 1447
-        y: 110
-        width: 73
-        height: 85
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: e52aacf22abc907b0800000000000000
-      internalID: -5257447192531393954
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: CrimsonTitle_15
-      rect:
-        serializedVersion: 2
-        x: 1550
-        y: 114
-        width: 35
-        height: 80
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4522e35fb577f98f0800000000000000
-      internalID: -531574994166209964
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: CrimsonTitle_16
-      rect:
-        serializedVersion: 2
-        x: 1608
-        y: 114
-        width: 74
-        height: 76
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5bbf8895c1a706790800000000000000
-      internalID: -7538891514038387787
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: CrimsonTitle_17
-      rect:
-        serializedVersion: 2
-        x: 1707
-        y: 112
-        width: 72
-        height: 82
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: e88d796a382077a20800000000000000
-      internalID: 3059917236280481934
+      spriteID: 7f787a0dc734c0950800000000000000
+      internalID: 6416577772451760119
       vertices: []
       indices: 
       edges: []
@@ -562,24 +587,25 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      CrimsonTitle_0: 1934061819023045819
-      CrimsonTitle_1: 2910374759017314888
-      CrimsonTitle_10: 3157638982934465238
-      CrimsonTitle_11: -2380229164006353432
-      CrimsonTitle_12: 1403951399955949449
-      CrimsonTitle_13: -6487687225608086899
-      CrimsonTitle_14: -5257447192531393954
-      CrimsonTitle_15: -531574994166209964
-      CrimsonTitle_16: -7538891514038387787
-      CrimsonTitle_17: 3059917236280481934
-      CrimsonTitle_2: -5848830365982229198
-      CrimsonTitle_3: 7901643225058454340
-      CrimsonTitle_4: 1457907092673256568
-      CrimsonTitle_5: 384428451584159351
-      CrimsonTitle_6: 863533098184148706
-      CrimsonTitle_7: 865413070037929848
-      CrimsonTitle_8: 1238684848311179601
-      CrimsonTitle_9: -4563600385650180491
+      GothicTitle-Korean-NoFlowers_0: -5960683419140857494
+      GothicTitle-Korean-NoFlowers_1: 6025439796672371397
+      GothicTitle-Korean-NoFlowers_10: -8390342364794024858
+      GothicTitle-Korean-NoFlowers_11: 4157763107749494696
+      GothicTitle-Korean-NoFlowers_12: 7852615064390634160
+      GothicTitle-Korean-NoFlowers_13: 4351957926237291372
+      GothicTitle-Korean-NoFlowers_14: 2184598854349662656
+      GothicTitle-Korean-NoFlowers_15: -4028062908897856480
+      GothicTitle-Korean-NoFlowers_16: -5164988666463266551
+      GothicTitle-Korean-NoFlowers_17: 4851768352451654567
+      GothicTitle-Korean-NoFlowers_18: 6416577772451760119
+      GothicTitle-Korean-NoFlowers_2: 2158347883018904722
+      GothicTitle-Korean-NoFlowers_3: 7591214725442535022
+      GothicTitle-Korean-NoFlowers_4: 3834215999394692114
+      GothicTitle-Korean-NoFlowers_5: -3733651631785023823
+      GothicTitle-Korean-NoFlowers_6: 7997283718497783202
+      GothicTitle-Korean-NoFlowers_7: -2595239701670039311
+      GothicTitle-Korean-NoFlowers_8: -1753838834404386231
+      GothicTitle-Korean-NoFlowers_9: -6853653010659107052
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

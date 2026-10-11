@@ -15,10 +15,14 @@ namespace DarkLord.UI
         public enum ScreenState { Main, Playing, Pause, Settings, Quit, Slots }
 
         [SerializeField] private bool isTitleScene;
+        [SerializeField] private CastleMenuPanorama panorama;
         [SerializeField] private string gameplayScene = "Assets/Scenes/SampleScene.unity";
         [SerializeField] private string titleScene = "Assets/Scenes/MainMenu.unity";
 
         [SerializeField] private GameObject backdrop, mainPanel, pausePanel, settingsPanel, quitPanel, hud;
+        [SerializeField] private GameObject modalDimmer;
+        [SerializeField] private CanvasGroup titleInteraction;
+        [SerializeField] private GameObject titleLogo, titleActions;
         [SerializeField] private UnityEngine.UI.Button startButton, resumeButton, cancelButton, keepPlayingButton;
         [SerializeField] private TMP_Text startLabel, volumeLabel, fullscreenLabel, qualityLabel, vsyncLabel, languageLabel;
         [SerializeField] private TMP_Text confirmationTitle, confirmationDescription, confirmationAction;
@@ -312,11 +316,20 @@ namespace DarkLord.UI
             if (playing) ReleasePause();
             else AcquirePause();
             backdrop.SetActive(!playing);
-            if (mainPanel != null) mainPanel.SetActive(state == ScreenState.Main);
+            if (mainPanel != null) mainPanel.SetActive(state == ScreenState.Main || (isTitleScene && !playing && modalDimmer != null));
+            if (titleInteraction != null)
+            {
+                titleInteraction.interactable = state == ScreenState.Main;
+                titleInteraction.blocksRaycasts = state == ScreenState.Main;
+            }
+            if (modalDimmer != null) modalDimmer.SetActive(isTitleScene && !playing && state != ScreenState.Main);
+            if (titleLogo != null) titleLogo.SetActive(state == ScreenState.Main);
+            if (titleActions != null) titleActions.SetActive(state == ScreenState.Main);
             if (pausePanel != null) pausePanel.SetActive(state == ScreenState.Pause);
             settingsPanel.SetActive(state == ScreenState.Settings);
             if (quitPanel != null) quitPanel.SetActive(state == ScreenState.Quit);
             if(slotPanel!=null)slotPanel.gameObject.SetActive(state==ScreenState.Slots);
+            if (isTitleScene && panorama != null) panorama.Navigate(state);
             if (EventSystem.current == null) return;
             EventSystem.current.SetSelectedGameObject(null);
             if (playing) return;
