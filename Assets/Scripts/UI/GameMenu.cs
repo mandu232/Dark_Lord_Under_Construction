@@ -183,7 +183,15 @@ namespace DarkLord.UI
         }
         public void ConfirmSlot()
         {
-            if(slotMode==SaveSlotMode.New) {GameSaveSession.BeginNew(selectedSlot);LoadScene(gameplayScene);}
+            if (isLoading) return;
+            if(slotMode==SaveSlotMode.New)
+            {
+                if (!Application.CanStreamedLevelBeLoaded(gameplayScene) ||
+                    !Application.CanStreamedLevelBeLoaded(StorySceneController.ScenePath))
+                { slotPanel.Error("스토리 또는 게임 장면을 불러올 수 없습니다."); return; }
+                GameSaveSession.BeginNew(selectedSlot);
+                LoadScene(StorySceneController.ScenePath);
+            }
             else if(slotMode==SaveSlotMode.Continue)
             {
                 if(GameSaveSession.BeginContinue(selectedSlot,out var error))LoadScene(gameplayScene);

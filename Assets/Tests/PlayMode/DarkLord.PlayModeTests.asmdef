@@ -1,6 +1,6 @@
 {
   "name": "DarkLord.PlayModeTests",
-  "references": ["DarkLord.Runtime", "Unity.InputSystem"],
+  "references": ["DarkLord.Runtime", "Unity.InputSystem", "Unity.TextMeshPro", "Unity.ugui"],
   "optionalUnityReferences": ["TestAssemblies"],
   "autoReferenced": false
 }

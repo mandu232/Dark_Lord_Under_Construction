@@ -19,6 +19,7 @@ namespace DarkLord.UI
         [SerializeField] private TMP_Text crystalsText;
         [SerializeField] private TMP_Text healthText;
         [SerializeField] private TMP_Text minionsText;
+        [SerializeField] private UnityEngine.UI.Image healthFill;
 
         private int lastHealth = -1;
         private int lastGuardCount = -1;
@@ -88,6 +89,12 @@ namespace DarkLord.UI
             if (playerHealth == null || healthText == null) return;
             lastHealth = playerHealth.CurrentHealth;
             healthText.text = $"체력  {lastHealth} / {playerHealth.MaximumHealth}";
+            if (healthFill != null)
+            {
+                float ratio = Mathf.Clamp01((float)lastHealth / playerHealth.MaximumHealth);
+                healthFill.rectTransform.anchorMax = new Vector2(ratio, 1);
+                healthFill.enabled = ratio > 0;
+            }
         }
 
         private void RefreshMinions()

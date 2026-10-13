@@ -17,6 +17,7 @@ namespace DarkLord.UI
         [SerializeField] private Transform itemsRoot;
         [SerializeField] private BuildItemButton itemTemplate;
         [SerializeField] private BuildItemDefinition[] items;
+        [SerializeField] private UnityEngine.UI.ScrollRect itemsScroll, detailsScroll;
         private readonly List<BuildItemButton> cards = new List<BuildItemButton>();
         private DungeonExpansion expansion;
         private MinionSummoning summoning;
@@ -184,7 +185,12 @@ namespace DarkLord.UI
             category = value;
             selected = null;
             expansion?.CancelSelection();
-            foreach (var card in cards) card.gameObject.SetActive(card.Item.category == value && !card.Item.repairTool);
+            foreach (var card in cards)
+            {
+                card.gameObject.SetActive(card.Item.category == value && !card.Item.repairTool);
+                card.SetSelected(false);
+            }
+            if (itemsScroll != null) itemsScroll.horizontalNormalizedPosition = 0;
             roomsTab.GetComponent<UnityEngine.UI.Image>().color = TabColor(value == BuildCategory.Rooms);
             minionsTab.GetComponent<UnityEngine.UI.Image>().color = TabColor(value == BuildCategory.Minions);
             trapsTab.GetComponent<UnityEngine.UI.Image>().color = TabColor(value == BuildCategory.Traps);
@@ -192,11 +198,13 @@ namespace DarkLord.UI
             if (buildingsTab != null) buildingsTab.image.color = TabColor(value == BuildCategory.Buildings);
             ShowSelectedDetails();
         }
-        private static Color TabColor(bool active) => active ? new Color32(155, 62, 51, 255) : new Color32(70, 54, 84, 255);
+        private static Color TabColor(bool active) => active ? new Color32(130, 28, 48, 255) : new Color32(35, 20, 29, 255);
         public void Choose(BuildItemDefinition item)
         {
             if (expansion == null || !expansion.ExpansionMode || item == null || item.repairTool) return;
             selected = item;
+            foreach (var card in cards) card.SetSelected(card.Item == item);
+            if (detailsScroll != null) detailsScroll.verticalNormalizedPosition = 1;
             expansion.CancelSelection();
             if (item.available)
             {
