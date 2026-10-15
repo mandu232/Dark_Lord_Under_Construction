@@ -8,7 +8,7 @@ namespace DarkLord.UI
         IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IEndDragHandler
     {
         [SerializeField] private RectTransform handleVisual;
-        [SerializeField, Min(.01f)] private float rotationDuration = .16f;
+        [SerializeField, Min(.01f)] private float rotationDuration = .12f;
         private UnityEngine.UI.Slider slider;
         private bool pressed;
         private float angle, fromAngle, targetAngle, elapsed;

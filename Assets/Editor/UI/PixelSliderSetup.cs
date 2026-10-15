@@ -38,11 +38,14 @@ namespace DarkLord.EditorTools
                 track.raycastTarget = false;
                 var fillArea = (RectTransform)slider.transform.Find("Fill Area");
                 fillArea.gameObject.SetActive(true);
-                Center(fillArea, new Vector2(width - 4 * PixelScale, fillSprite.rect.height * PixelScale));
+                Center(fillArea, new Vector2(width - 2 * PixelScale, fillSprite.rect.height * PixelScale));
+                // The visible fill occupies rows 2–5 of its seven-pixel texture.
+                fillArea.anchoredPosition = new Vector2(0, .5f * PixelScale);
                 fillArea.SetSiblingIndex(track.transform.GetSiblingIndex() + 1);
                 var fill = fillArea.Find("Fill").GetComponent<UnityEngine.UI.Image>();
                 fill.sprite = fillSprite;
-                fill.type = UnityEngine.UI.Image.Type.Filled;
+                fill.type = UnityEngine.UI.Image.Type.Sliced;
+                fill.pixelsPerUnitMultiplier = 1f / PixelScale;
                 fill.fillMethod = UnityEngine.UI.Image.FillMethod.Horizontal;
                 fill.fillOrigin = (int)UnityEngine.UI.Image.OriginHorizontal.Left;
                 fill.fillAmount = slider.normalizedValue;

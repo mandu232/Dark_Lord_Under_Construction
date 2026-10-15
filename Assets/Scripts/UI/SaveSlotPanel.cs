@@ -22,11 +22,21 @@ namespace DarkLord.UI
             {
                 bool valid=SaveSlotStore.Default.TryRead(i,out var data,out var error);
                 slots[i].interactable=mode!=SaveSlotMode.Continue || valid;
-                string details=valid?$"웨이브 {data.wave.number} · {TimeSpan.FromSeconds(data.playedSeconds):hh\\:mm\\:ss}":SaveSlotStore.Default.Exists(i)?"읽을 수 없는 저장 기록":"빈 저장 공간";
-                if(valid && DateTimeOffset.TryParse(data.savedAtUtc,out var date))details+="\n"+date.ToLocalTime().ToString("yyyy-MM-dd HH:mm");
                 string name = valid && !string.IsNullOrWhiteSpace(data.options?.saveName) ? data.options.saveName : $"저장 공간 {i+1}";
-                if (valid) details = (data.options ?? new DarkLord.Gameplay.NewGameOptions()).DifficultyName + " · " + details;
-                slotLabels[i].text=$"{name}\n{details}";
+                if (valid)
+                {
+                    string difficulty = (data.options ?? new DarkLord.Gameplay.NewGameOptions()).DifficultyName;
+                    string playedDate = DateTimeOffset.TryParse(data.savedAtUtc, out var date)
+                        ? date.ToLocalTime().ToString("yyyy-MM-dd") : "날짜 정보 없음";
+                    var duration = TimeSpan.FromSeconds(data.playedSeconds);
+                    string playedTime = $"{(long)duration.TotalHours:00}:{duration.Minutes:00}:{duration.Seconds:00}";
+                    slotLabels[i].text = $"{name}\n\n난이도: {difficulty}\n\n{playedDate}\n웨이브: {data.wave.number}\n{playedTime}";
+                }
+                else
+                {
+                    string status = SaveSlotStore.Default.Exists(i) ? "읽을 수 없는 저장 기록" : "빈 저장 공간";
+                    slotLabels[i].text = $"{name}\n{status}";
+                }
                 slotLabels[i].richText = false;
             }
         }

@@ -36,11 +36,13 @@ namespace DarkLord.Tests
                 var fill = slider.fillRect.GetComponent<UnityEngine.UI.Image>();
                 Assert.AreEqual("Assets/Sprtie/UI/Slider/SliderTrack_Bar.png", UnityEditor.AssetDatabase.GetAssetPath(fill.sprite));
                 Assert.IsTrue(fill.gameObject.activeInHierarchy);
-                Assert.AreEqual(UnityEngine.UI.Image.FillMethod.Horizontal, fill.fillMethod);
+                Assert.AreEqual(UnityEngine.UI.Image.Type.Sliced, fill.type);
+                Assert.AreEqual(track.pixelsPerUnitMultiplier, fill.pixelsPerUnitMultiplier, .001f);
+                Assert.AreEqual(pixels, ((RectTransform)fill.rectTransform.parent).rect.height / fill.sprite.rect.height, .001f);
                 foreach (float percent in new[] { 0f, .25f, .5f, 1f })
                 {
                     slider.SetValueWithoutNotify(percent);
-                    Assert.AreEqual(percent, fill.fillAmount, .001f);
+                    Assert.AreEqual(percent, fill.rectTransform.anchorMax.x, .001f);
                 }
             }
             var first = sliders[0];
