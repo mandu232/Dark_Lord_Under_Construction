@@ -14,7 +14,7 @@ namespace DarkLord.Editor
     // In-place presentation pass. Never rebuilds gameplay objects or changes the menu's source art.
     public static class CrimsonGameUiSetup
     {
-        private const string Art = "Assets/Art/UI/InGame";
+        private const string Art = "Assets/Sprtie/UI/InGame";
         private static readonly Color Ink = new Color32(23, 15, 23, 255);
         private static readonly Color Paper = new Color32(245, 231, 211, 255);
         private static readonly Color Muted = new Color32(187, 157, 164, 255);
@@ -30,7 +30,7 @@ namespace DarkLord.Editor
             if (!scene.isLoaded) scene = EditorSceneManager.OpenScene("Assets/Scenes/SampleScene.unity", OpenSceneMode.Additive);
             var hud = scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<GameHud>(true)).Single();
             Undo.RegisterFullObjectHierarchyUndo(hud.gameObject, "Apply crimson game UI");
-            if (!AssetDatabase.IsValidFolder(Art)) AssetDatabase.CreateFolder("Assets/Art/UI", "InGame");
+            if (!AssetDatabase.IsValidFolder(Art)) AssetDatabase.CreateFolder("Assets/Sprtie/UI", "InGame");
             panel = PrepareSprite("CastlePanel-Open", new Vector4(42, 28, 42, 65));
             button = PrepareSprite("CastleButton", new Vector4(34, 20, 34, 20));
             const string constructionPath = "Assets/Prefabs/UI/ConstructionPanel.prefab";
@@ -66,7 +66,7 @@ namespace DarkLord.Editor
         {
             string path = Art + "/" + name + ".png";
             if (AssetDatabase.LoadAssetAtPath<Texture2D>(path) == null)
-                AssetDatabase.CopyAsset("Assets/Art/UI/MainMenu/" + name + ".png", path);
+                AssetDatabase.CopyAsset("Assets/Sprtie/UI/MainMenu/" + name + ".png", path);
             var importer = (TextureImporter)AssetImporter.GetAtPath(path);
             importer.textureType = TextureImporterType.Sprite;
             importer.spriteImportMode = SpriteImportMode.Single;

@@ -218,7 +218,6 @@ GameObject:
   - component: {fileID: 3383184857788672494}
   - component: {fileID: 2183178690842372651}
   - component: {fileID: 6716379517484412962}
-  - component: {fileID: 3050954759574732355}
   m_Layer: 0
   m_Name: Cancel
   m_TagString: Untagged
@@ -275,8 +274,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: f930a5da86904134cb6334bf46f50392, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: -2934079335627394362, guid: 12eae261bcbe17d45a8851c78315e562, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -284,7 +283,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 0.22407408
+  m_PixelsPerUnitMultiplier: 0.16
 --- !u!114 &3383184857788672494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -304,7 +303,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 1.2, g: 1.12, b: 1.12, a: 1}
@@ -314,9 +313,9 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.08
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: -433241282, guid: 12eae261bcbe17d45a8851c78315e562, type: 3}
+    m_PressedSprite: {fileID: -433241282, guid: 12eae261bcbe17d45a8851c78315e562, type: 3}
+    m_SelectedSprite: {fileID: -433241282, guid: 12eae261bcbe17d45a8851c78315e562, type: 3}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -378,19 +377,6 @@ MonoBehaviour:
   m_EffectColor: {r: 0.41568628, g: 0.16862746, b: 0.23921569, a: 1}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
---- !u!114 &3050954759574732355
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 459468283357510333}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 058d3bfee00831b468913f97db1211ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.UI.SettingsButtonHover
-  hoverScale: 1.06
 --- !u!1 &775917530046155858
 GameObject:
   m_ObjectHideFlags: 0
@@ -4638,7 +4624,6 @@ GameObject:
   - component: {fileID: 7578077821153522852}
   - component: {fileID: 6291236809291050497}
   - component: {fileID: 4754640963813441558}
-  - component: {fileID: 8168519358302721190}
   m_Layer: 0
   m_Name: Apply
   m_TagString: Untagged
@@ -4695,8 +4680,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: f92cdfcd69ecc134b864b71942d2f152, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: -2934079335627394362, guid: 12eae261bcbe17d45a8851c78315e562, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -4704,7 +4689,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 0.22407408
+  m_PixelsPerUnitMultiplier: 0.16
 --- !u!114 &7578077821153522852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4724,7 +4709,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 1.2, g: 1.12, b: 1.12, a: 1}
@@ -4734,9 +4719,9 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.08
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: -433241282, guid: 12eae261bcbe17d45a8851c78315e562, type: 3}
+    m_PressedSprite: {fileID: -433241282, guid: 12eae261bcbe17d45a8851c78315e562, type: 3}
+    m_SelectedSprite: {fileID: -433241282, guid: 12eae261bcbe17d45a8851c78315e562, type: 3}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -4798,19 +4783,6 @@ MonoBehaviour:
   m_EffectColor: {r: 0.41568628, g: 0.16862746, b: 0.23921569, a: 1}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
---- !u!114 &8168519358302721190
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5209258187839771274}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 058d3bfee00831b468913f97db1211ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.UI.SettingsButtonHover
-  hoverScale: 1.06
 --- !u!1 &5221371692416322563
 GameObject:
   m_ObjectHideFlags: 0
@@ -5341,7 +5313,6 @@ GameObject:
   - component: {fileID: 3356484337093065594}
   - component: {fileID: 6178924090033791792}
   - component: {fileID: 5107752993053841365}
-  - component: {fileID: 4799637307019582381}
   m_Layer: 0
   m_Name: Defaults
   m_TagString: Untagged
@@ -5391,15 +5362,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.8, g: 0.78, b: 0.83, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: f930a5da86904134cb6334bf46f50392, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: -2934079335627394362, guid: 12eae261bcbe17d45a8851c78315e562, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -5407,7 +5378,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 0.22407408
+  m_PixelsPerUnitMultiplier: 0.16
 --- !u!114 &3356484337093065594
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5427,7 +5398,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 1.2, g: 1.12, b: 1.12, a: 1}
@@ -5437,9 +5408,9 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.08
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: -433241282, guid: 12eae261bcbe17d45a8851c78315e562, type: 3}
+    m_PressedSprite: {fileID: -433241282, guid: 12eae261bcbe17d45a8851c78315e562, type: 3}
+    m_SelectedSprite: {fileID: -433241282, guid: 12eae261bcbe17d45a8851c78315e562, type: 3}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -5501,19 +5472,6 @@ MonoBehaviour:
   m_EffectColor: {r: 0.41568628, g: 0.16862746, b: 0.23921569, a: 1}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
---- !u!114 &4799637307019582381
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5559605333924502466}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 058d3bfee00831b468913f97db1211ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.UI.SettingsButtonHover
-  hoverScale: 1.06
 --- !u!1 &5692403944796412181
 GameObject:
   m_ObjectHideFlags: 0
@@ -7727,7 +7685,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 10
+  m_Spacing: 50
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1

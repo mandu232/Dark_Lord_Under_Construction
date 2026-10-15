@@ -13,7 +13,7 @@ namespace DarkLord.Editor
         public static void Apply()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
-            const string art = "Assets/Art/UI/MainMenu/CastlePanel.png";
+            const string art = "Assets/Sprtie/UI/MainMenu/CastlePanel.png";
             var importer = (TextureImporter)AssetImporter.GetAtPath(art);
             importer.textureType = TextureImporterType.Sprite;
             importer.spriteImportMode = SpriteImportMode.Single;

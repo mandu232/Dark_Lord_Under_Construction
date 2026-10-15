@@ -10,9 +10,9 @@ namespace DarkLord.Editor
     public static class ConstructionUiSetup
     {
         private const string Folder = "Assets/Data/Construction";
-        private const string IconFolder = "Assets/Art/UI/Construction";
+        private const string IconFolder = "Assets/Sprtie/UI/Construction";
         private const string PrefabFolder = "Assets/Prefabs/Dungeon";
-        private const string MeshFolder = "Assets/Art/Dungeon/Meshes";
+        private const string MeshFolder = "Assets/Sprtie/Dungeon/Meshes";
         private static void EnsureFolder(string path)
         {
             var parts = path.Split('/');

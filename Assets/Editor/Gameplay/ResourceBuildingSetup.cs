@@ -19,7 +19,7 @@ namespace DarkLord.Editor
         { var data=new SerializedObject(owner);data.FindProperty(field).objectReferenceValue=value;data.ApplyModifiedPropertiesWithoutUndo(); }
         private static Sprite RuinsSprite()
         {
-            const string path="Assets/Art/UI/Construction/BuildingRuins.png";
+            const string path="Assets/Sprtie/UI/Construction/BuildingRuins.png";
             if(!System.IO.File.Exists(path))
             {
                 var texture=new Texture2D(32,32,TextureFormat.RGBA32,false);
@@ -41,7 +41,7 @@ namespace DarkLord.Editor
             var root=new GameObject(key);var health=root.AddComponent<ActorHealth>();health.Configure(Faction.Dungeon,180);
             root.AddComponent<CircleCollider2D>().radius=.45f;
             var intact=new GameObject("Intact");intact.transform.SetParent(root.transform,false);
-            var body=intact.AddComponent<SpriteRenderer>();body.sprite=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/UI/Construction/RoomIcon.png");body.color=color;body.sortingOrder=-90;
+            var body=intact.AddComponent<SpriteRenderer>();body.sprite=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprtie/UI/Construction/RoomIcon.png");body.color=color;body.sortingOrder=-90;
             var resource=new GameObject("Resource Symbol");resource.transform.SetParent(intact.transform,false);resource.transform.localPosition=new Vector3(0,.125f,0);var symbol=resource.AddComponent<SpriteRenderer>();symbol.sprite=icon;symbol.sortingOrder=-89;
             var remains=new GameObject("Ruins");remains.transform.SetParent(root.transform,false);var rubble=remains.AddComponent<SpriteRenderer>();rubble.sprite=ruins;rubble.sortingOrder=-90;remains.SetActive(false);
             var building=root.AddComponent<ResourceBuilding>();
@@ -65,7 +65,7 @@ namespace DarkLord.Editor
         public static string Run()
         {
             if(EditorApplication.isPlaying)throw new InvalidOperationException("Exit Play mode before setup.");
-            var icons=AssetDatabase.LoadAllAssetsAtPath("Assets/Art/UI/Icons/ResourceIconSheet.png").OfType<Sprite>().OrderBy(s=>s.name).ToArray();
+            var icons=AssetDatabase.LoadAllAssetsAtPath("Assets/Sprtie/UI/Icons/ResourceIconSheet.png").OfType<Sprite>().OrderBy(s=>s.name).ToArray();
             icons=new[] {icons[1],icons[0],icons[2]}; // Sheet order: blood, gold, bloodstone.
             var ruins=RuinsSprite();var items=new BuildItemDefinition[3];
             string[] keys={"GoldMint","BloodAltar","BloodstoneExtractor"};string[] titles={"금화 주조소","혈액 제단","혈석 추출기"};string[] resources={"금화","혈액","혈석"};

@@ -67,7 +67,7 @@ namespace DarkLord.Editor
 
         private static Mesh WorkerMesh()
         {
-            const string path = "Assets/Art/Placeholders/WorkerPlaceholder.asset";
+            const string path = "Assets/Sprtie/Placeholders/WorkerPlaceholder.asset";
             var existing = AssetDatabase.LoadAssetAtPath<Mesh>(path);
             if (existing != null) return existing;
             var vertices = new List<Vector3>();

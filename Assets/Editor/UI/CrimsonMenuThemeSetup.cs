@@ -168,7 +168,7 @@ namespace DarkLord.Editor
 
         private static void ImportFrame(string name, Vector4 border)
         {
-            string path = "Assets/Art/UI/MainMenu/" + name + ".png";
+            string path = "Assets/Sprtie/UI/MainMenu/" + name + ".png";
             AssetDatabase.ImportAsset(path);
             var importer = (TextureImporter)AssetImporter.GetAtPath(path);
             importer.textureType = TextureImporterType.Sprite; importer.spriteImportMode = SpriteImportMode.Single;

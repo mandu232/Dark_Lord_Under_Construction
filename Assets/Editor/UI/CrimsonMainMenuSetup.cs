@@ -11,7 +11,7 @@ namespace DarkLord.Editor
     public static class CrimsonMainMenuSetup
     {
         private const string PrefabPath = "Assets/Prefabs/UI/MainMenu.prefab";
-        private const string ArtPath = "Assets/Art/UI/MainMenu/";
+        private const string ArtPath = "Assets/Sprtie/UI/MainMenu/";
 
         [MenuItem("Tools/Dark Lord/Apply Crimson Main Menu")]
         public static void Apply()
