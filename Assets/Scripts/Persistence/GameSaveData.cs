@@ -18,6 +18,8 @@ namespace DarkLord.Persistence
         public DungeonSaveData dungeon;
         public MinionSaveData[] guards = new MinionSaveData[0];
         public WaveSaveData wave;
+        // Missing in legacy saves: null is the original, normal ruleset.
+        public NewGameOptions options;
     }
     [Serializable] public sealed class DungeonSaveData
     {
@@ -110,6 +112,7 @@ namespace DarkLord.Persistence
         public static void Validate(GameSaveData data)
         {
             if (data == null || data.version != 1) throw new InvalidDataException("지원하지 않는 저장 형식입니다.");
+            if (data.options != null && !data.options.IsValid) throw new InvalidDataException("게임 설정이 올바르지 않습니다.");
             var d = data.dungeon;
             if (d == null || d.width < 15 || d.width > 101 || d.height < 11 || d.height > 101 ||
                 d.cells == null || d.cells.Length != d.width * d.height || d.sections == null || d.traps == null || d.queue == null ||

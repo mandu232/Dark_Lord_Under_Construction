@@ -12,7 +12,7 @@ namespace DarkLord.UI
     [DisallowMultipleComponent]
     public sealed class GameMenu : MonoBehaviour
     {
-        public enum ScreenState { Main, Playing, Pause, Settings, Quit, Slots }
+        public enum ScreenState { Main, Playing, Pause, Settings, Quit, Slots, NewGameSetup }
 
         [SerializeField] private bool isTitleScene;
         [SerializeField] private CastleMenuPanorama panorama;
@@ -33,6 +33,7 @@ namespace DarkLord.UI
         [SerializeField] private DungeonExpansion expansion;
 
         [SerializeField] private SaveSlotPanel slotPanel;
+        [SerializeField] private NewGameSetupPanel newGameSetup;
         [SerializeField] private GameSaveSession saveSession;
         [SerializeField] private UnityEngine.UI.Button continueButton;
         [SerializeField] private TMP_Text saveStatus;
@@ -55,6 +56,7 @@ namespace DarkLord.UI
             var bindings = settingsPanel.GetComponent<SettingsPanelBindings>();
             if (bindings != null) bindings.Bind(this);
             slotPanel?.Bind(this);
+            newGameSetup?.Bind(this);
             if (isTitleScene)
             {
                 if (startLabel != null) startLabel.text="새 게임";
@@ -144,6 +146,7 @@ namespace DarkLord.UI
                 case ScreenState.Settings: CancelSettings(); break;
                 case ScreenState.Quit: CancelQuit(); break;
                 case ScreenState.Slots: if(!slotPanel.CancelOverwriteIfOpen())CancelSlots(); break;
+                case ScreenState.NewGameSetup: CancelNewGameSetup(); break;
             }
         }
 
@@ -186,11 +189,9 @@ namespace DarkLord.UI
             if (isLoading) return;
             if(slotMode==SaveSlotMode.New)
             {
-                if (!Application.CanStreamedLevelBeLoaded(gameplayScene) ||
-                    !Application.CanStreamedLevelBeLoaded(StorySceneController.ScenePath))
-                { slotPanel.Error("스토리 또는 게임 장면을 불러올 수 없습니다."); return; }
-                GameSaveSession.BeginNew(selectedSlot);
-                LoadScene(StorySceneController.ScenePath);
+                if (newGameSetup == null) { slotPanel.Error("새 게임 설정 화면이 연결되지 않았습니다."); return; }
+                newGameSetup.Begin(selectedSlot);
+                Show(ScreenState.NewGameSetup);
             }
             else if(slotMode==SaveSlotMode.Continue)
             {
@@ -199,6 +200,21 @@ namespace DarkLord.UI
             }
             else if(SaveCurrent(selectedSlot))
             {if(saveThenExit)QuitGame();else Show(ScreenState.Pause);}
+        }
+        public void CancelNewGameSetup()
+        {
+            if (isLoading || State != ScreenState.NewGameSetup) return;
+            slotPanel.Refresh(SaveSlotMode.New);
+            Show(ScreenState.Slots);
+        }
+        public void BeginConfiguredGame(DarkLord.Gameplay.NewGameOptions options)
+        {
+            if (isLoading || State != ScreenState.NewGameSetup) return;
+            string path = options.skipOpening ? gameplayScene : StorySceneController.ScenePath;
+            if (!Application.CanStreamedLevelBeLoaded(gameplayScene) || !Application.CanStreamedLevelBeLoaded(path))
+            { newGameSetup.Error("스토리 또는 게임 장면을 불러올 수 없습니다."); return; }
+            GameSaveSession.BeginNew(selectedSlot, options);
+            LoadScene(path);
         }
         public void SaveAndExit()
         {
@@ -337,11 +353,12 @@ namespace DarkLord.UI
             settingsPanel.SetActive(state == ScreenState.Settings);
             if (quitPanel != null) quitPanel.SetActive(state == ScreenState.Quit);
             if(slotPanel!=null)slotPanel.gameObject.SetActive(state==ScreenState.Slots);
+            if(newGameSetup!=null)newGameSetup.gameObject.SetActive(state==ScreenState.NewGameSetup);
             if (isTitleScene && panorama != null) panorama.Navigate(state);
             if (EventSystem.current == null) return;
             EventSystem.current.SetSelectedGameObject(null);
             if (playing) return;
-            var focus = state==ScreenState.Slots ? slotPanel.Focus : state == ScreenState.Main ? startButton : state == ScreenState.Pause ? resumeButton :
+            UnityEngine.UI.Selectable focus = state == ScreenState.NewGameSetup ? newGameSetup.Focus : state==ScreenState.Slots ? slotPanel.Focus : state == ScreenState.Main ? startButton : state == ScreenState.Pause ? resumeButton :
                 state == ScreenState.Settings ? cancelButton : keepPlayingButton;
             if(focus!=null)EventSystem.current.SetSelectedGameObject(focus.gameObject);
         }

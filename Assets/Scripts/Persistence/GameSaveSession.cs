@@ -19,6 +19,9 @@ namespace DarkLord.Persistence
         [SerializeField] private BuildItemDefinition[] catalog;
         [SerializeField] private string[] catalogIds;
         private static GameSaveData pendingLoad;
+        private static NewGameOptions pendingOptions;
+        private NewGameOptions options = new NewGameOptions();
+        public NewGameOptions Options => options.Copy();
         public static int ActiveSlot { get; private set; } = -1;
         private string savedSnapshot;
         private float playedSeconds;
@@ -35,18 +38,21 @@ namespace DarkLord.Persistence
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetSession() { ActiveSlot = -1; pendingLoad = null; }
-        public static void BeginNew(int slot)
+        private static void ResetSession() { ActiveSlot = -1; pendingLoad = null; pendingOptions = null; }
+        public static void BeginNew(int slot, NewGameOptions options = null)
         {
             if (slot < 0 || slot >= 3) throw new ArgumentOutOfRangeException(nameof(slot));
+            if (options != null && !options.IsValid) throw new ArgumentException("Invalid new game options.", nameof(options));
             ActiveSlot = slot;
             pendingLoad = null;
+            pendingOptions = (options ?? new NewGameOptions()).Copy();
         }
         public static bool BeginContinue(int slot, out string error, SaveSlotStore store = null)
         {
             if (!(store ?? SaveSlotStore.Default).TryRead(slot, out var data, out error)) return false;
             ActiveSlot = slot;
             pendingLoad = data;
+            pendingOptions = null;
             return true;
         }
         private IEnumerator Start()
@@ -54,10 +60,17 @@ namespace DarkLord.Persistence
             // Scene services finish Start before their saved state is restored.
             yield return null;
             var loaded = pendingLoad;
+            var newOptions = pendingOptions;
             pendingLoad = null;
+            pendingOptions = null;
             try
             {
                 if (loaded != null) Restore(loaded);
+                else if (newOptions != null)
+                {
+                    options = newOptions;
+                    waves.ConfigureRun(options);
+                }
                 Ready = true;
             }
             catch (Exception e) { Message = "이어하기 실패: " + e.Message; Debug.LogError(Message); }
@@ -77,6 +90,8 @@ namespace DarkLord.Persistence
                     if (prefab == null || prefab.GetComponent<ResourceBuilding>() == null)
                         throw new InvalidOperationException("저장된 건물 정보를 찾을 수 없습니다.");
                 }
+            options = (loaded.options ?? new NewGameOptions()).Copy();
+            waves.ConfigureRun(options);
             summoning.ClearSavedGuards();
             dungeon.RestoreSave(loaded.dungeon, Resolve);
             player.transform.position = loaded.playerPosition;
@@ -109,7 +124,7 @@ namespace DarkLord.Persistence
         }
         public GameSaveData Capture() => new GameSaveData
         {
-            playedSeconds = playedSeconds, playerPosition = player.transform.position,
+            options = options.Copy(), playedSeconds = playedSeconds, playerPosition = player.transform.position,
             playerHealth = player.CurrentHealth, playerMaximumHealth = player.MaximumHealth,
             coreHealth = core.CurrentHealth, coreMaximumHealth = core.MaximumHealth,
             gold = wallet.Gold, souls = wallet.Souls, crystals = wallet.DarkCrystals,

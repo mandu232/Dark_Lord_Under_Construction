@@ -36,6 +36,9 @@ namespace DarkLord.Gameplay
         private readonly Dictionary<ActorHealth, Action> deathHandlers = new Dictionary<ActorHealth, Action>();
         private Coroutine spawnRoutine;
         private int pendingSpawns;
+        private NewGameOptions options = new NewGameOptions();
+
+        public void ConfigureRun(NewGameOptions value) => options = (value ?? new NewGameOptions()).Copy();
 
         public int CurrentWave { get; private set; }
         public bool HasEntrance => dungeon != null && dungeon.Layout != null && dungeon.Layout.HasEntrance;
@@ -60,7 +63,7 @@ namespace DarkLord.Gameplay
             if (!CanStartWave || spawnRoutine != null || invaderPrefab == null) return;
             CurrentWave++;
             State = WaveState.Active;
-            pendingSpawns = WaveProgression.EnemyCount(CurrentWave, baseEnemyCount, enemyGrowthPerWave);
+            pendingSpawns = options.EnemyCount(WaveProgression.EnemyCount(CurrentWave, baseEnemyCount, enemyGrowthPerWave));
             spawnRoutine = StartCoroutine(SpawnWave());
             Changed?.Invoke();
         }
@@ -87,7 +90,7 @@ namespace DarkLord.Gameplay
             var invader = Instantiate(invaderPrefab, spawn, Quaternion.identity, transform);
             invader.name = $"Wave {CurrentWave} Invader";
             var health = invader.GetComponent<ActorHealth>();
-            health.Configure(Faction.Invader, WaveProgression.EnemyHealth(CurrentWave, baseEnemyHealth, enemyHealthGrowth));
+            health.Configure(Faction.Invader, options.EnemyHealth(WaveProgression.EnemyHealth(CurrentWave, baseEnemyHealth, enemyHealthGrowth)));
             invader.Assault(dungeonCore, dungeon);
             Action handler = () => OnInvaderDied(health);
             deathHandlers.Add(health, handler);
@@ -111,7 +114,7 @@ namespace DarkLord.Gameplay
         private void CheckWaveCleared()
         {
             if (State != WaveState.Active || pendingSpawns > 0 || aliveInvaders.Count > 0) return;
-            wallet?.Add(CurrencyType.Souls, WaveProgression.ClearReward(CurrentWave, baseSoulReward, soulRewardGrowth));
+            wallet?.Add(CurrencyType.Souls, options.Reward(WaveProgression.ClearReward(CurrentWave, baseSoulReward, soulRewardGrowth)));
             dungeon.PayBuildingIncome(wallet, CurrentWave);
             State = WaveState.Preparing;
             Changed?.Invoke();
