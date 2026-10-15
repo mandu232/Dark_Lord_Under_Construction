@@ -54,7 +54,7 @@ namespace DarkLord.UI
                 colors.pressedColor = new Color(.85f, .85f, .85f, 1);
                 categoryButtons[i].colors = colors;
                 categoryButtons[i].image.color = i == index
-                    ? new Color32(126, 55, 68, 255) : new Color32(49, 39, 54, 255);
+                    ? Color.white : new Color(.62f, .58f, .65f, 1);
             }
         }
 
