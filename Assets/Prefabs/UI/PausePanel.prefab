@@ -363,6 +363,7 @@ GameObject:
   - component: {fileID: 2516680774632213550}
   - component: {fileID: 2100372635381143453}
   - component: {fileID: 2538969757804205468}
+  - component: {fileID: 7407197624050784658}
   m_Layer: 0
   m_Name: Save
   m_TagString: Untagged
@@ -419,8 +420,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 7542121961434443071, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -428,7 +429,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 7
+  m_PixelsPerUnitMultiplier: 0.24736841
 --- !u!114 &2516680774632213550
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -448,7 +449,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 0.14117648, g: 0.101960786, b: 0.16470589, a: 1}
     m_HighlightedColor: {r: 0.36078432, g: 0.16078432, b: 0.22352941, a: 1}
@@ -458,10 +459,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 1118350329, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+    m_PressedSprite: {fileID: 1118350329, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+    m_SelectedSprite: {fileID: 7542121961434443071, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+    m_DisabledSprite: {fileID: 7542121961434443071, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -522,6 +523,18 @@ MonoBehaviour:
   m_EffectColor: {r: 0.41568628, g: 0.16862746, b: 0.23921569, a: 1}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
+--- !u!114 &7407197624050784658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2366100870905375718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a79a5e9b99bcc469eac746960c68fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.UI.ButtonPointerSelectionSprite
 --- !u!1 &2847124351456441610
 GameObject:
   m_ObjectHideFlags: 0
@@ -955,6 +968,7 @@ GameObject:
   - component: {fileID: 3594350347105436174}
   - component: {fileID: 356236584299746201}
   - component: {fileID: 2306926785828248420}
+  - component: {fileID: 8573006472799607326}
   m_Layer: 0
   m_Name: Quit
   m_TagString: Untagged
@@ -1011,8 +1025,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 7542121961434443071, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1020,7 +1034,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 7
+  m_PixelsPerUnitMultiplier: 0.24736841
 --- !u!114 &3594350347105436174
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1040,7 +1054,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 0.14117648, g: 0.101960786, b: 0.16470589, a: 1}
     m_HighlightedColor: {r: 0.36078432, g: 0.16078432, b: 0.22352941, a: 1}
@@ -1050,10 +1064,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 1118350329, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+    m_PressedSprite: {fileID: 1118350329, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+    m_SelectedSprite: {fileID: 7542121961434443071, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+    m_DisabledSprite: {fileID: 7542121961434443071, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -1114,6 +1128,18 @@ MonoBehaviour:
   m_EffectColor: {r: 0.41568628, g: 0.16862746, b: 0.23921569, a: 1}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
+--- !u!114 &8573006472799607326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4199562134043322664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a79a5e9b99bcc469eac746960c68fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.UI.ButtonPointerSelectionSprite
 --- !u!1 &4421805055075232179
 GameObject:
   m_ObjectHideFlags: 0
@@ -1188,15 +1214,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.08627451, g: 0.0627451, b: 0.105882354, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 3711238470162566674, guid: d885117b964873a43b427b285b3bbaee, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1204,7 +1230,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1.5
+  m_PixelsPerUnitMultiplier: 0.24736841
 --- !u!114 &4488462306619515087
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1647,6 +1673,7 @@ GameObject:
   - component: {fileID: 4368319239432353216}
   - component: {fileID: 7452833815350979153}
   - component: {fileID: 8467759125278071867}
+  - component: {fileID: 7532570021570309139}
   m_Layer: 0
   m_Name: Resume
   m_TagString: Untagged
@@ -1703,8 +1730,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 7542121961434443071, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1712,7 +1739,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 7
+  m_PixelsPerUnitMultiplier: 0.24736841
 --- !u!114 &4368319239432353216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1732,7 +1759,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 0.14117648, g: 0.101960786, b: 0.16470589, a: 1}
     m_HighlightedColor: {r: 0.36078432, g: 0.16078432, b: 0.22352941, a: 1}
@@ -1742,10 +1769,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 1118350329, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+    m_PressedSprite: {fileID: 1118350329, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+    m_SelectedSprite: {fileID: 7542121961434443071, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+    m_DisabledSprite: {fileID: 7542121961434443071, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -1806,6 +1833,18 @@ MonoBehaviour:
   m_EffectColor: {r: 0.41568628, g: 0.16862746, b: 0.23921569, a: 1}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
+--- !u!114 &7532570021570309139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5997525241804183192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a79a5e9b99bcc469eac746960c68fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.UI.ButtonPointerSelectionSprite
 --- !u!1 &6380051522291788059
 GameObject:
   m_ObjectHideFlags: 0
@@ -2101,7 +2140,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8960129175410931760
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2462,8 +2501,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 56, y: -48}
-  m_SizeDelta: {x: 600, y: 70}
+  m_AnchoredPosition: {x: 90, y: -90}
+  m_SizeDelta: {x: 530, y: 70}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &7785501798500952101
 CanvasRenderer:
@@ -2782,6 +2821,7 @@ GameObject:
   - component: {fileID: 7011710269221890551}
   - component: {fileID: 9024908838510891480}
   - component: {fileID: 304914096506152249}
+  - component: {fileID: 6487219076128948422}
   m_Layer: 0
   m_Name: Settings
   m_TagString: Untagged
@@ -2838,8 +2878,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 7542121961434443071, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -2847,7 +2887,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 7
+  m_PixelsPerUnitMultiplier: 0.24736841
 --- !u!114 &7011710269221890551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2867,7 +2907,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 0.14117648, g: 0.101960786, b: 0.16470589, a: 1}
     m_HighlightedColor: {r: 0.36078432, g: 0.16078432, b: 0.22352941, a: 1}
@@ -2877,10 +2917,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 1118350329, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+    m_PressedSprite: {fileID: 1118350329, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+    m_SelectedSprite: {fileID: 7542121961434443071, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+    m_DisabledSprite: {fileID: 7542121961434443071, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -2941,6 +2981,18 @@ MonoBehaviour:
   m_EffectColor: {r: 0.41568628, g: 0.16862746, b: 0.23921569, a: 1}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
+--- !u!114 &6487219076128948422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8480330338351176794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a79a5e9b99bcc469eac746960c68fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.UI.ButtonPointerSelectionSprite
 --- !u!1 &8562681770405407105
 GameObject:
   m_ObjectHideFlags: 0
@@ -2955,6 +3007,7 @@ GameObject:
   - component: {fileID: 6737847777099199873}
   - component: {fileID: 8619857085439736486}
   - component: {fileID: 2008787888292536037}
+  - component: {fileID: 4578589582777815581}
   m_Layer: 0
   m_Name: Main Menu
   m_TagString: Untagged
@@ -3011,8 +3064,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 7542121961434443071, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -3020,7 +3073,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 7
+  m_PixelsPerUnitMultiplier: 0.24736841
 --- !u!114 &6737847777099199873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3040,7 +3093,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 0.14117648, g: 0.101960786, b: 0.16470589, a: 1}
     m_HighlightedColor: {r: 0.36078432, g: 0.16078432, b: 0.22352941, a: 1}
@@ -3050,10 +3103,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 1118350329, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+    m_PressedSprite: {fileID: 1118350329, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+    m_SelectedSprite: {fileID: 7542121961434443071, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+    m_DisabledSprite: {fileID: 7542121961434443071, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -3114,6 +3167,18 @@ MonoBehaviour:
   m_EffectColor: {r: 0.41568628, g: 0.16862746, b: 0.23921569, a: 1}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
+--- !u!114 &4578589582777815581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8562681770405407105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a79a5e9b99bcc469eac746960c68fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.UI.ButtonPointerSelectionSprite
 --- !u!1 &8570839054868036408
 GameObject:
   m_ObjectHideFlags: 0
@@ -3223,8 +3288,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 56, y: -734}
-  m_SizeDelta: {x: 600, y: 36}
+  m_AnchoredPosition: {x: 90, y: -716}
+  m_SizeDelta: {x: 530, y: 36}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &3999400127577946622
 CanvasRenderer:

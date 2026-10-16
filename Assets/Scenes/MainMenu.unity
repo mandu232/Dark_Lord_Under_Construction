@@ -4710,6 +4710,10 @@ PrefabInstance:
       propertyPath: m_SpriteState.m_HighlightedSprite
       value: 
       objectReference: {fileID: 1118350329, guid: 9b14ec67f3f902a4a96d15012061f6aa, type: 3}
+    - target: {fileID: 3949682742005215462, guid: b971aef1c6e77bd4989a6817f4489bd8, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4293191654
+      objectReference: {fileID: 0}
     - target: {fileID: 4180279330405594175, guid: b971aef1c6e77bd4989a6817f4489bd8, type: 3}
       propertyPath: m_RaycastTarget
       value: 1
@@ -4998,6 +5002,14 @@ PrefabInstance:
       propertyPath: m_RaycastTarget
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5851624341930153458, guid: b971aef1c6e77bd4989a6817f4489bd8, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4293191654
+      objectReference: {fileID: 0}
+    - target: {fileID: 5851624341930153458, guid: b971aef1c6e77bd4989a6817f4489bd8, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
     - target: {fileID: 5930513092878229227, guid: b971aef1c6e77bd4989a6817f4489bd8, type: 3}
       propertyPath: m_SizeDelta.x
       value: -62.479347
@@ -5041,6 +5053,10 @@ PrefabInstance:
     - target: {fileID: 6129309015702010307, guid: b971aef1c6e77bd4989a6817f4489bd8, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 464.13223
+      objectReference: {fileID: 0}
+    - target: {fileID: 6408900609513587436, guid: b971aef1c6e77bd4989a6817f4489bd8, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4293191654
       objectReference: {fileID: 0}
     - target: {fileID: 7065451189156810874, guid: b971aef1c6e77bd4989a6817f4489bd8, type: 3}
       propertyPath: m_Sprite
@@ -5525,6 +5541,7 @@ MonoBehaviour:
   slots: {fileID: 2026967958}
   dimmer: {fileID: 2063945299}
   newGameSetup: {fileID: 584222249}
+  newGameCharacterSprite: {fileID: 21300000, guid: ab0cbcdbc7cb8bb47b0d62ad65b73511, type: 3}
   duration: 0.85
 --- !u!1 &2082287275
 GameObject:

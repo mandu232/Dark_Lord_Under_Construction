@@ -1,10 +1,19 @@
 fileFormatVersion: 2
-guid: f92cdfcd69ecc134b864b71942d2f152
+guid: ab0cbcdbc7cb8bb47b0d62ad65b73511
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1128754411527061042
-    second: ActionPrimary_0
+      213: 3005199941201742418
+    second: CrimsonRepose_NewGame_0
+  - first:
+      213: 2681055199864742374
+    second: CrimsonRepose_NewGame_1
+  - first:
+      213: -12598752545078751
+    second: CrimsonRepose_NewGame_2
+  - first:
+      213: 6086569684998677396
+    second: CrimsonRepose_NewGame_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +46,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -102,13 +111,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ActionPrimary_0
+      name: CrimsonRepose_NewGame_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 473
-        height: 145
+        width: 1476
+        height: 905
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,8 +126,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 23eb9b928242aaf00800000000000000
-      internalID: 1128754411527061042
+      spriteID: 25aca5e9c6d94b920800000000000000
+      internalID: 3005199941201742418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CrimsonRepose_NewGame_1
+      rect:
+        serializedVersion: 2
+        x: 1188
+        y: 196
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e1e62bdf75053520800000000000000
+      internalID: 2681055199864742374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CrimsonRepose_NewGame_2
+      rect:
+        serializedVersion: 2
+        x: 1184
+        y: 161
+        width: 21
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12200f5508d33dff0800000000000000
+      internalID: -12598752545078751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CrimsonRepose_NewGame_3
+      rect:
+        serializedVersion: 2
+        x: 1165
+        y: 103
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 493e10761e6d77450800000000000000
+      internalID: 6086569684998677396
       vertices: []
       indices: 
       edges: []
@@ -137,7 +212,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ActionPrimary_0: 1128754411527061042
+      CrimsonRepose_NewGame_0: 3005199941201742418
+      CrimsonRepose_NewGame_1: 2681055199864742374
+      CrimsonRepose_NewGame_2: -12598752545078751
+      CrimsonRepose_NewGame_3: 6086569684998677396
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

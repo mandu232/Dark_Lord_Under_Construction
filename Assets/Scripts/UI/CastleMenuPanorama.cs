@@ -12,6 +12,9 @@ namespace DarkLord.UI
         [SerializeField] private GameObject dimmer;
         [UnityEngine.Serialization.FormerlySerializedAs("rooftop")]
         [SerializeField] private RectTransform newGameSetup;
+        [SerializeField] private Sprite newGameCharacterSprite;
+        private UnityEngine.UI.Image characterImage;
+        private Sprite originalCharacterSprite;
         [SerializeField, Min(.1f)] private float duration = .85f;
         private Vector2 characterOrigin, titleOrigin, actionsOrigin;
         private Vector3 castleScale, characterScale;
@@ -27,6 +30,8 @@ namespace DarkLord.UI
         private void Awake()
         {
             characterOrigin=character.anchoredPosition;
+            characterImage=character.GetComponent<UnityEngine.UI.Image>();
+            if(characterImage!=null)originalCharacterSprite=characterImage.sprite;
             titleOrigin=title.anchoredPosition;
             actionsOrigin=actions.anchoredPosition;
             castleScale=castle.localScale;
@@ -39,7 +44,7 @@ namespace DarkLord.UI
 
         public void Navigate(GameMenu.ScreenState next)
         {
-            leavingSetup=state==GameMenu.ScreenState.NewGameSetup;
+            leavingSetup=state==GameMenu.ScreenState.NewGameSetup || (leavingSetup && elapsed<duration);
             state=next;
             from=view;
             target=next==GameMenu.ScreenState.Settings?1:next==GameMenu.ScreenState.Slots?-1:0;
@@ -80,6 +85,10 @@ namespace DarkLord.UI
             title.anchoredPosition=titleOrigin+Vector2.left*(view*width);
             actions.anchoredPosition=actionsOrigin+Vector2.left*(view*width);
             bool setupVisible=state==GameMenu.ScreenState.NewGameSetup || (leavingSetup && elapsed<duration);
+            // Keep the setup pose until its return transition has finished.
+            if(characterImage!=null)
+                characterImage.sprite=setupVisible && newGameCharacterSprite!=null
+                    ?newGameCharacterSprite:originalCharacterSprite;
             bool mainVisible=(Mathf.Abs(view)<.999f || target==0) && !setupVisible;
             title.gameObject.SetActive(mainVisible);
             actions.gameObject.SetActive(mainVisible);

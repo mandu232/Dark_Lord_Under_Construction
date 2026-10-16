@@ -67,5 +67,5 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "Dark_Lord_Under_Construction.slnx"
+    "dotnet.defaultSolution": "Dark Lord Under Construction.slnx"
 }
