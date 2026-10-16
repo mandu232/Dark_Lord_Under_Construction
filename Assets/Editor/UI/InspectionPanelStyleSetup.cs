@@ -57,7 +57,7 @@ namespace DarkLord.Editor
         }
         public static void Run()
         {
-            const string path="Assets/Prefabs/UI/BuildingInspectionPanel.prefab";
+            const string path="Assets/Prefabs/UI/InGame/BuildingInspectionPanel.prefab";
             var stage=PrefabStageUtility.GetCurrentPrefabStage();bool editing=stage!=null&&stage.assetPath==path;
             var root=editing?stage.prefabContentsRoot:PrefabUtility.LoadPrefabContents(path);
             try{Apply(root.GetComponent<BuildingInspectionPanel>());PrefabUtility.SaveAsPrefabAsset(root,path);}finally{if(!editing)PrefabUtility.UnloadPrefabContents(root);}

@@ -37,8 +37,8 @@ namespace DarkLord.Tests
         {
             previousTime=Time.timeScale;previousAudio=AudioListener.pause;
             directory=Path.Combine(Application.temporaryCachePath,"BuildingTests-"+Guid.NewGuid().ToString("N"));
-            yield return SceneManager.LoadSceneAsync("Assets/Scenes/SampleScene.unity",LoadSceneMode.Additive);
-            scene=SceneManager.GetSceneByPath("Assets/Scenes/SampleScene.unity");yield return null;yield return null;
+            yield return SceneManager.LoadSceneAsync("Assets/Scenes/InGame.unity",LoadSceneMode.Additive);
+            scene=SceneManager.GetSceneByPath("Assets/Scenes/InGame.unity");yield return null;yield return null;
             T Find<T>() where T:Component => scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<T>(true)).Single();
             dungeon=Find<DungeonGrid>();wallet=Find<CurrencyWallet>();session=Find<GameSaveSession>();menu=Find<GameMenu>();waves=Find<WaveDirector>();
             wallet.RestoreAmounts(2000,0,0);

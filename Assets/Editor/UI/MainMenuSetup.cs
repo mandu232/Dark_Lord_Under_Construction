@@ -133,7 +133,7 @@ namespace DarkLord.Editor
             EditorSceneManager.MarkSceneDirty(root.scene);
             EditorSceneManager.SaveScene(root.scene);
             Selection.activeGameObject = root;
-            Debug.Log("Main menu, pause menu, settings and quit confirmation added to SampleScene.");
+            Debug.Log("Main menu, pause menu, settings and quit confirmation added to InGame.");
         }
 
         private static void CreateCastle(Transform parent)

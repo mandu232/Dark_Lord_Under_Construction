@@ -17,7 +17,7 @@ namespace DarkLord.Tests
 
         [UnityTest] public IEnumerator SettingsSlidersUseMatchingPixelsAndRotateWithoutChangingValue()
         {
-            root = Object.Instantiate(UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/SettingsPanel.prefab"));
+            root = Object.Instantiate(UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/Shared/SettingsPanel.prefab"));
             root.SetActive(true);
             yield return null;
             var sliders = root.GetComponentsInChildren<UnityEngine.UI.Slider>(true);

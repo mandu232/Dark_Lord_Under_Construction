@@ -13,11 +13,11 @@ namespace DarkLord.Editor
         public static void Apply()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
-            const string path = "Assets/Prefabs/UI/SettingsPanel.prefab";
+            const string path = "Assets/Prefabs/UI/Shared/SettingsPanel.prefab";
             var prefab = PrefabUtility.LoadPrefabContents(path);
             try { Style(prefab); PrefabUtility.SaveAsPrefabAsset(prefab, path); }
             finally { PrefabUtility.UnloadPrefabContents(prefab); }
-            foreach (var scenePath in new[] { "Assets/Scenes/MainMenu.unity", "Assets/Scenes/SampleScene.unity" })
+            foreach (var scenePath in new[] { "Assets/Scenes/MainMenu.unity", "Assets/Scenes/InGame.unity" })
             {
                 var scene = SceneManager.GetSceneByPath(scenePath);
                 bool opened = !scene.isLoaded;

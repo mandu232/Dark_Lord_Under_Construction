@@ -23,7 +23,7 @@ namespace DarkLord.Tests
         {
             if (EventSystem.current == null) eventRoot = new GameObject("Test EventSystem", typeof(EventSystem));
             previousSelection = EventSystem.current.currentSelectedGameObject;
-            root = Object.Instantiate(UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/SaveSlotPanel.prefab"));
+            root = Object.Instantiate(UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/Shared/SaveSlotPanel.prefab"));
             root.SetActive(true);
             var panel = root.transform.Find("Overwrite Confirmation");
             panel.gameObject.SetActive(true);

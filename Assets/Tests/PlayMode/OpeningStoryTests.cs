@@ -145,9 +145,9 @@ namespace DarkLord.Tests
             Assert.IsTrue(lower.Find("Advance Triangle").gameObject.activeSelf);
             ExecuteEvents.ExecuteHierarchy(hits[0].gameObject, pointer, ExecuteEvents.pointerClickHandler);
             float deadline = Time.realtimeSinceStartup + 20;
-            while (SceneManager.GetActiveScene().path != "Assets/Scenes/SampleScene.unity" && Time.realtimeSinceStartup < deadline)
+            while (SceneManager.GetActiveScene().path != "Assets/Scenes/InGame.unity" && Time.realtimeSinceStartup < deadline)
                 yield return null;
-            Assert.AreEqual("Assets/Scenes/SampleScene.unity", SceneManager.GetActiveScene().path);
+            Assert.AreEqual("Assets/Scenes/InGame.unity", SceneManager.GetActiveScene().path);
             Assert.AreEqual(2, GameSaveSession.ActiveSlot);
             Assert.AreEqual(1, Time.timeScale, "Gameplay must start with its clock running.");
         }

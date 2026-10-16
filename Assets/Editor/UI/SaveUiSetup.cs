@@ -25,7 +25,7 @@ namespace DarkLord.Editor
         public static string Run()
         {
             if(EditorApplication.isPlaying)throw new System.InvalidOperationException("Exit Play mode first.");
-            var game=SceneManager.GetSceneByPath("Assets/Scenes/SampleScene.unity");if(!game.isLoaded)game=EditorSceneManager.OpenScene("Assets/Scenes/SampleScene.unity",OpenSceneMode.Additive);
+            var game=SceneManager.GetSceneByPath("Assets/Scenes/InGame.unity");if(!game.isLoaded)game=EditorSceneManager.OpenScene("Assets/Scenes/InGame.unity",OpenSceneMode.Additive);
             var title=SceneManager.GetSceneByPath("Assets/Scenes/MainMenu.unity");if(!title.isLoaded)title=EditorSceneManager.OpenScene("Assets/Scenes/MainMenu.unity",OpenSceneMode.Additive);
             GameMenu Menu(Scene s)=>s.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<GameMenu>(true)).Single();
             var gm=Menu(game);var tm=Menu(title);var gs=new SerializedObject(gm);
@@ -58,10 +58,10 @@ namespace DarkLord.Editor
             Button("Confirm",overlay,template,"계속",new Vector2(380,76),new Vector2(210,-155),view.ConfirmOverwrite);
             Button("Cancel",overlay,template,"취소",new Vector2(380,76),new Vector2(-210,-155),view.CancelOverwrite);
             overlay.gameObject.SetActive(false);root.gameObject.SetActive(false);
-            var asset=PrefabUtility.SaveAsPrefabAsset(root.gameObject,"Assets/Prefabs/UI/SaveSlotPanel.prefab");Object.DestroyImmediate(root.gameObject);
+            var asset=PrefabUtility.SaveAsPrefabAsset(root.gameObject,"Assets/Prefabs/UI/Shared/SaveSlotPanel.prefab");Object.DestroyImmediate(root.gameObject);
             foreach(var menu in new[]{gm,tm}){var instance=(GameObject)PrefabUtility.InstantiatePrefab(asset,menu.transform);Ref(menu,"slotPanel",instance.GetComponent<SaveSlotPanel>());}
             // Edit pause prefab through PrefabUtility, retaining its existing layout and references.
-            var contents=PrefabUtility.LoadPrefabContents("Assets/Prefabs/UI/PausePanel.prefab");
+            var contents=PrefabUtility.LoadPrefabContents("Assets/Prefabs/UI/InGame/PausePanel.prefab");
             try
             {
                 var actions=contents.transform.Find("Pause Actions");var resume=actions.Find("Resume").GetComponent<UnityEngine.UI.Button>();var bridge=contents.GetComponent<PausePanelBindings>();
@@ -69,7 +69,7 @@ namespace DarkLord.Editor
                 ((RectTransform)contents.transform).sizeDelta=new Vector2(710,780);((RectTransform)actions).sizeDelta=new Vector2(598,410);
                 ((RectTransform)contents.transform.Find("Hint")).anchoredPosition=new Vector2(56,-712);
                 if(contents.transform.Find("Save Status")==null)Text("Save Status",contents.transform,label,"",new Vector2(598,44),new Vector2(0,-296),24);
-                PrefabUtility.SaveAsPrefabAsset(contents,"Assets/Prefabs/UI/PausePanel.prefab");
+                PrefabUtility.SaveAsPrefabAsset(contents,"Assets/Prefabs/UI/InGame/PausePanel.prefab");
             }
             finally{PrefabUtility.UnloadPrefabContents(contents);}
             Ref(gm,"saveStatus",pause.transform.Find("Save Status").GetComponent<TMP_Text>());

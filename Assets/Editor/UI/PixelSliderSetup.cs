@@ -10,7 +10,7 @@ namespace DarkLord.EditorTools
 {
     public static class PixelSliderSetup
     {
-        private const string PrefabPath = "Assets/Prefabs/UI/SettingsPanel.prefab";
+        private const string PrefabPath = "Assets/Prefabs/UI/Shared/SettingsPanel.prefab";
         private const string TrackPath = "Assets/Sprtie/UI/Slider/SliderTrack.png";
         private const string HandlePath = "Assets/Sprtie/UI/Slider/SliderHander.png";
         private const string FillPath = "Assets/Sprtie/UI/Slider/SliderTrack_Bar.png";

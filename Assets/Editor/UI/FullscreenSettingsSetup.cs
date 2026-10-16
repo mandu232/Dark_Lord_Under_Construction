@@ -22,11 +22,11 @@ namespace DarkLord.Editor
             importer.textureCompression = TextureImporterCompression.Uncompressed;
             importer.SaveAndReimport();
             var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(art);
-            const string path = "Assets/Prefabs/UI/SettingsPanel.prefab";
+            const string path = "Assets/Prefabs/UI/Shared/SettingsPanel.prefab";
             var root = PrefabUtility.LoadPrefabContents(path);
             try { Configure(root, sprite); PrefabUtility.SaveAsPrefabAsset(root, path); }
             finally { PrefabUtility.UnloadPrefabContents(root); }
-            foreach (var scenePath in new[] { "Assets/Scenes/MainMenu.unity", "Assets/Scenes/SampleScene.unity" })
+            foreach (var scenePath in new[] { "Assets/Scenes/MainMenu.unity", "Assets/Scenes/InGame.unity" })
             {
                 var scene = SceneManager.GetSceneByPath(scenePath);
                 bool opened = !scene.isLoaded;

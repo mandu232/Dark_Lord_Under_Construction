@@ -122,11 +122,32 @@ namespace DarkLord.Tests
             Assert.AreEqual(slotBefore, GameSaveSession.ActiveSlot);
             Assert.IsTrue(menu.GetComponentInChildren<SaveSlotPanel>().GetComponent<CanvasGroup>().interactable);
         }
+        [UnityTest] public IEnumerator SkippingOpeningFromPausedTitleStartsGameplayClock()
+        {
+            Time.timeScale = 0;
+            AudioListener.pause = true;
+            yield return SceneManager.LoadSceneAsync("Assets/Scenes/MainMenu.unity", LoadSceneMode.Single);
+            yield return null;
+            var menu = Object.FindAnyObjectByType<GameMenu>();
+            menu.StartGame(); menu.ConfirmSlot();
+            menu.BeginConfiguredGame(new NewGameOptions { skipOpening = true, saveName = "Skip regression" });
+            float deadline = Time.realtimeSinceStartup + 15;
+            while (SceneManager.GetActiveScene().path != "Assets/Scenes/InGame.unity" && Time.realtimeSinceStartup < deadline)
+                yield return null;
+            scene = SceneManager.GetSceneByPath("Assets/Scenes/InGame.unity");
+            Assert.IsTrue(scene.isLoaded);
+            yield return null; yield return null;
+            Assert.AreEqual(1, Time.timeScale);
+            Assert.IsFalse(AudioListener.pause);
+            Assert.AreEqual(GameMenu.ScreenState.Playing, Object.FindAnyObjectByType<GameMenu>().State);
+            Assert.IsTrue(Object.FindAnyObjectByType<GameSaveSession>().Ready);
+        }
+
         [UnityTest] public IEnumerator ChosenOptionsSurviveGameplaySaveAndRestore()
         {
             GameSaveSession.BeginNew(2, new NewGameOptions { difficulty = GameDifficulty.Nightmare, saveName = "검은 지붕", skipOpening = true });
-            yield return SceneManager.LoadSceneAsync("Assets/Scenes/SampleScene.unity", LoadSceneMode.Additive);
-            scene = SceneManager.GetSceneByPath("Assets/Scenes/SampleScene.unity"); yield return null; yield return null;
+            yield return SceneManager.LoadSceneAsync("Assets/Scenes/InGame.unity", LoadSceneMode.Additive);
+            scene = SceneManager.GetSceneByPath("Assets/Scenes/InGame.unity"); yield return null; yield return null;
             var session = scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<GameSaveSession>()).Single();
             Assert.IsTrue(session.Ready);
             var snapshot = session.Capture();

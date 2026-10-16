@@ -12,7 +12,7 @@ namespace DarkLord.Editor
 {
     public static class MenuSceneSetup
     {
-        private const string GamePath = "Assets/Scenes/SampleScene.unity";
+        private const string GamePath = "Assets/Scenes/InGame.unity";
         private const string MenuPath = "Assets/Scenes/MainMenu.unity";
 
         [MenuItem("Tools/Dark Lord/Setup Main Menu and Settings")]

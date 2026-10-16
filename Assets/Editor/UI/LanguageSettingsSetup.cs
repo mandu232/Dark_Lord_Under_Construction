@@ -24,7 +24,7 @@ namespace DarkLord.Editor
             string originalScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().path;
             EditorSceneManager.SaveOpenScenes();
 
-            foreach (string path in new[] { "Assets/Scenes/MainMenu.unity", "Assets/Scenes/SampleScene.unity" })
+            foreach (string path in new[] { "Assets/Scenes/MainMenu.unity", "Assets/Scenes/InGame.unity" })
             {
                 var scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
                 PatchScene();

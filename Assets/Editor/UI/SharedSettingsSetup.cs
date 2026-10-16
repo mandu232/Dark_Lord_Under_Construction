@@ -9,9 +9,9 @@ namespace DarkLord.Editor
 {
     public static class SharedSettingsSetup
     {
-        public const string PrefabPath = "Assets/Prefabs/UI/SettingsPanel.prefab";
+        public const string PrefabPath = "Assets/Prefabs/UI/Shared/SettingsPanel.prefab";
         private const string TitlePath = "Assets/Scenes/MainMenu.unity";
-        private const string GamePath = "Assets/Scenes/SampleScene.unity";
+        private const string GamePath = "Assets/Scenes/InGame.unity";
         private static readonly string[] Controls = {
             "cancelButton", "volumeSlider", "characterVolumeSlider", "musicVolumeSlider", "effectsVolumeSlider",
             "volumeLabel", "characterVolumeLabel", "musicVolumeLabel", "effectsVolumeLabel",
@@ -60,7 +60,7 @@ namespace DarkLord.Editor
                 Object.DestroyImmediate(copy);
             }
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
-            const string menuPrefabPath = "Assets/Prefabs/UI/MainMenu.prefab";
+            const string menuPrefabPath = "Assets/Prefabs/UI/MainMenu/MainMenu.prefab";
             var root = PrefabUtility.LoadPrefabContents(menuPrefabPath);
             try
             {

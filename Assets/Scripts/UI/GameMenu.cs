@@ -16,7 +16,7 @@ namespace DarkLord.UI
 
         [SerializeField] private bool isTitleScene;
         [SerializeField] private CastleMenuPanorama panorama;
-        [SerializeField] private string gameplayScene = "Assets/Scenes/SampleScene.unity";
+        [SerializeField] private string gameplayScene = "Assets/Scenes/InGame.unity";
         [SerializeField] private string titleScene = "Assets/Scenes/MainMenu.unity";
 
         [SerializeField] private GameObject backdrop, mainPanel, pausePanel, settingsPanel, quitPanel, hud;
@@ -37,6 +37,8 @@ namespace DarkLord.UI
         [SerializeField] private GameSaveSession saveSession;
         [SerializeField] private UnityEngine.UI.Button continueButton;
         [SerializeField] private TMP_Text saveStatus;
+        [SerializeField, Min(0.1f)] private float saveStatusDuration = 3f;
+        private float saveStatusExpiresAt;
         private SaveSlotMode slotMode;
         private ScreenState slotReturnScreen;
         private int selectedSlot;
@@ -128,9 +130,15 @@ namespace DarkLord.UI
 
         private void LateUpdate()
         {
+            if (saveStatusExpiresAt > 0 && Time.unscaledTime >= saveStatusExpiresAt)
+            {
+                if (saveStatus != null) saveStatus.text = "";
+                saveStatusExpiresAt = 0;
+            }
             if (!isTitleScene && saveSession != null && !saveSession.Ready && saveSession.Message.Length > 0 && !loadErrorShown)
             {
                 loadErrorShown = true;
+                saveStatusExpiresAt = 0;
                 if (saveStatus != null) saveStatus.text = saveSession.Message;
                 PauseGame();
             }
@@ -165,11 +173,12 @@ namespace DarkLord.UI
             if(GameSaveSession.ActiveSlot<0) { OpenSlots(SaveSlotMode.Save); return; }
             SaveCurrent(GameSaveSession.ActiveSlot);
         }
-        private bool SaveCurrent(int slot)
+        private bool SaveCurrent(int slot, SaveSlotStore store = null)
         {
-            bool success=saveSession!=null && saveSession.Save(slot);
+            bool success=saveSession!=null && saveSession.Save(slot, store);
             string message=saveSession!=null?saveSession.Message:"저장할 게임이 없습니다.";
             if(saveStatus!=null)saveStatus.text=message;
+            saveStatusExpiresAt = success ? Time.unscaledTime + saveStatusDuration : 0;
             slotPanel?.Error(message);
             if(!success && State==ScreenState.Quit)confirmationDescription.text=message;
             return success;
@@ -295,6 +304,9 @@ namespace DarkLord.UI
             isLoading = true;
             if (isTitleScene && startLabel != null) startLabel.text = "불러오는 중...";
             ReleasePause();
+            // Scene transitions start a fresh clock, even when the title inherited a paused clock.
+            Time.timeScale = 1;
+            AudioListener.pause = false;
             SceneManager.LoadSceneAsync(path, LoadSceneMode.Single);
         }
 

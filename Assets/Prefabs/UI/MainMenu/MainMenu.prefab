@@ -2143,7 +2143,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.UI.GameMenu
   isTitleScene: 1
   panorama: {fileID: 0}
-  gameplayScene: Assets/Scenes/SampleScene.unity
+  gameplayScene: Assets/Scenes/InGame.unity
   titleScene: Assets/Scenes/MainMenu.unity
   backdrop: {fileID: 2249469594398774056}
   mainPanel: {fileID: 104486567493795360}
@@ -2178,6 +2178,7 @@ MonoBehaviour:
   summoning: {fileID: 0}
   expansion: {fileID: 0}
   slotPanel: {fileID: 0}
+  newGameSetup: {fileID: 0}
   saveSession: {fileID: 0}
   continueButton: {fileID: 0}
   saveStatus: {fileID: 0}

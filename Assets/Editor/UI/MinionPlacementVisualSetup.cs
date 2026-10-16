@@ -12,7 +12,7 @@ namespace DarkLord.Editor
     {
         public static void Setup(GameHud hud, DungeonExpansion expansion, Camera camera)
         {
-            const string path = "Assets/Prefabs/UI/RoomCapacityLabel.prefab";
+            const string path = "Assets/Prefabs/UI/InGame/RoomCapacityLabel.prefab";
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
             if (prefab == null)
             {

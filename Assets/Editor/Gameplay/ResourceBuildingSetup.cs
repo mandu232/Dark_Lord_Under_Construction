@@ -75,7 +75,7 @@ namespace DarkLord.Editor
                 var prefab=Prefab(keys[i],titles[i],(CurrencyType)i,yields[i],costs[i],repairs[i],icons[i],colors[i],ruins);
                 items[i]=Item(keys[i],titles[i],$"설치: 금화 {costs[i]} · 수리: 금화 {repairs[i]}\n체력 180 · 라운드 클리어마다 {resources[i]} +{yields[i]}\n\n코어를 제외한 완성된 방에 1개씩 설치합니다. 방의 파수꾼이 모두 쓰러지면 용사가 건물을 공격합니다. 파괴되면 잔해로 남고 생산이 중단됩니다. 건물을 우클릭해 정보창에서 수리하세요.",icons[i],prefab);
             }
-            string uiPath="Assets/Prefabs/UI/ConstructionPanel.prefab";
+            string uiPath="Assets/Prefabs/UI/InGame/ConstructionPanel.prefab";
             var stage=PrefabStageUtility.GetCurrentPrefabStage();bool stageRoot=stage!=null && stage.assetPath==uiPath;
             var ui=stageRoot?stage.prefabContentsRoot:PrefabUtility.LoadPrefabContents(uiPath);
             try
@@ -88,7 +88,7 @@ namespace DarkLord.Editor
                 AppendItems(view,items);PrefabUtility.SaveAsPrefabAsset(ui,uiPath);
             }
             finally{if(!stageRoot)PrefabUtility.UnloadPrefabContents(ui);}
-            var scene=SceneManager.GetSceneByPath("Assets/Scenes/SampleScene.unity");if(!scene.isLoaded)scene=EditorSceneManager.OpenScene("Assets/Scenes/SampleScene.unity",OpenSceneMode.Additive);
+            var scene=SceneManager.GetSceneByPath("Assets/Scenes/InGame.unity");if(!scene.isLoaded)scene=EditorSceneManager.OpenScene("Assets/Scenes/InGame.unity",OpenSceneMode.Additive);
             foreach(var root in scene.GetRootGameObjects())
             {
                 foreach(var view in root.GetComponentsInChildren<ConstructionPanel>(true))AppendItems(view,items);

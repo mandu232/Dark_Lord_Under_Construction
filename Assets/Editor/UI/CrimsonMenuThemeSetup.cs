@@ -21,7 +21,7 @@ namespace DarkLord.Editor
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
             foreach (var name in new[] { "SettingsPanel", "PausePanel", "SaveSlotPanel" })
             {
-                string path = "Assets/Prefabs/UI/" + name + ".prefab";
+                string path = "Assets/Prefabs/UI/" + (name == "PausePanel" ? "InGame/" : "Shared/") + name + ".prefab";
                 var root = PrefabUtility.LoadPrefabContents(path);
                 try { Theme(root); PrefabUtility.SaveAsPrefabAsset(root, path); }
                 finally { PrefabUtility.UnloadPrefabContents(root); }
@@ -33,11 +33,11 @@ namespace DarkLord.Editor
                 material = new Material(Shader.Find("DarkLord/UI/Crimson Menu Light"));
                 AssetDatabase.CreateAsset(material, materialPath);
             }
-            var menuPrefab = PrefabUtility.LoadPrefabContents("Assets/Prefabs/UI/MainMenu.prefab");
-            try { Lighting(menuPrefab, material); MainButtons(menuPrefab); Dimmer(menuPrefab); PrefabUtility.SaveAsPrefabAsset(menuPrefab, "Assets/Prefabs/UI/MainMenu.prefab"); }
+            var menuPrefab = PrefabUtility.LoadPrefabContents("Assets/Prefabs/UI/MainMenu/MainMenu.prefab");
+            try { Lighting(menuPrefab, material); MainButtons(menuPrefab); Dimmer(menuPrefab); PrefabUtility.SaveAsPrefabAsset(menuPrefab, "Assets/Prefabs/UI/MainMenu/MainMenu.prefab"); }
             finally { PrefabUtility.UnloadPrefabContents(menuPrefab); }
 
-            foreach (string path in new[] { "Assets/Scenes/MainMenu.unity", "Assets/Scenes/SampleScene.unity" })
+            foreach (string path in new[] { "Assets/Scenes/MainMenu.unity", "Assets/Scenes/InGame.unity" })
             {
                 var scene = SceneManager.GetSceneByPath(path);
                 bool opened = !scene.isLoaded;

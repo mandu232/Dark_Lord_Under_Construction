@@ -229,7 +229,7 @@ namespace DarkLord.Editor
             var frame = window.GetComponent<UnityEngine.UI.Image>();
             frame.sprite = sprite; frame.type = UnityEngine.UI.Image.Type.Sliced;
             frame.color = Color.white; frame.pixelsPerUnitMultiplier = 0.25f;
-            var settings = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/SettingsPanel.prefab");
+            var settings = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/Shared/SettingsPanel.prefab");
             var normal = settings.transform.Find("Actions/Cancel").GetComponent<UnityEngine.UI.Button>();
             var primary = settings.transform.Find("Actions/Apply").GetComponent<UnityEngine.UI.Button>();
             var category = settings.GetComponentInChildren<SettingsPanelView>(true);

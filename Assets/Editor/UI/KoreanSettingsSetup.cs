@@ -16,7 +16,7 @@ namespace DarkLord.Editor
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
             var original = SceneManager.GetActiveScene().path;
             EditorSceneManager.SaveOpenScenes();
-            const string prefabPath = "Assets/Prefabs/UI/MainMenu.prefab";
+            const string prefabPath = "Assets/Prefabs/UI/MainMenu/MainMenu.prefab";
             var prefab = PrefabUtility.LoadPrefabContents(prefabPath);
             try
             {
@@ -26,7 +26,7 @@ namespace DarkLord.Editor
             finally { PrefabUtility.UnloadPrefabContents(prefab); }
             try
             {
-                foreach (var path in new[] { "Assets/Scenes/MainMenu.unity", "Assets/Scenes/SampleScene.unity" })
+                foreach (var path in new[] { "Assets/Scenes/MainMenu.unity", "Assets/Scenes/InGame.unity" })
                 {
                     var scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
                     foreach (var root in scene.GetRootGameObjects()) PatchRoot(root);

@@ -12,7 +12,7 @@ namespace DarkLord.EditorTools
 {
     public static class NewGameSetupAuthoring
     {
-        private const string PrefabPath = "Assets/Prefabs/UI/NewGameSetupPanel.prefab";
+        private const string PrefabPath = "Assets/Prefabs/UI/MainMenu/NewGameSetupPanel.prefab";
         private static TMP_FontAsset font;
         private static readonly Color Ink = new Color32(235, 214, 211, 255);
 

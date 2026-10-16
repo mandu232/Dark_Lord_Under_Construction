@@ -10,6 +10,7 @@ using DarkLord.Persistence;
 using DarkLord.Player;
 using DarkLord.UI;
 using NUnit.Framework;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -33,6 +34,29 @@ namespace DarkLord.Tests
             Time.timeScale=timeScale;AudioListener.pause=audioPaused;
             if(Directory.Exists(directory))Directory.Delete(directory,true);
         }
+        [UnityTest]
+        public IEnumerator SaveNoticeExpiresWhilePausedAndRepeatedSaveRestartsTimer()
+        {
+            yield return SceneManager.LoadSceneAsync("Assets/Scenes/InGame.unity", LoadSceneMode.Additive);
+            scene = SceneManager.GetSceneByPath("Assets/Scenes/InGame.unity");
+            yield return null; yield return null;
+            var menu = scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<GameMenu>(true)).Single();
+            var status = menu.GetComponentInChildren<PausePanelBindings>(true).transform.Find("Save Status").GetComponent<TMP_Text>();
+            var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var save = typeof(GameMenu).GetMethod("SaveCurrent", flags);
+            typeof(GameMenu).GetField("saveStatusDuration", flags).SetValue(menu, .3f);
+            menu.PauseGame();
+            Assert.IsTrue((bool)save.Invoke(menu, new object[] { 0, store }));
+            Assert.IsNotEmpty(status.text);
+            yield return new WaitForSecondsRealtime(.2f);
+            Assert.IsTrue((bool)save.Invoke(menu, new object[] { 0, store }));
+            yield return new WaitForSecondsRealtime(.2f);
+            Assert.IsNotEmpty(status.text, "Saving again restarts the notice lifetime.");
+            yield return new WaitForSecondsRealtime(.2f);
+            Assert.IsEmpty(status.text);
+            Assert.AreEqual(0, Time.timeScale, "The notice must expire without resuming gameplay.");
+        }
+
         private static GameSaveData Data()
         {
             var layout=new DungeonLayout(41,31);
@@ -71,8 +95,8 @@ namespace DarkLord.Tests
         }
         [UnityTest] public IEnumerator MenuButtonsExposeSaveWarningAndThreeNewGameSlots()
         {
-            yield return SceneManager.LoadSceneAsync("Assets/Scenes/SampleScene.unity",LoadSceneMode.Additive);
-            scene=SceneManager.GetSceneByPath("Assets/Scenes/SampleScene.unity");yield return null;yield return null;
+            yield return SceneManager.LoadSceneAsync("Assets/Scenes/InGame.unity",LoadSceneMode.Additive);
+            scene=SceneManager.GetSceneByPath("Assets/Scenes/InGame.unity");yield return null;yield return null;
             var menu=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<GameMenu>(true)).Single();
             var pause=menu.GetComponentInChildren<PausePanelBindings>(true);
             var save=pause.transform.Find("Pause Actions/Save").GetComponent<UnityEngine.UI.Button>();
@@ -90,8 +114,8 @@ namespace DarkLord.Tests
         }        [UnityTest] public IEnumerator ContinueRestoresChosenSlotAfterSceneReload()
         {
             GameSaveSession.BeginNew(2);
-            yield return SceneManager.LoadSceneAsync("Assets/Scenes/SampleScene.unity",LoadSceneMode.Additive);
-            scene=SceneManager.GetSceneByPath("Assets/Scenes/SampleScene.unity");yield return null;yield return null;
+            yield return SceneManager.LoadSceneAsync("Assets/Scenes/InGame.unity",LoadSceneMode.Additive);
+            scene=SceneManager.GetSceneByPath("Assets/Scenes/InGame.unity");yield return null;yield return null;
             var roots=scene.GetRootGameObjects();
             var session=roots.SelectMany(r=>r.GetComponentsInChildren<GameSaveSession>(true)).Single();
             var menu=roots.SelectMany(r=>r.GetComponentsInChildren<GameMenu>(true)).Single();menu.PauseGame();
@@ -99,15 +123,15 @@ namespace DarkLord.Tests
             Assert.IsTrue(session.Save(2,store),session.Message);
             yield return SceneManager.UnloadSceneAsync(scene);
             Assert.IsTrue(GameSaveSession.BeginContinue(2,out var error,store),error);
-            yield return SceneManager.LoadSceneAsync("Assets/Scenes/SampleScene.unity",LoadSceneMode.Additive);
-            scene=SceneManager.GetSceneByPath("Assets/Scenes/SampleScene.unity");yield return null;yield return null;
+            yield return SceneManager.LoadSceneAsync("Assets/Scenes/InGame.unity",LoadSceneMode.Additive);
+            scene=SceneManager.GetSceneByPath("Assets/Scenes/InGame.unity");yield return null;yield return null;
             roots=scene.GetRootGameObjects();session=roots.SelectMany(r=>r.GetComponentsInChildren<GameSaveSession>(true)).Single();
             Assert.IsTrue(session.Ready);Assert.AreEqual(2,GameSaveSession.ActiveSlot);
             var restored=session.Capture();Assert.AreEqual(987,restored.gold);Assert.AreEqual(65,restored.souls);Assert.AreEqual(43,restored.crystals);
         }        [UnityTest] public IEnumerator GameStateRoundTripRestoresConstructionGuardsCombatAndDirtyWarning()
         {
-            yield return SceneManager.LoadSceneAsync("Assets/Scenes/SampleScene.unity",LoadSceneMode.Additive);
-            scene=SceneManager.GetSceneByPath("Assets/Scenes/SampleScene.unity");yield return null;yield return null;
+            yield return SceneManager.LoadSceneAsync("Assets/Scenes/InGame.unity",LoadSceneMode.Additive);
+            scene=SceneManager.GetSceneByPath("Assets/Scenes/InGame.unity");yield return null;yield return null;
             var roots=scene.GetRootGameObjects();
             T Find<T>() where T:Component=>roots.SelectMany(r=>r.GetComponentsInChildren<T>(true)).Single();
             var session=Find<GameSaveSession>();var menu=Find<GameMenu>();var dungeon=Find<DungeonGrid>();var summoning=Find<MinionSummoning>();var waves=Find<WaveDirector>();var wallet=Find<CurrencyWallet>();

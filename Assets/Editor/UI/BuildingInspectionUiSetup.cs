@@ -28,7 +28,7 @@ namespace DarkLord.Editor
             var source = new SerializedObject(minion);
             var hud = minion.GetComponentInParent<GameHud>();
             var expansion = (DungeonExpansion)source.FindProperty("construction").objectReferenceValue;
-            const string path = "Assets/Prefabs/UI/BuildingInspectionPanel.prefab";
+            const string path = "Assets/Prefabs/UI/InGame/BuildingInspectionPanel.prefab";
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
             if (prefab == null)
             {
@@ -55,7 +55,7 @@ namespace DarkLord.Editor
             Ref(binding,"wallet",expansion.GetComponent<CurrencyWallet>()); Ref(binding,"playerHealth",expansion.GetComponent<DarkLord.Actors.ActorHealth>());
             Ref(binding,"worldCamera",source.FindProperty("worldCamera").objectReferenceValue); Ref(binding,"minionInspection",minion);
             binding.ApplyModifiedPropertiesWithoutUndo(); Ref(source,"buildingInspection",panel); source.ApplyModifiedPropertiesWithoutUndo();
-            const string constructionPath = "Assets/Prefabs/UI/ConstructionPanel.prefab";
+            const string constructionPath = "Assets/Prefabs/UI/InGame/ConstructionPanel.prefab";
             var stage = PrefabStageUtility.GetCurrentPrefabStage(); bool editing = stage != null && stage.assetPath == constructionPath;
             var ui = editing ? stage.prefabContentsRoot : PrefabUtility.LoadPrefabContents(constructionPath);
             try { RemoveRepair(ui.GetComponent<ConstructionPanel>()); PrefabUtility.SaveAsPrefabAsset(ui, constructionPath); }

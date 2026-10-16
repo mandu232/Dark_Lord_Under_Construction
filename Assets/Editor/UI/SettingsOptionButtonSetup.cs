@@ -11,7 +11,7 @@ namespace DarkLord.EditorTools
     public static class SettingsOptionButtonSetup
     {
         private const string ArtPath = "Assets/Sprtie/UI/Button/CategoryButton_Type01.png";
-        private const string PrefabPath = "Assets/Prefabs/UI/SettingsPanel.prefab";
+        private const string PrefabPath = "Assets/Prefabs/UI/Shared/SettingsPanel.prefab";
         private const float PixelScale = 1080f / 242f;
 
         public static void Configure(GameObject root)

@@ -26,14 +26,14 @@ namespace DarkLord.Editor
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode)
                 throw new InvalidOperationException("Apply the skin outside Play Mode.");
-            var scene = SceneManager.GetSceneByPath("Assets/Scenes/SampleScene.unity");
-            if (!scene.isLoaded) scene = EditorSceneManager.OpenScene("Assets/Scenes/SampleScene.unity", OpenSceneMode.Additive);
+            var scene = SceneManager.GetSceneByPath("Assets/Scenes/InGame.unity");
+            if (!scene.isLoaded) scene = EditorSceneManager.OpenScene("Assets/Scenes/InGame.unity", OpenSceneMode.Additive);
             var hud = scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<GameHud>(true)).Single();
             Undo.RegisterFullObjectHierarchyUndo(hud.gameObject, "Apply crimson game UI");
             if (!AssetDatabase.IsValidFolder(Art)) AssetDatabase.CreateFolder("Assets/Sprtie/UI", "InGame");
             panel = PrepareSprite("CastlePanel-Open", new Vector4(42, 28, 42, 65));
             button = PrepareSprite("CastleButton", new Vector4(34, 20, 34, 20));
-            const string constructionPath = "Assets/Prefabs/UI/ConstructionPanel.prefab";
+            const string constructionPath = "Assets/Prefabs/UI/InGame/ConstructionPanel.prefab";
             var constructionAsset = PrefabUtility.LoadPrefabContents(constructionPath);
             try
             {

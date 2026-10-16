@@ -7,7 +7,7 @@ namespace DarkLord.UI
     {
         public const string ScenePath = "Assets/Scenes/Story.unity";
         [SerializeField] private OpeningStory story;
-        [SerializeField] private string gameplayScene = "Assets/Scenes/SampleScene.unity";
+        [SerializeField] private string gameplayScene = "Assets/Scenes/InGame.unity";
         private bool loading;
 
         private void Start()

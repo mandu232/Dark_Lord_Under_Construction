@@ -42,7 +42,7 @@ namespace DarkLord.Editor
         public static void Apply()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;
-            var prefabPath = "Assets/Prefabs/UI/MainMenu.prefab";
+            var prefabPath = "Assets/Prefabs/UI/MainMenu/MainMenu.prefab";
             var prefab = PrefabUtility.LoadPrefabContents(prefabPath);
             try
             {
@@ -52,8 +52,8 @@ namespace DarkLord.Editor
                 heading.sizeDelta = new Vector2(heading.sizeDelta.x, 100);
                 reference.Find("LANGUAGE Value").GetComponent<UnityEngine.UI.Button>().interactable = false;
                 reference.Find("LANGUAGE Value/Label").GetComponent<TMP_Text>().text = "한국어";
-                var scene = SceneManager.GetSceneByPath("Assets/Scenes/SampleScene.unity");
-                if (!scene.isLoaded) scene = EditorSceneManager.OpenScene("Assets/Scenes/SampleScene.unity", OpenSceneMode.Additive);
+                var scene = SceneManager.GetSceneByPath("Assets/Scenes/InGame.unity");
+                if (!scene.isLoaded) scene = EditorSceneManager.OpenScene("Assets/Scenes/InGame.unity", OpenSceneMode.Additive);
                 foreach (var root in scene.GetRootGameObjects())
                 {
                     Undo.RegisterFullObjectHierarchyUndo(root, "Apply vampire UI");

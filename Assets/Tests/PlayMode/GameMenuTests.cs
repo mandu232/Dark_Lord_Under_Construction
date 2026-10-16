@@ -38,8 +38,8 @@ namespace DarkLord.Tests
             testInput.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
             InputSystem.settings = testInput;
             keyboard = InputSystem.AddDevice<Keyboard>();
-            yield return SceneManager.LoadSceneAsync("Assets/Scenes/SampleScene.unity", LoadSceneMode.Additive);
-            scene = SceneManager.GetSceneByPath("Assets/Scenes/SampleScene.unity");
+            yield return SceneManager.LoadSceneAsync("Assets/Scenes/InGame.unity", LoadSceneMode.Additive);
+            scene = SceneManager.GetSceneByPath("Assets/Scenes/InGame.unity");
             yield return null;
         }
 
