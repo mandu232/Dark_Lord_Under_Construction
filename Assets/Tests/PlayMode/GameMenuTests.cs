@@ -519,6 +519,10 @@ namespace DarkLord.Tests
             Assert.That(director.CurrentWave, Is.EqualTo(1));
             yield return new WaitForSeconds(1.6f);
             foreach (var health in director.GetComponentsInChildren<DarkLord.Actors.ActorHealth>()) health.TakeDamage(health.MaximumHealth);
+            Assert.That(director.State, Is.EqualTo(DarkLord.Gameplay.WaveState.RewardSelection));
+            Assert.That(Time.timeScale, Is.Zero);
+            Assert.IsFalse(button.gameObject.activeSelf);
+            Assert.IsTrue(director.ChooseReward(0));
             yield return new WaitForSeconds(0.2f);
             Assert.That(director.State, Is.EqualTo(DarkLord.Gameplay.WaveState.Preparing));
             Assert.That(director.CurrentWave, Is.EqualTo(1));

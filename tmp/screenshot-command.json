@@ -1,0 +1,97 @@
+{
+  "success": true,
+  "command": "command",
+  "data": {
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "C:\\Users\\mandu252\\Desktop\\Dark_Lord_Under_Construction"
+    },
+    "server": {
+      "version": "0.0.1",
+      "port": 7800
+    },
+    "commands": [
+      {
+        "name": "screenshot",
+        "description": "Capture the Scene or Game view as a PNG and return its file path",
+        "tags": [
+          "capture"
+        ],
+        "package": "Unity.Pipeline.Editor",
+        "mainThreadRequired": true,
+        "runtimeOnly": false,
+        "parameters": [
+          {
+            "name": "view",
+            "description": "Which view to capture: 'game' (default) or 'scene'",
+            "type": "String",
+            "required": false,
+            "defaultValue": "game"
+          },
+          {
+            "name": "output",
+            "description": "Output PNG path (absolute, or relative to the project root). Defaults to a timestamped file under <project>/Temp/pipeline-screenshots/.",
+            "type": "String",
+            "required": false,
+            "defaultValue": ""
+          },
+          {
+            "name": "width",
+            "description": "Output width in pixels. 0 (default) uses the view camera's current width.",
+            "type": "Int32",
+            "required": false,
+            "defaultValue": 0
+          },
+          {
+            "name": "height",
+            "description": "Output height in pixels. 0 (default) uses the view camera's current height.",
+            "type": "Int32",
+            "required": false,
+            "defaultValue": 0
+          }
+        ],
+        "schema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "title": "screenshot",
+          "description": "Capture the Scene or Game view as a PNG and return its file path",
+          "properties": {
+            "view": {
+              "type": "string",
+              "description": "Which view to capture: 'game' (default) or 'scene'",
+              "default": "game"
+            },
+            "output": {
+              "type": "string",
+              "description": "Output PNG path (absolute, or relative to the project root). Defaults to a timestamped file under <project>/Temp/pipeline-screenshots/.",
+              "default": ""
+            },
+            "width": {
+              "type": "integer",
+              "description": "Output width in pixels. 0 (default) uses the view camera's current width.",
+              "default": 0
+            },
+            "height": {
+              "type": "integer",
+              "description": "Output height in pixels. 0 (default) uses the view camera's current height.",
+              "default": 0
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "x-command-metadata": {
+            "mainThreadRequired": true,
+            "methodName": "Unity.Pipeline.Editor.Commands.ScreenshotCommand.CaptureScreenshot"
+          }
+        }
+      }
+    ],
+    "count": 1,
+    "total": 1,
+    "offset": 0,
+    "limit": null
+  },
+  "errors": [],
+  "warnings": []
+}

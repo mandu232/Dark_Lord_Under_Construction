@@ -148,21 +148,66 @@ namespace DarkLord.EditorTools
             Place(content, "Save Name/Text Area/Placeholder", 0, 0, 520, 54, 21);
             content.Find("Save Name/Text Area/Placeholder").GetComponent<TMP_Text>().text = "저장 이름 (최대 24자)";
             Place(content, "Difficulty Caption", 0, 86, 560, 36, 25);
-            Place(content, "Easy", -145, 22, 270, 66);
-            Place(content, "Normal", 145, 22, 270, 66);
-            Place(content, "Hard", -145, -52, 270, 66);
-            Place(content, "Nightmare", 145, -52, 270, 66);
-            foreach (var name in new[] { "Easy", "Normal", "Hard", "Nightmare" }) Place(content, name + "/Label", 0, 0, 246, 58, 27);
+            ConfigureDifficultyLayout(root.gameObject);
             Place(content, "Difficulty Description", 0, -136, 560, 74, 23);
             Place(content, "Skip Opening", 0, -222, 560, 60);
             Place(content, "Skip Opening/Check Box", -258, 0, 42, 42);
             Place(content, "Skip Opening/Label", 32, 0, 508, 58, 25);
+            ConfigureStorySkip(root.gameObject);
             Place(content, "Error", 0, -280, 560, 40, 22);
             Place(content, "Back", -145, -347, 270, 72);
             Place(content, "Begin", 145, -347, 270, 72);
             Place(content, "Back/Label", 0, 0, 246, 64, 26);
             Place(content, "Begin/Label", 0, 0, 246, 64, 26);
             layout.Refresh();
+        }
+
+        public static void ConfigureDifficultyLayout(GameObject root)
+        {
+            var content = root.transform.Find("Setup Card");
+            Place(content, "Easy", -145, 22, 270, 15f / .2473684f);
+            Place(content, "Normal", 145, 22, 270, 15f / .2473684f);
+            Place(content, "Hard", -145, -52, 270, 15f / .2473684f);
+            Place(content, "Nightmare", 145, -52, 270, 15f / .2473684f);
+            foreach (var name in new[] { "Easy", "Normal", "Hard", "Nightmare" })
+                Place(content, name + "/Label", 0, 0, 246, 58, 27);
+        }
+
+        public static void ConfigureStorySkip(GameObject root)
+        {
+            var toggle = root.GetComponentInChildren<UnityEngine.UI.Toggle>(true);
+            var row = (RectTransform)toggle.transform;
+            row.sizeDelta = new Vector2(560, 15f / .2473684f);
+            var background = row.GetComponent<UnityEngine.UI.Image>();
+            if (background == null) background = row.gameObject.AddComponent<UnityEngine.UI.Image>();
+            background.sprite = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprtie/UI/Button/CategoryButton_Type02.png").OfType<Sprite>().Single(s => s.name == "CategoryButton_Type02_1");
+            background.color = Color.white;
+            background.type = UnityEngine.UI.Image.Type.Sliced;
+            background.pixelsPerUnitMultiplier = .2473684f;
+            background.preserveAspect = false;
+            background.raycastTarget = true;
+            var border = row.GetComponent<UnityEngine.UI.Outline>();
+            if (border != null) border.enabled = false;
+            row.Find("Check Box").gameObject.SetActive(false);
+            var oldFrame = row.Find("Selection Frame");
+            if (oldFrame != null) oldFrame.gameObject.SetActive(false);
+            toggle.graphic = null;
+            toggle.targetGraphic = background;
+            toggle.toggleTransition = UnityEngine.UI.Toggle.ToggleTransition.None;
+            toggle.transition = UnityEngine.UI.Selectable.Transition.ColorTint;
+            var colors = UnityEngine.UI.ColorBlock.defaultColorBlock;
+            colors.highlightedColor = new Color(.9f, .9f, .9f, 1);
+            colors.selectedColor = Color.white;
+            toggle.colors = colors;
+            var label = row.Find("Label").GetComponent<TMP_Text>();
+            label.rectTransform.anchoredPosition = Vector2.zero;
+            label.rectTransform.sizeDelta = new Vector2(360, 56);
+            label.alignment = TextAlignmentOptions.Center;
+            label.text = "스토리 건너뛰기\n<size=18>선택하면 오프닝 없이 시작합니다</size>";
+            label.richText = true;
+            label.color = Ink;
+            label.raycastTarget = false;
+
         }
 
         public static void UpgradeSaveNameInput()

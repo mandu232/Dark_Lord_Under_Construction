@@ -49,14 +49,21 @@ namespace DarkLord.UI
             lastEntrance = director.HasEntrance;
             if (startButton != null) startButton.gameObject.SetActive(director.State == WaveState.Preparing);
             if (startButtonText != null) startButtonText.text = $"웨이브 {director.CurrentWave + 1} 시작";
-            waveText.text = director.CurrentWave == 0 ? "습격  --" : $"습격  {director.CurrentWave}";
+            waveText.text = $"습격  {director.CurrentWave} / {director.FinalWave}";
             switch (director.State)
             {
                 case WaveState.Preparing:
-                    statusText.text = director.HasEntrance ? "시작 버튼을 눌러 습격 시작" : "입구 배치 대기";
+                    statusText.text = director.HasEntrance ? $"다음: 전사 {director.NextEnemyCount}명 · 체력 {director.NextEnemyHealth}\n시작 버튼을 눌러 습격 시작" : "입구 배치 대기";
                     break;
                 case WaveState.Active:
                     statusText.text = $"남은 침입자  {director.RemainingEnemies}" + (director.HasEntrance ? "" : " · 입구 대기");
+                    break;
+                case WaveState.Victorious:
+                    waveText.text = "방어 성공";
+                    statusText.text = "모든 침입자를 격퇴했습니다";
+                    break;
+                case WaveState.RewardSelection:
+                    statusText.text = "보상을 하나 선택하세요";
                     break;
                 default:
                     waveText.text = "성 함락";

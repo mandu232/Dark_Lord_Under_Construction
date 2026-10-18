@@ -20,6 +20,7 @@ namespace DarkLord.Persistence
         public WaveSaveData wave;
         // Missing in legacy saves: null is the original, normal ruleset.
         public NewGameOptions options;
+        public DarkLord.Player.CombatSaveData combat;
     }
     [Serializable] public sealed class DungeonSaveData
     {
@@ -59,6 +60,7 @@ namespace DarkLord.Persistence
     {
         public int number, pending;
         public WaveState state;
+        public int[] rewards;
         public MinionSaveData[] enemies;
     }
 
@@ -113,6 +115,13 @@ namespace DarkLord.Persistence
         {
             if (data == null || data.version != 1) throw new InvalidDataException("지원하지 않는 저장 형식입니다.");
             if (data.options != null && !data.options.IsValid) throw new InvalidDataException("게임 설정이 올바르지 않습니다.");
+            if (data.combat != null)
+            {
+                var c = data.combat;
+                if (!InRange(c.mana, 100) || c.coreUpgradeLevel < 0 || c.coreUpgradeLevel > 3 ||
+                    !InRange(c.attackCooldown, 0.5f) || !InRange(c.novaCooldown, 6) || !InRange(c.wardCooldown, 10) || !InRange(c.dodgeCooldown, 3))
+                    throw new InvalidDataException("전투 상태가 올바르지 않습니다.");
+            }
             var d = data.dungeon;
             if (d == null || d.width < 15 || d.width > 101 || d.height < 11 || d.height > 101 ||
                 d.cells == null || d.cells.Length != d.width * d.height || d.sections == null || d.traps == null || d.queue == null ||
@@ -123,6 +132,16 @@ namespace DarkLord.Persistence
                 data.wave.number < 0 || data.wave.pending < 0 || !Enum.IsDefined(typeof(WaveState), data.wave.state) || !Finite(data.playerPosition) ||
                 float.IsNaN(data.playedSeconds) || float.IsInfinity(data.playedSeconds) || data.playedSeconds < 0)
                 throw new InvalidDataException("저장 수치가 올바르지 않습니다.");
+            if (data.wave.state == WaveState.RewardSelection)
+            {
+                var rewards = data.wave.rewards;
+                if (rewards == null || rewards.Length != 3 || data.wave.pending != 0 || data.wave.enemies.Length != 0 ||
+                    data.playerHealth == 0 || data.coreHealth == 0)
+                    throw new InvalidDataException("보상 선택 상태가 올바르지 않습니다.");
+                var unique = new System.Collections.Generic.HashSet<int>();
+                foreach (int reward in rewards)
+                    if (reward < 0 || reward > 4 || !unique.Add(reward)) throw new InvalidDataException("보상 후보가 올바르지 않습니다.");
+            }
             foreach (int cell in d.cells) if (cell < 0 || cell > 2) throw new InvalidDataException("잘못된 타일입니다.");
             foreach (var section in d.sections)
             {
@@ -150,6 +169,7 @@ namespace DarkLord.Persistence
         private static void CheckCell(DungeonSaveData d, Vector2Int p)
         { if (p.x < 0 || p.y < 0 || p.x >= d.width || p.y >= d.height) throw new InvalidDataException("맵 밖의 좌표입니다."); }
         private static bool Finite(Vector3 p) => !float.IsNaN(p.x) && !float.IsNaN(p.y) && !float.IsNaN(p.z) && !float.IsInfinity(p.x) && !float.IsInfinity(p.y) && !float.IsInfinity(p.z);
+        private static bool InRange(float value, float maximum) => !float.IsNaN(value) && !float.IsInfinity(value) && value >= 0 && value <= maximum;
         private static void CheckActor(MinionSaveData actor)
         {
             if (actor == null || actor.health <= 0 || actor.maximumHealth < actor.health || !Finite(actor.position) || !Finite(actor.post) ||

@@ -18,6 +18,7 @@ namespace DarkLord.Actors
         public Vector2 Facing { get; private set; } = Vector2.down;
         public Vector2 Velocity => body != null ? body.linearVelocity : Vector2.zero;
         public float MoveSpeed => moveSpeed;
+        public float SpeedMultiplier { get; set; } = 1;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetActors() => ActiveMotors.Clear();
@@ -82,7 +83,7 @@ namespace DarkLord.Actors
         private void FixedUpdate()
         {
             BlockedBy = null;
-            Vector2 velocity = desiredDirection * moveSpeed;
+            Vector2 velocity = desiredDirection * moveSpeed * SpeedMultiplier;
             if (approachTarget != null)
             {
                 Vector2 delta = (Vector2)approachTarget.position - body.position;

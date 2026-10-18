@@ -14,6 +14,7 @@ namespace DarkLord.Player
         private ActorHealth health;
         private MinionSummoning summoning;
         private DarkLord.Dungeon.DungeonExpansion construction;
+        private PlayerCombat combat;
 
         private void Awake()
         {
@@ -40,7 +41,9 @@ namespace DarkLord.Player
 
         private void Update()
         {
+            if (combat == null) combat = GetComponent<PlayerCombat>();
             if (Time.timeScale == 0 || (health != null && !health.IsAlive) ||
+                (combat != null && combat.IsFinished) ||
                 (summoning != null && summoning.BlocksGameplayInput && (construction == null || !construction.ExpansionMode)))
             {
                 motor.Stop();
@@ -48,6 +51,13 @@ namespace DarkLord.Player
                 return;
             }
             Vector2 direction = move != null ? move.ReadValue<Vector2>() : Vector2.zero;
+            if (combat != null && combat.IsDodging) direction = combat.DodgeDirection;
+            else if (combat != null && combat.IsAttacking)
+            {
+                motor.Stop();
+                presentation.Present(ActorState.Attack, motor.Facing);
+                return;
+            }
             motor.Move(direction);
             presentation.Present(direction.sqrMagnitude > 0.01f ? ActorState.Run : ActorState.Idle, motor.Facing);
         }

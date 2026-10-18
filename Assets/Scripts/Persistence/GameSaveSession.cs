@@ -102,6 +102,7 @@ namespace DarkLord.Persistence
             wallet.RestoreAmounts(loaded.gold, loaded.souls, loaded.crystals);
             summoning.RestoreGuards(loaded.guards);
             waves.RestoreSave(loaded.wave);
+            waves.Combat?.RestoreSave(loaded.combat);
             playedSeconds = loaded.playedSeconds;
             Physics2D.SyncTransforms();
             savedSnapshot = JsonUtility.ToJson(Capture());
@@ -124,7 +125,7 @@ namespace DarkLord.Persistence
         }
         public GameSaveData Capture() => new GameSaveData
         {
-            options = options.Copy(), playedSeconds = playedSeconds, playerPosition = player.transform.position,
+            options = options.Copy(), playedSeconds = playedSeconds, playerPosition = player.transform.position, combat = waves.Combat?.CaptureSave(),
             playerHealth = player.CurrentHealth, playerMaximumHealth = player.MaximumHealth,
             coreHealth = core.CurrentHealth, coreMaximumHealth = core.MaximumHealth,
             gold = wallet.Gold, souls = wallet.Souls, crystals = wallet.DarkCrystals,

@@ -32,7 +32,7 @@ namespace DarkLord.Player
         private Vector2Int? highlightedCell;
         private bool highlightedAllowed;
         private static readonly Vector2Int[] Directions = { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
-        private string message = "권속을 선택하세요. 현재 소환 비용은 무료입니다.";
+        private string message = "권속을 선택하세요. 준비 중 코어 근처에서 마나 20으로 소환합니다.";
         public string Message => message;
         public bool IsOpen { get; private set; }
         public bool IsPlacing { get; private set; }
@@ -101,6 +101,9 @@ namespace DarkLord.Player
         public bool TrySummon(bool summonWorker)
         {
             if (!IsOpen || !isActiveAndEnabled || Time.timeScale == 0 || (health != null && !health.IsAlive)) return false;
+            var combat = GetComponent<PlayerCombat>();
+            if (combat != null && !combat.CanSummon)
+            { message = "준비 단계 · 코어에서 3유닛 이내 · 마나 20이 필요합니다."; return false; }
             if (summonWorker) { message = "일꾼 소환은 제거되었습니다. 건설창에서 바로 확장하세요."; return false; }
             if (dungeon == null || guardPrefab == null)
             { message = "소환 정보를 찾을 수 없습니다."; return false; }
@@ -125,6 +128,8 @@ namespace DarkLord.Player
                 SetOpen(false);
                 return true;
             }
+            var combat = GetComponent<PlayerCombat>();
+            if (combat != null && !combat.PaySummonCost()) return false;
             var guard = Instantiate(guardPrefab, position, Quaternion.identity);
             guard.name = guard.DisplayName;
             guards.Add(guard);
@@ -148,6 +153,9 @@ namespace DarkLord.Player
         public bool CanPlace(Vector2Int target, out string reason)
         {
             reason = "지금은 소환할 수 없습니다.";
+            var combat = GetComponent<PlayerCombat>();
+            if (!IsRelocating && combat != null && !combat.CanSummon)
+            { reason = "준비 중 코어 근처에서 마나 20이 필요합니다."; return false; }
             if (!IsOpen || !IsPlacing || !isActiveAndEnabled || dungeon == null || !dungeon.isActiveAndEnabled ||
                 Time.timeScale == 0 || (health != null && !health.IsAlive)) return false;
             if (!IsRelocating && guardPrefab == null)

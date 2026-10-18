@@ -24,6 +24,13 @@ namespace DarkLord.UI
         private int lastHealth = -1;
         private int lastGuardCount = -1;
 
+        private void Start()
+        {
+            var director = FindFirstObjectByType<DarkLord.Gameplay.WaveDirector>();
+            if (director != null && director.gameObject.scene == gameObject.scene && healthText != null)
+                gameObject.AddComponent<CombatHud>().Configure(director, healthText);
+        }
+
         public void Configure(CurrencyWallet currencyWallet, ActorHealth health, MinionSummoning minionSummoning)
         {
             Unsubscribe();

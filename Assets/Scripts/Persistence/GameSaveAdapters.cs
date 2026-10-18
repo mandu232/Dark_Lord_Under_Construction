@@ -114,15 +114,18 @@ namespace DarkLord.Gameplay
 {
     public sealed partial class WaveDirector
     {
-        public WaveSaveData CaptureSave() => new WaveSaveData { number=CurrentWave, state=State, pending=pendingSpawns,
+        public WaveSaveData CaptureSave() => new WaveSaveData { number=CurrentWave, state=State, pending=pendingSpawns, rewards=(int[])rewardChoices.Clone(),
             enemies=aliveInvaders.Where(e=>e!=null && e.IsAlive).Select(e=>SaveSnapshots.Actor(e.GetComponent<MinionController>())).ToArray() };
         public void RestoreSave(WaveSaveData data)
         {
+            if (State == WaveState.RewardSelection) Time.timeScale = rewardTimeScale;
             if(spawnRoutine!=null)StopCoroutine(spawnRoutine);spawnRoutine=null;
             foreach(var pair in deathHandlers)if(pair.Key!=null)pair.Key.Died-=pair.Value;
             deathHandlers.Clear();
             foreach(var enemy in aliveInvaders)if(enemy!=null){enemy.gameObject.SetActive(false);Destroy(enemy.gameObject);}
             aliveInvaders.Clear();CurrentWave=data.number;State=data.state;pendingSpawns=data.pending;
+            if (State == WaveState.Preparing && CurrentWave >= finalWave) State = WaveState.Victorious;
+            rewardChoices = data.rewards == null ? Array.Empty<int>() : (int[])data.rewards.Clone();
             foreach(var saved in data.enemies)
             {
                 var enemy=Instantiate(invaderPrefab,saved.position,Quaternion.identity,transform);enemy.name=$"Wave {CurrentWave} Invader";
@@ -131,6 +134,8 @@ namespace DarkLord.Gameplay
                 if(State==WaveState.Defeated)enemy.enabled=false;
             }
             if(State==WaveState.Active && pendingSpawns>0)spawnRoutine=StartCoroutine(ResumeSavedWave());
+            ReconcileHealth();
+            if (State == WaveState.RewardSelection) PauseForReward();
             Changed?.Invoke();
         }
         private System.Collections.IEnumerator ResumeSavedWave()

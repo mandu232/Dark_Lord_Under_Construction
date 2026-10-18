@@ -48,6 +48,22 @@ namespace DarkLord.Actors
             initialized = true;
         }
 
+        // Healing never revives a dead actor. Loading a save remains explicit via RestoreHealth.
+        public int Heal(int amount)
+        {
+            if (amount <= 0 || !IsAlive) return 0;
+            int recovered = Mathf.Min(amount, maximumHealth - currentHealth);
+            currentHealth += recovered;
+            return recovered;
+        }
+
+        public void Kill()
+        {
+            if (!IsAlive) return;
+            currentHealth = 0;
+            Died?.Invoke();
+        }
+
         public void Configure(Faction team, int health)
         {
             faction = team;

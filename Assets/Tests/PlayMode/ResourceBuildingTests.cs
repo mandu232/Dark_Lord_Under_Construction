@@ -134,8 +134,11 @@ namespace DarkLord.Tests
             Assert.AreEqual(420,wallet.Gold,"Wave start does not produce income.");
             yield return new WaitForSeconds(1.6f);
             foreach(var health in waves.GetComponentsInChildren<ActorHealth>())if(health.IsAlive)health.TakeDamage(health.MaximumHealth);
-            Assert.AreEqual(WaveState.Preparing,waves.State);Assert.AreEqual(455,wallet.Gold);
+            Assert.AreEqual(WaveState.RewardSelection,waves.State);Assert.AreEqual(455,wallet.Gold);
             dungeon.PayBuildingIncome(wallet,1);Assert.AreEqual(455,wallet.Gold,"Same round cannot pay twice.");
+            Assert.IsTrue(waves.ChooseReward(1));
+            Assert.AreEqual(WaveState.Preparing,waves.State);
+            Assert.AreEqual(455,wallet.Gold,"Income is independent of the non-gold choice.");
         }
         [UnityTest] public IEnumerator SavedBuildingRetainsDamageRubbleAndLastPaidRoundAcrossRestore()
         {

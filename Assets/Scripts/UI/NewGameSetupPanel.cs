@@ -10,11 +10,27 @@ namespace DarkLord.UI
         [SerializeField] private TMP_InputField saveName;
         [SerializeField] private TMP_Text heading, description, error;
         [SerializeField] private UnityEngine.UI.Button[] difficultyButtons;
+        [SerializeField] private Sprite defaultDifficultySprite, selectedDifficultySprite;
         [SerializeField] private UnityEngine.UI.Toggle skipOpening;
         private GameMenu owner;
         private NewGameOptions draft = new NewGameOptions();
         public UnityEngine.UI.Selectable Focus => difficultyButtons[(int)draft.difficulty];
         public void Bind(GameMenu menu) => owner = menu;
+        private void OnEnable()
+        {
+            if (skipOpening == null) return;
+            skipOpening.onValueChanged.AddListener(RefreshStorySkip);
+            RefreshStorySkip(skipOpening.isOn);
+        }
+        private void OnDisable()
+        {
+            if (skipOpening != null) skipOpening.onValueChanged.RemoveListener(RefreshStorySkip);
+        }
+        private void RefreshStorySkip(bool skip)
+        {
+            var image = skipOpening.GetComponent<UnityEngine.UI.Image>();
+            image.sprite = skip ? selectedDifficultySprite : defaultDifficultySprite;
+        }
 
         public void Begin(int slot)
         {
@@ -22,6 +38,7 @@ namespace DarkLord.UI
             heading.text = "새로운 통치의 시작";
             saveName.SetTextWithoutNotify(draft.saveName);
             skipOpening.SetIsOnWithoutNotify(false);
+            RefreshStorySkip(false);
             error.text = "";
             Refresh();
         }
@@ -36,12 +53,16 @@ namespace DarkLord.UI
             for (int i = 0; i < difficultyButtons.Length; i++)
             {
                 bool selected = i == (int)draft.difficulty;
-                var colors = difficultyButtons[i].colors;
-                colors.normalColor = selected ? new Color32(153, 38, 56, 255) : new Color32(46, 22, 33, 255);
-                colors.selectedColor = selected ? new Color32(186, 53, 72, 255) : new Color32(92, 39, 55, 255);
-                difficultyButtons[i].colors = colors;
+                var button = difficultyButtons[i];
+                button.transition = UnityEngine.UI.Selectable.Transition.None;
+                button.image.overrideSprite = null;
+                button.image.sprite = selected ? selectedDifficultySprite : defaultDifficultySprite;
+                button.image.color = Color.white;
+                button.image.type = UnityEngine.UI.Image.Type.Sliced;
+                button.image.pixelsPerUnitMultiplier = .2473684f;
+                button.image.preserveAspect = false;
                 var label = difficultyButtons[i].GetComponentInChildren<TMP_Text>();
-                label.text = (selected ? "◆  " : "") + new NewGameOptions { difficulty = (GameDifficulty)i }.DifficultyName;
+                label.text = new NewGameOptions { difficulty = (GameDifficulty)i }.DifficultyName;
             }
             description.text = draft.difficulty == GameDifficulty.Easy ? "여유롭게 성을 세우며 통치에 익숙해지는 여정" :
                 draft.difficulty == GameDifficulty.Hard ? "치밀한 준비와 판단이 필요한 위험한 통치" :
