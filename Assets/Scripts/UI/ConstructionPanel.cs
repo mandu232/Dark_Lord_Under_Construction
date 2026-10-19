@@ -29,6 +29,43 @@ namespace DarkLord.UI
         private Vector2 restingPosition;
         private CanvasGroup detailsGroup;
         private Coroutine opening;
+        [SerializeField] private RectTransform layer1, layer2, layer3;
+
+        private void LateUpdate()
+        {
+            if (layer2 != null && windowRect != null && window.activeInHierarchy && opening == null)
+                PresentLayers();
+        }
+
+        private static float LayerProgress(float value, float delay)
+        {
+            float t = Mathf.Clamp01((value - delay) / (1 - delay));
+            return 1 - Mathf.Pow(1 - t, 3);
+        }
+
+        private void PresentLayers()
+        {
+            float distance = windowRect.rect.height + Mathf.Max(0, restingPosition.y) + 8;
+            float book = layer2 != null ? LayerProgress(visibility, .16f) : LayerProgress(visibility, 0);
+            float offset = -distance * (1 - book);
+            windowRect.anchoredPosition = restingPosition + Vector2.up * offset;
+            if (layer2 != null)
+            {
+                // All PNGs share the same 405 x 242 canvas. Keep their transparent margins.
+                float height = windowRect.rect.width * 242f / 405f;
+                PlaceLayer(layer1, height, 44f / 242f, LayerProgress(visibility, 0), offset + restingPosition.y);
+                PlaceLayer(layer3, height, 73f / 242f, LayerProgress(visibility, .025f), offset + restingPosition.y);
+                PlaceLayer(layer2, height, 105f / 242f, book, offset + restingPosition.y);
+            }
+            if (detailsGroup != null) detailsGroup.alpha = book;
+        }
+
+        private static void PlaceLayer(RectTransform layer, float height, float visibleFraction, float progress, float parentOffset)
+        {
+            if (layer == null) return;
+            layer.sizeDelta = new Vector2(0, height);
+            layer.anchoredPosition = Vector2.up * (-(height * visibleFraction + 8) * (1 - progress) - parentOffset);
+        }
 
         private void InitializePresentation()
         {
@@ -80,13 +117,10 @@ namespace DarkLord.UI
             Canvas.ForceUpdateCanvases();
             float start = visibility, end = visible ? 1 : 0;
             float duration = (visible ? openingDuration : closingDuration) * Mathf.Abs(end - start);
-            float distance = windowRect.rect.height + Mathf.Max(0, restingPosition.y) + 8;
             for (float elapsed = 0; elapsed < duration; elapsed += Time.unscaledDeltaTime)
             {
-                float t = 1 - Mathf.Pow(1 - elapsed / duration, 3);
-                visibility = Mathf.Lerp(start, end, t);
-                windowRect.anchoredPosition = restingPosition + Vector2.down * (distance * (1 - visibility));
-                if (detailsGroup != null) detailsGroup.alpha = visibility;
+                visibility = Mathf.Lerp(start, end, elapsed / duration);
+                PresentLayers();
                 yield return null;
             }
             FinishVisibility(visible);
@@ -99,6 +133,7 @@ namespace DarkLord.UI
             window.SetActive(visible);
             if (detailsWindow != null) detailsWindow.SetActive(visible && selected != null);
             windowRect.anchoredPosition = restingPosition;
+            if (visible) PresentLayers();
             if (detailsGroup != null) detailsGroup.alpha = 1;
         }
 
