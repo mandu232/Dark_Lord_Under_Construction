@@ -23,6 +23,7 @@ namespace DarkLord.UI
         private DungeonExpansion expansion;
         private MinionSummoning summoning;
         private BuildItemDefinition selected;
+        private BuildItemDefinition previewed;
         private BuildCategory category;
         private float nextRefresh;
         [SerializeField, Min(0)] private float openingDuration = 0.28f;
@@ -101,6 +102,7 @@ namespace DarkLord.UI
             }
             if (!immediate && requestedVisible == visible && (opening != null || window.activeSelf == visible)) return;
             requestedVisible = visible;
+            if (!visible) previewed = null;
             if (opening != null) StopCoroutine(opening);
             opening = null;
             windowGroup.blocksRaycasts = visible;
@@ -113,7 +115,7 @@ namespace DarkLord.UI
                 return;
             }
             window.SetActive(true);
-            if (detailsWindow != null) detailsWindow.SetActive(visible && selected != null);
+            if (detailsWindow != null) detailsWindow.SetActive(visible && previewed != null);
             opening = StartCoroutine(AnimateTo(visible));
         }
 
@@ -136,7 +138,7 @@ namespace DarkLord.UI
         {
             visibility = visible ? 1 : 0;
             window.SetActive(visible);
-            if (detailsWindow != null) detailsWindow.SetActive(visible && selected != null);
+            if (detailsWindow != null) detailsWindow.SetActive(visible && previewed != null);
             windowRect.anchoredPosition = restingPosition;
             if (visible) PresentLayers();
             if (detailsGroup != null) detailsGroup.alpha = 1;
@@ -226,6 +228,7 @@ namespace DarkLord.UI
         {
             category = value;
             selected = null;
+            previewed = null;
             expansion?.CancelSelection();
             foreach (var card in cards)
             {
@@ -257,12 +260,23 @@ namespace DarkLord.UI
                 }
                 else expansion.Select(item);
             }
-            ShowDetails(item);
+        }
+        public void ClearDetails(BuildItemDefinition item)
+        {
+            if (previewed != item) return;
+            previewed = null;
+            ShowSelectedDetails();
+        }
+        public void ScrollDetails(BuildItemDefinition item, UnityEngine.EventSystems.PointerEventData data)
+        {
+            if (previewed != item || detailsScroll == null || !detailsScroll.isActiveAndEnabled) return;
+            // Handle the wheel on the card so it never reaches the item list's ScrollRect.
+            detailsScroll.OnScroll(data);
         }
         public void ShowSelectedDetails()
         {
             if (expansion != null && expansion.DemolitionMode) return;
-            if (selected != null) { ShowDetails(selected); return; }
+            if (previewed != null) { ShowDetails(previewed); return; }
             detailTitle.text = "";
             detailText.text = "";
             detailIcon.sprite = null;
@@ -274,12 +288,14 @@ namespace DarkLord.UI
                 var placeholderText = detailsPlaceholder.GetComponent<TMP_Text>();
                 if (placeholderText != null) placeholderText.text = category == BuildCategory.Decorations
                     ? "아직 등록된 장식이 없습니다.\n\n추후 장식이 추가될 예정입니다."
-                    : "항목을 선택하세요\n\n선택한 건설 항목의 설명이 표시됩니다.";
+                    : "항목에 마우스를 올리세요\n\n마우스를 올린 건설 항목의 설명이 표시됩니다.";
             }
         }
         public void ShowDetails(BuildItemDefinition item)
         {
-            if (selected == null || item != selected) return;
+            if (item == null || item.category != category || item.repairTool || !requestedVisible) return;
+            if (previewed != item && detailsScroll != null) detailsScroll.verticalNormalizedPosition = 1;
+            previewed = item;
             if (detailsPlaceholder != null) detailsPlaceholder.SetActive(false);
             detailTitle.text = item.displayName;
             detailText.text = DescribeItem(item) + (item.available ? "" : "\n\n아직 준비 중인 항목입니다.");

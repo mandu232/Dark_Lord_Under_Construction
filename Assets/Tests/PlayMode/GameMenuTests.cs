@@ -440,7 +440,7 @@ namespace DarkLord.Tests
         }
 
         [UnityTest]
-        public IEnumerator OnlyChosenItemShowsDetailsAndCategoryChangeHidesWindow()
+        public IEnumerator HoverShowsDetailsWithoutChoosingAndCategoryChangeHidesWindow()
         {
             var roots = scene.GetRootGameObjects();
             var construction = roots.SelectMany(r => r.GetComponentsInChildren<DungeonExpansion>()).Single();
@@ -451,14 +451,20 @@ namespace DarkLord.Tests
             Assert.That(cards.Length, Is.EqualTo(1));
             var guard = cards.Single();
             Assert.That(guard.Item.category, Is.EqualTo(BuildCategory.Minions));
+            Assert.That(view.DetailDescription, Is.Empty);
             UnityEngine.EventSystems.ExecuteEvents.Execute(guard.gameObject,
                 new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current),
                 UnityEngine.EventSystems.ExecuteEvents.pointerEnterHandler);
+            Assert.That(view.DetailDescription, Is.EqualTo(ConstructionPanel.DescribeItem(guard.Item)));
+            Assert.IsTrue(view.transform.Find("Details").gameObject.activeSelf);
+            Assert.IsFalse(construction.GetComponent<MinionSummoning>().IsPlacing);
+            UnityEngine.EventSystems.ExecuteEvents.Execute(guard.gameObject,
+                new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current),
+                UnityEngine.EventSystems.ExecuteEvents.pointerExitHandler);
             Assert.That(view.DetailDescription, Is.Empty);
             Assert.IsFalse(view.transform.Find("Details").gameObject.activeSelf);
             view.Choose(guard.Item);
-            Assert.That(view.DetailDescription, Is.EqualTo(guard.Item.description));
-            Assert.IsTrue(view.transform.Find("Details").gameObject.activeSelf);
+            Assert.That(view.DetailDescription, Is.Empty);
             var summoning = construction.GetComponent<MinionSummoning>();
             Assert.IsTrue(summoning.IsPlacing);
             Assert.IsTrue(construction.ExpansionMode);

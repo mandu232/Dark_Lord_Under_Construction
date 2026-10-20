@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace DarkLord.UI
 {
-    public sealed class BuildItemButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler
+    public sealed class BuildItemButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IScrollHandler
     {
         [SerializeField] private UnityEngine.UI.Image icon;
         [SerializeField] private TMP_Text label;
@@ -25,9 +25,11 @@ namespace DarkLord.UI
             if (selectionFrame != null)
                 selectionFrame.color = selected ? new Color32(239, 77, 103, 255) : new Color32(133, 70, 86, 255);
         }
-        public void OnPointerEnter(PointerEventData data) => panel.ShowSelectedDetails();
-        public void OnSelect(BaseEventData data) => panel.ShowSelectedDetails();
-        public void OnPointerExit(PointerEventData data) => panel.ShowSelectedDetails();
+        public void OnPointerEnter(PointerEventData data) => panel.ShowDetails(Item);
+        public void OnSelect(BaseEventData data) => panel.ShowDetails(Item);
+        public void OnPointerExit(PointerEventData data) => panel.ClearDetails(Item);
+        public void OnScroll(PointerEventData data) => panel.ScrollDetails(Item, data);
+        private void OnDisable() { if (panel != null) panel.ClearDetails(Item); }
         private void OnDestroy() { GetComponent<UnityEngine.UI.Button>().onClick.RemoveListener(Choose); }
     }
 }
