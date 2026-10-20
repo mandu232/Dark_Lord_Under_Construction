@@ -17,7 +17,6 @@ namespace DarkLord.UI
         }
         private void Update()
         {
-            // GameMenu pauses scaled time even on the title screen.
             if (instance != null) instance.SetFloat(Clock, Time.unscaledTime);
         }
         private void OnDestroy()

@@ -2,7 +2,8 @@ using UnityEngine;
 
 namespace DarkLord.Dungeon
 {
-    public enum BuildCategory { Rooms, Minions, Traps, Entrances, Buildings }
+    // Keep existing values stable for authored assets and saved references.
+    public enum BuildCategory { Rooms = 0, Minions = 1, Traps = 2, Entrances = 3, Buildings = 4, Corridors = 5, Decorations = 6 }
 
     [CreateAssetMenu(menuName = "Dark Lord/Build Item")]
     public sealed class BuildItemDefinition : ScriptableObject

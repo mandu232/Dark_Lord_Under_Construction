@@ -36,6 +36,8 @@ namespace DarkLord.UI
         private readonly System.Collections.Generic.Dictionary<SpriteRenderer, OutlineState> outlines = new System.Collections.Generic.Dictionary<SpriteRenderer, OutlineState>();
         private readonly System.Collections.Generic.List<SpriteRenderer> releasedOutlines = new System.Collections.Generic.List<SpriteRenderer>();
         private float nextRefresh;
+        private readonly System.Collections.Generic.List<ResourceBuilding> activeBuffs = new System.Collections.Generic.List<ResourceBuilding>();
+        private UnityEngine.UI.ScrollRect statsScroll;
         private readonly System.Collections.Generic.Dictionary<Sprite, Vector2[][]> hitShapes = new System.Collections.Generic.Dictionary<Sprite, Vector2[][]>();
         public MinionController Hovered { get; private set; }
         public MinionController Selected { get; private set; }
@@ -45,12 +47,39 @@ namespace DarkLord.UI
 
         private void Awake()
         {
+            SetupStatsScroll();
             inspect = new InputAction("Inspect minion", InputActionType.Button, "<Mouse>/rightButton");
             if (worldCamera == null) worldCamera = Camera.main;
             if (closeButton != null) closeButton.onClick.AddListener(Close);
             if (relocateButton != null) relocateButton.onClick.AddListener(RelocateSelected);
             if (aggressiveButton != null) aggressiveButton.onClick.AddListener(SetAggressive);
             if (defensiveButton != null) defensiveButton.onClick.AddListener(SetDefensive);
+        }
+        private void SetupStatsScroll()
+        {
+            if (statsText == null || statsText.GetComponentInParent<UnityEngine.UI.ScrollRect>() != null) return;
+            var textRect = statsText.rectTransform;
+            var root = new GameObject("Stats Scroll", typeof(RectTransform), typeof(UnityEngine.UI.ScrollRect));
+            var rect = root.GetComponent<RectTransform>();
+            rect.SetParent(textRect.parent, false); rect.SetSiblingIndex(textRect.GetSiblingIndex());
+            rect.anchorMin = textRect.anchorMin; rect.anchorMax = textRect.anchorMax; rect.pivot = textRect.pivot;
+            rect.sizeDelta = textRect.sizeDelta; rect.anchoredPosition = textRect.anchoredPosition;
+            var viewport = new GameObject("Viewport", typeof(RectTransform), typeof(UnityEngine.UI.Image), typeof(UnityEngine.UI.Mask));
+            var view = viewport.GetComponent<RectTransform>(); view.SetParent(rect, false);
+            view.anchorMin = Vector2.zero; view.anchorMax = Vector2.one; view.offsetMin = view.offsetMax = Vector2.zero;
+            viewport.GetComponent<UnityEngine.UI.Mask>().showMaskGraphic = false;
+            var content = new GameObject("Content", typeof(RectTransform), typeof(UnityEngine.UI.VerticalLayoutGroup), typeof(UnityEngine.UI.ContentSizeFitter));
+            var contentRect = content.GetComponent<RectTransform>(); contentRect.SetParent(view, false);
+            contentRect.anchorMin = new Vector2(0, 1); contentRect.anchorMax = Vector2.one; contentRect.pivot = new Vector2(.5f, 1);
+            contentRect.anchoredPosition = Vector2.zero; contentRect.sizeDelta = Vector2.zero;
+            var layout = content.GetComponent<UnityEngine.UI.VerticalLayoutGroup>();
+            layout.childControlWidth = layout.childControlHeight = true; layout.childForceExpandWidth = true; layout.childForceExpandHeight = false;
+            content.GetComponent<UnityEngine.UI.ContentSizeFitter>().verticalFit = UnityEngine.UI.ContentSizeFitter.FitMode.PreferredSize;
+            textRect.SetParent(contentRect, false);
+            statsText.enableAutoSizing = false; statsText.overflowMode = TextOverflowModes.Overflow; statsText.raycastTarget = false;
+            statsScroll = root.GetComponent<UnityEngine.UI.ScrollRect>();
+            statsScroll.viewport = view; statsScroll.content = contentRect; statsScroll.horizontal = false;
+            statsScroll.movementType = UnityEngine.UI.ScrollRect.MovementType.Clamped; statsScroll.scrollSensitivity = 32;
         }
         private void OnEnable() => inspect.Enable();
         private void OnDisable() { inspect.Disable(); SetHovered(null); Close(); }
@@ -213,6 +242,7 @@ namespace DarkLord.UI
             if (!CanInspect || !Alive(minion)) return;
             buildingInspection?.Close();
             Selected = minion; window.SetActive(true); Refresh(); UpdateOutline();
+            if (statsScroll != null) { Canvas.ForceUpdateCanvases(); statsScroll.StopMovement(); statsScroll.verticalNormalizedPosition = 1; }
         }
         public void Close() { Selected = null; if (window != null) window.SetActive(false); UpdateOutline(); }
         private void Refresh()
@@ -223,7 +253,25 @@ namespace DarkLord.UI
             if (aggressiveButton != null) aggressiveButton.image.color = Selected.Behaviour == MinionBehaviour.Aggressive ? new Color32(155, 62, 51, 255) : new Color32(70, 54, 84, 255);
             if (defensiveButton != null) defensiveButton.image.color = Selected.Behaviour == MinionBehaviour.Defensive ? new Color32(155, 62, 51, 255) : new Color32(70, 54, 84, 255);
             string state = Selected.State == ActorState.Attack ? "공격 중" : Selected.State == ActorState.Hit ? "피격 중" : Selected.State == ActorState.Run ? "이동 중" : "대기 중";
-            statsText.text = (healthBar == null ? $"체력  {Selected.Health.CurrentHealth} / {Selected.Health.MaximumHealth}\n\n" : "") + $"공격력  {Selected.AttackDamage}\n공격 간격  {Selected.AttackInterval:0.##}초\n공격 사거리  {Selected.AttackRange / DungeonGrid.CellSize:0.##}칸\n감지 거리  {Selected.DetectionRange / DungeonGrid.CellSize:0.##}칸\n이동 속도  {Selected.MoveSpeed / DungeonGrid.CellSize:0.##}칸/초\n\n상태  {state}";
+            Selected.GetRoomBonuses(out int attackPercent, out _, out _, activeBuffs);
+            int attack = Selected.AttackDamage, basicAttack = Selected.BaseAttackDamage;
+            var health = Selected.Health;
+            statsText.text = (healthBar == null ? $"체력  {health.CurrentHealth} / {health.MaximumHealth}\n\n" : "") +
+                $"특성  {Selected.TraitText}\n공격 유형  {(Selected.AttackType == DamageType.Magic ? "마법공격" : "물리공격")}\n\n" +
+                $"공격력  {attack}\n기본 {basicAttack} + 시설 {attack - basicAttack} (+{attackPercent}%)\n" +
+                $"물리 내성  {health.PhysicalResistance}%\n기본 {health.BasePhysicalResistance}% + 시설 {health.PhysicalResistance - health.BasePhysicalResistance}%p\n" +
+                $"마법 내성  {health.MagicResistance}%\n기본 {health.BaseMagicResistance}% + 시설 {health.MagicResistance - health.BaseMagicResistance}%p\n" +
+                "내성 상한 100%\n\n적용 중인 시설 버프\n";
+            activeBuffs.Sort((a, b) => string.CompareOrdinal(a.DisplayName, b.DisplayName));
+            if (activeBuffs.Count == 0) statsText.text += "없음\n";
+            foreach (var buff in activeBuffs)
+            {
+                statsText.text += buff.DisplayName + "\n";
+                if (buff.AttackBonusPercent > 0) statsText.text += $"  공격력 +{buff.AttackBonusPercent}%\n";
+                if (buff.ResistanceBonus(DamageType.Physical) > 0) statsText.text += $"  물리 내성 +{buff.ResistanceBonus(DamageType.Physical)}%p\n";
+                if (buff.ResistanceBonus(DamageType.Magic) > 0) statsText.text += $"  마법 내성 +{buff.ResistanceBonus(DamageType.Magic)}%p\n";
+            }
+            statsText.text += $"\n공격 간격  {Selected.AttackInterval:0.##}초\n공격 사거리  {Selected.AttackRange / DungeonGrid.CellSize:0.##}칸\n감지 거리  {Selected.DetectionRange / DungeonGrid.CellSize:0.##}칸\n이동 속도  {Selected.MoveSpeed / DungeonGrid.CellSize:0.##}칸/초\n\n상태  {state}";
             if (summoning != null)
             {
                 var room = dungeon.Construction.RoomAt(dungeon.WorldToCell(Selected.GuardPosition));

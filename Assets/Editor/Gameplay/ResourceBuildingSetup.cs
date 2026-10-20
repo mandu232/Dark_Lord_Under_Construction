@@ -73,7 +73,7 @@ namespace DarkLord.Editor
             for(int i=0;i<3;i++)
             {
                 var prefab=Prefab(keys[i],titles[i],(CurrencyType)i,yields[i],costs[i],repairs[i],icons[i],colors[i],ruins);
-                items[i]=Item(keys[i],titles[i],$"설치: 금화 {costs[i]} · 수리: 금화 {repairs[i]}\n체력 180 · 라운드 클리어마다 {resources[i]} +{yields[i]}\n\n코어를 제외한 완성된 방에 1개씩 설치합니다. 방의 파수꾼이 모두 쓰러지면 용사가 건물을 공격합니다. 파괴되면 잔해로 남고 생산이 중단됩니다. 건물을 우클릭해 정보창에서 수리하세요.",icons[i],prefab);
+                items[i]=Item(keys[i],titles[i],$"설치: 금화 {costs[i]} · 수리: 금화 {repairs[i]}\n체력 180 · 라운드 클리어마다 {resources[i]} +{yields[i]}\n\n코어를 제외한 완성된 방의 빈 바닥에 여러 시설을 설치할 수 있습니다. 방의 파수꾼이 모두 쓰러지면 용사가 건물을 공격합니다. 파괴되면 잔해로 남고 생산이 중단됩니다. 건물을 우클릭해 정보창에서 수리하세요.",icons[i],prefab);
             }
             string uiPath="Assets/Prefabs/UI/InGame/ConstructionPanel.prefab";
             var stage=PrefabStageUtility.GetCurrentPrefabStage();bool stageRoot=stage!=null && stage.assetPath==uiPath;

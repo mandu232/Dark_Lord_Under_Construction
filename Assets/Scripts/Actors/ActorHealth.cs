@@ -4,6 +4,8 @@ using UnityEngine;
 namespace DarkLord.Actors
 {
     public enum Faction { Dungeon, Invader }
+    public enum DamageType { Physical = 0, Magic = 1 }
+    [Flags] public enum MinionTrait { None = 0, Magic = 1, Acid = 2, Melee = 4 }
 
     [DisallowMultipleComponent]
     public sealed class ActorHealth : MonoBehaviour
@@ -12,6 +14,20 @@ namespace DarkLord.Actors
         [SerializeField, Min(1)] private int maximumHealth = 100;
         private int currentHealth;
         private bool initialized;
+        [SerializeField, Range(0, 100)] private int physicalResistance;
+        [SerializeField, Range(0, 100)] private int magicResistance;
+        public int PhysicalResistance => Resistance(DamageType.Physical);
+        public int MagicResistance => Resistance(DamageType.Magic);
+        public int BasePhysicalResistance => Mathf.Clamp(physicalResistance, 0, 100);
+        public int BaseMagicResistance => Mathf.Clamp(magicResistance, 0, 100);
+        private int Resistance(DamageType type)
+        {
+            var minion = GetComponent<DarkLord.Minions.MinionController>();
+            int physical = 0, magic = 0;
+            if (minion != null) minion.GetRoomBonuses(out _, out physical, out magic);
+            return Mathf.Clamp((type == DamageType.Magic ? magicResistance : physicalResistance) +
+                (type == DamageType.Magic ? magic : physical), 0, 100);
+        }
 
         public Faction Faction => faction;
         public int CurrentHealth { get { Initialize(); return currentHealth; } }
@@ -30,11 +46,13 @@ namespace DarkLord.Actors
             initialized = true;
         }
 
-        public bool TakeDamage(int amount, ActorHealth source = null)
+        public bool TakeDamage(int amount, ActorHealth source = null, DamageType damageType = DamageType.Physical)
         {
             if (amount <= 0 || !IsAlive || !isActiveAndEnabled) return false;
             if (source != null && (!source.IsAlive || source.Faction == faction)) return false;
             if (DamageFilter != null && !DamageFilter(source)) return false;
+            amount = Mathf.RoundToInt(amount * (1f - Resistance(damageType) / 100f));
+            if (amount <= 0) return false;
             currentHealth = Mathf.Max(0, currentHealth - amount);
             if (currentHealth == 0) Died?.Invoke();
             else Damaged?.Invoke(source);

@@ -84,9 +84,9 @@ namespace DarkLord.UI
             if (healthBar != null) healthBar.SetHealth(Selected.Health.CurrentHealth, Selected.Health.MaximumHealth);
             titleText.text = Selected.DisplayName;
             string resource = Selected.Resource == CurrencyType.Gold ? "금화" : Selected.Resource == CurrencyType.Souls ? "혈액" : "혈석";
-            string state = Selected.IsRuined ? "파괴됨 · 생산 중단" : "가동 중";
+            string state = Selected.IsRuined ? "파괴됨 · 효과 중단" : "가동 중";
             bool canRepair = Selected.CanRepair(wallet, out var reason);
-            statsText.text = (healthBar == null ? $"체력  {Selected.Health.CurrentHealth} / {Selected.Health.MaximumHealth}\n\n" : "") + $"생산  {resource} +{Selected.ProductionPerRound}\n라운드 클리어마다 지급\n\n상태  {state}\n방어  {(Selected.IsProtected ? "하수인이 보호 중" : "하수인 없음")}\n\n수리 비용  금화 {Selected.RepairCost}\n{reason}";
+            statsText.text = (healthBar == null ? $"체력  {Selected.Health.CurrentHealth} / {Selected.Health.MaximumHealth}\n\n" : "") + $"{Selected.EffectDescription}\n\n상태  {state}\n방어  {(Selected.IsProtected ? "하수인이 보호 중" : "하수인 없음")}\n\n수리 비용  금화 {Selected.RepairCost}\n{reason}";
             repairButton.interactable = canRepair;
             repairLabel.text = $"수리 · 금화 {Selected.RepairCost}";
         }

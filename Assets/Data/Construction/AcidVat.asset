@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abf6566f8160eab4c885caec8b2423d5, type: 3}
+  m_Name: AcidVat
+  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Dungeon.BuildItemDefinition
+  category: 4
+  displayName: "\uC0B0\uC131 \uBC30\uC591\uC870"
+  description: "\uC124\uCE58: \uAE08\uD654 100 \xB7 \uC218\uB9AC: \uAE08\uD654 50 \xB7 \uCCB4\uB825 180\n\uBC29 \uC804\uCCB4 \uAC15\uD654 \xB7 \uC0B0\uC131 \uD2B9\uC131\n\uACF5\uACA9\uB825 +30%\n\n\uC644\uC131\uB41C \uC77C\uBC18 \uBC29\uC758 \uBE48 \uBC14\uB2E5\uC5D0 \uC5EC\uB7EC \uC2DC\uC124\uC744 \uC124\uCE58\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4. \uC11C\uB85C \uB2E4\uB978 \uC2DC\uC124 \uBC84\uD504\uB294 \uD569\uC0B0\uB418\uBA70 \uAC19\uC740 \uC2DC\uC124 \uBC84\uD504\uB294 \uC911\uBCF5\uB418\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4. \uD574\uB2F9 \uBC29 \uC548\uC758 \uD558\uC218\uC778\uC5D0\uAC8C\uB9CC \uC801\uC6A9\uB429\uB2C8\uB2E4. \uBC29\uC744 \uBC97\uC5B4\uB098\uAC70\uB098 \uC2DC\uC124\uC774 \uD30C\uAD34\uB418\uBA74 \uD6A8\uACFC\uAC00 \uC0AC\uB77C\uC9D1\uB2C8\uB2E4. \uD558\uC218\uC778 \uC804\uBA78 \uD6C4 \uC6A9\uC0AC\uAC00 \uC2DC\uC124\uC744 \uACF5\uACA9\uD569\uB2C8\uB2E4."
+  icon: {fileID: -1026144962751251527, guid: 886554f42df0dc74b93c4c19ddec9eeb, type: 3}
+  constructionKind: 0
+  prefab: {fileID: 1877158609922879453, guid: 95a66493675facc4a9d4009e104506f6, type: 3}
+  available: 1
+  repairTool: 0

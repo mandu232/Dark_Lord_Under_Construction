@@ -9,6 +9,22 @@ namespace DarkLord.Dungeon
     public sealed class ResourceBuilding : MonoBehaviour
     {
         [SerializeField] private string displayName = "생산 건물";
+        [Header("Room aura (None keeps resource production)")]
+        [SerializeField] private bool buffFacility;
+        [SerializeField] private MinionTrait requiredTrait;
+        [SerializeField, Range(0, 200)] private int attackBonusPercent;
+        [SerializeField, Range(0, 100)] private int physicalResistanceBonus, magicResistanceBonus;
+        public bool IsBuffFacility => buffFacility;
+        public MinionTrait RequiredTrait => requiredTrait;
+        public int AttackBonusPercent => attackBonusPercent;
+        public int ResistanceBonus(DamageType type) => type == DamageType.Magic ? magicResistanceBonus : physicalResistanceBonus;
+        public bool Buffs(DarkLord.Minions.MinionController minion) => buffFacility && isActiveAndEnabled && !IsRuined &&
+            minion != null && (requiredTrait == MinionTrait.None || (minion.Traits & requiredTrait) == requiredTrait);
+        public string EffectDescription => !buffFacility ? $"생산  {(resource == CurrencyType.Gold ? "금화" : resource == CurrencyType.Souls ? "혈액" : "혈석")} +{productionPerRound}\n라운드 클리어마다 지급" :
+            $"방 전체 강화 · {(requiredTrait == MinionTrait.None ? "모든 하수인" : requiredTrait == MinionTrait.Magic ? "마법 특성" : requiredTrait == MinionTrait.Acid ? "산성 특성" : "근접 특성")}\n" +
+            (attackBonusPercent > 0 ? $"공격력 +{attackBonusPercent}%\n" : "") +
+            (physicalResistanceBonus > 0 ? $"물리 내성 +{physicalResistanceBonus}%p\n" : "") +
+            (magicResistanceBonus > 0 ? $"마법 내성 +{magicResistanceBonus}%p\n" : "");
         [SerializeField] private CurrencyType resource;
         [SerializeField, Min(1)] private int productionPerRound = 35;
         [SerializeField, Min(0)] private int constructionCost = 80;
@@ -71,7 +87,7 @@ namespace DarkLord.Dungeon
             if (!IsRuined) { reason = "파괴된 건물만 수리할 수 있습니다."; return false; }
             if (dungeon != null && dungeon.HasInvaderInRoom(Cell)) { reason = "방에 용사가 있어 수리할 수 없습니다."; return false; }
             if (wallet == null || !wallet.CanAfford(CurrencyType.Gold, repairCost)) { reason = $"금화가 부족합니다. 수리 비용: {repairCost}"; return false; }
-            reason = "수리하면 체력과 생산이 복구됩니다.";
+            reason = "수리하면 체력과 시설 효과가 복구됩니다.";
             return true;
         }
         public bool TryRepair(CurrencyWallet wallet)
@@ -83,7 +99,7 @@ namespace DarkLord.Dungeon
         }
         public int PayRound(CurrencyWallet wallet, int round)
         {
-            if (wallet == null || IsRuined || round <= LastPaidRound || round <= 0) return 0;
+            if (buffFacility || wallet == null || IsRuined || round <= LastPaidRound || round <= 0) return 0;
             LastPaidRound = round;
             wallet.Add(resource, productionPerRound);
             return productionPerRound;

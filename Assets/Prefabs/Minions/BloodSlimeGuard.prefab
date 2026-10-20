@@ -200,6 +200,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Actors.ActorHealth
   faction: 0
   maximumHealth: 100
+  physicalResistance: 0
+  magicResistance: 0
 --- !u!114 &7163071772286336191
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -244,6 +246,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Minions.MinionController
   displayName: "\uD608\uC561 \uC2AC\uB77C\uC784"
+  traits: 7
+  attackType: 1
   detectionRange: 4
   chaseRange: 5
   attackRange: 0.85

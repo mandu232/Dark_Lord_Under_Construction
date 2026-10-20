@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abf6566f8160eab4c885caec8b2423d5, type: 3}
   m_Name: HorizontalCorridor
   m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Dungeon.BuildItemDefinition
-  category: 0
+  category: 5
   displayName: "\uAC00\uB85C \uBCF5\uB3C4"
   description: "5 \xD7 3\uCE78 \xB7 \uAE30\uC874 \uAD6C\uC5ED\uC5D0 \uC5F0\uACB0\n\n\uBC29\uACFC \uBC29\uC744 \uAC00\uB85C\uB85C \uC774\uC5B4 \uC90D\uB2C8\uB2E4. \uBAA8\uB4E0 \uD0C0\uC77C\uC774 \uC5F4\uB9B0 \uB4A4 \uC6A9\uC0AC\uAC00 \uD1B5\uACFC\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
   icon: {fileID: -7763794035167653443, guid: 0573ec4e55a58cf41a063564d03c841b, type: 3}
   constructionKind: 1
   prefab: {fileID: 2071298574468312538, guid: 09956fc410b4a4b4791a9ceb37298128, type: 3}
   available: 1
+  repairTool: 0

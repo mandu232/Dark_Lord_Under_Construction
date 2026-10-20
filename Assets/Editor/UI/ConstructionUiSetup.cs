@@ -51,7 +51,7 @@ namespace DarkLord.Editor
                 Item("Room", "파수꾼의 방", BuildCategory.Rooms, ConstructionKind.Room,
                     "5 × 5칸 · 복도와 연결\n\n타일이 순차적으로 부서진 뒤 사전 정의된 방 디자인이 생성됩니다. 방 안의 파수꾼을 모두 처치해야 용사가 다음 방으로 이동합니다.", Design("RoomDesign", 5, 5), 0),
                 largeRoom,
-                Item("Corridor", "복도", BuildCategory.Rooms, ConstructionKind.Corridor,
+                Item("Corridor", "복도", BuildCategory.Corridors, ConstructionKind.Corridor,
                     "폭 3칸 · 드래그로 연결\n\n기존 방이나 복도에서 좌클릭을 누르고 끝점까지 드래그하세요. 같은 축에서는 직선, 위치가 어긋나면 ㄱ자로 연결합니다. 놓으면 타일이 순차적으로 열립니다. 빈 곳까지 확장한 뒤 방을 붙일 수도 있습니다.\n\n우클릭: 취소", Design("CorridorTileDesign", 1, 1), 1),
                 Item("Guard", "혈액 슬라임", BuildCategory.Minions, ConstructionKind.Room,
                     "일반 방 2명 · 큰 방 4명 · 주인공 주변 3칸\n\n빈 바닥을 클릭해 소환합니다. 방을 지키며 침입한 용사와 전투합니다. 전투 중에도 원래 배치 자리는 예약됩니다.\n\nE: 복귀\n우클릭: 배치 취소", null, 3),
@@ -258,3 +258,4 @@ namespace DarkLord.Editor
         { var data = new SerializedObject(owner); data.FindProperty(field).objectReferenceValue = value; data.ApplyModifiedPropertiesWithoutUndo(); }
     }
 }
+

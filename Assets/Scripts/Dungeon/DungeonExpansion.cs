@@ -77,7 +77,7 @@ namespace DarkLord.Dungeon
             selectedItem = item; selectedKind = item.constructionKind; hasSelection = item.available;
             Message = "위쪽 던전에서 배치할 위치를 클릭하세요.";
             ClearPreview();
-            if (ExpansionMode && item.available && item.category == BuildCategory.Rooms) EnterPlacementView();
+            if (ExpansionMode && item.available && (item.category == BuildCategory.Rooms || item.category == BuildCategory.Corridors)) EnterPlacementView();
         }
         public void CancelSelection()
         {
@@ -140,7 +140,7 @@ namespace DarkLord.Dungeon
         public ConstructionResult TryBuild(Vector2Int center)
         {
             if (!PreparationAllowed) { Message = "방과 복도 건설은 준비 단계에만 가능합니다."; return ConstructionResult.Unavailable; }
-            if (!ExpansionMode || DemolitionMode || !hasSelection || (selectedItem != null && selectedItem.category != BuildCategory.Rooms) || !isActiveAndEnabled || dungeon == null || Time.timeScale == 0 ||
+            if (!ExpansionMode || DemolitionMode || !hasSelection || (selectedItem != null && selectedItem.category != BuildCategory.Rooms && selectedItem.category != BuildCategory.Corridors) || !isActiveAndEnabled || dungeon == null || Time.timeScale == 0 ||
                 (health != null && !health.IsAlive) || !dungeon.isActiveAndEnabled)
             {
                 Message = "지금은 건설할 수 없습니다.";
@@ -225,7 +225,7 @@ namespace DarkLord.Dungeon
                 dungeon.Highlight(cell, buildingAllowed); previewCell = cell;
                 if (building != null)
                     Message = building.IsRuined ? $"{building.DisplayName} 잔해 · 건설 모드를 종료하고 우클릭 정보창에서 수리하세요." : $"{building.DisplayName} · 체력 {building.Health.CurrentHealth}/{building.Health.MaximumHealth} · 매 라운드 +{building.ProductionPerRound}";
-                else Message = "코어를 제외한 완성된 방에 1개씩 설치할 수 있습니다. 금화가 필요합니다.";
+                else Message = "코어를 제외한 완성된 방의 빈 바닥에 설치할 수 있습니다. 금화가 필요합니다.";
                 if (Time.frameCount > openedFrame && build.WasPressedThisFrame()) TryBuildOrRepairBuilding(cell);
                 return;
             }

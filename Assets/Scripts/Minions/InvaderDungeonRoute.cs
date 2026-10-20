@@ -65,10 +65,10 @@ namespace DarkLord.Minions
                     // Never leave an uncleared room, even if its last guard is temporarily unreachable.
                     return;
                 }
-                var building = dungeon.BuildingInRoom(LockedRoom);
+                var building = dungeon.BuildingInRoom(LockedRoom, true);
                 if (building != null && !building.IsRuined)
                 {
-                    // The room remains locked until its production building becomes rubble.
+                    // Keep clearing surviving facilities even when earlier ones are rubble.
                     if (dungeon.Construction.FindPath(cell, building.Cell, candidatePath, LockedRoom))
                     {
                         Target = building.Health;
@@ -104,7 +104,7 @@ namespace DarkLord.Minions
                 var room = dungeon.Construction.RoomAt(path[i]);
                 if (room == null) continue;
                 dungeon.GetRoomDefenders(room, defenders);
-                var building = dungeon.BuildingInRoom(room);
+                var building = dungeon.BuildingInRoom(room, true);
                 if (defenders.Count == 0 && (building == null || building.IsRuined)) continue;
                 if (i + 1 < path.Count) path.RemoveRange(i + 1, path.Count - i - 1);
                 Target = null;

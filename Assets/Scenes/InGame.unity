@@ -529,6 +529,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Actors.ActorHealth
   faction: 0
   maximumHealth: 100
+  physicalResistance: 0
+  magicResistance: 0
 --- !u!58 &254482898
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -1046,6 +1048,7 @@ MonoBehaviour:
   enemyHealthGrowth: 10
   baseSoulReward: 12
   soulRewardGrowth: 4
+  finalWave: 5
 --- !u!4 &702650913
 Transform:
   m_ObjectHideFlags: 0
@@ -1092,6 +1095,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Actors.ActorHealth
   faction: 0
   maximumHealth: 300
+  physicalResistance: 0
+  magicResistance: 0
 --- !u!4 &768845848
 Transform:
   m_ObjectHideFlags: 0
@@ -1964,6 +1969,62 @@ PrefabInstance:
       propertyPath: summoning
       value: 
       objectReference: {fileID: 254482901}
+    - target: {fileID: 5892099503582823960, guid: c3081368d1d70794fb551cc9e1915ff8, type: 3}
+      propertyPath: catalog.Array.size
+      value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 5892099503582823960, guid: c3081368d1d70794fb551cc9e1915ff8, type: 3}
+      propertyPath: catalogIds.Array.size
+      value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 5892099503582823960, guid: c3081368d1d70794fb551cc9e1915ff8, type: 3}
+      propertyPath: 'catalog.Array.data[13]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 288c88e0122bd1e45a39a08e2d16a3a4, type: 2}
+    - target: {fileID: 5892099503582823960, guid: c3081368d1d70794fb551cc9e1915ff8, type: 3}
+      propertyPath: 'catalog.Array.data[14]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 64eea6afd095b924e93eccf186085e47, type: 2}
+    - target: {fileID: 5892099503582823960, guid: c3081368d1d70794fb551cc9e1915ff8, type: 3}
+      propertyPath: 'catalog.Array.data[15]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 5bb615c0a3e7e9f47811de6ca2194d3b, type: 2}
+    - target: {fileID: 5892099503582823960, guid: c3081368d1d70794fb551cc9e1915ff8, type: 3}
+      propertyPath: 'catalog.Array.data[16]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 4602acab84ec3de47900a5db409bce51, type: 2}
+    - target: {fileID: 5892099503582823960, guid: c3081368d1d70794fb551cc9e1915ff8, type: 3}
+      propertyPath: 'catalog.Array.data[17]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 4271c6b27c18bad49a980e47c067624a, type: 2}
+    - target: {fileID: 5892099503582823960, guid: c3081368d1d70794fb551cc9e1915ff8, type: 3}
+      propertyPath: 'catalog.Array.data[18]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 6029d8df55f551746a3585fee5912b75, type: 2}
+    - target: {fileID: 5892099503582823960, guid: c3081368d1d70794fb551cc9e1915ff8, type: 3}
+      propertyPath: 'catalogIds.Array.data[13]'
+      value: 288c88e0122bd1e45a39a08e2d16a3a4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5892099503582823960, guid: c3081368d1d70794fb551cc9e1915ff8, type: 3}
+      propertyPath: 'catalogIds.Array.data[14]'
+      value: 64eea6afd095b924e93eccf186085e47
+      objectReference: {fileID: 0}
+    - target: {fileID: 5892099503582823960, guid: c3081368d1d70794fb551cc9e1915ff8, type: 3}
+      propertyPath: 'catalogIds.Array.data[15]'
+      value: 5bb615c0a3e7e9f47811de6ca2194d3b
+      objectReference: {fileID: 0}
+    - target: {fileID: 5892099503582823960, guid: c3081368d1d70794fb551cc9e1915ff8, type: 3}
+      propertyPath: 'catalogIds.Array.data[16]'
+      value: 4602acab84ec3de47900a5db409bce51
+      objectReference: {fileID: 0}
+    - target: {fileID: 5892099503582823960, guid: c3081368d1d70794fb551cc9e1915ff8, type: 3}
+      propertyPath: 'catalogIds.Array.data[17]'
+      value: 4271c6b27c18bad49a980e47c067624a
+      objectReference: {fileID: 0}
+    - target: {fileID: 5892099503582823960, guid: c3081368d1d70794fb551cc9e1915ff8, type: 3}
+      propertyPath: 'catalogIds.Array.data[18]'
+      value: 6029d8df55f551746a3585fee5912b75
+      objectReference: {fileID: 0}
     - target: {fileID: 7435677596461414584, guid: c3081368d1d70794fb551cc9e1915ff8, type: 3}
       propertyPath: m_Name
       value: Game Menu

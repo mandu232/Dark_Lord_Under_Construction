@@ -10,6 +10,29 @@ namespace DarkLord.Minions
     public sealed class MinionController : MonoBehaviour
     {
         [SerializeField] private string displayName = "하수인";
+        [SerializeField] private MinionTrait traits;
+        [SerializeField] private DamageType attackType;
+        public MinionTrait Traits => traits;
+        public DamageType AttackType => attackType;
+        private readonly System.Collections.Generic.HashSet<GameObject> buffDesigns = new System.Collections.Generic.HashSet<GameObject>();
+        public DarkLord.Dungeon.ResourceBuilding GetRoomBonuses(out int attack, out int physical, out int magic,
+            System.Collections.Generic.List<DarkLord.Dungeon.ResourceBuilding> activeBuffs = null)
+        {
+            attack = physical = magic = 0;
+            activeBuffs?.Clear();
+            if (defenceDungeon == null || health == null || health.Faction != Faction.Dungeon || !isActiveAndEnabled || !health.IsAlive) return null;
+            return defenceDungeon.GetRoomBonuses(this, buffDesigns, out attack, out physical, out magic, activeBuffs);
+        }
+        public string TraitText => traits == MinionTrait.None ? "없음" : string.Join(" · ",
+            System.Array.FindAll(new[] { "마법", "산성", "근접" }, name =>
+                (traits & (name == "마법" ? MinionTrait.Magic : name == "산성" ? MinionTrait.Acid : MinionTrait.Melee)) != 0));
+        public DarkLord.Dungeon.ResourceBuilding RoomBuff
+        {
+            get
+            {
+                return GetRoomBonuses(out _, out _, out _);
+            }
+        }
         public string DisplayName => string.IsNullOrWhiteSpace(displayName) ? "하수인" : displayName;
 
         [Header("Distances in world units (1 unit = 16px; one tile = 2 units)")]
@@ -50,7 +73,11 @@ namespace DarkLord.Minions
         public ActorHealth Target => target;
         public bool IsAlive => health != null && health.IsAlive;
         public ActorHealth Health => health;
-        public int AttackDamage => attackDamage;
+        public int AttackDamage
+        {
+            get { GetRoomBonuses(out int attack, out _, out _); return Mathf.RoundToInt(attackDamage * (1 + attack / 100f)); }
+        }
+        public int BaseAttackDamage => attackDamage;
         public float AttackInterval => Mathf.Max(attackCooldown, attackDuration, attackWindup);
         public float AttackRange => attackRange;
         public float DetectionRange => detectionRange;
@@ -149,7 +176,7 @@ namespace DarkLord.Minions
                 {
                     damagePending = false;
                     if (ValidTarget(target) && InAttackRange(target) && HasLineOfSight(target))
-                        target.TakeDamage(attackDamage, health);
+                        target.TakeDamage(AttackDamage, health, attackType);
                 }
                 if (Time.time < stateEnds) return;
             }

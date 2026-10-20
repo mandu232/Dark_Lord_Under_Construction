@@ -32,19 +32,21 @@ namespace DarkLord.EditorTools
                 rect.sizeDelta = new Vector2(width, height);
                 rect.anchoredPosition = new Vector2(rect.anchoredPosition.x, y);
                 var track = slider.transform.Find("Track").GetComponent<UnityEngine.UI.Image>();
-                track.sprite = trackSprite; track.type = UnityEngine.UI.Image.Type.Sliced;
+                track.sprite = trackSprite; track.type = UnityEngine.UI.Image.Type.Simple;
                 track.color = Color.white; track.pixelsPerUnitMultiplier = 1f / PixelScale;
                 Center(track.rectTransform, new Vector2(width, trackSprite.rect.height * PixelScale));
                 track.raycastTarget = false;
                 var fillArea = (RectTransform)slider.transform.Find("Fill Area");
                 fillArea.gameObject.SetActive(true);
-                Center(fillArea, new Vector2(width - 2 * PixelScale, fillSprite.rect.height * PixelScale));
-                // The visible fill occupies rows 2–5 of its seven-pixel texture.
-                fillArea.anchoredPosition = new Vector2(0, .5f * PixelScale);
+                // Both textures share the same canvas: preserve their alignment, including transparent pixels.
+                Center(fillArea, track.rectTransform.sizeDelta);
                 fillArea.SetSiblingIndex(track.transform.GetSiblingIndex() + 1);
                 var fill = fillArea.Find("Fill").GetComponent<UnityEngine.UI.Image>();
                 fill.sprite = fillSprite;
-                fill.type = UnityEngine.UI.Image.Type.Sliced;
+                // Slider drives fillAmount for Filled images, leaving the full-size rect fixed.
+                fill.type = UnityEngine.UI.Image.Type.Filled;
+                fill.preserveAspect = false;
+                fill.useSpriteMesh = false;
                 fill.pixelsPerUnitMultiplier = 1f / PixelScale;
                 fill.fillMethod = UnityEngine.UI.Image.FillMethod.Horizontal;
                 fill.fillOrigin = (int)UnityEngine.UI.Image.OriginHorizontal.Left;
@@ -58,7 +60,8 @@ namespace DarkLord.EditorTools
                 fill.rectTransform.anchoredPosition = Vector2.zero;
                 slider.fillRect = fill.rectTransform;
                 var handleArea = (RectTransform)slider.handleRect.parent;
-                Center(handleArea, new Vector2(width - height, height));
+                // Keep the entire rotating handle inside the track at both endpoints.
+                Center(handleArea, new Vector2(width - handleSprite.rect.size.magnitude * PixelScale, height));
                 // A square hit/slide rect keeps the endpoint positions invariant on rotation.
                 var handle = slider.handleRect;
                 handle.pivot = Vector2.one * .5f;

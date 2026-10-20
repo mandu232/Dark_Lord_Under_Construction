@@ -12,12 +12,34 @@ namespace DarkLord.Dungeon
     {
         private readonly Dictionary<Vector2Int, ResourceBuilding> buildings = new Dictionary<Vector2Int, ResourceBuilding>();
         public ResourceBuilding BuildingAt(Vector2Int cell) => buildings.TryGetValue(cell, out var building) ? building : null;
-        public ResourceBuilding BuildingInRoom(DungeonSection room)
+        public ResourceBuilding BuildingInRoom(DungeonSection room, bool livingOnly = false)
         {
             if (room == null) return null;
             foreach (var building in buildings.Values)
-                if (building != null && Construction.RoomAt(building.Cell) == room) return building;
+                if (building != null && (!livingOnly || building.isActiveAndEnabled && !building.IsRuined) && Construction.RoomAt(building.Cell) == room) return building;
             return null;
+        }
+        public ResourceBuilding GetRoomBonuses(MinionController minion, HashSet<GameObject> designs,
+            out int attack, out int physical, out int magic, List<ResourceBuilding> activeBuffs = null)
+        {
+            attack = physical = magic = 0;
+            designs.Clear();
+            activeBuffs?.Clear();
+            var room = Construction.RoomAt(WorldToCell(minion.transform.position));
+            if (room == null) return null;
+            ResourceBuilding first = null;
+            foreach (var building in buildings.Values)
+            {
+                if (building == null || Construction.RoomAt(building.Cell) != room || !building.Buffs(minion)) continue;
+                // Copies share the authored prefab identity, including after save restoration.
+                if (!designs.Add(building.Design)) continue;
+                activeBuffs?.Add(building);
+                if (first == null) first = building;
+                attack += building.AttackBonusPercent;
+                physical += building.ResistanceBonus(DamageType.Physical);
+                magic += building.ResistanceBonus(DamageType.Magic);
+            }
+            return first;
         }
         public bool HasInvaderInRoom(Vector2Int cell)
         {
@@ -35,7 +57,7 @@ namespace DarkLord.Dungeon
         {
             Initialize();
             var room = Construction.RoomAt(cell);
-            return room != null && !room.IsCore && BuildingInRoom(room) == null && EmptyFloor(cell);
+            return room != null && !room.IsCore && EmptyFloor(cell);
         }
         public bool TryPlaceBuilding(Vector2Int cell, GameObject prefab, CurrencyWallet wallet)
         {

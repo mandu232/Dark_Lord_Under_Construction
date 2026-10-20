@@ -10,6 +10,7 @@ namespace DarkLord.UI
     public sealed class ConstructionPanel : MonoBehaviour
     {
         [SerializeField] private GameObject window, detailsWindow;
+        [SerializeField] private GameObject detailsPlaceholder;
         [SerializeField] private UnityEngine.UI.Button openButton, closeButton, roomsTab, minionsTab, trapsTab, entrancesTab, demolitionButton;
         [SerializeField] private UnityEngine.UI.Button buildingsTab;
         [SerializeField] private TMP_Text statusText, selectionText, detailTitle, detailText;
@@ -30,6 +31,7 @@ namespace DarkLord.UI
         private CanvasGroup detailsGroup;
         private Coroutine opening;
         [SerializeField] private RectTransform layer1, layer2, layer3;
+        [SerializeField, Min(0)] private float bookLift = 16f;
 
         private void LateUpdate()
         {
@@ -45,6 +47,8 @@ namespace DarkLord.UI
 
         private void PresentLayers()
         {
+            // The usable page and its artwork must share the same width-based scale.
+            if (layer2 != null) windowRect.sizeDelta = new Vector2(windowRect.sizeDelta.x, windowRect.rect.width * 105f / 405f);
             float distance = windowRect.rect.height + Mathf.Max(0, restingPosition.y) + 8;
             float book = layer2 != null ? LayerProgress(visibility, .16f) : LayerProgress(visibility, 0);
             float offset = -distance * (1 - book);
@@ -56,6 +60,7 @@ namespace DarkLord.UI
                 PlaceLayer(layer1, height, 44f / 242f, LayerProgress(visibility, 0), offset + restingPosition.y);
                 PlaceLayer(layer3, height, 73f / 242f, LayerProgress(visibility, .025f), offset + restingPosition.y);
                 PlaceLayer(layer2, height, 105f / 242f, book, offset + restingPosition.y);
+                layer2.anchoredPosition += Vector2.up * (bookLift * windowRect.rect.width / 1920f * book);
             }
             if (detailsGroup != null) detailsGroup.alpha = book;
         }
@@ -164,11 +169,13 @@ namespace DarkLord.UI
         private void Awake()
         {
             InitializePresentation();
+            if (selectionText != null) selectionText.gameObject.SetActive(false);
+            if (detailIcon != null) detailIcon.gameObject.SetActive(false);
             openButton.onClick.AddListener(Toggle);
             closeButton.onClick.AddListener(Close);
             roomsTab.onClick.AddListener(Rooms);
-            minionsTab.onClick.AddListener(Minions);
-            trapsTab.onClick.AddListener(Traps);
+            minionsTab.onClick.AddListener(Corridors);
+            trapsTab.onClick.AddListener(Decorations);
             entrancesTab.onClick.AddListener(Entrances);
             if (buildingsTab != null) buildingsTab.onClick.AddListener(Buildings);
             demolitionButton.onClick.AddListener(Demolish);
@@ -203,8 +210,8 @@ namespace DarkLord.UI
         }        private void Toggle() { if (expansion != null) expansion.SetExpansionMode(!expansion.ExpansionMode); }
         private void Close() => expansion?.SetExpansionMode(false);
         private void Rooms() => ShowCategory(BuildCategory.Rooms);
-        private void Minions() => ShowCategory(BuildCategory.Minions);
-        private void Traps() => ShowCategory(BuildCategory.Traps);
+        private void Corridors() => ShowCategory(BuildCategory.Corridors);
+        private void Decorations() => ShowCategory(BuildCategory.Decorations);
         private void Entrances() => ShowCategory(BuildCategory.Entrances);
         private void Buildings() => ShowCategory(BuildCategory.Buildings);
         public void Demolish()
@@ -227,13 +234,13 @@ namespace DarkLord.UI
             }
             if (itemsScroll != null) itemsScroll.horizontalNormalizedPosition = 0;
             roomsTab.GetComponent<UnityEngine.UI.Image>().color = TabColor(value == BuildCategory.Rooms);
-            minionsTab.GetComponent<UnityEngine.UI.Image>().color = TabColor(value == BuildCategory.Minions);
-            trapsTab.GetComponent<UnityEngine.UI.Image>().color = TabColor(value == BuildCategory.Traps);
+            minionsTab.GetComponent<UnityEngine.UI.Image>().color = TabColor(value == BuildCategory.Corridors);
+            trapsTab.GetComponent<UnityEngine.UI.Image>().color = TabColor(value == BuildCategory.Decorations);
             entrancesTab.GetComponent<UnityEngine.UI.Image>().color = TabColor(value == BuildCategory.Entrances);
             if (buildingsTab != null) buildingsTab.image.color = TabColor(value == BuildCategory.Buildings);
             ShowSelectedDetails();
         }
-        private static Color TabColor(bool active) => active ? new Color32(130, 28, 48, 255) : new Color32(35, 20, 29, 255);
+        private static Color TabColor(bool active) => active ? new Color32(130, 28, 48, 255) : new Color32(35, 20, 29, 0);
         public void Choose(BuildItemDefinition item)
         {
             if (expansion == null || !expansion.ExpansionMode || item == null || item.repairTool) return;
@@ -261,36 +268,75 @@ namespace DarkLord.UI
             detailIcon.sprite = null;
             detailIcon.enabled = false;
             if (detailsWindow != null) detailsWindow.SetActive(false);
+            if (detailsPlaceholder != null)
+            {
+                detailsPlaceholder.SetActive(true);
+                var placeholderText = detailsPlaceholder.GetComponent<TMP_Text>();
+                if (placeholderText != null) placeholderText.text = category == BuildCategory.Decorations
+                    ? "아직 등록된 장식이 없습니다.\n\n추후 장식이 추가될 예정입니다."
+                    : "항목을 선택하세요\n\n선택한 건설 항목의 설명이 표시됩니다.";
+            }
         }
         public void ShowDetails(BuildItemDefinition item)
         {
             if (selected == null || item != selected) return;
+            if (detailsPlaceholder != null) detailsPlaceholder.SetActive(false);
             detailTitle.text = item.displayName;
-            detailText.text = item.description + (item.available ? "" : "\n\n아직 준비 중인 항목입니다.");
+            detailText.text = DescribeItem(item) + (item.available ? "" : "\n\n아직 준비 중인 항목입니다.");
             detailIcon.sprite = item.icon;
-            detailIcon.enabled = item.icon != null;
+            detailIcon.enabled = false;
             if (detailsWindow != null) detailsWindow.SetActive(requestedVisible && window.activeSelf);
+        }
+        public static string DescribeItem(BuildItemDefinition item)
+        {
+            var facility = item.prefab != null ? item.prefab.GetComponent<ResourceBuilding>() : null;
+            if (facility == null) return FormatDescription(item.description);
+            string gold = $"<color=#D7C7B5>필요 골드</color><pos=180><size=40><color=#FFD477>{facility.ConstructionCost} G</color></size>";
+            if (!facility.IsBuffFacility)
+            {
+                string resource = facility.Resource == CurrencyType.Gold ? "골드" : facility.Resource == CurrencyType.Souls ? "혈액" : "혈석";
+                return gold + "\n\n" + WrapWords($"라운드를 클리어할 때마다 <color=#9CE5B4>{resource} {facility.ProductionPerRound}</color>을 생산합니다.");
+            }
+            var effects = new List<string>();
+            if (facility.AttackBonusPercent > 0) effects.Add($"공격력을 <color=#9CE5B4>{facility.AttackBonusPercent}%</color>");
+            if (facility.ResistanceBonus(DarkLord.Actors.DamageType.Physical) > 0)
+                effects.Add($"물리 내성을 <color=#9CE5B4>{facility.ResistanceBonus(DarkLord.Actors.DamageType.Physical)}%p</color>");
+            if (facility.ResistanceBonus(DarkLord.Actors.DamageType.Magic) > 0)
+                effects.Add($"마법 내성을 <color=#9CE5B4>{facility.ResistanceBonus(DarkLord.Actors.DamageType.Magic)}%p</color>");
+            var targets = new List<string>();
+            var trait = facility.RequiredTrait;
+            if ((trait & DarkLord.Actors.MinionTrait.Magic) != 0) targets.Add("마법");
+            if ((trait & DarkLord.Actors.MinionTrait.Acid) != 0) targets.Add("산성");
+            if ((trait & DarkLord.Actors.MinionTrait.Melee) != 0) targets.Add("근접");
+            string target = targets.Count == 0 ? "설치된 방의 모든 하수인" : "설치된 방의 " + string.Join("·", targets) + " 특성을 가진 하수인";
+            return gold + "\n\n" + WrapWords(target + "의 " + string.Join(", ", effects) + " 높입니다.");
+        }
+        // Keep Korean words together while TMP chooses line breaks for the current width.
+        private static string WrapWords(string sentence) => "<nobr>" + sentence.Replace(" ", "</nobr> <nobr>") + "</nobr>";
+        public static string FormatDescription(string description)
+        {
+            if (string.IsNullOrWhiteSpace(description)) return "";
+            var lines = description.Replace("\r\n", "\n").Replace(" · ", "\n").Replace(". ", ".\n\n")
+                .Split('\n');
+            for (int i = 0; i < lines.Length; i++) lines[i] = lines[i].Trim();
+            return string.Join("\n", lines).Trim();
         }
         private void Update()
         {
             if (expansion == null || !expansion.ExpansionMode || Time.unscaledTime < nextRefresh) return;
             nextRefresh = Time.unscaledTime + 0.1f;
             statusText.text = summoning != null && summoning.IsOpen ? summoning.Message : expansion.Message;
-            selectionText.text = expansion.DemolitionMode ? "파괴 모드 · 대상을 클릭하세요" : selected == null ? "항목을 선택하세요" : "선택: " + selected.displayName;
         }
         private void OnDestroy()
         {
             if (openButton != null) openButton.onClick.RemoveListener(Toggle);
             if (closeButton != null) closeButton.onClick.RemoveListener(Close);
             if (roomsTab != null) roomsTab.onClick.RemoveListener(Rooms);
-            if (minionsTab != null) minionsTab.onClick.RemoveListener(Minions);
-            if (trapsTab != null) trapsTab.onClick.RemoveListener(Traps);
+            if (minionsTab != null) minionsTab.onClick.RemoveListener(Corridors);
+            if (trapsTab != null) trapsTab.onClick.RemoveListener(Decorations);
             if (entrancesTab != null) entrancesTab.onClick.RemoveListener(Entrances);
             if (demolitionButton != null) demolitionButton.onClick.RemoveListener(Demolish);
             if (buildingsTab != null) buildingsTab.onClick.RemoveListener(Buildings);
         }
     }
 }
-
-
-

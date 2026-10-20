@@ -14,8 +14,36 @@ namespace DarkLord.UI
         private float angle, fromAngle, targetAngle, elapsed;
 
         private void Awake() => slider = GetComponent<UnityEngine.UI.Slider>();
-        private void OnEnable() => ResetRotation();
-        private void OnDisable() => ResetRotation();
+        private void OnEnable()
+        {
+            if (slider == null) slider = GetComponent<UnityEngine.UI.Slider>();
+            slider.onValueChanged.AddListener(OnValueChanged);
+            Canvas.willRenderCanvases += RefreshFill;
+            ResetRotation();
+            RefreshFill();
+        }
+        private void OnDisable()
+        {
+            if (slider != null) slider.onValueChanged.RemoveListener(OnValueChanged);
+            Canvas.willRenderCanvases -= RefreshFill;
+            ResetRotation();
+        }
+        private void OnValueChanged(float value) => RefreshFill();
+        private void LateUpdate() => RefreshFill();
+        // Slider's default fillAmount assumes the handle travels across the whole texture.
+        // Our inset handle instead clips the full-size artwork at its actual center.
+        private void RefreshFill()
+        {
+            if (slider == null || slider.fillRect == null || slider.handleRect == null) return;
+            var fill = slider.fillRect.GetComponent<UnityEngine.UI.Image>();
+            if (fill == null || fill.type != UnityEngine.UI.Image.Type.Filled) return;
+            var rect = slider.fillRect.rect;
+            if (rect.width <= 0) return;
+            var center = slider.fillRect.InverseTransformPoint(
+                slider.handleRect.TransformPoint(slider.handleRect.rect.center));
+            fill.fillAmount = slider.normalizedValue <= 0 ? 0 :
+                Mathf.Clamp01((center.x - rect.xMin) / rect.width);
+        }
         private void OnApplicationFocus(bool focused) { if (!focused) SetPressed(false); }
         public void OnPointerDown(PointerEventData data) { if (data.button == PointerEventData.InputButton.Left) SetPressed(true); }
         public void OnPointerUp(PointerEventData data) { if (data.button == PointerEventData.InputButton.Left) SetPressed(false); }

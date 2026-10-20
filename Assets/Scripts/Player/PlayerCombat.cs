@@ -109,7 +109,7 @@ namespace DarkLord.Player
             motor.Face(direction);
             nextAttack = Time.time + 0.5f;
             attackUntil = Time.time + 0.25f;
-            DamageArea(1.65f, 25, direction, 0.25f);
+            DamageArea(1.65f, 25, direction, 0.25f, DamageType.Physical);
             return true;
         }
         public bool TryNova()
@@ -117,7 +117,7 @@ namespace DarkLord.Player
             if (!CanAct || IsDodging || Time.time < nextNova || !SpendMana(30)) return false;
             nextNova = Time.time + 6;
             attackUntil = Time.time + 0.3f;
-            DamageArea(3.5f, 45, Vector2.zero, -1);
+            DamageArea(3.5f, 45, Vector2.zero, -1, DamageType.Magic);
             Message = "혈파 발동";
             return true;
         }
@@ -145,7 +145,7 @@ namespace DarkLord.Player
             Mana -= amount;
             return true;
         }
-        private void DamageArea(float radius, int damage, Vector2 direction, float minimumDot)
+        private void DamageArea(float radius, int damage, Vector2 direction, float minimumDot, DamageType type)
         {
             struck.Clear();
             int count = Physics2D.OverlapCircle(transform.position, radius, new ContactFilter2D { useTriggers = false }, overlaps);
@@ -160,7 +160,7 @@ namespace DarkLord.Player
                 foreach (var hit in Physics2D.LinecastAll(transform.position, target.transform.position))
                     if (!hit.collider.isTrigger && hit.collider.GetComponentInParent<ActorHealth>() == null)
                     { blocked = true; break; }
-                if (!blocked) target.TakeDamage(damage, health);
+                if (!blocked) target.TakeDamage(damage, health, type);
             }
         }
         private bool NearCore() => waves != null && waves.Core != null && waves.Core.IsAlive &&

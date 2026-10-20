@@ -21,7 +21,7 @@ namespace DarkLord.Dungeon
             if (target == null || !target.IsAlive || target.Faction != Faction.Invader) return;
             if (hits.TryGetValue(target, out float next) && Time.time < next) return;
             hits[target] = Time.time + cooldown;
-            target.TakeDamage(damage);
+            target.TakeDamage(damage, null, DarkLord.Actors.DamageType.Physical);
         }
     }
 }
