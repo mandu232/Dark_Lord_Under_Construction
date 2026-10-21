@@ -17,6 +17,16 @@ namespace DarkLord.Player
         [SerializeField, Min(1)] private int guardLimit = 4; // Large/core room capacity.
         [SerializeField, Min(1)] private int smallRoomLimit = 2;
         private MinionController relocatingGuard;
+        private ResourceBuilding recruitmentStation;
+        private bool recruitmentWindow;
+        public MinionController RecruitDefinition => guardPrefab;
+        public bool IsRecruiting => recruitmentWindow;
+        public bool CanInteractRecruitment => !IsOpen && Time.timeScale > 0 && isActiveAndEnabled &&
+            (health == null || health.IsAlive) && dungeon != null && dungeon.isActiveAndEnabled &&
+            (GetComponent<DungeonExpansion>() == null || !GetComponent<DungeonExpansion>().ExpansionMode) &&
+            (GetComponent<AlchemyExchange>() == null || !GetComponent<AlchemyExchange>().BlocksGameplayInput) &&
+            (GetComponent<PlayerCombat>() == null || GetComponent<PlayerCombat>().CanPrepare && !GetComponent<PlayerCombat>().IsFinished) &&
+            dungeon.NearRecruitmentFacility(transform.position);
         private bool dragPlacement;
         public bool IsRelocating => relocatingGuard != null;
         public MinionController RelocatingGuard => relocatingGuard;
@@ -26,13 +36,13 @@ namespace DarkLord.Player
         private readonly Collider2D[] overlaps = new Collider2D[16];
         private ActorHealth health;
         private MinionCommands commands;
-        private InputAction close, place, cancelPlacement;
+        private InputAction close, place, cancelPlacement, recruit;
         private Camera worldCamera;
         private int placementStartedFrame, consumedFrame = -1;
         private Vector2Int? highlightedCell;
         private bool highlightedAllowed;
         private static readonly Vector2Int[] Directions = { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
-        private string message = "권속을 선택하세요. 준비 중 코어 근처에서 마나 20으로 소환합니다.";
+        private string message = "권속을 선택하세요. 준비 중 코어 또는 소환소 근처에서 마나 20으로 소환합니다.";
         public string Message => message;
         public bool IsOpen { get; private set; }
         public bool IsPlacing { get; private set; }
@@ -47,10 +57,22 @@ namespace DarkLord.Player
             close = new InputAction("Close summon menu", InputActionType.Button, "<Keyboard>/escape");
             place = new InputAction("Place summoned minion", InputActionType.Button, "<Mouse>/leftButton");
             cancelPlacement = new InputAction("Cancel summoned minion", InputActionType.Button, "<Mouse>/rightButton");
+            recruit = new InputAction("Recruit at facility", InputActionType.Button, "<Keyboard>/f");
         }
-        private void OnEnable() { close.Enable(); place.Enable(); cancelPlacement.Enable(); }
-        private void OnDisable() { close.Disable(); place.Disable(); cancelPlacement.Disable(); SetOpen(false); }
-        private void OnDestroy() { close.Dispose(); place.Dispose(); cancelPlacement.Dispose(); }
+        private void OnEnable() { close.Enable(); place.Enable(); cancelPlacement.Enable(); recruit.Enable(); }
+        private void OnDisable() { close.Disable(); place.Disable(); cancelPlacement.Disable(); recruit.Disable(); SetOpen(false); }
+        private void OnDestroy() { close.Dispose(); place.Dispose(); cancelPlacement.Dispose(); recruit.Dispose(); }
+
+        public bool TryRecruit()
+        {
+            if (!CanInteractRecruitment) return false;
+            var station = dungeon.NearestRecruitmentFacility(transform.position);
+            SetOpen(true);
+            recruitmentStation = station;
+            recruitmentWindow = true;
+            message = "모집할 하수인을 선택하세요. 마나 20 · 선택 후 빈 칸에 배치";
+            return IsOpen;
+        }
 
         public void Configure(DungeonGrid grid, MinionController guardTemplate)
         {
@@ -65,12 +87,21 @@ namespace DarkLord.Player
             ClearPreview();
             IsPlacing = false;
             relocatingGuard = null; dragPlacement = false;
+            recruitmentStation = null;
+            recruitmentWindow = false;
             IsOpen = value && isActiveAndEnabled && Time.timeScale > 0 && (health == null || health.IsAlive);
         }
 
         private void Update()
         {
             if (Time.timeScale == 0 || (health != null && !health.IsAlive)) { SetOpen(false); return; }
+            if (IsRecruiting && (recruitmentStation == null || recruitmentStation.IsRuined || !recruitmentStation.isActiveAndEnabled ||
+                Vector2.Distance(transform.position, recruitmentStation.transform.position) > 3f ||
+                GetComponent<PlayerCombat>() != null && (!GetComponent<PlayerCombat>().CanPrepare || GetComponent<PlayerCombat>().IsFinished)))
+            { SetOpen(false); return; }
+            if (recruit.WasPressedThisFrame() && (EventSystem.current == null ||
+                EventSystem.current.currentSelectedGameObject == null ||
+                EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>() == null)) TryRecruit();
             if (close.WasPressedThisFrame()) SetOpen(false);
             if (!IsPlacing) return;
             if (IsRelocating && !relocatingGuard.IsAlive) { SetOpen(false); return; }
@@ -103,7 +134,7 @@ namespace DarkLord.Player
             if (!IsOpen || !isActiveAndEnabled || Time.timeScale == 0 || (health != null && !health.IsAlive)) return false;
             var combat = GetComponent<PlayerCombat>();
             if (combat != null && !combat.CanSummon)
-            { message = "준비 단계 · 코어에서 3유닛 이내 · 마나 20이 필요합니다."; return false; }
+            { message = "준비 단계 · 코어 또는 소환소에서 3유닛 이내 · 마나 20이 필요합니다."; return false; }
             if (summonWorker) { message = "일꾼 소환은 제거되었습니다. 건설창에서 바로 확장하세요."; return false; }
             if (dungeon == null || guardPrefab == null)
             { message = "소환 정보를 찾을 수 없습니다."; return false; }
@@ -155,7 +186,7 @@ namespace DarkLord.Player
             reason = "지금은 소환할 수 없습니다.";
             var combat = GetComponent<PlayerCombat>();
             if (!IsRelocating && combat != null && !combat.CanSummon)
-            { reason = "준비 중 코어 근처에서 마나 20이 필요합니다."; return false; }
+            { reason = "준비 중 코어 또는 소환소 근처에서 마나 20이 필요합니다."; return false; }
             if (!IsOpen || !IsPlacing || !isActiveAndEnabled || dungeon == null || !dungeon.isActiveAndEnabled ||
                 Time.timeScale == 0 || (health != null && !health.IsAlive)) return false;
             if (!IsRelocating && guardPrefab == null)
@@ -164,7 +195,7 @@ namespace DarkLord.Player
             dungeon.Initialize();
             if (dungeon.GuardPostAt(target) != null && dungeon.GuardPostAt(target) != relocatingGuard)
             { reason = "다른 하수인이 지키는 자리입니다."; return false; }
-            if (!dungeon.Construction.IsWalkable(target) || (dungeon.Layout.HasEntrance && target == dungeon.Layout.Entrance) || dungeon.HasTrap(target) || dungeon.BuildingAt(target) != null)
+            if (!dungeon.Construction.IsWalkable(target) || dungeon.IsAlchemyStationCell(target) || (dungeon.Layout.HasEntrance && target == dungeon.Layout.Entrance) || dungeon.HasTrap(target) || dungeon.BuildingAt(target) != null)
             { reason = "입구와 함정을 피해서 완성된 빈 바닥을 선택하세요."; return false; }
             var room = dungeon.Construction.RoomAt(target);
             if (room == null) { reason = "완성된 방 안에 하수인을 배치하세요."; return false; }
@@ -199,7 +230,8 @@ namespace DarkLord.Player
             return false;
         }
 
-        public int RoomCapacity(DungeonSection room) => room == null ? 0 : room.Kind == ConstructionKind.Room ? smallRoomLimit : guardLimit;
+        public int RoomCapacity(DungeonSection room) => room == null ? 0 :
+            (room.Kind == ConstructionKind.LargeRoom ? guardLimit : smallRoomLimit) + (dungeon != null ? dungeon.RoomCapacityBonus(room) : 0);
         public int RoomGuardCount(DungeonSection room, MinionController excluding = null)
         {
             int count = 0;

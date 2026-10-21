@@ -23,12 +23,17 @@ namespace DarkLord.UI
 
         private int lastHealth = -1;
         private int lastGuardCount = -1;
+        private int lastGoldCapacity = -1, lastSoulsCapacity = -1, lastCrystalsCapacity = -1;
 
         private void Start()
         {
             var director = FindFirstObjectByType<DarkLord.Gameplay.WaveDirector>();
             if (director != null && director.gameObject.scene == gameObject.scene && healthText != null)
+            {
                 gameObject.AddComponent<CombatHud>().Configure(director, healthText);
+                gameObject.AddComponent<AlchemyRoomPanel>().Configure(director, healthText);
+                gameObject.AddComponent<RecruitmentPanel>().Configure(summoning, healthText.font);
+            }
         }
 
         public void Configure(CurrencyWallet currencyWallet, ActorHealth health, MinionSummoning minionSummoning)
@@ -51,6 +56,9 @@ namespace DarkLord.UI
 
         private void LateUpdate()
         {
+            if (wallet != null && (lastGoldCapacity != wallet.GetCapacity(CurrencyType.Gold) ||
+                lastSoulsCapacity != wallet.GetCapacity(CurrencyType.Souls) || lastCrystalsCapacity != wallet.GetCapacity(CurrencyType.DarkCrystals)))
+                RefreshCurrencies();
             if (playerHealth != null && playerHealth.CurrentHealth != lastHealth) RefreshHealth();
             if (summoning != null && summoning.GuardCount != lastGuardCount) RefreshMinions();
         }
@@ -73,9 +81,9 @@ namespace DarkLord.UI
         {
             switch (currency)
             {
-                case CurrencyType.Gold: SetAmount(goldText, amount); break;
-                case CurrencyType.Souls: SetAmount(soulsText, amount); break;
-                case CurrencyType.DarkCrystals: SetAmount(crystalsText, amount); break;
+                case CurrencyType.Gold: SetAmount(goldText, currency, amount); break;
+                case CurrencyType.Souls: SetAmount(soulsText, currency, amount); break;
+                case CurrencyType.DarkCrystals: SetAmount(crystalsText, currency, amount); break;
             }
         }
 
@@ -83,9 +91,7 @@ namespace DarkLord.UI
         {
             if (wallet != null)
             {
-                SetAmount(goldText, wallet.Gold);
-                SetAmount(soulsText, wallet.Souls);
-                SetAmount(crystalsText, wallet.DarkCrystals);
+                RefreshCurrencies();
             }
             RefreshHealth();
             RefreshMinions();
@@ -111,9 +117,22 @@ namespace DarkLord.UI
             minionsText.text = $"하수인  {lastGuardCount}";
         }
 
-        private static void SetAmount(TMP_Text label, int amount)
+        private void RefreshCurrencies()
         {
-            if (label != null) label.text = amount.ToString("N0");
+            lastGoldCapacity = wallet.GetCapacity(CurrencyType.Gold);
+            lastSoulsCapacity = wallet.GetCapacity(CurrencyType.Souls);
+            lastCrystalsCapacity = wallet.GetCapacity(CurrencyType.DarkCrystals);
+            SetAmount(goldText, CurrencyType.Gold, wallet.Gold);
+            SetAmount(soulsText, CurrencyType.Souls, wallet.Souls);
+            SetAmount(crystalsText, CurrencyType.DarkCrystals, wallet.DarkCrystals);
+        }
+        private void SetAmount(TMP_Text label, CurrencyType currency, int amount)
+        {
+            if (label == null) return;
+            int capacity = wallet.GetCapacity(currency);
+            int amountSize = amount >= 1000000 ? 50 : 75;
+            int capacitySize = capacity >= 1000000 ? 45 : 60;
+            label.text = $"<size={amountSize}%>{amount:N0}\n<size={capacitySize}%>/ {capacity:N0}</size></size>";
         }
     }
 }

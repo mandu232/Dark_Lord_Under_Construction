@@ -93,6 +93,7 @@ namespace DarkLord.Persistence
             options = (loaded.options ?? new NewGameOptions()).Copy();
             waves.ConfigureRun(options);
             summoning.ClearSavedGuards();
+            waves.Alchemy?.Close();
             dungeon.RestoreSave(loaded.dungeon, Resolve);
             player.transform.position = loaded.playerPosition;
             var body = player.GetComponent<Rigidbody2D>();

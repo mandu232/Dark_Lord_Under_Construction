@@ -474,7 +474,7 @@ namespace DarkLord.Tests
             view.ShowCategory(BuildCategory.Traps);
             Assert.IsFalse(view.transform.Find("Details").gameObject.activeSelf);
             Assert.That(view.DetailDescription, Is.Empty);
-            var trap = view.GetComponentsInChildren<BuildItemButton>().Single();
+            var trap = view.GetComponentsInChildren<BuildItemButton>().Single(c => c.Item.name == "SpikeTrap");
             view.Choose(trap.Item);
             Assert.IsFalse(summoning.IsPlacing);
             Assert.IsTrue(trap.Item.available);

@@ -68,9 +68,9 @@ namespace DarkLord.Editor
             Rect(close.GetComponent<RectTransform>(), Vector2.one, new Vector2(-20, -14), new Vector2(180, 38));
             foreach (string name in new[] { "Room", "Horizontal Corridor", "Vertical Corridor", "Description" })
             { var legacy = window.transform.Find(name); if (legacy != null) legacy.gameObject.SetActive(false); }
-            var rooms = Button(window.transform, font, "Rooms Tab", "방", 20, 72, 162, 46);
-            var minions = Button(window.transform, font, "Minions Tab", "하수인", 20, 128, 162, 46);
-            var traps = Button(window.transform, font, "Traps Tab", "함정", 20, 184, 162, 46);
+            var rooms = Button(window.transform, font, "Rooms Tab", "방·복도", 20, 72, 162, 46);
+            var minions = Button(window.transform, font, "Minions Tab", "함정", 20, 128, 162, 46);
+            var traps = Button(window.transform, font, "Traps Tab", "장식", 20, 184, 162, 46);
             var entrances = Button(window.transform, font, "Entrances Tab", "입구", 20, 240, 162, 46);
             var demolition = Button(window.transform, font, "Demolition", "파괴 모드", 290, 14, 160, 38);
             var items = Ui("Items", window.transform);

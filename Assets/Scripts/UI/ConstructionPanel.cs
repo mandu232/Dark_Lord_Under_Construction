@@ -176,7 +176,7 @@ namespace DarkLord.UI
             openButton.onClick.AddListener(Toggle);
             closeButton.onClick.AddListener(Close);
             roomsTab.onClick.AddListener(Rooms);
-            minionsTab.onClick.AddListener(Corridors);
+            minionsTab.onClick.AddListener(Traps);
             trapsTab.onClick.AddListener(Decorations);
             entrancesTab.onClick.AddListener(Entrances);
             if (buildingsTab != null) buildingsTab.onClick.AddListener(Buildings);
@@ -212,7 +212,7 @@ namespace DarkLord.UI
         }        private void Toggle() { if (expansion != null) expansion.SetExpansionMode(!expansion.ExpansionMode); }
         private void Close() => expansion?.SetExpansionMode(false);
         private void Rooms() => ShowCategory(BuildCategory.Rooms);
-        private void Corridors() => ShowCategory(BuildCategory.Corridors);
+        private void Traps() => ShowCategory(BuildCategory.Traps);
         private void Decorations() => ShowCategory(BuildCategory.Decorations);
         private void Entrances() => ShowCategory(BuildCategory.Entrances);
         private void Buildings() => ShowCategory(BuildCategory.Buildings);
@@ -226,23 +226,27 @@ namespace DarkLord.UI
         }
         public void ShowCategory(BuildCategory value)
         {
+            // Keep legacy corridor definitions and callers compatible with the combined tab.
+            if (value == BuildCategory.Corridors) value = BuildCategory.Rooms;
             category = value;
             selected = null;
             previewed = null;
             expansion?.CancelSelection();
             foreach (var card in cards)
             {
-                card.gameObject.SetActive(card.Item.category == value && !card.Item.repairTool);
+                card.gameObject.SetActive(IsInCategory(card.Item, value) && !card.Item.repairTool);
                 card.SetSelected(false);
             }
             if (itemsScroll != null) itemsScroll.horizontalNormalizedPosition = 0;
             roomsTab.GetComponent<UnityEngine.UI.Image>().color = TabColor(value == BuildCategory.Rooms);
-            minionsTab.GetComponent<UnityEngine.UI.Image>().color = TabColor(value == BuildCategory.Corridors);
+            minionsTab.GetComponent<UnityEngine.UI.Image>().color = TabColor(value == BuildCategory.Traps);
             trapsTab.GetComponent<UnityEngine.UI.Image>().color = TabColor(value == BuildCategory.Decorations);
             entrancesTab.GetComponent<UnityEngine.UI.Image>().color = TabColor(value == BuildCategory.Entrances);
             if (buildingsTab != null) buildingsTab.image.color = TabColor(value == BuildCategory.Buildings);
             ShowSelectedDetails();
         }
+        private static bool IsInCategory(BuildItemDefinition item, BuildCategory category) =>
+            item.category == category || category == BuildCategory.Rooms && item.category == BuildCategory.Corridors;
         private static Color TabColor(bool active) => active ? new Color32(130, 28, 48, 255) : new Color32(35, 20, 29, 0);
         public void Choose(BuildItemDefinition item)
         {
@@ -293,7 +297,7 @@ namespace DarkLord.UI
         }
         public void ShowDetails(BuildItemDefinition item)
         {
-            if (item == null || item.category != category || item.repairTool || !requestedVisible) return;
+            if (item == null || !IsInCategory(item, category) || item.repairTool || !requestedVisible) return;
             if (previewed != item && detailsScroll != null) detailsScroll.verticalNormalizedPosition = 1;
             previewed = item;
             if (detailsPlaceholder != null) detailsPlaceholder.SetActive(false);
@@ -308,6 +312,8 @@ namespace DarkLord.UI
             var facility = item.prefab != null ? item.prefab.GetComponent<ResourceBuilding>() : null;
             if (facility == null) return FormatDescription(item.description);
             string gold = $"<color=#D7C7B5>필요 골드</color><pos=180><size=40><color=#FFD477>{facility.ConstructionCost} G</color></size>";
+            if (facility.IsRecruitmentFacility || facility.RoomCapacityBonus > 0)
+                return gold + "\n\n" + FormatDescription(facility.EffectDescription);
             if (!facility.IsBuffFacility)
             {
                 string resource = facility.Resource == CurrencyType.Gold ? "골드" : facility.Resource == CurrencyType.Souls ? "혈액" : "혈석";
@@ -348,7 +354,7 @@ namespace DarkLord.UI
             if (openButton != null) openButton.onClick.RemoveListener(Toggle);
             if (closeButton != null) closeButton.onClick.RemoveListener(Close);
             if (roomsTab != null) roomsTab.onClick.RemoveListener(Rooms);
-            if (minionsTab != null) minionsTab.onClick.RemoveListener(Corridors);
+            if (minionsTab != null) minionsTab.onClick.RemoveListener(Traps);
             if (trapsTab != null) trapsTab.onClick.RemoveListener(Decorations);
             if (entrancesTab != null) entrancesTab.onClick.RemoveListener(Entrances);
             if (demolitionButton != null) demolitionButton.onClick.RemoveListener(Demolish);

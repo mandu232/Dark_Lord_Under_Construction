@@ -146,6 +146,7 @@ namespace DarkLord.UI
             switch (State)
             {
                 case ScreenState.Playing:
+                    if (expansion != null && expansion.GetComponent<DarkLord.Player.AlchemyExchange>()?.BlocksGameplayInput == true) return;
                     if (summoning != null && summoning.BlocksGameplayInput) return;
                     if (expansion != null && expansion.BlocksGameplayInput) return;
                     PauseGame();

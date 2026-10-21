@@ -54,6 +54,11 @@ namespace DarkLord.Dungeon
             var position = new Vector3Int(p.x, p.y, 0);
             bool floor = ArtFloor(p);
             floorMap.SetTile(position, BackedFloor(p) ? Piece(stonePieces, (2 - p.y % 3) * 3 + p.x % 3, roomFloorTile) : null);
+            var section = Construction.At(new Vector2Int(p.x / 2, p.y / 2));
+            floorMap.SetTileFlags(position, TileFlags.None);
+            floorMap.SetColor(position, section != null && section.Kind == ConstructionKind.StorageRoom
+                ? new Color(1f, .82f, .55f) : section != null && section.Kind == ConstructionKind.AlchemyRoom
+                ? new Color(.8f, .65f, 1f) : Color.white);
             // A nine-piece carpet only uses its gold edges at the boundary of the connected carpet.
             int column = !BackedCarpet(p + Vector2Int.left) ? 0 : !BackedCarpet(p + Vector2Int.right) ? 2 : 1;
             int row = !BackedCarpet(p + Vector2Int.up) ? 0 : !BackedCarpet(p + Vector2Int.down) ? 2 : 1;

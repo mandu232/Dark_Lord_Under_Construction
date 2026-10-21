@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace DarkLord.Tests
 {
+    [Category("ResourceStorage")]
     public sealed class CurrencyWalletTests
     {
         private GameObject owner;
@@ -48,6 +49,47 @@ namespace DarkLord.Tests
             Assert.That(wallet.TrySpend(CurrencyType.Gold, -1), Is.False);
             wallet.Add(CurrencyType.Gold, -1);
             Assert.That(wallet.Gold, Is.EqualTo(100));
+        }
+
+        [TestCase(CurrencyType.Gold, 1000)]
+        [TestCase(CurrencyType.Souls, 200)]
+        [TestCase(CurrencyType.DarkCrystals, 50)]
+        public void IncomeStopsAtCapacityAndSpendingMakesSpace(CurrencyType currency, int expectedCapacity)
+        {
+            Assert.AreEqual(expectedCapacity, wallet.GetCapacity(currency));
+            wallet.Add(currency, int.MaxValue);
+            Assert.AreEqual(expectedCapacity, wallet.GetAmount(currency));
+            int events = 0;
+            wallet.Changed += (_, __) => events++;
+            wallet.Add(currency, 1);
+            Assert.AreEqual(0, events);
+            Assert.IsTrue(wallet.TrySpend(currency, 10));
+            wallet.Add(currency, 4);
+            Assert.AreEqual(expectedCapacity - 6, wallet.GetAmount(currency));
+        }
+
+        [Test]
+        public void LegacyExcessIsPreservedWithoutAllowingFurtherIncome()
+        {
+            wallet.RestoreAmounts(1500, 300, 75);
+            wallet.Add(CurrencyType.Gold, int.MaxValue);
+            wallet.Add(CurrencyType.Souls, int.MaxValue);
+            wallet.Add(CurrencyType.DarkCrystals, int.MaxValue);
+            Assert.AreEqual(1500, wallet.Gold);
+            Assert.AreEqual(300, wallet.Souls);
+            Assert.AreEqual(75, wallet.DarkCrystals);
+            wallet.TrySpend(CurrencyType.Gold, 501);
+            wallet.Add(CurrencyType.Gold, 10);
+            Assert.AreEqual(1000, wallet.Gold);
+        }
+
+        [Test]
+        public void StartingAmountsRespectAllCaps()
+        {
+            wallet.SetStartingAmounts(int.MaxValue, int.MaxValue, int.MaxValue);
+            Assert.AreEqual(1000, wallet.Gold);
+            Assert.AreEqual(200, wallet.Souls);
+            Assert.AreEqual(50, wallet.DarkCrystals);
         }
     }
 }

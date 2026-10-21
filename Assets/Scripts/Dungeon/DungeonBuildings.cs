@@ -10,7 +10,41 @@ namespace DarkLord.Dungeon
 {
     public sealed partial class DungeonGrid
     {
+        [SerializeField] private GameObject initialRecruitmentPrefab;
         private readonly Dictionary<Vector2Int, ResourceBuilding> buildings = new Dictionary<Vector2Int, ResourceBuilding>();
+        private void PlaceInitialRecruitmentFacility()
+        {
+            if (initialRecruitmentPrefab == null) return;
+            var definition = initialRecruitmentPrefab.GetComponent<ResourceBuilding>();
+            if (definition == null || !definition.IsRecruitmentFacility) return;
+            foreach (var room in Construction.Sections)
+            {
+                if (room.IsCore || room.Kind != ConstructionKind.Room || !room.IsComplete) continue;
+                SpawnBuilding(room.Center, initialRecruitmentPrefab);
+                return;
+            }
+        }
+        public int RoomCapacityBonus(DungeonSection room)
+        {
+            if (room == null) return 0;
+            int bonus = 0;
+            foreach (var building in buildings.Values)
+                if (building != null && building.isActiveAndEnabled && !building.IsRuined && Construction.RoomAt(building.Cell) == room)
+                    bonus += building.RoomCapacityBonus;
+            return bonus;
+        }
+        public bool NearRecruitmentFacility(Vector3 position)
+            => NearestRecruitmentFacility(position) != null;
+        public ResourceBuilding NearestRecruitmentFacility(Vector3 position)
+        {
+            ResourceBuilding nearest = null;
+            float distance = 3f;
+            foreach (var building in buildings.Values)
+                if (building != null && building.isActiveAndEnabled && !building.IsRuined && building.IsRecruitmentFacility &&
+                    Vector2.Distance(position, CellCenter(building.Cell)) <= distance)
+                { nearest = building; distance = Vector2.Distance(position, CellCenter(building.Cell)); }
+            return nearest;
+        }
         public ResourceBuilding BuildingAt(Vector2Int cell) => buildings.TryGetValue(cell, out var building) ? building : null;
         public ResourceBuilding BuildingInRoom(DungeonSection room, bool livingOnly = false)
         {

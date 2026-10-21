@@ -46,6 +46,57 @@ namespace DarkLord.Tests
         }
 
         [Test]
+        public void NewGameStartsWithConnectedStorageRoomAndOneCorridor()
+        {
+            var grid = Grid();
+            int storage = 0, rooms = 0, corridors = 0, cores = 0;
+            var owned = new HashSet<Vector2Int>();
+            foreach (var section in grid.Construction.Sections)
+            {
+                if (section.IsCore) cores++;
+                else if (section.Kind == ConstructionKind.Room) rooms++;
+                else if (section.Kind == ConstructionKind.StorageRoom) storage++;
+                else if (!DungeonConstruction.IsRoom(section.Kind)) corridors++;
+                Assert.IsTrue(section.IsComplete);
+                foreach (var cell in section.Cells)
+                {
+                    Assert.IsTrue(owned.Add(cell), "Starting footprints must not overlap.");
+                    Assert.IsTrue(grid.Layout.IsFloor(cell));
+                    Assert.AreSame(section, grid.Construction.At(cell));
+                }
+            }
+            Assert.AreEqual(1, storage); Assert.AreEqual(1, rooms);
+            Assert.AreEqual(1, corridors); Assert.AreEqual(1, cores);
+            var reached = new HashSet<Vector2Int> { grid.Layout.Entrance };
+            var queue = new Queue<Vector2Int>(); queue.Enqueue(grid.Layout.Entrance);
+            var directions = new[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+            while (queue.Count > 0)
+            {
+                var cell = queue.Dequeue();
+                foreach (var direction in directions)
+                {
+                    var next = cell + direction;
+                    if (grid.Layout.IsFloor(next) && reached.Add(next)) queue.Enqueue(next);
+                }
+            }
+            Assert.That(reached, Is.EquivalentTo(owned));
+            Assert.AreEqual(0, grid.Layout.ExpandedCells);
+            Assert.AreEqual(0, grid.RemainingConstructionTiles);
+            foreach (var section in grid.Construction.Sections)
+            {
+                if (!DungeonConstruction.IsRoom(section.Kind))
+                { Assert.AreEqual(8, section.Cells.Count, "Keep the starting hall short, with narrow doorways and a warehouse branch."); continue; }
+                var margin = new RectInt(section.Bounds.xMin - 1, section.Bounds.yMin - 1, section.Bounds.width + 2, section.Bounds.height + 2);
+                foreach (var other in grid.Construction.Sections)
+                    if (other != section && DungeonConstruction.IsRoom(other.Kind)) Assert.IsFalse(margin.Overlaps(other.Bounds));
+                var outward = section.IsCore ? Vector2Int.right : section.Kind == ConstructionKind.StorageRoom ? Vector2Int.down : Vector2Int.left;
+                var kind = outward == Vector2Int.down ? ConstructionKind.VerticalCorridor : ConstructionKind.HorizontalCorridor;
+                int offset = section.IsCore ? 6 : 5;
+                Assert.AreEqual(ConstructionResult.Success, grid.Construction.CanPlan(kind, section.Center + outward * offset), "Each room needs a free expansion direction.");
+            }
+        }
+
+        [Test]
         public void DraggedCorridorHasWidthThreeAndPreservesRoomOwnership()
         {
             var grid = Grid();
@@ -69,7 +120,13 @@ namespace DarkLord.Tests
         {
             var grid = Grid();
             var construction = grid.Construction;
-            var firstCenter = new Vector2Int(5, grid.Layout.Core.y + 4);
+            var start = new Vector2Int(7, 15);
+            foreach (var end in new[] { new Vector2Int(4, 15), new Vector2Int(4, 18), new Vector2Int(11, 18) })
+            {
+                Assert.AreEqual(ConstructionResult.Success, construction.TryPlanCorridor(start, end, out var branch));
+                Finish(grid, branch); start = end;
+            }
+            var firstCenter = new Vector2Int(4, 22);
             Assert.That(construction.TryPlan(ConstructionKind.Room, firstCenter, out var first), Is.EqualTo(ConstructionResult.Success));
             Assert.IsFalse(first.IsComplete);
             int count = construction.Sections.Count;
@@ -119,13 +176,14 @@ namespace DarkLord.Tests
         }
 
         [Test]
-        public void InitialSectionsAreLargeRoomAndModularCorridorsAndSevenBySevenRoomConnects()
+        public void InitialSectionsPreserveCoreAndSevenBySevenRoomConnects()
         {
             var grid = Grid();
             Assert.That(grid.Construction.RoomAt(grid.Layout.Core).Kind, Is.EqualTo(ConstructionKind.LargeRoom));
             Assert.That(grid.Construction.Sections.Count, Is.EqualTo(4));
             foreach (var section in grid.Construction.Sections)
-                Assert.That(section.Bounds.size, Is.EqualTo(section.IsCore ? new Vector2Int(7, 7) : new Vector2Int(5, 3)));
+                Assert.That(section.Bounds.size, Is.EqualTo(section.IsCore ? new Vector2Int(7, 7) :
+                    DungeonConstruction.IsRoom(section.Kind) ? new Vector2Int(5, 5) : new Vector2Int(5, 4)));
             Assert.That(grid.Construction.CanPlan(ConstructionKind.LargeRoom, grid.Layout.Core + Vector2Int.right * 7), Is.EqualTo(ConstructionResult.TooCloseToRoom));
             grid.Construction.TryPlan(ConstructionKind.HorizontalCorridor, grid.Layout.Core + Vector2Int.right * 6, out var corridor);
             Finish(grid, corridor);
@@ -268,7 +326,8 @@ namespace DarkLord.Tests
             last.TakeDamage(100);
             yield return new WaitForSeconds(0.25f);
             route.Update(grid.CellCenter(room.Center));
-            Assert.IsNull(route.LockedRoom); Assert.That(route.Target, Is.SameAs(objective));
+            Assert.IsNull(route.LockedRoom);
+            Assert.IsTrue(route.HasWaypoint, "Clearing guards releases the route to the remaining starting rooms.");
         }
 
         [Test]
@@ -276,7 +335,7 @@ namespace DarkLord.Tests
         {
             var grid = Grid();
             // This branch is beside the initial entrance corridor, away from the core.
-            grid.Construction.TryPlan(ConstructionKind.VerticalCorridor, new Vector2Int(8, grid.Layout.Core.y + 4), out var corridor); Finish(grid, corridor);
+            grid.Construction.TryPlan(ConstructionKind.VerticalCorridor, new Vector2Int(14, grid.Layout.Core.y + 3), out var corridor); Finish(grid, corridor);
             grid.Construction.TryPlan(ConstructionKind.Room, corridor.Center + Vector2Int.up * 5, out var room); Finish(grid, room);
             var objective = Actor(grid, grid.Layout.Core).GetComponent<ActorHealth>();
             var route = new InvaderDungeonRoute(grid, objective);
@@ -289,9 +348,12 @@ namespace DarkLord.Tests
         public IEnumerator InvaderAttacksCorridorBlockerInsteadOfStalling()
         {
             var grid = Grid();
-            var start = new Vector2Int(6, grid.Layout.Core.y);
+            var start = grid.Layout.Entrance;
             var objective = Actor(grid, grid.Layout.Core).GetComponent<ActorHealth>();
-            var blocker = Actor(grid, start + Vector2Int.right).GetComponent<ActorHealth>();
+            var route = new InvaderDungeonRoute(grid, objective);
+            route.Update(grid.CellCenter(start)); route.Update(grid.CellCenter(start));
+            Assert.IsTrue(route.HasWaypoint);
+            var blocker = Actor(grid, grid.WorldToCell(route.NextWaypoint)).GetComponent<ActorHealth>();
             var invaderGo = Actor(grid, start);
             invaderGo.GetComponent<ActorHealth>().Configure(Faction.Invader, 100);
             var invader = invaderGo.AddComponent<MinionController>();
@@ -305,7 +367,7 @@ namespace DarkLord.Tests
         public IEnumerator InvaderNavigatesTurnAndClearsTwoGuardsBeforeNextRoom()
         {
             var grid = Grid();
-            grid.Construction.TryPlan(ConstructionKind.VerticalCorridor, new Vector2Int(8, grid.Layout.Core.y + 4), out var corridor); Finish(grid, corridor);
+            grid.Construction.TryPlan(ConstructionKind.VerticalCorridor, new Vector2Int(14, grid.Layout.Core.y + 3), out var corridor); Finish(grid, corridor);
             grid.Construction.TryPlan(ConstructionKind.Room, corridor.Center + Vector2Int.up * 5, out var room); Finish(grid, room);
             grid.Construction.TryPlan(ConstructionKind.HorizontalCorridor, room.Center + Vector2Int.right * 5, out var nextCorridor); Finish(grid, nextCorridor);
             grid.Construction.TryPlan(ConstructionKind.Room, nextCorridor.Center + Vector2Int.right * 5, out var nextRoom); Finish(grid, nextRoom);

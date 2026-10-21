@@ -137,7 +137,7 @@ namespace DarkLord.Editor
             }
             window.Find("Entrances Tab").gameObject.SetActive(false);
             string[] tabs = { "Rooms Tab", "Minions Tab", "Buildings Tab", "Traps Tab" };
-            string[] labels = { "방", "복도", "시설", "장식" };
+            string[] labels = { "방·복도", "함정", "시설", "장식" };
             for (int i = 0; i < tabs.Length; i++)
             {
                 var tab = window.Find(tabs[i]);

@@ -54,13 +54,25 @@ namespace DarkLord.Dungeon
             Layout.CellChanged += OnCellChanged;
             foreach (var section in Construction.Sections)
             {
-                var prefab = section.IsCore ? initialRoomPrefab : initialCorridorPrefab;
+                var prefab = InitialPrefab(section);
                 if (prefab == null || UsesArtTiles) continue;
                 var design = Instantiate(prefab, CellCenter(section.Center), transform.rotation, generated.transform);
-                if (!section.IsCore) design.transform.localScale = new Vector3(section.Bounds.width / 5f, 1, 1);
+                ScaleInitialDesign(design, section);
                 design.name = "Initial " + prefab.name;
             }
+            PlaceInitialRecruitmentFacility();
             RefreshEntranceMarker();
+        }
+
+        private GameObject InitialPrefab(DungeonSection section) =>
+            DungeonConstruction.IsRoom(section.Kind) ? initialRoomPrefab : initialCorridorPrefab;
+
+        private static void ScaleInitialDesign(GameObject design, DungeonSection section)
+        {
+            if (section.IsCore) return;
+            design.transform.localScale = DungeonConstruction.IsRoom(section.Kind)
+                ? new Vector3(section.Bounds.width / 7f, section.Bounds.height / 7f, 1)
+                : new Vector3(section.Bounds.width / 5f, 1, 1);
         }
 
         public Vector2Int WorldToCell(Vector3 world)
@@ -105,7 +117,9 @@ namespace DarkLord.Dungeon
             if (Layout.HasEntrance && cell == Layout.Entrance) return new Color(0.25f, 0.65f, 0.85f);
             switch (Layout.GetCell(cell))
             {
-                case DungeonCell.Floor: return new Color(0.30f, 0.35f, 0.39f);
+                case DungeonCell.Floor: return Construction.At(cell)?.Kind == ConstructionKind.StorageRoom
+                    ? new Color(.48f, .37f, .21f) : Construction.At(cell)?.Kind == ConstructionKind.AlchemyRoom
+                    ? new Color(.38f, .25f, .48f) : new Color(0.30f, 0.35f, 0.39f);
                 case DungeonCell.Bedrock: return new Color(0.09f, 0.11f, 0.15f);
                 default: return new Color(0.48f, 0.42f, 0.34f);
             }
@@ -179,6 +193,7 @@ namespace DarkLord.Dungeon
         {
             miningMarks.Remove(cell);
             var section = Construction.At(cell);
+            EnsureAlchemyStation(section);
             if (section != null && section.IsComplete && sectionPrefabs.TryGetValue(section, out var prefab))
             {
                 sectionPrefabs.Remove(section);
@@ -336,7 +351,7 @@ namespace DarkLord.Dungeon
         public bool HasTrap(Vector2Int cell) => traps.TryGetValue(cell, out var trap) && trap != null && trap.activeSelf;
         private bool EmptyFloor(Vector2Int cell)
         {
-            if (!Construction.IsWalkable(cell) || cell == Layout.Core || BuildingAt(cell) != null || HasTrap(cell) || GuardPostAt(cell) != null) return false;
+            if (!Construction.IsWalkable(cell) || cell == Layout.Core || IsAlchemyStationCell(cell) || BuildingAt(cell) != null || HasTrap(cell) || GuardPostAt(cell) != null) return false;
             Physics2D.SyncTransforms();
             var hits = Physics2D.OverlapCircleAll(CellCenter(cell), 0.65f);
             foreach (var hit in hits) if (hit.GetComponentInParent<ActorHealth>() != null) return false;

@@ -32,6 +32,13 @@ namespace DarkLord.Persistence
         public TrapSaveData[] traps;
         public Vector2Int[] queue;
         public BuildingSaveData[] buildings;
+        public AlchemyJobSaveData[] alchemyJobs;
+    }
+    [Serializable] public sealed class AlchemyJobSaveData
+    {
+        public Vector2Int cell;
+        public DarkLord.Player.CurrencyType source;
+        public float remaining;
     }
     [Serializable] public sealed class SectionSaveData
     {
@@ -47,7 +54,8 @@ namespace DarkLord.Persistence
         public string designId;
         public int health, maximumHealth, lastPaidRound;
     }
-    [Serializable] public sealed class TrapSaveData { public Vector2Int cell; public string designId; }
+    [Serializable] public sealed class TrapSaveData { public Vector2Int cell; public string designId; public float cooldownRemaining; }
+    [Serializable] public sealed class MovementSlowSaveData { public float multiplier, remaining; }
     [Serializable] public sealed class MinionSaveData
     {
         public Vector3 position;
@@ -55,6 +63,7 @@ namespace DarkLord.Persistence
         public int health, maximumHealth;
         public MinionOrder order;
         public MinionBehaviour behaviour;
+        public MovementSlowSaveData[] slows;
     }
     [Serializable] public sealed class WaveSaveData
     {
@@ -149,7 +158,11 @@ namespace DarkLord.Persistence
                     throw new InvalidDataException("잘못된 건설 구역입니다.");
                 foreach (var cell in section.cells) CheckCell(d, cell);
             }
-            foreach (var trap in d.traps) { if (trap == null) throw new InvalidDataException("잘못된 함정입니다."); CheckCell(d, trap.cell); }
+            foreach (var trap in d.traps)
+            {
+                if (trap == null || !InRange(trap.cooldownRemaining, 3600)) throw new InvalidDataException("잘못된 함정입니다.");
+                CheckCell(d, trap.cell);
+            }
             if (d.buildings != null)
             {
                 var seen = new System.Collections.Generic.HashSet<Vector2Int>();
@@ -162,6 +175,22 @@ namespace DarkLord.Persistence
                 }
             }
             foreach (var cell in d.queue) CheckCell(d, cell);
+            if (d.alchemyJobs != null)
+            {
+                var occupied = new System.Collections.Generic.HashSet<Vector2Int>();
+                foreach (var job in d.alchemyJobs)
+                {
+                    if (job == null || (job.source != DarkLord.Player.CurrencyType.Souls && job.source != DarkLord.Player.CurrencyType.DarkCrystals) ||
+                        !InRange(job.remaining, DarkLord.Player.AlchemyExchange.DurationFor(job.source)) || !occupied.Add(job.cell))
+                        throw new InvalidDataException("잘못된 연성 기록입니다.");
+                    CheckCell(d, job.cell);
+                    bool found = false;
+                    foreach (var room in d.sections)
+                        if (room.complete && room.kind == ConstructionKind.AlchemyRoom &&
+                            job.cell == new Vector2Int(room.bounds.xMin + room.bounds.width / 2, room.bounds.yMin + room.bounds.height / 2)) found = true;
+                    if (!found) throw new InvalidDataException("연금술실을 찾을 수 없습니다.");
+                }
+            }
             if (d.hasEntrance) CheckCell(d, d.entrance);
             foreach (var actor in data.guards) CheckActor(actor);
             foreach (var actor in data.wave.enemies) CheckActor(actor);
@@ -174,6 +203,9 @@ namespace DarkLord.Persistence
         {
             if (actor == null || actor.health <= 0 || actor.maximumHealth < actor.health || !Finite(actor.position) || !Finite(actor.post) ||
                 !Enum.IsDefined(typeof(MinionOrder), actor.order) || !Enum.IsDefined(typeof(MinionBehaviour), actor.behaviour)) throw new InvalidDataException("잘못된 캐릭터 기록입니다.");
+            if (actor.slows != null) foreach (var slow in actor.slows)
+                if (slow == null || !InRange(slow.multiplier, 1) || !InRange(slow.remaining, 3600))
+                    throw new InvalidDataException("잘못된 둔화 기록입니다.");
         }
     }
 }

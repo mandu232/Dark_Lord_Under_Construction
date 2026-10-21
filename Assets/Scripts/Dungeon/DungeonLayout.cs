@@ -25,16 +25,18 @@ namespace DarkLord.Dungeon
             Height = height;
             cells = new DungeonCell[width, height];
             Core = new Vector2Int(width / 2, height / 2);
-            Entrance = new Vector2Int(2, Core.y);
+            Entrance = new Vector2Int(HasCompactStart ? Core.x - 8 : 2, Core.y);
             for (int y = 0; y < height; y++)
                 for (int x = 0; x < width; x++)
                 {
                     bool border = x == 0 || y == 0 || x == width - 1 || y == height - 1;
-                    bool room = Mathf.Abs(x - Core.x) <= 3 && Mathf.Abs(y - Core.y) <= 3;
-                    bool passage = x >= Entrance.x && x <= Core.x && Mathf.Abs(y - Core.y) <= 1;
-                    cells[x, y] = border ? DungeonCell.Bedrock : room || passage ? DungeonCell.Floor : DungeonCell.Rock;
+                    cells[x, y] = border ? DungeonCell.Bedrock : DungeonCell.Rock;
                 }
+            foreach (var section in DungeonConstruction.InitialSections(this))
+                foreach (var cell in section.Cells) cells[cell.x, cell.y] = DungeonCell.Floor;
         }
+
+        internal bool HasCompactStart => Core.x >= 14 && Core.y >= 9;
 
         public bool Contains(Vector2Int cell) => cell.x >= 0 && cell.y >= 0 && cell.x < Width && cell.y < Height;
         public DungeonCell GetCell(Vector2Int cell) => Contains(cell) ? cells[cell.x, cell.y] : DungeonCell.Bedrock;

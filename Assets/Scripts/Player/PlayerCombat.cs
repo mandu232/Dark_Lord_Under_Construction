@@ -39,7 +39,8 @@ namespace DarkLord.Player
         public bool IsFinished => waves != null && waves.IsFinished;
         public bool CanPrepare => waves == null || waves.State == WaveState.Preparing;
         public bool CanSummon => isActiveAndEnabled && health.IsAlive && Time.timeScale > 0 &&
-            !IsFinished && CanPrepare && NearCore() && Mana >= 20;
+            !IsFinished && CanPrepare && (NearCore() || (summoning != null && summoning.Dungeon != null &&
+                summoning.Dungeon.NearRecruitmentFacility(transform.position))) && Mana >= 20;
         public bool PaySummonCost() => CanSummon && SpendMana(20);
         public float NovaCooldown => Mathf.Max(0, nextNova - Time.time);
         public float WardCooldown => Mathf.Max(0, nextWard - Time.time);
@@ -68,6 +69,7 @@ namespace DarkLord.Player
         public void Configure(WaveDirector director) => waves = director;
         public void RefillMana() => Mana = MaximumMana;
         private bool CanAct => isActiveAndEnabled && health.IsAlive && Time.timeScale > 0 && !IsFinished &&
+            (waves == null || waves.Alchemy == null || !waves.Alchemy.BlocksGameplayInput) &&
             (construction == null || !construction.BlocksGameplayInput) && (summoning == null || !summoning.BlocksGameplayInput);
 
         private void Update()

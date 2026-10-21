@@ -52,6 +52,7 @@ namespace DarkLord.Gameplay
         public ActorHealth Lord => dungeonLord;
         public bool IsFinished => State == WaveState.Defeated || State == WaveState.Victorious;
         public PlayerCombat Combat { get; private set; }
+        public AlchemyExchange Alchemy { get; private set; }
         public bool HasEntrance => dungeon != null && dungeon.Layout != null && dungeon.Layout.HasEntrance;
         public int RemainingEnemies => aliveInvaders.Count + pendingSpawns;
         public bool CanStartWave => isActiveAndEnabled && State == WaveState.Preparing && CurrentWave < finalWave &&
@@ -69,6 +70,8 @@ namespace DarkLord.Gameplay
             dungeonCore.Died += OnCoreDestroyed;
             Combat = dungeonLord.GetComponent<PlayerCombat>() ?? dungeonLord.gameObject.AddComponent<PlayerCombat>();
             Combat.Configure(this);
+            Alchemy = dungeonLord.GetComponent<AlchemyExchange>() ?? dungeonLord.gameObject.AddComponent<AlchemyExchange>();
+            Alchemy.Configure(dungeon, wallet, this);
             ReconcileHealth();
             Changed?.Invoke();
         }

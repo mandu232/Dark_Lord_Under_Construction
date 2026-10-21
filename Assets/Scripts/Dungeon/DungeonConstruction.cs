@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace DarkLord.Dungeon
 {
-    public enum ConstructionKind { Room, HorizontalCorridor, VerticalCorridor, LargeRoom, Corridor }
+    // Append new kinds to preserve existing asset and save values.
+    public enum ConstructionKind { Room, HorizontalCorridor, VerticalCorridor, LargeRoom, Corridor, StorageRoom, AlchemyRoom }
     public enum ConstructionResult { Success, OutsideMap, Occupied, Disconnected, NeedsCorridor, Unavailable, TooCloseToRoom }
 
     public sealed partial class DungeonSection
@@ -42,21 +43,44 @@ namespace DarkLord.Dungeon
         {
             this.layout = layout;
             owners = new DungeonSection[layout.Width, layout.Height];
-            Add(new DungeonSection(ConstructionKind.LargeRoom, new RectInt(layout.Core.x - 3, layout.Core.y - 3, 7, 7), true, true));
-            for (int x = layout.Entrance.x; x < layout.Core.x - 3; x += 5)
-                Add(new DungeonSection(ConstructionKind.HorizontalCorridor,
-                    new RectInt(x, layout.Core.y - 1, Mathf.Min(5, layout.Core.x - 3 - x), 3), true));
+            foreach (var section in InitialSections(layout)) Add(section);
             layout.CellChanged += OnCellChanged;
+        }
+
+        internal static IEnumerable<DungeonSection> InitialSections(DungeonLayout layout)
+        {
+            yield return new DungeonSection(ConstructionKind.LargeRoom,
+                new RectInt(layout.Core.x - 3, layout.Core.y - 3, 7, 7), true, true);
+            if (layout.HasCompactStart)
+            {
+                // Centered one-cell doorways keep the rooms visually separate and easy to extend.
+                var hall = new RectInt(layout.Core.x - 8, layout.Core.y, 5, 1);
+                var cells = new List<Vector2Int>();
+                foreach (var cell in hall.allPositionsWithin) cells.Add(cell);
+                cells.Add(new Vector2Int(layout.Core.x - 7, layout.Core.y - 2));
+                cells.Add(new Vector2Int(layout.Core.x - 7, layout.Core.y - 3));
+                cells.Add(new Vector2Int(layout.Core.x - 7, layout.Core.y - 1));
+                yield return new DungeonSection(ConstructionKind.Corridor,
+                    new RectInt(layout.Core.x - 8, layout.Core.y - 3, 5, 4), true, cells: cells);
+                yield return new DungeonSection(ConstructionKind.Room,
+                    Footprint(ConstructionKind.Room, layout.Core + Vector2Int.left * 11), true);
+                yield return new DungeonSection(ConstructionKind.StorageRoom,
+                    Footprint(ConstructionKind.StorageRoom, layout.Core + new Vector2Int(-7, -6)), true);
+                yield break;
+            }
+            yield return new DungeonSection(ConstructionKind.HorizontalCorridor,
+                new RectInt(layout.Entrance.x, layout.Core.y - 1, layout.Core.x - 3 - layout.Entrance.x, 3), true);
         }
 
         public static RectInt Footprint(ConstructionKind kind, Vector2Int center)
         {
-            var size = kind == ConstructionKind.LargeRoom ? new Vector2Int(7, 7) : kind == ConstructionKind.Room ? new Vector2Int(5, 5) :
+            var size = kind == ConstructionKind.LargeRoom ? new Vector2Int(7, 7) : IsRoom(kind) ? new Vector2Int(5, 5) :
                 kind == ConstructionKind.HorizontalCorridor ? new Vector2Int(5, 3) : new Vector2Int(3, 5);
             return new RectInt(center - size / 2, size);
         }
 
-        public static bool IsRoom(ConstructionKind kind) => kind == ConstructionKind.Room || kind == ConstructionKind.LargeRoom;
+        public static bool IsRoom(ConstructionKind kind) => kind == ConstructionKind.Room || kind == ConstructionKind.LargeRoom ||
+            kind == ConstructionKind.StorageRoom || kind == ConstructionKind.AlchemyRoom;
         public DungeonSection At(Vector2Int cell) => layout.Contains(cell) ? owners[cell.x, cell.y] : null;
         public DungeonSection RoomAt(Vector2Int cell)
         {

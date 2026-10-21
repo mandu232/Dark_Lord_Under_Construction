@@ -63,6 +63,42 @@ namespace DarkLord.Tests
         }
         private Vector2Int RoomCell => dungeon.Layout.Core+Vector2Int.down*6;
         private static GameObject Prefab(string name)=>UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Dungeon/"+name+".prefab");
+        [UnityTest] public IEnumerator MinionFacilitiesRecruitExpandAndRestore()
+        {
+            invader.transform.position = dungeon.CellCenter(dungeon.Layout.Core);
+            var summoning = wallet.GetComponent<MinionSummoning>();
+            var combat = wallet.GetComponent<PlayerCombat>();
+            var room = dungeon.Construction.RoomAt(RoomCell);
+            int original = summoning.RoomCapacity(room);
+            Assert.IsTrue(dungeon.TryPlaceBuilding(RoomCell, Prefab("MinionRecruitment"), wallet));
+            Assert.IsTrue(dungeon.TryPlaceBuilding(RoomCell + Vector2Int.left, Prefab("MinionQuarters"), wallet));
+            Assert.IsTrue(dungeon.TryPlaceBuilding(RoomCell + Vector2Int.right, Prefab("MinionQuarters"), wallet));
+            Assert.AreEqual(original + 4, summoning.RoomCapacity(room));
+            Assert.AreEqual(4, summoning.RoomCapacity(dungeon.Construction.RoomAt(dungeon.Layout.Core)));
+            var quarters = dungeon.BuildingAt(RoomCell + Vector2Int.left);
+            quarters.Health.Kill(); Assert.AreEqual(original + 2, summoning.RoomCapacity(room));
+            Assert.IsTrue(quarters.TryRepair(wallet)); Assert.AreEqual(original + 4, summoning.RoomCapacity(room));
+            wallet.transform.position = dungeon.CellCenter(RoomCell + Vector2Int.up);
+            Physics2D.SyncTransforms();
+            Assert.IsTrue(combat.CanSummon);
+            var recruitment = dungeon.BuildingAt(RoomCell);
+            recruitment.Health.Kill(); Assert.IsFalse(combat.CanSummon);
+            Assert.IsTrue(recruitment.TryRepair(wallet)); Assert.IsTrue(combat.CanSummon);
+            Assert.AreEqual(0, recruitment.PayRound(wallet, 1));
+            Assert.AreEqual(0, quarters.PayRound(wallet, 1));
+            Assert.IsTrue(summoning.TryRecruit());
+            Assert.IsTrue(summoning.TrySummon(false));
+            float mana = combat.Mana;
+            Assert.IsTrue(summoning.TryPlace(RoomCell + Vector2Int.up + Vector2Int.right));
+            Assert.AreEqual(mana - 20, combat.Mana);
+            var saved = session.Capture(); session.Restore(saved); Time.timeScale = 1;
+            room = dungeon.Construction.RoomAt(RoomCell);
+            Assert.AreEqual(original + 4, summoning.RoomCapacity(room));
+            Assert.IsTrue(dungeon.BuildingAt(RoomCell).IsRecruitmentFacility);
+            Assert.IsTrue(dungeon.NearRecruitmentFacility(dungeon.CellCenter(RoomCell + Vector2Int.up)));
+            Assert.IsFalse(dungeon.NearRecruitmentFacility(dungeon.CellCenter(dungeon.Layout.Core)));
+            yield return null;
+        }
         [UnityTest] public IEnumerator RoomAuraTracksOccupantsDestructionRepairAndSave()
         {
             Assert.IsTrue(dungeon.TryPlaceBuilding(RoomCell,Prefab("ArcaneFocus"),wallet));
@@ -185,8 +221,11 @@ namespace DarkLord.Tests
             var expansion=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<DungeonExpansion>(true)).Single();
             var view=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ConstructionPanel>(true)).Single();
             expansion.SetExpansionMode(true);view.ShowCategory(BuildCategory.Buildings);
-            var cards=view.GetComponentsInChildren<BuildItemButton>();Assert.AreEqual(9,cards.Length);
+            var cards=view.GetComponentsInChildren<BuildItemButton>();Assert.AreEqual(11,cards.Length);
+            Assert.IsTrue(cards.Any(c=>c.Item.name=="MinionRecruitment"));
+            Assert.IsTrue(cards.Any(c=>c.Item.name=="MinionQuarters"));
             var mint=cards.Single(c=>c.Item.name=="GoldMint");view.Choose(mint.Item);
+            view.ShowDetails(mint.Item);
             Assert.IsFalse(expansion.IsPlacementView);Assert.IsTrue(((GameObject)new UnityEditor.SerializedObject(view).FindProperty("detailsWindow").objectReferenceValue).activeSelf);
             Assert.IsTrue(expansion.TryBuildOrRepairBuilding(RoomCell));Assert.AreEqual(1920,wallet.Gold);
             dungeon.BuildingAt(RoomCell).Health.TakeDamage(180,invader);

@@ -14,11 +14,52 @@ namespace DarkLord.Actors
         private ActorHealth health;
         private Transform approachTarget;
         private float stoppingDistance;
+        private struct Slow { public float multiplier, until; }
+        private readonly List<Slow> slows = new List<Slow>();
         public ActorHealth BlockedBy { get; private set; }
         public Vector2 Facing { get; private set; } = Vector2.down;
         public Vector2 Velocity => body != null ? body.linearVelocity : Vector2.zero;
         public float MoveSpeed => moveSpeed;
         public float SpeedMultiplier { get; set; } = 1;
+        public float SlowMultiplier
+        {
+            get
+            {
+                float result = 1;
+                for (int i = slows.Count - 1; i >= 0; i--)
+                {
+                    if (Time.time >= slows[i].until) { slows.RemoveAt(i); continue; }
+                    result = Mathf.Min(result, slows[i].multiplier);
+                }
+                return result;
+            }
+        }
+        public float EffectiveMoveSpeed => moveSpeed * Mathf.Max(0, SpeedMultiplier) * SlowMultiplier;
+        public void ApplySlow(float multiplier, float duration)
+        {
+            if (!isActiveAndEnabled || duration <= 0 || multiplier < 0 || multiplier >= 1 ||
+                float.IsNaN(multiplier) || float.IsInfinity(multiplier) || float.IsNaN(duration) || float.IsInfinity(duration)) return;
+            for (int i = 0; i < slows.Count; i++)
+                if (Mathf.Approximately(slows[i].multiplier, multiplier))
+                {
+                    slows[i] = new Slow { multiplier = multiplier, until = Mathf.Max(slows[i].until, Time.time + duration) };
+                    return;
+                }
+            slows.Add(new Slow { multiplier = multiplier, until = Time.time + duration });
+        }
+        public DarkLord.Persistence.MovementSlowSaveData[] CaptureSlows()
+        {
+            _ = SlowMultiplier; // Discard expired entries before saving.
+            var result = new DarkLord.Persistence.MovementSlowSaveData[slows.Count];
+            for (int i = 0; i < slows.Count; i++) result[i] = new DarkLord.Persistence.MovementSlowSaveData
+                { multiplier = slows[i].multiplier, remaining = slows[i].until - Time.time };
+            return result;
+        }
+        public void RestoreSlows(DarkLord.Persistence.MovementSlowSaveData[] saved)
+        {
+            slows.Clear();
+            if (saved != null) foreach (var slow in saved) ApplySlow(slow.multiplier, slow.remaining);
+        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetActors() => ActiveMotors.Clear();
@@ -83,12 +124,13 @@ namespace DarkLord.Actors
         private void FixedUpdate()
         {
             BlockedBy = null;
-            Vector2 velocity = desiredDirection * moveSpeed * SpeedMultiplier;
+            float speed = EffectiveMoveSpeed;
+            Vector2 velocity = desiredDirection * speed;
             if (approachTarget != null)
             {
                 Vector2 delta = (Vector2)approachTarget.position - body.position;
                 float remaining = Mathf.Max(0, delta.magnitude - stoppingDistance);
-                velocity = delta.normalized * Mathf.Min(moveSpeed, remaining / Time.fixedDeltaTime);
+                velocity = delta.normalized * Mathf.Min(speed, remaining / Time.fixedDeltaTime);
             }
             float step = velocity.magnitude * Time.fixedDeltaTime;
             if (step > 0 && health != null && health.IsAlive)
@@ -139,6 +181,7 @@ namespace DarkLord.Actors
         }
         private void OnDisable()
         {
+            slows.Clear();
             Stop();
             ActiveMotors.Remove(this);
             foreach (var other in ActiveMotors)
