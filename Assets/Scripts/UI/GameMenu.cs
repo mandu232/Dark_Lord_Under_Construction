@@ -48,6 +48,9 @@ namespace DarkLord.UI
         private bool ownsPause, previousHud, previousAudioPause;
         private bool returnToTitle, isLoading;
         private float previousTimeScale;
+        private bool previousDialoguePause;
+        private float previousDialogueResumeScale;
+        public bool OwnsPause => ownsPause;
         private CursorLockMode previousCursorLock;
         private bool previousCursorVisible;
         public ScreenState State { get; private set; } = ScreenState.Main;
@@ -146,7 +149,9 @@ namespace DarkLord.UI
             switch (State)
             {
                 case ScreenState.Playing:
+                    if (summoning != null && summoning.GetComponent<RunEconomy>()?.BlocksGameplayInput == true) return;
                     if (expansion != null && expansion.GetComponent<DarkLord.Player.AlchemyExchange>()?.BlocksGameplayInput == true) return;
+                    if (summoning != null && summoning.GetComponent<CorpseHarvest>()?.BlocksGameplayInput == true) return;
                     if (summoning != null && summoning.BlocksGameplayInput) return;
                     if (expansion != null && expansion.BlocksGameplayInput) return;
                     PauseGame();
@@ -381,6 +386,9 @@ namespace DarkLord.UI
             if (ownsPause) return;
             ownsPause = true;
             previousTimeScale = Time.timeScale;
+            var tutorial = FindTutorialPause();
+            previousDialoguePause = tutorial != null && tutorial.OwnsDialoguePause;
+            previousDialogueResumeScale = tutorial != null ? tutorial.DialogueResumeScale : 1;
             previousAudioPause = AudioListener.pause;
             previousCursorLock = Cursor.lockState;
             previousCursorVisible = Cursor.visible;
@@ -398,7 +406,8 @@ namespace DarkLord.UI
         {
             if (!ownsPause) return;
             ownsPause = false;
-            Time.timeScale = previousTimeScale;
+            var tutorial = FindTutorialPause();
+            Time.timeScale = tutorial != null && tutorial.OwnsDialoguePause ? 0 : previousDialoguePause ? previousDialogueResumeScale : previousTimeScale;
             AudioListener.pause = previousAudioPause;
             Cursor.lockState = previousCursorLock;
             Cursor.visible = previousCursorVisible;
@@ -406,6 +415,16 @@ namespace DarkLord.UI
         }
 
         private void OnDisable() { Application.wantsToQuit-=WantsToQuit;ReleasePause(); }
+        private DarkLord.Gameplay.StartingTutorial FindTutorialPause()
+        {
+            if (!gameObject.scene.IsValid() || !gameObject.scene.isLoaded) return null;
+            foreach (var root in gameObject.scene.GetRootGameObjects())
+            {
+                var tutorial = root.GetComponentInChildren<DarkLord.Gameplay.StartingTutorial>(true);
+                if (tutorial != null) return tutorial;
+            }
+            return null;
+        }
     }
 }
 

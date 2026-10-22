@@ -1,0 +1,16 @@
+var waves=UnityEngine.Object.FindFirstObjectByType<DarkLord.Gameplay.WaveDirector>();
+var grid=UnityEngine.Object.FindFirstObjectByType<DarkLord.Dungeon.DungeonGrid>();
+var summoning=UnityEngine.Object.FindFirstObjectByType<DarkLord.Player.MinionSummoning>();
+var station=grid.RecruitmentFacilities.Single();
+waves.ConfigureRun(new DarkLord.Gameplay.NewGameOptions{difficulty=DarkLord.Gameplay.GameDifficulty.Easy});
+waves.Lord.transform.position=station.transform.position+UnityEngine.Vector3.down*2;
+waves.Lord.GetComponent<UnityEngine.Rigidbody2D>().position=waves.Lord.transform.position;
+var camera=UnityEngine.Camera.main;
+camera.GetComponent<UnityEngine.Rendering.Universal.PixelPerfectCamera>().enabled=false;
+camera.GetComponent<DarkLord.Player.CameraFollow>().enabled=false;
+camera.transform.position=grid.CellCenter(grid.Layout.Core)+UnityEngine.Vector3.back*10;
+camera.orthographicSize=12;camera.ResetWorldToCameraMatrix();camera.ResetProjectionMatrix();
+station.TryAddSummonStack();
+UnityEngine.Time.timeScale=.04f;
+if(!summoning.TryRecruit()||!summoning.TrySummonRandom()) return summoning.Message;
+return grid.Guards.Last().DisplayName;

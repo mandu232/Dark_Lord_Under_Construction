@@ -25,7 +25,7 @@ namespace DarkLord.Dungeon
             Height = height;
             cells = new DungeonCell[width, height];
             Core = new Vector2Int(width / 2, height / 2);
-            Entrance = new Vector2Int(HasCompactStart ? Core.x - 8 : 2, Core.y);
+            Entrance = new Vector2Int(2, Core.y);
             for (int y = 0; y < height; y++)
                 for (int x = 0; x < width; x++)
                 {
@@ -35,8 +35,6 @@ namespace DarkLord.Dungeon
             foreach (var section in DungeonConstruction.InitialSections(this))
                 foreach (var cell in section.Cells) cells[cell.x, cell.y] = DungeonCell.Floor;
         }
-
-        internal bool HasCompactStart => Core.x >= 14 && Core.y >= 9;
 
         public bool Contains(Vector2Int cell) => cell.x >= 0 && cell.y >= 0 && cell.x < Width && cell.y < Height;
         public DungeonCell GetCell(Vector2Int cell) => Contains(cell) ? cells[cell.x, cell.y] : DungeonCell.Bedrock;
@@ -64,6 +62,16 @@ namespace DarkLord.Dungeon
             if (!IsFloor(cell + Vector2Int.left) && !IsFloor(cell + Vector2Int.right) &&
                 !IsFloor(cell + Vector2Int.up) && !IsFloor(cell + Vector2Int.down))
                 return ExpansionResult.NoAdjacentFloor;
+            return ExpansionResult.Success;
+        }
+
+        internal ExpansionResult ExcavatePlannedCorridor(Vector2Int cell)
+        {
+            if (!Contains(cell)) return ExpansionResult.OutsideMap;
+            if (GetCell(cell) != DungeonCell.Rock) return ExpansionResult.NotRock;
+            cells[cell.x, cell.y] = DungeonCell.Floor;
+            ExpandedCells++;
+            CellChanged?.Invoke(cell);
             return ExpansionResult.Success;
         }
 

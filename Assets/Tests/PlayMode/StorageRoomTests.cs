@@ -15,6 +15,8 @@ using UnityEngine.TestTools;
 namespace DarkLord.Tests
 {
     [Category("ResourceStorage")]
+    [Category("StarterDungeon")]
+    [Category("MinionRoster")]
     public sealed class StorageRoomTests
     {
         private Scene scene;
@@ -45,8 +47,8 @@ namespace DarkLord.Tests
         [UnityTest] public IEnumerator RecruitmentUsesFSelectionAndEscapeWithoutSpendingOrPausing()
         {
             var dungeon = Find<DungeonGrid>(); var summoning = Find<MinionSummoning>();
-            var room = dungeon.Construction.Sections.Single(s => s.Kind == ConstructionKind.Room);
-            summoning.transform.position = dungeon.CellCenter(room.Center + Vector2Int.left);
+            var room = dungeon.Construction.Sections.Single(s => s.IsCore);
+            summoning.transform.position = dungeon.CellCenter(room.Center);
             summoning.GetComponent<Rigidbody2D>().position = summoning.transform.position;
             Physics2D.SyncTransforms();
             var original = UnityEngine.InputSystem.InputSystem.settings; var flags = original.hideFlags; original.hideFlags = HideFlags.None;
@@ -86,15 +88,16 @@ namespace DarkLord.Tests
         {
             var dungeon = Find<DungeonGrid>(); var wallet = Find<CurrencyWallet>();
             var session = Find<GameSaveSession>(); var summoning = Find<MinionSummoning>();
-            var room = dungeon.Construction.Sections.Single(s => s.Kind == ConstructionKind.Room);
-            var building = dungeon.BuildingAt(room.Center);
+            var room = dungeon.Construction.Sections.Single(s => s.IsCore);
+            var stationCell = room.Center + new Vector2Int(1, 1);
+            var building = dungeon.BuildingAt(stationCell);
             Assert.IsNotNull(building);
             Assert.IsTrue(building.IsRecruitmentFacility);
             Assert.IsFalse(building.IsRuined);
             Assert.AreEqual(1, dungeon.GetComponentsInChildren<ResourceBuilding>().Count());
             Assert.AreEqual(250, wallet.Gold, "The starting facility costs no gold.");
-            Assert.IsFalse(dungeon.CanPlaceBuilding(room.Center));
-            summoning.transform.position = dungeon.CellCenter(room.Center + Vector2Int.left);
+            Assert.IsFalse(dungeon.CanPlaceBuilding(stationCell));
+            summoning.transform.position = dungeon.CellCenter(room.Center);
             Physics2D.SyncTransforms();
             Assert.IsTrue(summoning.TryRecruit(), summoning.Message);
             Assert.IsFalse(summoning.IsPlacing, "Interaction only opens the selection window.");
@@ -110,7 +113,7 @@ namespace DarkLord.Tests
             Assert.AreEqual(1, saved.dungeon.buildings.Length);
             session.Restore(saved); Time.timeScale = 1;
             yield return null;
-            building = dungeon.BuildingAt(room.Center);
+            building = dungeon.BuildingAt(stationCell);
             Assert.IsTrue(building.IsRecruitmentFacility);
             Assert.AreEqual(health, building.Health.CurrentHealth);
             Assert.AreEqual(1, dungeon.GetComponentsInChildren<ResourceBuilding>().Count());
@@ -120,7 +123,7 @@ namespace DarkLord.Tests
             saved.dungeon.buildings = new BuildingSaveData[0];
             session.Restore(saved); Time.timeScale = 1;
             yield return null;
-            Assert.IsNull(dungeon.BuildingAt(room.Center), "Old saves retain their own facility layout.");
+            Assert.IsNull(dungeon.BuildingAt(stationCell), "Missing facilities are never respawned on restore.");
             Assert.AreEqual(0, dungeon.GetComponentsInChildren<ResourceBuilding>().Count());
         }
 
@@ -141,14 +144,14 @@ namespace DarkLord.Tests
             expansion.SetExpansionMode(true); view.ShowCategory(BuildCategory.Rooms);
             Assert.IsTrue(view.GetComponentsInChildren<BuildItemButton>().Any(c => c.Item == item));
             expansion.Select(item);
-            foreach (var end in new[] { new Vector2Int(4, 15), new Vector2Int(4, 18), new Vector2Int(11, 18) })
+            foreach (var end in new[] { new Vector2Int(25, 15), new Vector2Int(25, 18), new Vector2Int(35, 18) })
             {
-                var start = end == new Vector2Int(4, 15) ? new Vector2Int(7, 15) :
-                    end == new Vector2Int(4, 18) ? new Vector2Int(4, 15) : new Vector2Int(4, 18);
+                var start = end == new Vector2Int(25, 15) ? dungeon.Layout.Core + Vector2Int.right * 3 :
+                    end == new Vector2Int(25, 18) ? new Vector2Int(25, 15) : new Vector2Int(25, 18);
                 Assert.AreEqual(ConstructionResult.Success, dungeon.Construction.TryPlanCorridor(start, end, out var branch));
                 Finish(dungeon, branch);
             }
-            var firstCell = new Vector2Int(4, 22);
+            var firstCell = new Vector2Int(28, 22);
             Assert.AreEqual(ConstructionResult.Success, expansion.TryBuild(firstCell));
             var first = dungeon.Construction.At(firstCell);
             Assert.AreEqual(2000, wallet.GetCapacity(CurrencyType.Gold), "Queued rooms provide no capacity.");

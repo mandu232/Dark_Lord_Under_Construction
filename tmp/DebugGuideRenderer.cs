@@ -1,0 +1,1 @@
+var marker=UnityEngine.Object.FindFirstObjectByType<DarkLord.UI.TutorialTargetHighlight>();var g=marker.HighlightRect.GetComponent<DarkLord.UI.TutorialGuideGraphic>();var r=g.GetComponent<UnityEngine.CanvasRenderer>();return new{visible=marker.IsVisible,rect=marker.HighlightRect.rect,position=marker.HighlightRect.position,hasRenderer=r!=null,canvas=g.canvas?.name};

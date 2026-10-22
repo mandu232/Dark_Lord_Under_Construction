@@ -22,6 +22,7 @@ namespace DarkLord.UI
         [SerializeField] private UnityEngine.UI.Image healthFill;
 
         private int lastHealth = -1;
+        private int lastMaximumHealth = -1;
         private int lastGuardCount = -1;
         private int lastGoldCapacity = -1, lastSoulsCapacity = -1, lastCrystalsCapacity = -1;
 
@@ -31,8 +32,13 @@ namespace DarkLord.UI
             if (director != null && director.gameObject.scene == gameObject.scene && healthText != null)
             {
                 gameObject.AddComponent<CombatHud>().Configure(director, healthText);
+                gameObject.AddComponent<InvasionAlert>().Configure(director, healthText.font);
+                gameObject.AddComponent<StartingTutorialPresentation>().Configure(director, healthText.font);
+                gameObject.AddComponent<CorpseHarvestHud>().Configure(director, healthText.font);
                 gameObject.AddComponent<AlchemyRoomPanel>().Configure(director, healthText);
                 gameObject.AddComponent<RecruitmentPanel>().Configure(summoning, healthText.font);
+                gameObject.AddComponent<SummonPresentation>().Configure(summoning, director, healthText.font);
+                gameObject.AddComponent<EconomyPanel>().Configure(director, healthText.font);
             }
         }
 
@@ -59,7 +65,8 @@ namespace DarkLord.UI
             if (wallet != null && (lastGoldCapacity != wallet.GetCapacity(CurrencyType.Gold) ||
                 lastSoulsCapacity != wallet.GetCapacity(CurrencyType.Souls) || lastCrystalsCapacity != wallet.GetCapacity(CurrencyType.DarkCrystals)))
                 RefreshCurrencies();
-            if (playerHealth != null && playerHealth.CurrentHealth != lastHealth) RefreshHealth();
+            if (playerHealth != null && (playerHealth.CurrentHealth != lastHealth ||
+                playerHealth.MaximumHealth != lastMaximumHealth)) RefreshHealth();
             if (summoning != null && summoning.GuardCount != lastGuardCount) RefreshMinions();
         }
 
@@ -101,11 +108,15 @@ namespace DarkLord.UI
         {
             if (playerHealth == null || healthText == null) return;
             lastHealth = playerHealth.CurrentHealth;
+            lastMaximumHealth = playerHealth.MaximumHealth;
             healthText.text = $"체력  {lastHealth} / {playerHealth.MaximumHealth}";
             if (healthFill != null)
             {
                 float ratio = Mathf.Clamp01((float)lastHealth / playerHealth.MaximumHealth);
-                healthFill.rectTransform.anchorMax = new Vector2(ratio, 1);
+                if (healthFill.type == UnityEngine.UI.Image.Type.Filled)
+                    healthFill.fillAmount = ratio;
+                else
+                    healthFill.rectTransform.anchorMax = new Vector2(ratio, 1);
                 healthFill.enabled = ratio > 0;
             }
         }

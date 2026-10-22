@@ -14,7 +14,11 @@ namespace DarkLord.Persistence
         {
             position = actor.transform.position, post = actor.GuardPosition, order = actor.Order, behaviour = actor.Behaviour,
             health = actor.Health.CurrentHealth, maximumHealth = actor.Health.MaximumHealth,
-            slows = actor.GetComponent<TopDownMotor>().CaptureSlows()
+            slows = actor.GetComponent<TopDownMotor>().CaptureSlows(),
+            tactics = actor.GetComponent<InvaderTactics>()?.CaptureSave(),
+            role = actor.Role, attackCooldown = actor.AttackCooldownRemaining, support = actor.GetComponent<MinionSupport>()?.CaptureSave(),
+            invasionWave = actor.GetComponent<DarkLord.Gameplay.WaveMember>()?.Number ?? 0,
+            augmentStatus = actor.GetComponent<AugmentStatus>()?.CaptureSave()
         };
     }
 }
@@ -54,6 +58,8 @@ namespace DarkLord.Dungeon
                     cooldownRemaining=p.Value.GetComponent<SpikeTrap>()?.CooldownRemaining ?? 0 }).ToArray();
             data.buildings = CaptureBuildings(identify);
             data.alchemyJobs = CaptureAlchemyJobs();
+            data.constructionItems = Inventory.Capture();
+            data.lastConstructionRewardDay = LastConstructionRewardDay;
             return data;
         }
         public void RestoreSave(DungeonSaveData data, Func<string,GameObject> resolve)
@@ -85,6 +91,8 @@ namespace DarkLord.Dungeon
                 }
                 else if(!section.IsComplete)QueueConstruction(section,prefab);
             }
+            Inventory.Restore(data.constructionItems);
+            LastConstructionRewardDay = data.lastConstructionRewardDay;
             RestoreBuildings(data.buildings, resolve);
             RestoreAlchemyJobs(data.alchemyJobs);
             constructionTiles.Clear();constructionTiles.AddRange(data.queue);RefreshEntranceMarker();
@@ -108,9 +116,15 @@ namespace DarkLord.Player
         {
             foreach(var data in saved)
             {
-                var guard=Instantiate(guardPrefab,data.position,Quaternion.identity);guard.name=guard.DisplayName;
+                var definition = RecruitDefinitionFor(data.role);
+                if (definition == null) throw new InvalidOperationException("저장된 하수인 병과를 찾을 수 없습니다.");
+                var guard=Instantiate(definition,data.position,Quaternion.identity);guard.name=guard.DisplayName;
+                UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(guard.gameObject, gameObject.scene);
                 guard.Health.RestoreHealth(data.maximumHealth,data.health);guard.Defend(data.post);guard.SetBehaviour(data.behaviour);
+                guard.RestoreAttackCooldown(data.attackCooldown);
+                guard.GetComponent<MinionSupport>()?.RestoreSave(data.support);
                 guard.GetComponent<TopDownMotor>().RestoreSlows(data.slows);
+                if (data.augmentStatus != null) AugmentStatus.Get(guard.Health).RestoreSave(data.augmentStatus);
                 if(data.order==MinionOrder.Return)guard.ReturnToPost();
                 guards.Add(guard);dungeon.RegisterGuard(guard);commands?.Register(guard);
             }
@@ -122,6 +136,9 @@ namespace DarkLord.Gameplay
     public sealed partial class WaveDirector
     {
         public WaveSaveData CaptureSave() => new WaveSaveData { number=CurrentWave, state=State, pending=pendingSpawns, rewards=(int[])rewardChoices.Clone(),
+            rewardItemIds=rewardBuildItems.Select(i => i != null ? i.name : "").ToArray(),
+            pendingRoles=pendingRoles.ToArray(),
+            augments=Augments.Capture(), schedule=CaptureSchedule(),
             enemies=aliveInvaders.Where(e=>e!=null && e.IsAlive).Select(e=>SaveSnapshots.Actor(e.GetComponent<MinionController>())).ToArray() };
         public void RestoreSave(WaveSaveData data)
         {
@@ -131,17 +148,29 @@ namespace DarkLord.Gameplay
             deathHandlers.Clear();
             foreach(var enemy in aliveInvaders)if(enemy!=null){enemy.gameObject.SetActive(false);Destroy(enemy.gameObject);}
             aliveInvaders.Clear();CurrentWave=data.number;State=data.state;pendingSpawns=data.pending;
-            if (State == WaveState.Preparing && CurrentWave >= finalWave) State = WaveState.Victorious;
+            Augments.Restore(data.augments);
+            pendingRoles.Clear(); pendingWaves.Clear();
+            RestoreSchedule(data.schedule);
+            for (int i = 0; i < pendingSpawns; i++) pendingRoles.Enqueue(data.pendingRoles != null && i < data.pendingRoles.Length ? data.pendingRoles[i] : InvaderRole.Warrior);
+            for (int i = 0; i < pendingSpawns; i++) pendingWaves.Enqueue(data.schedule != null && data.schedule.pendingWaves != null && i < data.schedule.pendingWaves.Length ? data.schedule.pendingWaves[i] : CurrentWave);
+            if (State == WaveState.Preparing && CurrentWave >= finalWave && pendingSpawns == 0 && data.enemies.Length == 0 && waveRewardQueue.Count == 0) State = WaveState.Victorious;
             rewardChoices = data.rewards == null ? Array.Empty<int>() : (int[])data.rewards.Clone();
+            rewardBuildItems = new DarkLord.Dungeon.BuildItemDefinition[rewardChoices.Length];
+            if (data.rewardItemIds != null)
+                for (int i = 0; i < rewardBuildItems.Length && i < data.rewardItemIds.Length; i++)
+                    if (!string.IsNullOrEmpty(data.rewardItemIds[i])) rewardBuildItems[i] = dungeon.Inventory.Find(data.rewardItemIds[i]);
             foreach(var saved in data.enemies)
             {
                 var enemy=Instantiate(invaderPrefab,saved.position,Quaternion.identity,transform);enemy.name=$"Wave {CurrentWave} Invader";
+                enemy.gameObject.AddComponent<WaveMember>().Number = saved.invasionWave > 0 ? saved.invasionWave : CurrentWave;
                 var health=enemy.Health;health.RestoreHealth(saved.maximumHealth,saved.health);enemy.Assault(dungeonCore,dungeon);
+                ConfigureInvader(enemy, saved.tactics != null ? saved.tactics.role : InvaderRole.Warrior).RestoreSave(saved.tactics);
                 enemy.GetComponent<TopDownMotor>().RestoreSlows(saved.slows);
+                if (saved.augmentStatus != null) AugmentStatus.Get(health).RestoreSave(saved.augmentStatus);
                 Action handler=()=>OnInvaderDied(health);deathHandlers.Add(health,handler);health.Died+=handler;aliveInvaders.Add(health);
                 if(State==WaveState.Defeated)enemy.enabled=false;
             }
-            if(State==WaveState.Active && pendingSpawns>0)spawnRoutine=StartCoroutine(ResumeSavedWave());
+            if((State==WaveState.Active || State==WaveState.RewardSelection) && pendingSpawns>0)spawnRoutine=StartCoroutine(ResumeSavedWave());
             ReconcileHealth();
             if (State == WaveState.RewardSelection) PauseForReward();
             Changed?.Invoke();

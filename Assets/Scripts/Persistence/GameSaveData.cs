@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using UnityEngine;
+using DarkLord.Actors;
 using DarkLord.Dungeon;
 using DarkLord.Gameplay;
 using DarkLord.Minions;
@@ -18,9 +19,18 @@ namespace DarkLord.Persistence
         public DungeonSaveData dungeon;
         public MinionSaveData[] guards = new MinionSaveData[0];
         public WaveSaveData wave;
+        public TutorialSaveData tutorial;
+        public CorpseSaveData[] corpses;
         // Missing in legacy saves: null is the original, normal ruleset.
         public NewGameOptions options;
         public DarkLord.Player.CombatSaveData combat;
+        public DarkLord.Player.EconomySaveData economy;
+    }
+    [Serializable] public sealed class CorpseSaveData
+    {
+        public Vector3 position;
+        public InvaderRole role;
+        public bool carried;
     }
     [Serializable] public sealed class DungeonSaveData
     {
@@ -33,6 +43,8 @@ namespace DarkLord.Persistence
         public Vector2Int[] queue;
         public BuildingSaveData[] buildings;
         public AlchemyJobSaveData[] alchemyJobs;
+        public ConstructionItemStack[] constructionItems;
+        public int lastConstructionRewardDay;
     }
     [Serializable] public sealed class AlchemyJobSaveData
     {
@@ -53,6 +65,8 @@ namespace DarkLord.Persistence
         public Vector2Int cell;
         public string designId;
         public int health, maximumHealth, lastPaidRound;
+        public int summonStacks;
+        public bool tutorialCapacityUnlocked;
     }
     [Serializable] public sealed class TrapSaveData { public Vector2Int cell; public string designId; public float cooldownRemaining; }
     [Serializable] public sealed class MovementSlowSaveData { public float multiplier, remaining; }
@@ -64,13 +78,30 @@ namespace DarkLord.Persistence
         public MinionOrder order;
         public MinionBehaviour behaviour;
         public MovementSlowSaveData[] slows;
+        public InvaderTacticsSaveData tactics;
+        public MinionRole role;
+        public float attackCooldown;
+        public int invasionWave;
+        public MinionSupportSaveData support;
+        public AugmentStatusSaveData augmentStatus;
     }
     [Serializable] public sealed class WaveSaveData
     {
         public int number, pending;
         public WaveState state;
         public int[] rewards;
+        public string[] rewardItemIds;
         public MinionSaveData[] enemies;
+        public InvaderRole[] pendingRoles;
+        public int[] augments;
+        public WaveScheduleSaveData schedule;
+    }
+
+    [Serializable] public sealed class WaveScheduleSaveData
+    {
+        public float remaining;
+        public int rewardWave;
+        public int[] pendingWaves, completedWaves, rewardQueue;
     }
 
     // Files contain data and stable build-item IDs, never scene object references.
@@ -128,7 +159,7 @@ namespace DarkLord.Persistence
             {
                 var c = data.combat;
                 if (!InRange(c.mana, 100) || c.coreUpgradeLevel < 0 || c.coreUpgradeLevel > 3 ||
-                    !InRange(c.attackCooldown, 0.5f) || !InRange(c.novaCooldown, 6) || !InRange(c.wardCooldown, 10) || !InRange(c.dodgeCooldown, 3))
+                    !InRange(c.attackCooldown, .75f) || !InRange(c.novaCooldown, 6) || !InRange(c.wardCooldown, 12) || !InRange(c.dodgeCooldown, 3) || !InRange(c.hasteRemaining,6) || !InRange(c.wardRemaining,3))
                     throw new InvalidDataException("전투 상태가 올바르지 않습니다.");
             }
             var d = data.dungeon;
@@ -144,12 +175,59 @@ namespace DarkLord.Persistence
             if (data.wave.state == WaveState.RewardSelection)
             {
                 var rewards = data.wave.rewards;
-                if (rewards == null || rewards.Length != 3 || data.wave.pending != 0 || data.wave.enemies.Length != 0 ||
+                if (rewards == null || rewards.Length != 3 || data.wave.schedule == null && (data.wave.pending != 0 || data.wave.enemies.Length != 0) ||
                     data.playerHealth == 0 || data.coreHealth == 0)
                     throw new InvalidDataException("보상 선택 상태가 올바르지 않습니다.");
                 var unique = new System.Collections.Generic.HashSet<int>();
                 foreach (int reward in rewards)
-                    if (reward < 0 || reward > 4 || !unique.Add(reward)) throw new InvalidDataException("보상 후보가 올바르지 않습니다.");
+                    if (!WaveRewardCatalog.IsValid(reward) || !unique.Add(reward)) throw new InvalidDataException("보상 후보가 올바르지 않습니다.");
+            }
+            if (data.wave.rewardItemIds != null && data.wave.rewardItemIds.Length > 0)
+            {
+                if (data.wave.rewards == null || data.wave.rewardItemIds.Length != data.wave.rewards.Length)
+                    throw new InvalidDataException("보상 아이템 목록이 올바르지 않습니다.");
+                for (int i = 0; i < data.wave.rewardItemIds.Length; i++)
+                    if (!string.IsNullOrEmpty(data.wave.rewardItemIds[i]) && data.wave.rewards[i] != WaveRewardCatalog.RoomItem && data.wave.rewards[i] != WaveRewardCatalog.FacilityItem && data.wave.rewards[i] != WaveRewardCatalog.TrapItem)
+                        throw new InvalidDataException("보상 아이템 종류가 올바르지 않습니다.");
+            }
+            if (data.wave.augments != null)
+            {
+                var selected = new System.Collections.Generic.HashSet<int>();
+                foreach (int id in data.wave.augments)
+                    if (!WaveRewardCatalog.IsAugment(id) || !selected.Add(id)) throw new InvalidDataException("획득한 증강이 올바르지 않습니다.");
+                if (data.wave.state == WaveState.RewardSelection)
+                    foreach (int id in data.wave.rewards) if (selected.Contains(id)) throw new InvalidDataException("이미 획득한 증강입니다.");
+            }
+            if (d.lastConstructionRewardDay < 0 || d.lastConstructionRewardDay > data.wave.number)
+                throw new InvalidDataException("건설 보상 날짜가 올바르지 않습니다.");
+            if (d.constructionItems != null)
+            {
+                var ids = new System.Collections.Generic.HashSet<string>();
+                foreach (var stack in d.constructionItems)
+                    if (stack == null || string.IsNullOrEmpty(stack.id) || stack.count <= 0 || !ids.Add(stack.id))
+                        throw new InvalidDataException("건설 아이템 수량이 올바르지 않습니다.");
+            }
+            if (data.economy != null)
+            {
+                var e = data.economy;
+                DarkLord.Player.TechCatalog.Validate(e.technology);
+                if (e.technology != null && (e.vitality != e.technology.ranks[0] || e.power != e.technology.ranks[1] || e.speed != e.technology.ranks[2] ||
+                    data.combat != null && data.combat.coreUpgradeLevel != e.technology.ranks[(int)DarkLord.Player.TechId.CoreVitality]))
+                    throw new InvalidDataException("강화 단계와 테크트리 기록이 일치하지 않습니다.");
+                if (data.combat != null && data.combat.hasteRemaining > 0 && (e.technology == null || e.technology.ranks[(int)DarkLord.Player.TechId.Haste] == 0))
+                    throw new InvalidDataException("해금되지 않은 가속 효과입니다.");
+                if (e.vitality < 0 || e.vitality > 5 || e.power < 0 || e.power > 5 || e.speed < 0 || e.speed > 5 || e.bloodDebt < 0 ||
+                    e.lastBloodPaid < 0 || e.lastUpkeepWave < 0 || e.lastUpkeepWave > data.wave.number || e.nextMerchantWave < 1 ||
+                    !InRange(e.merchantRemaining, 90) || !Finite(e.merchantPosition) || e.offers == null || e.sold == null ||
+                    e.merchantRemaining > 0 && (e.offers.Length != 3 || e.sold.Length != 4))
+                    throw new InvalidDataException("자원 운영 또는 코어 강화 기록이 올바르지 않습니다.");
+            }
+            if (data.corpses != null)
+            {
+                int carried = 0;
+                foreach (var corpse in data.corpses)
+                    if (corpse == null || !Finite(corpse.position) || !Enum.IsDefined(typeof(InvaderRole), corpse.role) || corpse.carried && ++carried > 1)
+                        throw new InvalidDataException("시체 운반 정보가 올바르지 않습니다.");
             }
             foreach (int cell in d.cells) if (cell < 0 || cell > 2) throw new InvalidDataException("잘못된 타일입니다.");
             foreach (var section in d.sections)
@@ -169,7 +247,7 @@ namespace DarkLord.Persistence
                 foreach (var building in d.buildings)
                 {
                     if (building == null || string.IsNullOrEmpty(building.designId) || building.maximumHealth <= 0 || building.health < 0 ||
-                        building.health > building.maximumHealth || building.lastPaidRound < 0 || building.lastPaidRound > data.wave.number || !seen.Add(building.cell))
+                        building.health > building.maximumHealth || building.summonStacks < 0 || building.lastPaidRound < 0 || building.lastPaidRound > data.wave.number || !seen.Add(building.cell))
                         throw new InvalidDataException("잘못된 건물 기록입니다.");
                     CheckCell(d, building.cell);
                 }
@@ -194,6 +272,50 @@ namespace DarkLord.Persistence
             if (d.hasEntrance) CheckCell(d, d.entrance);
             foreach (var actor in data.guards) CheckActor(actor);
             foreach (var actor in data.wave.enemies) CheckActor(actor);
+            if (data.tutorial != null && data.tutorial.active)
+            {
+                var tutorial = data.tutorial;
+                if (tutorial.dialogueVersion < 0 || tutorial.dialogueVersion > 3 || tutorial.dialoguePage < 0 || tutorial.dialoguePage > 4)
+                    throw new InvalidDataException("튜토리얼 대사 기록이 올바르지 않습니다.");
+                if (tutorial.dialogueVersion >= 2 && (tutorial.dialogueLine < 0 || tutorial.dialogueLine >= StartingTutorial.DialogueLineCount(tutorial.dialoguePage)))
+                    throw new InvalidDataException("튜토리얼 대화 순서가 올바르지 않습니다.");
+                if (tutorial.trainingVersion < 0 || tutorial.trainingVersion > 1 || !Enum.IsDefined(typeof(TutorialTrainingStep), tutorial.trainingStep) ||
+                    tutorial.trainingStep != TutorialTrainingStep.None && !tutorial.collapsed)
+                    throw new InvalidDataException("시체 소환 훈련 기록이 올바르지 않습니다.");
+                if (!InRange(tutorial.elapsed, StartingTutorial.FinishAt) || tutorial.spawned < 0 || tutorial.spawned > 9 ||
+                    tutorial.enemies == null || tutorial.enemies.Length > tutorial.spawned ||
+                    tutorial.collapsed != (tutorial.elapsed >= StartingTutorial.CollapseAt) || tutorial.collapsed && tutorial.enemies.Length != 0 ||
+                    data.wave.number != 0 || data.wave.state != WaveState.Preparing)
+                    throw new InvalidDataException("시작 튜토리얼 기록이 올바르지 않습니다.");
+                foreach (var actor in tutorial.enemies) CheckActor(actor);
+            }
+            if (data.wave.schedule != null)
+            {
+                var schedule = data.wave.schedule;
+                if (!InRange(schedule.remaining, 300) || schedule.rewardWave < 0 || schedule.rewardWave > data.wave.number ||
+                    schedule.pendingWaves == null || schedule.pendingWaves.Length != data.wave.pending || schedule.completedWaves == null || schedule.rewardQueue == null)
+                    throw new InvalidDataException("침공 일정이 올바르지 않습니다.");
+                var completed = new System.Collections.Generic.HashSet<int>();
+                foreach (int n in schedule.completedWaves)
+                    if (n < 1 || n > data.wave.number || !completed.Add(n)) throw new InvalidDataException("침공 완료 기록이 올바르지 않습니다.");
+                var rewards = new System.Collections.Generic.HashSet<int>();
+                foreach (int n in schedule.rewardQueue)
+                    if (!completed.Contains(n) || !rewards.Add(n) || data.wave.state == WaveState.RewardSelection && n == schedule.rewardWave)
+                        throw new InvalidDataException("침공 보상 대기열이 올바르지 않습니다.");
+                if (data.wave.state == WaveState.RewardSelection && !completed.Contains(schedule.rewardWave))
+                    throw new InvalidDataException("침공 보상 번호가 올바르지 않습니다.");
+                foreach (int n in schedule.pendingWaves)
+                    if (n < 1 || n > data.wave.number || completed.Contains(n)) throw new InvalidDataException("침공 소환 대기열이 올바르지 않습니다.");
+                foreach (var actor in data.wave.enemies)
+                    if (actor.invasionWave < 1 || actor.invasionWave > data.wave.number || completed.Contains(actor.invasionWave))
+                        throw new InvalidDataException("침입자의 웨이브가 올바르지 않습니다.");
+            }
+            if (data.wave.pendingRoles != null)
+            {
+                if (data.wave.pendingRoles.Length != data.wave.pending) throw new InvalidDataException("침입 편성이 올바르지 않습니다.");
+                foreach (var role in data.wave.pendingRoles)
+                    if (!Enum.IsDefined(typeof(InvaderRole), role)) throw new InvalidDataException("잘못된 용사 병과입니다.");
+            }
         }
         private static void CheckCell(DungeonSaveData d, Vector2Int p)
         { if (p.x < 0 || p.y < 0 || p.x >= d.width || p.y >= d.height) throw new InvalidDataException("맵 밖의 좌표입니다."); }
@@ -206,6 +328,22 @@ namespace DarkLord.Persistence
             if (actor.slows != null) foreach (var slow in actor.slows)
                 if (slow == null || !InRange(slow.multiplier, 1) || !InRange(slow.remaining, 3600))
                     throw new InvalidDataException("잘못된 둔화 기록입니다.");
+            var t = actor.tactics;
+            if (!Enum.IsDefined(typeof(MinionRole), actor.role) || !InRange(actor.attackCooldown, 10))
+                throw new InvalidDataException("하수인 병과 기록이 올바르지 않습니다.");
+            var support = actor.support;
+            if (support != null && ((actor.role != MinionRole.BloodSupport && (support.casting || support.remaining > 0 || support.cooldown > 0 || support.targetPosition != Vector2.zero)) || !InRange(support.remaining, .55f) || !InRange(support.cooldown, 3.5f) ||
+                !Finite(support.targetPosition) || !support.casting && support.remaining > 0))
+                throw new InvalidDataException("하수인 치유 기록이 올바르지 않습니다.");
+            var status = actor.augmentStatus;
+            if (status != null && (!InRange(status.lordMark, 4) || !InRange(status.trapBrand, 4) || !InRange(status.empowered, 5)))
+                throw new InvalidDataException("증강 효과 시간이 올바르지 않습니다.");
+            if (t != null && (!Enum.IsDefined(typeof(InvaderRole), t.role) || !Enum.IsDefined(typeof(InvaderAction), t.action) ||
+                !InRange(t.remaining, 1) || !InRange(t.cooldown, 6) || !Finite(t.direction) || !Finite(t.healPosition) ||
+                (t.action == InvaderAction.Healing && t.role != InvaderRole.Healer) ||
+                ((t.action == InvaderAction.WindingUp || t.action == InvaderAction.Charging || t.action == InvaderAction.Recovering) &&
+                    (t.role != InvaderRole.Charger || t.direction.sqrMagnitude < .5f))))
+                throw new InvalidDataException("용사 행동 기록이 올바르지 않습니다.");
         }
     }
 }

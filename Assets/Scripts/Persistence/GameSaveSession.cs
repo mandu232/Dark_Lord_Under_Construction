@@ -55,6 +55,8 @@ namespace DarkLord.Persistence
             pendingOptions = null;
             return true;
         }
+        private void Awake() => dungeon.Inventory.Configure(catalog);
+
         private IEnumerator Start()
         {
             // Scene services finish Start before their saved state is restored.
@@ -71,6 +73,8 @@ namespace DarkLord.Persistence
                     options = newOptions;
                     waves.ConfigureRun(options);
                 }
+                if (loaded == null) { dungeon.EnsureStartingRecruitment(); summoning.GrantStartingSlime(); }
+                if (loaded == null && newOptions != null) waves.BeginTutorial();
                 Ready = true;
             }
             catch (Exception e) { Message = "이어하기 실패: " + e.Message; Debug.LogError(Message); }
@@ -87,10 +91,33 @@ namespace DarkLord.Persistence
                 foreach (var building in loaded.dungeon.buildings)
                 {
                     var prefab = Resolve(building.designId);
-                    if (prefab == null || prefab.GetComponent<ResourceBuilding>() == null)
+                    if (prefab == null || prefab.GetComponent<ResourceBuilding>() == null || (building.summonStacks > 0 || building.tutorialCapacityUnlocked) && !prefab.GetComponent<ResourceBuilding>().IsRecruitmentFacility)
                         throw new InvalidOperationException("저장된 건물 정보를 찾을 수 없습니다.");
                 }
+            if (loaded.wave.rewardItemIds != null)
+                for (int i = 0; i < loaded.wave.rewardItemIds.Length; i++)
+                {
+                    string id = loaded.wave.rewardItemIds[i];
+                    if (string.IsNullOrEmpty(id)) continue;
+                    var item = catalog.FirstOrDefault(c => c != null && c.name == id);
+                    var category = loaded.wave.rewards[i] == WaveRewardCatalog.RoomItem ? BuildCategory.Rooms : loaded.wave.rewards[i] == WaveRewardCatalog.TrapItem ? BuildCategory.Traps : BuildCategory.Buildings;
+                    if (!ConstructionInventory.RequiresItem(item) || !item.available || item.prefab == null || item.category != category)
+                        throw new InvalidOperationException("저장된 보상 아이템을 찾을 수 없습니다: " + id);
+                }
+            if (loaded.dungeon.constructionItems != null)
+                foreach (var stack in loaded.dungeon.constructionItems)
+                    if (!catalog.Any(i => ConstructionInventory.RequiresItem(i) && i.name == stack.id))
+                        throw new InvalidOperationException("저장된 건설 아이템을 찾을 수 없습니다: " + stack.id);
             options = (loaded.options ?? new NewGameOptions()).Copy();
+            if (loaded.economy != null && loaded.economy.merchantRemaining > 0)
+                for (int i = 0; i < 3; i++)
+                {
+                    string id = loaded.economy.offers[i];
+                    if (string.IsNullOrEmpty(id)) continue;
+                    var item = dungeon.Inventory.Find(id);
+                    var expected = i == 0 ? BuildCategory.Rooms : i == 1 ? BuildCategory.Buildings : BuildCategory.Traps;
+                    if (item == null || item.category != expected) throw new InvalidOperationException("상인 상품을 찾을 수 없습니다: " + id);
+                }
             waves.ConfigureRun(options);
             summoning.ClearSavedGuards();
             waves.Alchemy?.Close();
@@ -102,8 +129,12 @@ namespace DarkLord.Persistence
             core.RestoreHealth(loaded.coreMaximumHealth, loaded.coreHealth);
             wallet.RestoreAmounts(loaded.gold, loaded.souls, loaded.crystals);
             summoning.RestoreGuards(loaded.guards);
+            dungeon.MoveStartingRecruitmentToCore();
             waves.RestoreSave(loaded.wave);
             waves.Combat?.RestoreSave(loaded.combat);
+            waves.Harvest?.Restore(loaded.corpses);
+            waves.Economy?.Restore(loaded.economy);
+            waves.RestoreTutorial(loaded.tutorial);
             playedSeconds = loaded.playedSeconds;
             Physics2D.SyncTransforms();
             savedSnapshot = JsonUtility.ToJson(Capture());
@@ -126,11 +157,12 @@ namespace DarkLord.Persistence
         }
         public GameSaveData Capture() => new GameSaveData
         {
+            tutorial = waves.Tutorial?.Capture(),
             options = options.Copy(), playedSeconds = playedSeconds, playerPosition = player.transform.position, combat = waves.Combat?.CaptureSave(),
             playerHealth = player.CurrentHealth, playerMaximumHealth = player.MaximumHealth,
             coreHealth = core.CurrentHealth, coreMaximumHealth = core.MaximumHealth,
             gold = wallet.Gold, souls = wallet.Souls, crystals = wallet.DarkCrystals,
-            dungeon = dungeon.CaptureSave(Identify), guards = summoning.CaptureGuards(), wave = waves.CaptureSave()
+            dungeon = dungeon.CaptureSave(Identify), guards = summoning.CaptureGuards(), wave = waves.CaptureSave(), corpses = waves.Harvest?.Capture(), economy = waves.Economy?.Capture()
         };
         public bool Save(int slot, SaveSlotStore store = null)
         {

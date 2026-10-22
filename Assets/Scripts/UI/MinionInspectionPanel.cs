@@ -22,11 +22,8 @@ namespace DarkLord.UI
         [SerializeField] private TMP_Text titleText, statsText;
         [SerializeField] private TMP_Text placementHint;
         [SerializeField] private UnityEngine.UI.Button closeButton;
-        [SerializeField] private UnityEngine.UI.Button relocateButton;
-        [SerializeField] private UnityEngine.UI.Button aggressiveButton, defensiveButton;
-        [SerializeField, Min(0.1f)] private float relocationHoldSeconds = 0.3f;
-        private MinionController pressedGuard;
-        private float pressedAt;
+        [SerializeField, HideInInspector] private UnityEngine.UI.Button relocateButton;
+        [SerializeField, HideInInspector] private UnityEngine.UI.Button aggressiveButton, defensiveButton;
         [SerializeField] private Shader outlineShader;
         private InputAction inspect;
         private sealed class OutlineState
@@ -51,9 +48,9 @@ namespace DarkLord.UI
             inspect = new InputAction("Inspect minion", InputActionType.Button, "<Mouse>/rightButton");
             if (worldCamera == null) worldCamera = Camera.main;
             if (closeButton != null) closeButton.onClick.AddListener(Close);
-            if (relocateButton != null) relocateButton.onClick.AddListener(RelocateSelected);
-            if (aggressiveButton != null) aggressiveButton.onClick.AddListener(SetAggressive);
-            if (defensiveButton != null) defensiveButton.onClick.AddListener(SetDefensive);
+            if (relocateButton != null) relocateButton.gameObject.SetActive(false);
+            if (aggressiveButton != null) aggressiveButton.gameObject.SetActive(false);
+            if (defensiveButton != null) defensiveButton.gameObject.SetActive(false);
         }
         private void SetupStatsScroll()
         {
@@ -92,7 +89,7 @@ namespace DarkLord.UI
             if (defensiveButton != null) defensiveButton.onClick.RemoveListener(SetDefensive);
             ClearOutlines();
         }
-        private bool CanInspect => Time.timeScale > 0 && dungeon != null && dungeon.isActiveAndEnabled &&
+        private bool CanInspect => (summoning == null || summoning.GetComponent<RunEconomy>()?.BlocksGameplayInput != true) && (summoning == null || summoning.GetComponent<CorpseHarvest>()?.BlocksGameplayInput != true) && Time.timeScale > 0 && dungeon != null && dungeon.isActiveAndEnabled &&
             (construction == null || !construction.BlocksGameplayInput) && (summoning == null || !summoning.BlocksGameplayInput);
         private static bool Alive(MinionController minion) => minion != null && minion.isActiveAndEnabled && minion.IsAlive && minion.Health.Faction == Faction.Dungeon;
 
@@ -104,7 +101,7 @@ namespace DarkLord.UI
                 placementHint.gameObject.SetActive(placing);
                 if (placing) placementHint.text = summoning.Message;
             }
-            if (!CanInspect) { pressedGuard = null; SetHovered(null); Close(); return; }
+            if (!CanInspect) { SetHovered(null); Close(); return; }
             if ((Selected != null && !Alive(Selected)) || (Selected == null && IsOpen)) Close();
             if (Mouse.current != null && worldCamera != null && worldCamera.pixelRect.Contains(Mouse.current.position.ReadValue()) &&
                 (EventSystem.current == null || !EventSystem.current.IsPointerOverGameObject()))
@@ -115,16 +112,6 @@ namespace DarkLord.UI
                 if (inspect.WasPressedThisFrame()) { if (Hovered != null) Show(Hovered); else Close(); }
             }
             else SetHovered(null);
-            if (Mouse.current != null)
-            {
-                if (Mouse.current.leftButton.wasPressedThisFrame) { pressedGuard = Hovered; pressedAt = Time.unscaledTime; }
-                if (!Mouse.current.leftButton.isPressed) pressedGuard = null;
-                if (Alive(pressedGuard) && Time.unscaledTime - pressedAt >= relocationHoldSeconds)
-                {
-                    summoning?.BeginRelocation(pressedGuard, true);
-                    pressedGuard = null;
-                }
-            }
             UpdateOutline();
             if (IsOpen && Time.unscaledTime >= nextRefresh) { Refresh(); nextRefresh = Time.unscaledTime + 0.1f; }
         }
@@ -134,7 +121,7 @@ namespace DarkLord.UI
         private void SetBehaviour(MinionBehaviour behaviour)
         {
             if (!CanInspect || !Alive(Selected)) return;
-            Selected.SetBehaviour(behaviour); Refresh();
+            Refresh();
         }
 
         public void RelocateSelected()
@@ -250,14 +237,12 @@ namespace DarkLord.UI
             if (!Alive(Selected)) { Close(); return; }
             if (healthBar != null) healthBar.SetHealth(Selected.Health.CurrentHealth, Selected.Health.MaximumHealth);
             titleText.text = Selected.DisplayName;
-            if (aggressiveButton != null) aggressiveButton.image.color = Selected.Behaviour == MinionBehaviour.Aggressive ? new Color32(155, 62, 51, 255) : new Color32(70, 54, 84, 255);
-            if (defensiveButton != null) defensiveButton.image.color = Selected.Behaviour == MinionBehaviour.Defensive ? new Color32(155, 62, 51, 255) : new Color32(70, 54, 84, 255);
             string state = Selected.State == ActorState.Attack ? "공격 중" : Selected.State == ActorState.Hit ? "피격 중" : Selected.State == ActorState.Run ? "이동 중" : "대기 중";
             Selected.GetRoomBonuses(out int attackPercent, out _, out _, activeBuffs);
             int attack = Selected.AttackDamage, basicAttack = Selected.BaseAttackDamage;
             var health = Selected.Health;
             statsText.text = (healthBar == null ? $"체력  {health.CurrentHealth} / {health.MaximumHealth}\n\n" : "") +
-                $"특성  {Selected.TraitText}\n공격 유형  {(Selected.AttackType == DamageType.Magic ? "마법공격" : "물리공격")}\n\n" +
+                $"역할  {Selected.RoleName}\n특성  {Selected.TraitText}\n공격 유형  {(Selected.AttackType == DamageType.Magic ? "마법공격" : "물리공격")}\n\n" +
                 $"공격력  {attack}\n기본 {basicAttack} + 시설 {attack - basicAttack} (+{attackPercent}%)\n" +
                 $"물리 내성  {health.PhysicalResistance}%\n기본 {health.BasePhysicalResistance}% + 시설 {health.PhysicalResistance - health.BasePhysicalResistance}%p\n" +
                 $"마법 내성  {health.MagicResistance}%\n기본 {health.BaseMagicResistance}% + 시설 {health.MagicResistance - health.BaseMagicResistance}%p\n" +
@@ -271,7 +256,10 @@ namespace DarkLord.UI
                 if (buff.ResistanceBonus(DamageType.Physical) > 0) statsText.text += $"  물리 내성 +{buff.ResistanceBonus(DamageType.Physical)}%p\n";
                 if (buff.ResistanceBonus(DamageType.Magic) > 0) statsText.text += $"  마법 내성 +{buff.ResistanceBonus(DamageType.Magic)}%p\n";
             }
-            statsText.text += $"\n공격 간격  {Selected.AttackInterval:0.##}초\n공격 사거리  {Selected.AttackRange / DungeonGrid.CellSize:0.##}칸\n감지 거리  {Selected.DetectionRange / DungeonGrid.CellSize:0.##}칸\n이동 속도  {Selected.MoveSpeed / DungeonGrid.CellSize:0.##}칸/초\n\n상태  {state}";
+            statsText.text += "\n행동  방 안에서 자유 이동 · 침입자 자동 공격\n이동  하수인을 꾹 눌러 다른 방에 놓기\n";
+            statsText.text += $"\n공격 간격  {Selected.AttackInterval:0.##}초\n공격 사거리  {Selected.AttackRange / DungeonGrid.CellSize:0.##}칸\n감지 범위  {(Selected.AssignedRoom != null ? "배치된 방 전체" : $"{Selected.DetectionRange / DungeonGrid.CellSize:0.##}칸")}\n이동 속도  {Selected.MoveSpeed / DungeonGrid.CellSize:0.##}칸/초\n\n상태  {state}";
+            var support = Selected.GetComponent<MinionSupport>();
+            if (support != null) statsText.text += $"\n치유 {support.HealAmount} · 간격 3.5초 · 사거리 2.25칸\n" + (support.IsCasting ? "치유 시전 중" : $"치유 대기 {support.Cooldown:0.0}초");
             if (summoning != null)
             {
                 var room = dungeon.Construction.RoomAt(dungeon.WorldToCell(Selected.GuardPosition));

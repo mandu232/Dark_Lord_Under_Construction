@@ -2,8 +2,8 @@ var grid = UnityEngine.Object.FindFirstObjectByType<DarkLord.Dungeon.DungeonGrid
 var go = new UnityEngine.GameObject("Temporary layout review camera");
 var camera = go.AddComponent<UnityEngine.Camera>();
 camera.CopyFrom(UnityEngine.Camera.main);
-camera.transform.position = grid.CellCenter(new UnityEngine.Vector2Int(15,13)) + new UnityEngine.Vector3(0,0,-10);
-camera.orthographic = true; camera.orthographicSize = 16; camera.aspect = 1280f/900f; camera.ResetWorldToCameraMatrix(); camera.ResetProjectionMatrix();
+camera.transform.position = grid.CellCenter(grid.Layout.Core + new UnityEngine.Vector2Int(-5,1)) + new UnityEngine.Vector3(0,0,-10);
+camera.orthographic = true; camera.orthographicSize = 20; camera.aspect = 1280f/900f; camera.ResetWorldToCameraMatrix(); camera.ResetProjectionMatrix();
 var target = new UnityEngine.RenderTexture(1280, 900, 24);
 camera.targetTexture = target; camera.Render();
 var previous = UnityEngine.RenderTexture.active; UnityEngine.RenderTexture.active = target;

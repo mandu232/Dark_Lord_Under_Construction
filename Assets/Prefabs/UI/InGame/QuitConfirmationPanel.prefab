@@ -224,7 +224,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 0.24736841
+  m_PixelsPerUnitMultiplier: 0.25
 --- !u!1 &1065414265703958245
 GameObject:
   m_ObjectHideFlags: 0
@@ -1269,7 +1269,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 0.24736841
+  m_PixelsPerUnitMultiplier: 0.25
 --- !u!114 &3422837756919458163
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1804,7 +1804,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 0.24736841
+  m_PixelsPerUnitMultiplier: 0.25
 --- !u!114 &1963201007468189537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1977,7 +1977,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 0.24736841
+  m_PixelsPerUnitMultiplier: 0.25
 --- !u!114 &6133365834342583007
 MonoBehaviour:
   m_ObjectHideFlags: 0

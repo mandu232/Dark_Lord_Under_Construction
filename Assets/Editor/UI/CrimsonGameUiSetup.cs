@@ -93,6 +93,7 @@ namespace DarkLord.Editor
             var fill = Graphic(track.transform, "Fill", new Color32(216, 40, 68, 255));
             Stretch(fill.rectTransform, 2);
             Bind(hud, "healthFill", fill);
+            PendantHealthSetup.Apply(hud);
 
             var wave = root.Find("Wave Status");
             Place(wave, new Vector2(.5f, 1), new Vector2(-60, -22), new Vector2(390, 106));
@@ -106,10 +107,20 @@ namespace DarkLord.Editor
             Typography(status, 18); status.alignment = TextAlignmentOptions.Center;
 
             var resources = root.Find("Resources");
+            ApplyResourceLayout(resources);
+            var start = root.Find("Start Wave Button").GetComponent<UnityEngine.UI.Button>();
+            StyleButton(start);
+            Place(start.transform, Vector2.right, new Vector2(-24, 24), new Vector2(256, 64));
+        }
+
+        public static void ApplyResourceLayout(Transform resources)
+        {
             Place(resources, Vector2.one, new Vector2(-24, -22), new Vector2(550, 88));
             var layout = resources.GetComponent<HorizontalLayoutGroup>();
             if (layout != null) layout.enabled = false;
-            Surface(resources, false);
+            foreach (var image in resources.GetComponentsInChildren<UnityEngine.UI.Image>(true))
+                if (image.name != "Icon") image.enabled = false;
+            foreach (var outline in resources.GetComponentsInChildren<Outline>(true)) outline.enabled = false;
             string[] names = { "Gold", "Souls", "Crystals" };
             for (int i = 0; i < names.Length; i++)
             {
@@ -118,17 +129,13 @@ namespace DarkLord.Editor
                 foreach (var outline in item.GetComponents<Outline>()) outline.enabled = false;
                 Place(item.Find("Icon"), new Vector2(0, .5f), new Vector2(0, 0), new Vector2(38, 38));
                 var amount = item.Find("Amount").GetComponent<TMP_Text>();
-                Place(amount.transform, new Vector2(0, .5f), new Vector2(49, 0), new Vector2(105, 38));
+                Place(amount.transform, new Vector2(0, .5f), new Vector2(49, 0), new Vector2(109, 58));
                 Typography(amount, 25);
-                if (i > 0)
-                {
-                    var divider = Graphic(resources, "Resource Divider " + i, Red);
-                    Place(divider.transform, Vector2.up, new Vector2(16 + i * 170, -27), new Vector2(1, 33));
-                }
+                amount.alignment = TextAlignmentOptions.Left;
+                amount.textWrappingMode = TextWrappingModes.NoWrap;
+                amount.enableAutoSizing = false;
+                amount.margin = Vector4.zero;
             }
-            var start = root.Find("Start Wave Button").GetComponent<UnityEngine.UI.Button>();
-            StyleButton(start);
-            Place(start.transform, Vector2.right, new Vector2(-24, 24), new Vector2(256, 64));
         }
 
         private static void ApplyConstruction(ConstructionPanel view)
@@ -161,6 +168,7 @@ namespace DarkLord.Editor
             var open = owner.Find("Open Construction").GetComponent<UnityEngine.UI.Button>();
             StyleButton(open);
             Place(open.transform, Vector2.zero, new Vector2(24, 24), new Vector2(240, 64));
+            open.gameObject.SetActive(false);
 
             var divider = window.Find("Category Divider").GetComponent<UnityEngine.UI.Image>();
             divider.color = Red;

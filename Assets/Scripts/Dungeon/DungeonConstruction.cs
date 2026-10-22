@@ -51,23 +51,6 @@ namespace DarkLord.Dungeon
         {
             yield return new DungeonSection(ConstructionKind.LargeRoom,
                 new RectInt(layout.Core.x - 3, layout.Core.y - 3, 7, 7), true, true);
-            if (layout.HasCompactStart)
-            {
-                // Centered one-cell doorways keep the rooms visually separate and easy to extend.
-                var hall = new RectInt(layout.Core.x - 8, layout.Core.y, 5, 1);
-                var cells = new List<Vector2Int>();
-                foreach (var cell in hall.allPositionsWithin) cells.Add(cell);
-                cells.Add(new Vector2Int(layout.Core.x - 7, layout.Core.y - 2));
-                cells.Add(new Vector2Int(layout.Core.x - 7, layout.Core.y - 3));
-                cells.Add(new Vector2Int(layout.Core.x - 7, layout.Core.y - 1));
-                yield return new DungeonSection(ConstructionKind.Corridor,
-                    new RectInt(layout.Core.x - 8, layout.Core.y - 3, 5, 4), true, cells: cells);
-                yield return new DungeonSection(ConstructionKind.Room,
-                    Footprint(ConstructionKind.Room, layout.Core + Vector2Int.left * 11), true);
-                yield return new DungeonSection(ConstructionKind.StorageRoom,
-                    Footprint(ConstructionKind.StorageRoom, layout.Core + new Vector2Int(-7, -6)), true);
-                yield break;
-            }
             yield return new DungeonSection(ConstructionKind.HorizontalCorridor,
                 new RectInt(layout.Entrance.x, layout.Core.y - 1, layout.Core.x - 3 - layout.Entrance.x, 3), true);
         }
@@ -114,7 +97,7 @@ namespace DarkLord.Dungeon
                 foreach (var room in sections)
                     if (IsRoom(room.Kind) && clearance.Overlaps(room.Bounds)) return ConstructionResult.TooCloseToRoom;
             }
-            if (!connected) return ConstructionResult.Disconnected;
+            if (IsRoom(kind) && !connected) return ConstructionResult.Disconnected;
             if (IsRoom(kind) && !touchesCorridor) return ConstructionResult.NeedsCorridor;
             return ConstructionResult.Success;
         }
@@ -158,15 +141,12 @@ namespace DarkLord.Dungeon
         public ConstructionResult CanPlanCorridor(Vector2Int start, Vector2Int end)
         {
             if (!layout.Contains(start) || !layout.Contains(end)) return ConstructionResult.OutsideMap;
-            if (start == end) return ConstructionResult.Unavailable;
-            if (!IsWalkable(start)) return ConstructionResult.Disconnected;
             bool hasNewCells = false;
             foreach (var cell in CorridorCells(start, end))
             {
                 if (!layout.Contains(cell) || layout.GetCell(cell) == DungeonCell.Bedrock) return ConstructionResult.OutsideMap;
                 var owner = At(cell);
-                if (owner != null && !owner.IsComplete) return ConstructionResult.Occupied;
-                if (layout.GetCell(cell) == DungeonCell.Rock) hasNewCells = true;
+                if (owner == null && layout.GetCell(cell) == DungeonCell.Rock) hasNewCells = true;
             }
             return hasNewCells ? ConstructionResult.Success : ConstructionResult.Occupied;
         }
@@ -177,7 +157,7 @@ namespace DarkLord.Dungeon
             var result = CanPlanCorridor(start, end);
             if (result != ConstructionResult.Success) return result;
             var cells = CorridorCells(start, end);
-            cells.RemoveAll(cell => layout.IsFloor(cell));
+            cells.RemoveAll(cell => layout.IsFloor(cell) || At(cell) != null);
             int minX = int.MaxValue, minY = int.MaxValue, maxX = int.MinValue, maxY = int.MinValue;
             foreach (var cell in cells)
             {

@@ -59,7 +59,7 @@ namespace DarkLord.UI
                 button.image.sprite = selected ? selectedDifficultySprite : defaultDifficultySprite;
                 button.image.color = Color.white;
                 button.image.type = UnityEngine.UI.Image.Type.Sliced;
-                button.image.pixelsPerUnitMultiplier = .2473684f;
+                button.image.pixelsPerUnitMultiplier = .25f;
                 button.image.preserveAspect = false;
                 var label = difficultyButtons[i].GetComponentInChildren<TMP_Text>();
                 label.text = new NewGameOptions { difficulty = (GameDifficulty)i }.DifficultyName;
@@ -67,6 +67,7 @@ namespace DarkLord.UI
             description.text = draft.difficulty == GameDifficulty.Easy ? "여유롭게 성을 세우며 통치에 익숙해지는 여정" :
                 draft.difficulty == GameDifficulty.Hard ? "치밀한 준비와 판단이 필요한 위험한 통치" :
                 draft.difficulty == GameDifficulty.Nightmare ? "가장 가혹한 침공을 견뎌야 하는 군주의 시련" : "건설과 전투의 균형을 즐기는 기본 난이도";
+            description.text += "\n" + draft.WaveRuleDescription;
         }
         public void Confirm()
         {

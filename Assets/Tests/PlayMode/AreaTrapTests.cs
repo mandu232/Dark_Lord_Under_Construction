@@ -15,6 +15,7 @@ using UnityEngine.TestTools;
 
 namespace DarkLord.Tests
 {
+    [Category("CombatRewards")]
     public sealed class AreaTrapTests
     {
         private readonly List<GameObject> objects = new List<GameObject>();

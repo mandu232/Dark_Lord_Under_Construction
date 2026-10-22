@@ -1,0 +1,10 @@
+var waves=UnityEngine.Object.FindFirstObjectByType<DarkLord.Gameplay.WaveDirector>();
+var grid=UnityEngine.Object.FindFirstObjectByType<DarkLord.Dungeon.DungeonGrid>();
+UnityEngine.Time.timeScale=0;
+var camera=UnityEngine.Camera.main;
+camera.GetComponent<UnityEngine.Rendering.Universal.PixelPerfectCamera>().enabled=false;
+camera.GetComponent<DarkLord.Player.CameraFollow>().enabled=false;
+camera.transform.position=grid.CellCenter(grid.Layout.Core+UnityEngine.Vector2Int.left*6)+UnityEngine.Vector3.back*10;
+camera.orthographicSize=17; camera.ResetWorldToCameraMatrix();camera.ResetProjectionMatrix();
+UnityEngine.ScreenCapture.CaptureScreenshot("tmp/StartingTutorialBattle.png");
+return new {elapsed=waves.Tutorial.Elapsed,enemies=waves.Tutorial.LivingEnemies,rowen=waves.Tutorial.Rowen?.transform.position,core=grid.CellCenter(grid.Layout.Core),playerHealth=waves.Lord.CurrentHealth,coreHealth=waves.Core.CurrentHealth};

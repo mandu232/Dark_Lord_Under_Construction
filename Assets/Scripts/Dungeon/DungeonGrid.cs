@@ -60,7 +60,6 @@ namespace DarkLord.Dungeon
                 ScaleInitialDesign(design, section);
                 design.name = "Initial " + prefab.name;
             }
-            PlaceInitialRecruitmentFacility();
             RefreshEntranceMarker();
         }
 
@@ -215,7 +214,14 @@ namespace DarkLord.Dungeon
             RefreshArtTile(cell);
             if (section != null && section.IsComplete) foreach (var part in section.Cells) RefreshArtTile(part);
             var collider = blockers[cell.x, cell.y];
-            if (collider != null) collider.enabled = false;
+            if (collider == null && !Layout.IsFloor(cell))
+            {
+                collider = generated.AddComponent<BoxCollider2D>();
+                collider.offset = new Vector2((cell.x + .5f) * CellSize, (cell.y + .5f) * CellSize);
+                collider.size = Vector2.one * CellSize;
+                blockers[cell.x, cell.y] = collider;
+            }
+            if (collider != null) collider.enabled = !Layout.IsFloor(cell);
             Paint(cell.y * Layout.Width + cell.x, CellColor(cell));
             mesh.colors = colors;
         }
@@ -250,7 +256,10 @@ namespace DarkLord.Dungeon
             {
                 var cell = breakingCell.Value;
                 breakingCell = null;
-                if (Layout.TryExpand(cell) == ExpansionResult.Success) EmitRockChips(cell);
+                var section = Construction.At(cell);
+                var result = section != null && !DungeonConstruction.IsRoom(section.Kind)
+                    ? Layout.ExcavatePlannedCorridor(cell) : Layout.TryExpand(cell);
+                if (result == ExpansionResult.Success) EmitRockChips(cell);
                 constructionTiles.Remove(cell);
                 nextBreakAt = Time.time + tileBreakInterval * 0.6f;
                 return;
@@ -259,7 +268,8 @@ namespace DarkLord.Dungeon
             {
                 var cell = constructionTiles[i];
                 if (Layout.GetCell(cell) != DungeonCell.Rock) { constructionTiles.RemoveAt(i--); continue; }
-                if (Layout.CanExpand(cell) != ExpansionResult.Success) continue;
+                var section = Construction.At(cell);
+                if ((section == null || DungeonConstruction.IsRoom(section.Kind)) && Layout.CanExpand(cell) != ExpansionResult.Success) continue;
                 breakingCell = cell;
                 Paint(cell.y * Layout.Width + cell.x, CellColor(cell));
                 mesh.colors = colors;

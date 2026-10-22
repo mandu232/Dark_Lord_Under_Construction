@@ -1,0 +1,1 @@
+var callbacks=UnityEditor.EditorApplication.update.GetInvocationList().Where(d=>d.Method.DeclaringType.Name.Contains("TestListJob")).ToArray();return new {jobs=callbacks.Length,methods=string.Join(",",callbacks.Select(d=>d.Method.Name))};

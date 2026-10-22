@@ -13,6 +13,7 @@ using Object = UnityEngine.Object;
 
 namespace DarkLord.Tests
 {
+    [Category("CombatRewards")]
     public sealed class CoreCombatLoopTests
     {
         private readonly List<GameObject> objects = new List<GameObject>();
@@ -115,8 +116,10 @@ namespace DarkLord.Tests
             Assert.That(new HashSet<int>(waves.RewardChoices).Count, Is.EqualTo(3));
             Assert.That(lord.CurrentHealth, Is.EqualTo(80));
             int gold = wallet.Gold;
+            int chosen = waves.RewardChoices[0];
             Assert.That(waves.ChooseReward(0), Is.True);
-            Assert.That(wallet.Gold, Is.EqualTo(gold + 75));
+            Assert.That(waves.Augments.Has(chosen), Is.True);
+            Assert.That(wallet.Gold, Is.EqualTo(gold));
             Assert.That(lord.CurrentHealth, Is.EqualTo(100));
             Assert.That(guard.Health.CurrentHealth, Is.EqualTo(100));
             Assert.That(dead.Health.IsAlive, Is.False);
@@ -124,7 +127,7 @@ namespace DarkLord.Tests
             Assert.That(waves.State, Is.EqualTo(WaveState.Preparing));
             Assert.That(Time.timeScale, Is.EqualTo(1));
             Assert.That(waves.ChooseReward(0), Is.False);
-            Assert.That(wallet.Gold, Is.EqualTo(gold + 75));
+            Assert.That(wallet.Gold, Is.EqualTo(gold));
         }
         [Test]
         public void FinalWaveEndsInVictoryAfterReward()

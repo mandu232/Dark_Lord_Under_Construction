@@ -100,21 +100,12 @@ namespace DarkLord.Editor
         public static void AddBehaviourControls(MinionInspectionPanel panel)
         {
             var data = new SerializedObject(panel);
-            var window = (GameObject)data.FindProperty("window").objectReferenceValue;
-            var rect = window.GetComponent<RectTransform>(); rect.sizeDelta = new Vector2(rect.sizeDelta.x, Mathf.Max(rect.sizeDelta.y, 600));
-            var template = (UnityEngine.UI.Button)data.FindProperty("relocateButton").objectReferenceValue;
-            string[] names = { "Aggressive", "Defensive" }, labels = { "공격적", "수비적" }, fields = { "aggressiveButton", "defensiveButton" };
-            for (int i = 0; i < 2; i++)
+            foreach (string field in new[] { "aggressiveButton", "defensiveButton", "relocateButton" })
             {
-                var existing = window.transform.Find(names[i]);
-                var button = existing != null ? existing.GetComponent<UnityEngine.UI.Button>() : Object.Instantiate(template, window.transform);
-                button.name = names[i]; button.onClick = new UnityEngine.UI.Button.ButtonClickedEvent();
-                var br = button.GetComponent<RectTransform>(); br.anchorMin = br.anchorMax = new Vector2(0.5f, 0); br.pivot = new Vector2(0.5f, 0);
-                br.anchoredPosition = new Vector2(i == 0 ? -90 : 90, 92); br.sizeDelta = new Vector2(172, 44);
-                var label = button.GetComponentInChildren<TMP_Text>(); label.text = labels[i]; label.fontSize = 22;
-                Set(data, fields[i], button);
+                var button = data.FindProperty(field).objectReferenceValue as UnityEngine.UI.Button;
+                if (button != null) button.gameObject.SetActive(false);
             }
-            data.ApplyModifiedPropertiesWithoutUndo(); EditorSceneManager.MarkSceneDirty(panel.gameObject.scene);
+            EditorSceneManager.MarkSceneDirty(panel.gameObject.scene);
         }
 
         private static void Set(SerializedObject so, string name, Object value) => so.FindProperty(name).objectReferenceValue = value;

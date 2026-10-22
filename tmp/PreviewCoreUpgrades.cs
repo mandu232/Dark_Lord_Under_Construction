@@ -1,0 +1,15 @@
+var waves=UnityEngine.Object.FindFirstObjectByType<DarkLord.Gameplay.WaveDirector>();
+var grid=UnityEngine.Object.FindFirstObjectByType<DarkLord.Dungeon.DungeonGrid>();
+waves.ConfigureRun(new DarkLord.Gameplay.NewGameOptions{difficulty=DarkLord.Gameplay.GameDifficulty.Easy});
+var economy=waves.Economy;
+economy.Wallet.RestoreAmounts(250,40,40);
+waves.Lord.transform.position=economy.CorePosition+UnityEngine.Vector3.left*1.5f;
+waves.Lord.GetComponent<UnityEngine.Rigidbody2D>().position=waves.Lord.transform.position;
+var camera=UnityEngine.Camera.main;
+camera.GetComponent<UnityEngine.Rendering.Universal.PixelPerfectCamera>().enabled=false;
+camera.GetComponent<DarkLord.Player.CameraFollow>().enabled=false;
+camera.transform.position=grid.CellCenter(grid.Layout.Core)+UnityEngine.Vector3.back*10;
+camera.orthographicSize=13;camera.ResetWorldToCameraMatrix();camera.ResetProjectionMatrix();
+var opened=economy.TryInteract();
+UnityEngine.ScreenCapture.CaptureScreenshot("tmp/CoreUpgradeReview.png");
+return opened;

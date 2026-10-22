@@ -10,18 +10,38 @@ namespace DarkLord.Dungeon
 {
     public sealed partial class DungeonGrid
     {
+        public DarkLord.Gameplay.CombatAugments Augments { get; internal set; }
         [SerializeField] private GameObject initialRecruitmentPrefab;
         private readonly Dictionary<Vector2Int, ResourceBuilding> buildings = new Dictionary<Vector2Int, ResourceBuilding>();
-        private void PlaceInitialRecruitmentFacility()
+        public void EnsureStartingRecruitment()
         {
-            if (initialRecruitmentPrefab == null) return;
-            var definition = initialRecruitmentPrefab.GetComponent<ResourceBuilding>();
-            if (definition == null || !definition.IsRecruitmentFacility) return;
+            Initialize();
+            if (buildings.Values.Any(b => b != null && b.IsRecruitmentFacility && Construction.RoomAt(b.Cell)?.IsCore == true)) return;
+            var prefab = initialRecruitmentPrefab != null ? initialRecruitmentPrefab : Inventory.Find("MinionRecruitment")?.prefab;
+            if (prefab == null) return;
+            var preferred = Layout.Core + new Vector2Int(1, 1);
+            foreach (var cell in Construction.RoomAt(Layout.Core).Cells.OrderBy(c => (c - preferred).sqrMagnitude))
+                if (EmptyFloor(cell)) { SpawnBuilding(cell, prefab); return; }
+        }
+        public void MoveStartingRecruitmentToCore()
+        {
+            if (initialRecruitmentPrefab == null || buildings.Values.Any(b => b != null && b.IsRecruitmentFacility && Construction.RoomAt(b.Cell)?.IsCore == true)) return;
+            ResourceBuilding starting = null;
             foreach (var room in Construction.Sections)
             {
-                if (room.IsCore || room.Kind != ConstructionKind.Room || !room.IsComplete) continue;
-                SpawnBuilding(room.Center, initialRecruitmentPrefab);
-                return;
+                if (room.IsCore || room.Kind != ConstructionKind.Room || savedDesigns.ContainsKey(room)) continue;
+                var facility = BuildingAt(room.Center);
+                if (facility != null && facility.IsRecruitmentFacility && facility.Design == initialRecruitmentPrefab) { starting = facility; break; }
+            }
+            if (starting == null) return;
+            var core = Construction.RoomAt(Layout.Core);
+            var preferred = Layout.Core + new Vector2Int(1, 1);
+            foreach (var cell in core.Cells.OrderBy(c => (c - preferred).sqrMagnitude))
+            {
+                if (!EmptyFloor(cell) || Layout.HasEntrance && cell == Layout.Entrance) continue;
+                buildings.Remove(starting.Cell);
+                starting.transform.position = CellCenter(cell); starting.Bind(this, cell, initialRecruitmentPrefab);
+                buildings.Add(cell, starting); return;
             }
         }
         public int RoomCapacityBonus(DungeonSection room)
@@ -33,6 +53,7 @@ namespace DarkLord.Dungeon
                     bonus += building.RoomCapacityBonus;
             return bonus;
         }
+        public IEnumerable<ResourceBuilding> RecruitmentFacilities => buildings.Values.Where(b => b != null && b.IsRecruitmentFacility);
         public bool NearRecruitmentFacility(Vector3 position)
             => NearestRecruitmentFacility(position) != null;
         public ResourceBuilding NearestRecruitmentFacility(Vector3 position)
@@ -114,7 +135,7 @@ namespace DarkLord.Dungeon
         { foreach (var building in buildings.Values) if (building != null) building.PayRound(wallet, round); }
         public BuildingSaveData[] CaptureBuildings(System.Func<GameObject,string> identify) => buildings.Values.Where(b=>b!=null)
             .OrderBy(b=>b.Cell.y).ThenBy(b=>b.Cell.x).Select(b=>new BuildingSaveData { cell=b.Cell, designId=identify(b.Design),
-                health=b.Health.CurrentHealth, maximumHealth=b.Health.MaximumHealth, lastPaidRound=b.LastPaidRound }).ToArray();
+                health=b.Health.CurrentHealth, maximumHealth=b.Health.MaximumHealth, lastPaidRound=b.LastPaidRound, summonStacks=b.SummonStacks, tutorialCapacityUnlocked=b.TutorialCapacityUnlocked }).ToArray();
         private void RestoreBuildings(BuildingSaveData[] data, System.Func<string,GameObject> resolve)
         {
             buildings.Clear();
@@ -123,6 +144,8 @@ namespace DarkLord.Dungeon
             {
                 var building = SpawnBuilding(saved.cell, resolve(saved.designId));
                 building.RestoreState(saved.maximumHealth, saved.health, saved.lastPaidRound);
+                building.RestoreSummonStacks(saved.summonStacks);
+                building.RestoreTutorialCapacity(saved.tutorialCapacityUnlocked);
             }
         }
     }

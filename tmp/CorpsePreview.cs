@@ -1,0 +1,15 @@
+var waves=UnityEngine.Object.FindFirstObjectByType<DarkLord.Gameplay.WaveDirector>();
+var grid=UnityEngine.Object.FindFirstObjectByType<DarkLord.Dungeon.DungeonGrid>();
+var station=grid.RecruitmentFacilities.Single();
+waves.ConfigureRun(new DarkLord.Gameplay.NewGameOptions{difficulty=DarkLord.Gameplay.GameDifficulty.Easy});
+waves.Lord.transform.position=station.transform.position+UnityEngine.Vector3.down*2.8f;
+waves.Lord.GetComponent<UnityEngine.Rigidbody2D>().position=waves.Lord.transform.position;
+waves.Harvest.Restore(new[]{new DarkLord.Persistence.CorpseSaveData{position=waves.Lord.transform.position,role=DarkLord.Minions.InvaderRole.Warrior,carried=true},new DarkLord.Persistence.CorpseSaveData{position=grid.CellCenter(grid.Layout.Core+new UnityEngine.Vector2Int(-2,-2)),role=DarkLord.Minions.InvaderRole.Healer}});
+station.RestoreSummonStacks(3);
+var camera=UnityEngine.Camera.main;
+camera.GetComponent<UnityEngine.Rendering.Universal.PixelPerfectCamera>().enabled=false;
+camera.GetComponent<DarkLord.Player.CameraFollow>().enabled=false;
+camera.transform.position=grid.CellCenter(grid.Layout.Core)+UnityEngine.Vector3.back*10;
+camera.orthographicSize=12;camera.ResetWorldToCameraMatrix();camera.ResetProjectionMatrix();
+UnityEngine.ScreenCapture.CaptureScreenshot("tmp/CorpseCarryReview.png");
+return "Corpse carry preview: station stacks 3, starter slime and carried/ground bodies";

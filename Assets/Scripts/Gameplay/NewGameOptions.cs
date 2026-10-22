@@ -12,6 +12,8 @@ namespace DarkLord.Gameplay
         public string saveName = "";
         public bool skipOpening;
 
+        public bool AutomaticWaves => difficulty != GameDifficulty.Easy;
+        public string WaveRuleDescription => AutomaticWaves ? "2~5분 간격 자동 침공 · 적이 남아 있어도 다음 웨이브 진입" : "웨이브 시작 버튼으로 직접 진행";
         public float EnemyCountMultiplier => difficulty == GameDifficulty.Easy ? .75f : difficulty == GameDifficulty.Hard ? 1.35f : difficulty == GameDifficulty.Nightmare ? 1.7f : 1f;
         public float EnemyHealthMultiplier => difficulty == GameDifficulty.Easy ? .75f : difficulty == GameDifficulty.Hard ? 1.4f : difficulty == GameDifficulty.Nightmare ? 1.8f : 1f;
         public float RewardMultiplier => difficulty == GameDifficulty.Easy ? 1.2f : difficulty == GameDifficulty.Hard ? 1.3f : difficulty == GameDifficulty.Nightmare ? 1.6f : 1f;

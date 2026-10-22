@@ -143,6 +143,11 @@ namespace DarkLord.EditorTools
             content.Find("Subtitle").GetComponent<TMP_Text>().text = "당신의 통치를 준비하세요.";
             Place(content, "Save Name Caption", 0, 215, 560, 36, 25);
             Place(content, "Save Name", 0, 159, 560, 64);
+            var nameBackground = content.Find("Save Name").GetComponent<UnityEngine.UI.Image>();
+            nameBackground.sprite = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprtie/UI/Frame/TextBox.png").OfType<Sprite>().Single();
+            nameBackground.color = Color.white;
+            nameBackground.type = UnityEngine.UI.Image.Type.Sliced;
+            nameBackground.pixelsPerUnitMultiplier = .25f;
             Place(content, "Save Name/Text Area", 0, 0, 520, 54);
             Place(content, "Save Name/Text Area/Text", 0, 0, 520, 54, 27);
             Place(content, "Save Name/Text Area/Placeholder", 0, 0, 520, 54, 21);
@@ -165,10 +170,10 @@ namespace DarkLord.EditorTools
         public static void ConfigureDifficultyLayout(GameObject root)
         {
             var content = root.transform.Find("Setup Card");
-            Place(content, "Easy", -145, 22, 270, 15f / .2473684f);
-            Place(content, "Normal", 145, 22, 270, 15f / .2473684f);
-            Place(content, "Hard", -145, -52, 270, 15f / .2473684f);
-            Place(content, "Nightmare", 145, -52, 270, 15f / .2473684f);
+            Place(content, "Easy", -145, 22, 270, 15f / .25f);
+            Place(content, "Normal", 145, 22, 270, 15f / .25f);
+            Place(content, "Hard", -145, -52, 270, 15f / .25f);
+            Place(content, "Nightmare", 145, -52, 270, 15f / .25f);
             foreach (var name in new[] { "Easy", "Normal", "Hard", "Nightmare" })
                 Place(content, name + "/Label", 0, 0, 246, 58, 27);
         }
@@ -177,13 +182,13 @@ namespace DarkLord.EditorTools
         {
             var toggle = root.GetComponentInChildren<UnityEngine.UI.Toggle>(true);
             var row = (RectTransform)toggle.transform;
-            row.sizeDelta = new Vector2(560, 15f / .2473684f);
+            row.sizeDelta = new Vector2(560, 15f / .25f);
             var background = row.GetComponent<UnityEngine.UI.Image>();
             if (background == null) background = row.gameObject.AddComponent<UnityEngine.UI.Image>();
             background.sprite = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprtie/UI/Button/CategoryButton_Type02.png").OfType<Sprite>().Single(s => s.name == "CategoryButton_Type02_1");
             background.color = Color.white;
             background.type = UnityEngine.UI.Image.Type.Sliced;
-            background.pixelsPerUnitMultiplier = .2473684f;
+            background.pixelsPerUnitMultiplier = .25f;
             background.preserveAspect = false;
             background.raycastTarget = true;
             var border = row.GetComponent<UnityEngine.UI.Outline>();

@@ -16,6 +16,9 @@ using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 namespace DarkLord.Tests
 {
+    [Category("CombatRewards")]
+    [Category("OpeningRegression")]
+    [Category("MinionRoster")]
     public sealed class SaveGameTests
     {
         private string directory;
@@ -136,14 +139,18 @@ namespace DarkLord.Tests
             T Find<T>() where T:Component=>roots.SelectMany(r=>r.GetComponentsInChildren<T>(true)).Single();
             var session=Find<GameSaveSession>();var menu=Find<GameMenu>();var dungeon=Find<DungeonGrid>();var summoning=Find<MinionSummoning>();var waves=Find<WaveDirector>();var wallet=Find<CurrencyWallet>();
             Assert.IsTrue(session.Ready);Assert.IsTrue(session.HasUnsavedChanges);
-            summoning.SetOpen(true);Assert.IsTrue(summoning.TrySummon(false));Assert.IsTrue(summoning.TryPlace(dungeon.Layout.Core+Vector2Int.up));
+            var initial = session.Capture(); initial.options = new NewGameOptions { difficulty = GameDifficulty.Easy }; session.Restore(initial);
+            // Current starts already contain four guards; retain one for this focused round trip.
+            foreach (var guard in dungeon.Guards.Skip(1).ToArray()) Assert.IsTrue(summoning.RemoveGuard(guard));
+            Assert.IsTrue(summoning.BeginRelocation(dungeon.Guards.Single()));
+            Assert.IsTrue(summoning.TryPlace(dungeon.Layout.Core + Vector2Int.right * 2 + Vector2Int.up * 2));
             dungeon.Guards.Single().SetBehaviour(DarkLord.Minions.MinionBehaviour.Aggressive);
             var corridor=UnityEditor.AssetDatabase.FindAssets("t:BuildItemDefinition").Select(g=>UnityEditor.AssetDatabase.LoadAssetAtPath<BuildItemDefinition>(UnityEditor.AssetDatabase.GUIDToAssetPath(g))).First(i=>i.constructionKind==ConstructionKind.Corridor);
             var start=dungeon.Layout.Core+Vector2Int.right*2;var end=start+Vector2Int.right*7;
             Assert.AreEqual(ConstructionResult.Success,dungeon.Construction.TryPlanCorridor(start,end,out var section));dungeon.QueueConstruction(section,corridor.prefab);
             var entrance=dungeon.Layout.Core+Vector2Int.left*2;Assert.IsTrue(dungeon.TryPlaceEntrance(entrance));waves.BeginNextWave();
             menu.PauseGame();Assert.IsTrue(session.Save(0,store),session.Message);Assert.IsFalse(session.HasUnsavedChanges);
-            Assert.IsTrue(store.TryRead(0,out var saved,out _));string expected=JsonUtility.ToJson(session.Capture());
+            Assert.IsTrue(store.TryRead(0,out var saved,out var readError), readError);string expected=JsonUtility.ToJson(session.Capture());
             wallet.Add(CurrencyType.Gold,456);summoning.ClearSavedGuards();dungeon.RemoveEntrance();
             Assert.IsTrue(session.HasUnsavedChanges);menu.AskQuit();Assert.AreEqual(GameMenu.ScreenState.Quit,menu.State);menu.CancelQuit();
             session.Restore(saved);

@@ -27,7 +27,7 @@ namespace DarkLord.UI
         public ResourceBuilding Selected { get; private set; }
         public bool IsOpen => window != null && window.activeSelf;
         public string StatsText => (healthBar != null ? healthBar.Label + "\n\n" : "") + (statsText != null ? statsText.text : "");
-        private bool CanInspect => isActiveAndEnabled && Time.timeScale > 0 && dungeon != null && dungeon.isActiveAndEnabled &&
+        private bool CanInspect => (summoning == null || summoning.GetComponent<RunEconomy>()?.BlocksGameplayInput != true) && (summoning == null || summoning.GetComponent<CorpseHarvest>()?.BlocksGameplayInput != true) && isActiveAndEnabled && Time.timeScale > 0 && dungeon != null && dungeon.isActiveAndEnabled &&
             (playerHealth == null || playerHealth.IsAlive) && (construction == null || !construction.BlocksGameplayInput) &&
             (summoning == null || !summoning.BlocksGameplayInput);
         private void Awake()

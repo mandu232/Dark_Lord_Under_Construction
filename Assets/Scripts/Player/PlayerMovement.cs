@@ -42,8 +42,8 @@ namespace DarkLord.Player
         private void Update()
         {
             if (combat == null) combat = GetComponent<PlayerCombat>();
-            if (Time.timeScale == 0 || (health != null && !health.IsAlive) ||
-                (combat != null && combat.IsFinished) ||
+            if (GetComponent<RunEconomy>()?.BlocksGameplayInput == true || GetComponent<CorpseHarvest>() != null && GetComponent<CorpseHarvest>().BlocksGameplayInput || Time.timeScale == 0 || (health != null && !health.IsAlive) ||
+                (combat != null && (combat.IsFinished || combat.BlocksTutorialInput)) ||
                 (summoning != null && summoning.BlocksGameplayInput && (construction == null || !construction.ExpansionMode)))
             {
                 motor.Stop();

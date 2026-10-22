@@ -14,7 +14,14 @@ namespace DarkLord.Dungeon
         [SerializeField] private bool recruitmentFacility;
         [SerializeField, Min(0)] private int roomCapacityBonus;
         public bool IsRecruitmentFacility => recruitmentFacility;
-        public int RoomCapacityBonus => roomCapacityBonus;
+        public int SummonStacks { get; private set; }
+        public bool CanReceiveCorpse => recruitmentFacility && isActiveAndEnabled && !IsRuined && SummonStacks < int.MaxValue;
+        public bool TryAddSummonStack() { if (!CanReceiveCorpse) return false; SummonStacks++; return true; }
+        public bool TrySpendSummonStack() { if (!recruitmentFacility || !isActiveAndEnabled || IsRuined || SummonStacks <= 0) return false; SummonStacks--; return true; }
+        public void RestoreSummonStacks(int value) => SummonStacks = Mathf.Max(0, value);
+        public bool TutorialCapacityUnlocked { get; private set; }
+        public void RestoreTutorialCapacity(bool value) => TutorialCapacityUnlocked = recruitmentFacility && value;
+        public int RoomCapacityBonus => roomCapacityBonus + (TutorialCapacityUnlocked ? 1 : 0);
         [SerializeField] private MinionTrait requiredTrait;
         [SerializeField, Range(0, 200)] private int attackBonusPercent;
         [SerializeField, Range(0, 100)] private int physicalResistanceBonus, magicResistanceBonus;
@@ -24,7 +31,7 @@ namespace DarkLord.Dungeon
         public int ResistanceBonus(DamageType type) => type == DamageType.Magic ? magicResistanceBonus : physicalResistanceBonus;
         public bool Buffs(DarkLord.Minions.MinionController minion) => buffFacility && isActiveAndEnabled && !IsRuined &&
             minion != null && (requiredTrait == MinionTrait.None || (minion.Traits & requiredTrait) == requiredTrait);
-        public string EffectDescription => recruitmentFacility ? "권속 소환소 · 준비 단계에 시설 3유닛 이내에서 마나 20으로 소환\n시설 근처에서 F: 모집 창 · 하수인 선택 후 빈 바닥 클릭: 배치 · 우클릭/Esc: 취소" : roomCapacityBonus > 0 ? $"이 방의 하수인 배치 한도 +{roomCapacityBonus}\n여러 숙소의 효과는 합산됩니다. 파괴 시 효과 중단" : !buffFacility ? $"생산  {(resource == CurrencyType.Gold ? "금화" : resource == CurrencyType.Souls ? "혈액" : "혈석")} +{productionPerRound}\n라운드 클리어마다 지급" :
+        public string EffectDescription => recruitmentFacility ? $"소환 스택 {SummonStacks}개 · 시체 1구당 +1\n시체 옆에서 F로 들어 소환소에 가져오세요.\nF: 소환 창 · 스택 1개로 무작위 하수인 즉시 소환" : roomCapacityBonus > 0 ? $"이 방의 하수인 배치 한도 +{roomCapacityBonus}\n여러 숙소의 효과는 합산됩니다. 파괴 시 효과 중단" : !buffFacility ? $"생산  {(resource == CurrencyType.Gold ? "금화" : resource == CurrencyType.Souls ? "혈액" : "혈석")} +{productionPerRound}\n라운드 클리어마다 지급" :
             $"방 전체 강화 · {(requiredTrait == MinionTrait.None ? "모든 하수인" : requiredTrait == MinionTrait.Magic ? "마법 특성" : requiredTrait == MinionTrait.Acid ? "산성 특성" : "근접 특성")}\n" +
             (attackBonusPercent > 0 ? $"공격력 +{attackBonusPercent}%\n" : "") +
             (physicalResistanceBonus > 0 ? $"물리 내성 +{physicalResistanceBonus}%p\n" : "") +

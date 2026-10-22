@@ -1,0 +1,14 @@
+var waves=UnityEngine.Object.FindFirstObjectByType<DarkLord.Gameplay.WaveDirector>();
+var economy=waves.Economy;
+waves.ConfigureRun(new DarkLord.Gameplay.NewGameOptions{difficulty=DarkLord.Gameplay.GameDifficulty.Easy});
+economy.Wallet.RestoreAmounts(250,40,50);
+waves.Lord.transform.position=economy.CorePosition+UnityEngine.Vector3.left*1.5f;
+waves.Lord.GetComponent<UnityEngine.Rigidbody2D>().position=waves.Lord.transform.position;
+economy.TryInteract();
+economy.TryResearch(DarkLord.Player.TechId.Vitality);economy.TryResearch(DarkLord.Player.TechId.Vitality);
+economy.TryResearch(DarkLord.Player.TechId.Armor);economy.TryResearch(DarkLord.Player.TechId.Power);economy.TryResearch(DarkLord.Player.TechId.Power);
+economy.TryResearch(DarkLord.Player.TechId.WideSlash);economy.TryResearch(DarkLord.Player.TechId.BloodLance);
+economy.TryResearch(DarkLord.Player.TechId.Mend);economy.EquipAttack(DarkLord.Player.AttackStyle.BloodLance);economy.EquipSupport(DarkLord.Player.SupportSpell.Mend);
+var panel=UnityEngine.Object.FindFirstObjectByType<DarkLord.UI.CoreTechPanel>();panel.Select(DarkLord.Player.TechId.BloodLance);
+UnityEngine.ScreenCapture.CaptureScreenshot("tmp/CoreTechnologyReview.png");
+return "Technology tree with acquired stats, attacks and support spells";

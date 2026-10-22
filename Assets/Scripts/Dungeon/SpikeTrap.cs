@@ -14,6 +14,7 @@ namespace DarkLord.Dungeon
         [SerializeField, Range(0, 1)] private float slowMultiplier = 1;
         [SerializeField, Min(0)] private float slowDuration;
         private BoxCollider2D area;
+        private DungeonGrid dungeon;
         private float nextPulse;
         private readonly List<Collider2D> overlaps = new List<Collider2D>();
         private readonly HashSet<ActorHealth> targets = new HashSet<ActorHealth>();
@@ -23,7 +24,7 @@ namespace DarkLord.Dungeon
         public int Damage => damage;
         public float SlowMultiplier => slowMultiplier;
         public float SlowDuration => slowDuration;
-        private void Awake() => area = GetComponent<BoxCollider2D>();
+        private void Awake() { area = GetComponent<BoxCollider2D>(); dungeon = GetComponentInParent<DungeonGrid>(); }
         private void OnEnable() => nextPulse = Time.time;
         private void OnDisable() { overlaps.Clear(); targets.Clear(); }
         private void FixedUpdate() => TryPulse();
@@ -47,6 +48,7 @@ namespace DarkLord.Dungeon
                 if (damage > 0) target.TakeDamage(damage, null, DamageType.Physical);
                 if (target != null && target.IsAlive && slowMultiplier < 1 && slowDuration > 0)
                     target.GetComponent<TopDownMotor>()?.ApplySlow(slowMultiplier, slowDuration);
+                if (target != null && target.IsAlive) dungeon?.Augments?.TrapHit(target);
             }
             return targets.Count;
         }

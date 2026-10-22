@@ -18,6 +18,7 @@ using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.TestTools;
 namespace DarkLord.Tests
 {
+    [Category("MinionRoster")]
     public sealed class ResourceBuildingTests
     {
         private Scene scene;
@@ -96,7 +97,7 @@ namespace DarkLord.Tests
             Assert.AreEqual(original + 4, summoning.RoomCapacity(room));
             Assert.IsTrue(dungeon.BuildingAt(RoomCell).IsRecruitmentFacility);
             Assert.IsTrue(dungeon.NearRecruitmentFacility(dungeon.CellCenter(RoomCell + Vector2Int.up)));
-            Assert.IsFalse(dungeon.NearRecruitmentFacility(dungeon.CellCenter(dungeon.Layout.Core)));
+            Assert.IsTrue(dungeon.NearRecruitmentFacility(dungeon.CellCenter(dungeon.Layout.Core)), "The free starting recruitment facility is now in the main room.");
             yield return null;
         }
         [UnityTest] public IEnumerator RoomAuraTracksOccupantsDestructionRepairAndSave()
@@ -136,8 +137,8 @@ namespace DarkLord.Tests
             Assert.IsTrue(dungeon.BuildingAt(cells[0]).TryRepair(wallet));Assert.AreEqual(boosted,guard.AttackDamage);
             guard.Relocate(dungeon.CellCenter(dungeon.Layout.Core));guard.GetRoomBonuses(out attack,out physical,out magic);
             Assert.AreEqual(0,attack+physical+magic);
-            var saved=session.Capture();Assert.AreEqual(5,saved.dungeon.buildings.Length);session.Restore(saved);Time.timeScale=1;
-            Assert.AreEqual(5,session.Capture().dungeon.buildings.Length);
+            var saved=session.Capture();Assert.AreEqual(6,saved.dungeon.buildings.Length);session.Restore(saved);Time.timeScale=1;
+            Assert.AreEqual(6,session.Capture().dungeon.buildings.Length);
             var core=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ActorHealth>(true)).First(h=>h.name=="Dungeon Core");
             var route=new InvaderDungeonRoute(dungeon,core);
             var position=dungeon.CellCenter(RoomCell+Vector2Int.up+Vector2Int.right);
@@ -224,14 +225,14 @@ namespace DarkLord.Tests
             var cards=view.GetComponentsInChildren<BuildItemButton>();Assert.AreEqual(11,cards.Length);
             Assert.IsTrue(cards.Any(c=>c.Item.name=="MinionRecruitment"));
             Assert.IsTrue(cards.Any(c=>c.Item.name=="MinionQuarters"));
-            var mint=cards.Single(c=>c.Item.name=="GoldMint");view.Choose(mint.Item);
+            var mint=cards.Single(c=>c.Item.name=="GoldMint");dungeon.Inventory.Grant(mint.Item);view.Choose(mint.Item);
             view.ShowDetails(mint.Item);
             Assert.IsFalse(expansion.IsPlacementView);Assert.IsTrue(((GameObject)new UnityEditor.SerializedObject(view).FindProperty("detailsWindow").objectReferenceValue).activeSelf);
-            Assert.IsTrue(expansion.TryBuildOrRepairBuilding(RoomCell));Assert.AreEqual(1920,wallet.Gold);
+            Assert.IsTrue(expansion.TryBuildOrRepairBuilding(RoomCell));Assert.AreEqual(2000,wallet.Gold);Assert.AreEqual(0,dungeon.Inventory.Count(mint.Item));
             dungeon.BuildingAt(RoomCell).Health.TakeDamage(180,invader);
             var deprecatedRepair=UnityEditor.AssetDatabase.LoadAssetAtPath<BuildItemDefinition>("Assets/Data/Construction/RepairBuilding.asset");
             expansion.Select(deprecatedRepair);
-            Assert.IsFalse(expansion.TryBuildOrRepairBuilding(RoomCell));Assert.AreEqual(1920,wallet.Gold);
+            Assert.IsFalse(expansion.TryBuildOrRepairBuilding(RoomCell));Assert.AreEqual(2000,wallet.Gold);
             expansion.SetExpansionMode(false);yield return null;yield return null;
             var info=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<BuildingInspectionPanel>(true)).Single();
             var building=dungeon.BuildingAt(RoomCell);

@@ -1,0 +1,43 @@
+using DarkLord.Player;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace DarkLord.UI
+{
+    // Code-native pixel glyphs keep all 17 research icons crisp at any canvas scale.
+    [RequireComponent(typeof(CanvasRenderer))]
+    public sealed class TechIconGraphic : MaskableGraphic
+    {
+        private static readonly string[] Glyphs={
+            ".##...##./####.####/#########/#########/.#######./..#####../...###.../....#..../.........", // heart
+            "......###/.....####/....####./...####../..####.../.####..../.###...../##.##..../#...#....", // sword
+            "...###.../...###.../...###.../...###.../...###.../..####.../.######../.#######./.........", // boots
+            ".#######./.#######./.###.###./.###.###./..##.##../..#####../...###.../....#..../.........", // armor
+            "..#.#.#../..#####../..#####../...###.../...###.../..#####../.#######./.#######./.........", // core
+            "..#####../.##...##./##..#..##/##.###.##/##..#..##/.##...##./..#####../...###.../....#....",
+            "....#..../...###.../...###.../..#####../..#####../.#######./.#######./..#####../...###...", // blood
+            ".....##../....###../...####../..#####../.#####.../####...../.##.##.../....##.../....#....",
+            "....#..../...###.../..#####../...###.../....#..../....#..../....#..../....#..../....#....", // lance
+            "#...#...#/.#..#..#./..#.#.#../...###.../#########/...###.../..#.#.#../.#..#..#./#...#...#", // snow
+            "...###.../...###.../...###.../#########/#########/#########/...###.../...###.../...###...", // heal
+            "..##.##../...##.##./....##.##/.....##.#/....##.##/...##.##./..##.##../.##.##.../.........", // haste
+            "....#..../.#######./..#####../...###.../#########/...###.../..#####../.#######./....#....", // aegis
+            "...###.../.##...##./.#.....#./#...#...#/#..###..#/#...#...#/.#.....#./.##...##./...###...", // regen
+            "..#####../.#.....#./..#####../...###.../....#..../...###.../..#####../.#######./..#####..", // mana
+            "..#####../.#######./##.#.#.##/##.#.#.##/.#######./..#.#.#../..#####../...#.#.../.........", // skull
+            "....#..../...###.../.#..#..#./..#.#.#../#########/..#.#.#../.#..#..#./...###.../....#...." // pulse
+        };
+        private string[] rows;
+        public void Configure(TechId id){rows=Glyphs[(int)id].Split('/');raycastTarget=false;SetVerticesDirty();}
+        protected override void OnPopulateMesh(VertexHelper mesh)
+        {
+            mesh.Clear();if(rows==null)return;float pixel=Mathf.Min(rectTransform.rect.width,rectTransform.rect.height)/9;
+            for(int y=0;y<9;y++)for(int x=0;x<9;x++)if(rows[y][x]=='#')
+            {
+                Vector2 p=new Vector2((x-4.5f)*pixel,(3.5f-y)*pixel);int k=mesh.currentVertCount;
+                Color tint=(x+y)%4==0?new Color(color.r*.78f,color.g*.65f,color.b*.6f,color.a):color;
+                mesh.AddVert(p,tint,Vector2.zero);mesh.AddVert(p+Vector2.up*pixel,tint,Vector2.zero);mesh.AddVert(p+Vector2.one*pixel,tint,Vector2.zero);mesh.AddVert(p+Vector2.right*pixel,tint,Vector2.zero);mesh.AddTriangle(k,k+1,k+2);mesh.AddTriangle(k,k+2,k+3);
+            }
+        }
+    }
+}

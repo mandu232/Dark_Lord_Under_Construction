@@ -20,13 +20,14 @@ namespace DarkLord.Actors
         public int MagicResistance => Resistance(DamageType.Magic);
         public int BasePhysicalResistance => Mathf.Clamp(physicalResistance, 0, 100);
         public int BaseMagicResistance => Mathf.Clamp(magicResistance, 0, 100);
+        public int TechnologyResistance { get; internal set; }
         private int Resistance(DamageType type)
         {
             var minion = GetComponent<DarkLord.Minions.MinionController>();
             int physical = 0, magic = 0;
             if (minion != null) minion.GetRoomBonuses(out _, out physical, out magic);
             return Mathf.Clamp((type == DamageType.Magic ? magicResistance : physicalResistance) +
-                (type == DamageType.Magic ? magic : physical), 0, 100);
+                (type == DamageType.Magic ? magic : physical) + TechnologyResistance, 0, 100);
         }
 
         public Faction Faction => faction;
@@ -36,6 +37,8 @@ namespace DarkLord.Actors
         public event Action<ActorHealth> Damaged;
         public event Action Died;
         internal Func<ActorHealth, bool> DamageFilter;
+        internal int ScriptedHealthFloor;
+        internal Func<ActorHealth, DamageType, float> DamageMultiplier;
 
         private void Awake() => Initialize();
 
@@ -51,9 +54,10 @@ namespace DarkLord.Actors
             if (amount <= 0 || !IsAlive || !isActiveAndEnabled) return false;
             if (source != null && (!source.IsAlive || source.Faction == faction)) return false;
             if (DamageFilter != null && !DamageFilter(source)) return false;
+            if (DamageMultiplier != null) amount = Mathf.RoundToInt(amount * Mathf.Clamp01(DamageMultiplier(source, damageType)));
             amount = Mathf.RoundToInt(amount * (1f - Resistance(damageType) / 100f));
             if (amount <= 0) return false;
-            currentHealth = Mathf.Max(0, currentHealth - amount);
+            currentHealth = Mathf.Max(Mathf.Min(currentHealth, ScriptedHealthFloor), currentHealth - amount);
             if (currentHealth == 0) Died?.Invoke();
             else Damaged?.Invoke(source);
             return true;

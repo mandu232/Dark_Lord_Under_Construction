@@ -74,7 +74,8 @@ namespace DarkLord.Dungeon
         public void Select(BuildItemDefinition item)
         {
             DemolitionMode = false;
-            selectedItem = item; selectedKind = item.constructionKind; hasSelection = item.available;
+            selectedItem = item; selectedKind = item.constructionKind; hasSelection = item.available && dungeon.Inventory.CanUse(item);
+            if (!hasSelection) { Message = "보유 아이템이 없습니다. 날짜 보상이나 전리품에서 획득하세요."; ClearPreview(); return; }
             Message = "위쪽 던전에서 배치할 위치를 클릭하세요.";
             ClearPreview();
             if (ExpansionMode && item.available && (item.category == BuildCategory.Rooms || item.category == BuildCategory.Corridors)) EnterPlacementView();
@@ -147,10 +148,13 @@ namespace DarkLord.Dungeon
                 return ConstructionResult.Unavailable;
             }
             dungeon.Initialize();
+            if (!dungeon.Inventory.CanUse(selectedItem) || selectedItem == null && DungeonConstruction.IsRoom(selectedKind))
+            { Message = "보유한 방 아이템이 없습니다. 날짜 보상이나 전리품에서 획득하세요."; return ConstructionResult.Unavailable; }
             var result = dungeon.Construction.TryPlan(selectedKind, center, out var section);
             Message = ResultMessage(result);
             if (result != ConstructionResult.Success) return result;
             dungeon.QueueConstruction(section, selectedItem == null ? null : selectedItem.prefab);
+            dungeon.Inventory.Consume(selectedItem);
             Message = "건설을 예약했습니다. 타일이 순서대로 부서지며 확장됩니다.";
             ClearPreview();
             return result;
@@ -180,13 +184,13 @@ namespace DarkLord.Dungeon
             if (!PreparationAllowed) { Message = "생산 시설 건설은 준비 단계에만 가능합니다."; return false; }
             if (!ExpansionMode || DemolitionMode || !hasSelection || selectedItem == null || selectedItem.category != BuildCategory.Buildings || selectedItem.repairTool ||
                 Time.timeScale <= 0 || !isActiveAndEnabled || health != null && !health.IsAlive) return false;
-            var wallet = GetComponent<DarkLord.Player.CurrencyWallet>();
-            bool success = dungeon.TryPlaceBuilding(cell, selectedItem.prefab, wallet);
-            Message = success ? "생산 건물을 설치했습니다. 라운드 클리어 시 자원을 제공합니다." : "완성된 방의 빈 바닥과 금화를 확인하세요. 건물 수리는 우클릭 정보창에서 가능합니다.";
+            bool success = dungeon.TryPlaceBuildingItem(cell, selectedItem);
+            Message = success ? "시설 아이템 1개를 사용해 설치했습니다." : "완성된 방의 빈 바닥과 보유 아이템을 확인하세요. 건물 수리는 우클릭 정보창에서 가능합니다.";
             return success;
         }
         private void Update()
         {
+            if (GetComponent<DarkLord.Player.RunEconomy>()?.BlocksGameplayInput == true) return;
             if (Time.timeScale == 0 || (health != null && !health.IsAlive)) { SetExpansionMode(false); return; }
             if (toggle.WasPressedThisFrame()) SetExpansionMode(!ExpansionMode);
             if (cancel.WasPressedThisFrame() && ExpansionMode) { SetExpansionMode(false); return; }
@@ -218,20 +222,19 @@ namespace DarkLord.Dungeon
             }
             if (selectedItem != null && selectedItem.category == BuildCategory.Buildings)
             {
-                var wallet = GetComponent<DarkLord.Player.CurrencyWallet>();
                 var building = dungeon.BuildingAt(cell);
                 var definition = selectedItem.prefab != null ? selectedItem.prefab.GetComponent<ResourceBuilding>() : null;
-                bool buildingAllowed = !selectedItem.repairTool && definition != null && dungeon.CanPlaceBuilding(cell) && wallet.CanAfford(DarkLord.Player.CurrencyType.Gold, definition.ConstructionCost);
+                bool buildingAllowed = !selectedItem.repairTool && definition != null && dungeon.CanPlaceBuilding(cell) && dungeon.Inventory.CanUse(selectedItem);
                 dungeon.Highlight(cell, buildingAllowed); previewCell = cell;
                 if (building != null)
                     Message = building.IsRuined ? $"{building.DisplayName} 잔해 · 건설 모드를 종료하고 우클릭 정보창에서 수리하세요." : $"{building.DisplayName} · 체력 {building.Health.CurrentHealth}/{building.Health.MaximumHealth} · 매 라운드 +{building.ProductionPerRound}";
-                else Message = "코어를 제외한 완성된 방의 빈 바닥에 설치할 수 있습니다. 금화가 필요합니다.";
+                else Message = "코어를 제외한 완성된 방의 빈 바닥에 설치할 수 있습니다. 시설 아이템 1개가 필요합니다.";
                 if (Time.frameCount > openedFrame && build.WasPressedThisFrame()) TryBuildOrRepairBuilding(cell);
                 return;
             }
             if (selectedItem != null && selectedItem.category == BuildCategory.Traps)
             {
-                bool canPlace = selectedItem.prefab != null && dungeon.CanPlaceTrap(cell);
+                bool canPlace = selectedItem.prefab != null && dungeon.CanPlaceTrap(cell) && dungeon.Inventory.CanUse(selectedItem);
                 if (!PreparationAllowed)
                 {
                     Vector3 position = dungeon.CellCenter(cell);
@@ -246,7 +249,7 @@ namespace DarkLord.Dungeon
                 Message = canPlace ? "좌클릭: 함정 배치" : "완성된 빈 바닥에만 배치할 수 있습니다.";
                 if (canPlace && Time.frameCount > openedFrame && build.WasPressedThisFrame())
                 {
-                    dungeon.TryPlaceTrap(cell, selectedItem.prefab);
+                    dungeon.TryPlaceTrapItem(cell, selectedItem);
                 }
                 return;
             }
@@ -256,8 +259,8 @@ namespace DarkLord.Dungeon
                 return;
             }
             var result = dungeon.Construction.CanPlan(selectedKind, cell);
-            bool allowed = result == ConstructionResult.Success;
-            Message = ResultMessage(result);
+            bool allowed = result == ConstructionResult.Success && dungeon.Inventory.CanUse(selectedItem);
+            Message = dungeon.Inventory.CanUse(selectedItem) ? ResultMessage(result) : "보유한 방 아이템이 없습니다. 날짜 보상이나 전리품에서 획득하세요.";
             if (previewCell != cell || previewAllowed != allowed)
             {
                 dungeon.HighlightArea(DungeonConstruction.Footprint(selectedKind, cell), allowed);
@@ -277,9 +280,9 @@ namespace DarkLord.Dungeon
         {
             if (!corridorStart.HasValue)
             {
-                bool allowed = dungeon.Construction.IsWalkable(cell);
+                bool allowed = dungeon.Construction.CanPlanCorridor(cell, cell) == ConstructionResult.Success;
                 dungeon.Highlight(cell, allowed); previewCell = cell;
-                Message = allowed ? "좌클릭을 누른 채 끝점까지 드래그하세요. 폭 3칸 복도로 연결됩니다." : "기존 방 또는 복도의 바닥에서 드래그를 시작하세요.";
+                Message = allowed ? "좌클릭을 누른 채 끝점까지 드래그하세요. 폭 3칸 복도로 연결됩니다." : "빈 바위나 기존 바닥에서 자유롭게 드래그하세요.";
                 if (allowed && Time.frameCount > openedFrame && build.WasPressedThisFrame()) corridorStart = cell;
                 return;
             }

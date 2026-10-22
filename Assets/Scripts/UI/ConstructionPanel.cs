@@ -165,6 +165,7 @@ namespace DarkLord.UI
         {
             if (demolitionOverlay != null) demolitionOverlay.SetActive(false);
         }
+        public int OwnedCount(BuildItemDefinition item) => expansion != null ? expansion.Dungeon.Inventory.Count(item) : 0;
         public BuildCategory Category => category;
         public string DetailDescription => detailText.text;
 
@@ -200,7 +201,7 @@ namespace DarkLord.UI
         public void SetVisible(bool visible)
         {
             ClearDemolitionPresentation();
-            if (openButton != null) openButton.gameObject.SetActive(!visible);
+            if (openButton != null) openButton.gameObject.SetActive(false);
             if (visible && !requestedVisible) ShowCategory(category);
             AnimateVisibility(visible);
         }
@@ -234,7 +235,7 @@ namespace DarkLord.UI
             expansion?.CancelSelection();
             foreach (var card in cards)
             {
-                card.gameObject.SetActive(IsInCategory(card.Item, value) && !card.Item.repairTool);
+                card.gameObject.SetActive(IsVisibleItem(card.Item));
                 card.SetSelected(false);
             }
             if (itemsScroll != null) itemsScroll.horizontalNormalizedPosition = 0;
@@ -245,12 +246,27 @@ namespace DarkLord.UI
             if (buildingsTab != null) buildingsTab.image.color = TabColor(value == BuildCategory.Buildings);
             ShowSelectedDetails();
         }
+        private bool IsVisibleItem(BuildItemDefinition item) => item != null && item.available && !item.repairTool &&
+            IsInCategory(item, category) && (!ConstructionInventory.RequiresItem(item) || OwnedCount(item) > 0);
+        private void RefreshOwnedItems()
+        {
+            foreach (var card in cards)
+            {
+                bool visible = IsVisibleItem(card.Item);
+                if (card.gameObject.activeSelf != visible) card.gameObject.SetActive(visible);
+            }
+            if (previewed != null && !IsVisibleItem(previewed))
+            {
+                previewed = null;
+                ShowSelectedDetails();
+            }
+        }
         private static bool IsInCategory(BuildItemDefinition item, BuildCategory category) =>
             item.category == category || category == BuildCategory.Rooms && item.category == BuildCategory.Corridors;
         private static Color TabColor(bool active) => active ? new Color32(130, 28, 48, 255) : new Color32(35, 20, 29, 0);
         public void Choose(BuildItemDefinition item)
         {
-            if (expansion == null || !expansion.ExpansionMode || item == null || item.repairTool) return;
+            if (expansion == null || !expansion.ExpansionMode || !IsVisibleItem(item)) return;
             selected = item;
             foreach (var card in cards) card.SetSelected(card.Item == item);
             if (detailsScroll != null) detailsScroll.verticalNormalizedPosition = 1;
@@ -297,12 +313,12 @@ namespace DarkLord.UI
         }
         public void ShowDetails(BuildItemDefinition item)
         {
-            if (item == null || !IsInCategory(item, category) || item.repairTool || !requestedVisible) return;
+            if (!IsVisibleItem(item) || !requestedVisible) return;
             if (previewed != item && detailsScroll != null) detailsScroll.verticalNormalizedPosition = 1;
             previewed = item;
             if (detailsPlaceholder != null) detailsPlaceholder.SetActive(false);
             detailTitle.text = item.displayName;
-            detailText.text = DescribeItem(item) + (item.available ? "" : "\n\n아직 준비 중인 항목입니다.");
+            detailText.text = (ConstructionInventory.RequiresItem(item) ? $"보유 {OwnedCount(item)}개 · 설치 시 1개 소모\n\n" : item.category == BuildCategory.Corridors ? "무제한 설치 · 아이템 소모 없음\n\n" : "") + DescribeItem(item) + (item.available ? "" : "\n\n아직 준비 중인 항목입니다.");
             detailIcon.sprite = item.icon;
             detailIcon.enabled = false;
             if (detailsWindow != null) detailsWindow.SetActive(requestedVisible && window.activeSelf);
@@ -311,7 +327,7 @@ namespace DarkLord.UI
         {
             var facility = item.prefab != null ? item.prefab.GetComponent<ResourceBuilding>() : null;
             if (facility == null) return FormatDescription(item.description);
-            string gold = $"<color=#D7C7B5>필요 골드</color><pos=180><size=40><color=#FFD477>{facility.ConstructionCost} G</color></size>";
+            string gold = $"<color=#D7C7B5>설치 비용</color><pos=180><size=40><color=#FFD477>아이템 1개</color></size>";
             if (facility.IsRecruitmentFacility || facility.RoomCapacityBonus > 0)
                 return gold + "\n\n" + FormatDescription(facility.EffectDescription);
             if (!facility.IsBuffFacility)
@@ -347,6 +363,7 @@ namespace DarkLord.UI
         {
             if (expansion == null || !expansion.ExpansionMode || Time.unscaledTime < nextRefresh) return;
             nextRefresh = Time.unscaledTime + 0.1f;
+            RefreshOwnedItems();
             statusText.text = summoning != null && summoning.IsOpen ? summoning.Message : expansion.Message;
         }
         private void OnDestroy()

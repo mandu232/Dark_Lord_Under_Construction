@@ -17,6 +17,7 @@ namespace DarkLord.Actors
         private struct Slow { public float multiplier, until; }
         private readonly List<Slow> slows = new List<Slow>();
         public ActorHealth BlockedBy { get; private set; }
+        public bool IgnoreActorBlocking { get; set; }
         public Vector2 Facing { get; private set; } = Vector2.down;
         public Vector2 Velocity => body != null ? body.linearVelocity : Vector2.zero;
         public float MoveSpeed => moveSpeed;
@@ -133,7 +134,7 @@ namespace DarkLord.Actors
                 velocity = delta.normalized * Mathf.Min(speed, remaining / Time.fixedDeltaTime);
             }
             float step = velocity.magnitude * Time.fixedDeltaTime;
-            if (step > 0 && health != null && health.IsAlive)
+            if (step > 0 && health != null && health.IsAlive && !IgnoreActorBlocking)
             {
                 Vector2 direction = velocity.normalized;
                 foreach (var other in ActiveMotors)

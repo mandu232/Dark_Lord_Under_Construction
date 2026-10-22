@@ -110,7 +110,7 @@ namespace DarkLord.UI
             bool visible = exchange != null && exchange.isActiveAndEnabled && Time.timeScale > 0 &&
                 !waves.IsFinished && waves.Lord.IsAlive && exchange.IsOpen && exchange.SelectedStation == exchange.NearbyStation &&
                 (construction == null || !construction.ExpansionMode) && (summoning == null || !summoning.IsOpen);
-            prompt.gameObject.SetActive(exchange != null && !exchange.IsOpen && exchange.NearbyStation != null && Time.timeScale > 0 && !waves.IsFinished && waves.Lord.IsAlive &&
+            prompt.gameObject.SetActive(exchange != null && waves.CanUseFacilities && !exchange.IsOpen && exchange.NearbyStation != null && Time.timeScale > 0 && !waves.IsFinished && waves.Lord.IsAlive &&
                 (construction == null || !construction.ExpansionMode) && (summoning == null || !summoning.IsOpen));
             if (prompt.gameObject.activeSelf) prompt.text = exchange.NearbyStation.IsReady ? "F · 연성 결과물 수령창 열기" : "F · 중앙 연성 장치 사용";
             window.SetActive(visible);

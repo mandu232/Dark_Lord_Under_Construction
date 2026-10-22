@@ -44,8 +44,8 @@ namespace DarkLord.Player
                 return station != null && station.isActiveAndEnabled && Vector2.Distance(transform.position, station.transform.position) <= InteractionDistance ? station : null;
             }
         }
-        private bool CanUse => isActiveAndEnabled && wallet != null && health != null && health.IsAlive && Time.timeScale > 0 &&
-            waves != null && !waves.IsFinished && (construction == null || !construction.ExpansionMode) && (summoning == null || !summoning.IsOpen);
+        private bool CanUse => (GetComponent<RunEconomy>() == null || !GetComponent<RunEconomy>().BlocksGameplayInput) && (GetComponent<CorpseHarvest>() == null || !GetComponent<CorpseHarvest>().BlocksGameplayInput) && isActiveAndEnabled && wallet != null && health != null && health.IsAlive && Time.timeScale > 0 &&
+            waves != null && waves.CanUseFacilities && (construction == null || !construction.ExpansionMode) && (summoning == null || !summoning.IsOpen);
         private void Awake()
         {
             interact = new InputAction("Interact with alchemy station", InputActionType.Button, "<Keyboard>/f");
