@@ -1,0 +1,5 @@
+cut=1 font=34 lines=2 height=68.34/137.808 overflow=False
+cut=2 font=34 lines=2 height=68.34/137.808 overflow=False
+cut=3 font=34 lines=2 height=68.34/137.808 overflow=False
+cut=4 font=34 lines=2 height=68.34/137.808 overflow=False
+cut=5 font=34 lines=2 height=68.34/137.808 overflow=False

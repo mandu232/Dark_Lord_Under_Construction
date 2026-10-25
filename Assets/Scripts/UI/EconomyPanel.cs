@@ -27,6 +27,12 @@ namespace DarkLord.UI
             window.anchorMin = window.anchorMax = window.pivot = new Vector2(1, .5f);
             var skin = Resources.Load<RewardUiSkin>("WaveRewardSkin");
             var plate = window.gameObject.AddComponent<UnityEngine.UI.Image>(); plate.sprite = skin != null ? skin.cardFrame : null; plate.color = Color.white;
+            var portraitRect = Rect("Nibble merchant portrait", window, new Vector2(-24, 0), new Vector2(360, 440));
+            portraitRect.anchorMin = portraitRect.anchorMax = Vector2.zero; portraitRect.pivot = new Vector2(1, 0);
+            var portrait = portraitRect.gameObject.AddComponent<UnityEngine.UI.RawImage>(); portrait.raycastTarget = false;
+            portrait.texture = Resources.Load<Texture2D>("Story/Portraits/NibbleDungeon");
+            portrait.enabled = portrait.texture != null;
+            if (portrait.texture != null) portraitRect.sizeDelta = new Vector2(440f * portrait.texture.width / portrait.texture.height, 440);
             title = Label("Facility title", window, "", 28, new Vector2(0, -42), new Vector2(440, 42));
             summary = Label("Facility summary", window, "", 18, new Vector2(0, -104), new Vector2(430, 110));
             for (int i = 0; i < 4; i++)
@@ -84,7 +90,7 @@ namespace DarkLord.UI
             merchantHint.text=$"고블린 상인 · {Mathf.CeilToInt(economy.MerchantRemaining)}초"+(economy.NearMerchant&&waves.CanUseFacilities?"\n[F] 거래하기":"");
             WorldHint(merchantHint,economy.MerchantPosition+Vector3.up*2.1f,active&&waves.CanUseFacilities&&economy.MerchantPresent&&!economy.IsOpen);
             if(!window.gameObject.activeInHierarchy)return;
-            title.text="고블린 떠돌이 상인";
+            title.text="니블 틱 · 던전 컴퍼니";
             summary.text=$"보유 금화 {economy.Wallet.Gold} · 남은 시간 {Mathf.CeilToInt(economy.MerchantRemaining)}초\n상품별 1회 구매 · 방문할 때마다 새 재고\n구매한 건설 아이템은 건설창에서 사용";
             for(int i=0;i<4;i++)
             {

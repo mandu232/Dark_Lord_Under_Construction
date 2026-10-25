@@ -1,0 +1,13 @@
+0/0 speaker=로웬 · 현상금 사냥꾼 lines=2 font=30 height=62.7/112 overflow=False
+0/1 speaker=릴리아 · 흑관성의 새 주인 lines=2 font=30 height=62.7/112 overflow=False
+1/0 speaker=로웬 · 현상금 사냥꾼 lines=2 font=30 height=62.7/112 overflow=False
+1/1 speaker=릴리아 · 흑관성의 새 주인 lines=1 font=30 height=30.01/112 overflow=False
+2/0 speaker=로웬 · 현상금 사냥꾼 lines=2 font=30 height=62.7/112 overflow=False
+2/1 speaker=릴리아 · 흑관성의 새 주인 lines=2 font=30 height=62.7/112 overflow=False
+2/2 speaker=로웬 · 현상금 사냥꾼 lines=2 font=30 height=62.7/112 overflow=False
+2/3 speaker=릴리아 · 흑관성의 새 주인 lines=2 font=30 height=62.7/112 overflow=False
+3/0 speaker=로웬 · 현상금 사냥꾼 lines=2 font=30 height=62.7/112 overflow=False
+3/1 speaker=릴리아 · 흑관성의 새 주인 lines=2 font=30 height=62.7/112 overflow=False
+3/2 speaker=로웬 · 현상금 사냥꾼 lines=2 font=30 height=62.7/112 overflow=False
+3/3 speaker=릴리아 · 흑관성의 새 주인 lines=3 font=30 height=95.39/112 overflow=False
+4/0 speaker=릴리아 · 흑관성의 새 주인 lines=3 font=30 height=95.39/112 overflow=False

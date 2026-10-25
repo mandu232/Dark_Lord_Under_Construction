@@ -9,6 +9,7 @@ using UnityEngine;
 
 namespace DarkLord.Gameplay
 {
+    public enum TutorialPortraitMood { Neutral, Determined, Alarmed, Aftermath }
     [Serializable] public sealed class TutorialSaveData
     {
         public bool active;
@@ -70,34 +71,41 @@ namespace DarkLord.Gameplay
         {
             public readonly bool Rowen;
             public readonly string Text;
-            public DialogueEntry(bool rowen, string text) { Rowen = rowen; Text = text; }
+            public readonly bool RowenPresent;
+            public readonly TutorialPortraitMood LiliaMood, RowenMood;
+            public DialogueEntry(bool rowen, string text, bool rowenPresent = true,
+                TutorialPortraitMood liliaMood = TutorialPortraitMood.Determined, TutorialPortraitMood rowenMood = TutorialPortraitMood.Neutral)
+            { Rowen = rowen; Text = text; RowenPresent = rowenPresent; LiliaMood = liliaMood; RowenMood = rowenMood; }
         }
         private static readonly DialogueEntry[][] Conversations = {
             new[] {
-                new DialogueEntry(true, "마왕이여, 오늘 여기서 끝내겠다!"),
-                new DialogueEntry(false, "로웬… 감히 내 영역을 짓밟았겠다.\n권속들이여, 저 침입자들을 맞이하라!")
+                new DialogueEntry(true, "도면까지 펴 놨군. 여기가 네 성이라도 된 줄 알아?\n마왕을 쓰러뜨린 건 나야. 그 코어는 내 몫이고."),
+                new DialogueEntry(false, "네가 부수고 간 곳에서 우린 아직 살아.\n코어도 이 성도 원래 우리 것이었어.", rowenMood: TutorialPortraitMood.Determined)
             },
             new[] {
-                new DialogueEntry(true, "토벌대여, 전진하라! 저 코어를 부수면 마왕의 지배도 끝이다!"),
-                new DialogueEntry(false, "내 코어에는 손대지 못한다. 권속들이여, 이 방을 지켜라!\nWASD 이동 · 좌클릭 공격 · Space 회피 · 하수인을 꾹 눌러 방에 배치")
+                new DialogueEntry(true, "말로 해선 안 되겠군. 앞줄, 길을 열어!\n코어는 건드리지 마. 저 녀석부터 치운다.", rowenMood: TutorialPortraitMood.Determined),
+                new DialogueEntry(false, "다들 방 안쪽을 지켜. 통로는 내가 막을 테니.\nWASD 이동 · 좌클릭 공격 · Space 회피 · 하수인을 꾹 눌러 방에 배치", rowenMood: TutorialPortraitMood.Determined)
             },
             new[] {
-                new DialogueEntry(true, "더 밀어붙여라! …잠깐, 이 진동은 뭐지?"),
-                new DialogueEntry(false, "천장이 버티지 못한다! 권속들이여, 시작방으로 물러서라!"),
-                new DialogueEntry(true, "낙석이다! 전원 후퇴하라! 대열을 유지해!"),
-                new DialogueEntry(false, "입구 쪽 복도가 무너진다… 이 틈에 추격을 끊을 수 있겠군.")
+                new DialogueEntry(true, "조금만 더 밀어! 코어가 바로 앞이다!\n…잠깐. 천장에 금이 가는데?", liliaMood: TutorialPortraitMood.Alarmed, rowenMood: TutorialPortraitMood.Alarmed),
+                new DialogueEntry(false, "지지대가 벌어졌어… 모두 시작방으로 물러나!\n다친 녀석 두고 오지 말고!", liliaMood: TutorialPortraitMood.Alarmed, rowenMood: TutorialPortraitMood.Alarmed),
+                new DialogueEntry(true, "무너진다! 전부 뒤로!\n짐 버려! 거기 깔리면 코어고 뭐고 끝이야!", liliaMood: TutorialPortraitMood.Alarmed, rowenMood: TutorialPortraitMood.Alarmed),
+                new DialogueEntry(false, "…발소리가 멀어졌어. 우리도 더 안쪽으로 가자.\n벽엔 기대지 마. 저 균열도 벌어지고 있으니까.", false, TutorialPortraitMood.Alarmed)
             },
             new[] {
-                new DialogueEntry(true, "길이 막혔군… 마왕, 이것으로 끝났다고 생각하지 마라!"),
-                new DialogueEntry(false, "아직 내 던전은 살아 있다. 오늘은 여기까지다, 로웬."),
-                new DialogueEntry(true, "기억해라. 다음에는 네 코어까지 반드시 도달하겠다!"),
-                new DialogueEntry(false, "숨 돌릴 틈은 벌었다. 남은 복도 끝을 새 입구로 삼자.\n이제 시체를 F로 들어 소환소에 운반하고, 그 힘으로 새 권속을 불러내겠다.")
+                new DialogueEntry(true, "젠장, 또 길이 막혔군. 이걸 치우다간 날 새겠어.\n철수한다. 도구부터 다시 챙겨 와.", liliaMood: TutorialPortraitMood.Neutral, rowenMood: TutorialPortraitMood.Aftermath),
+                new DialogueEntry(false, "그만 포기하고 돌아가지?\n남의 집을 이 꼴로 만들어 놓고, 뭘 더 가져가겠다고.", rowenMood: TutorialPortraitMood.Aftermath),
+                new DialogueEntry(true, "잠깐 맡겨 두는 거야. 네 것이 된 줄 알지 마.\n내 코어는 내가 도로 가져갈 테니까.", rowenMood: TutorialPortraitMood.Determined),
+                new DialogueEntry(false, "…이제 갔네. 남의 집 부숴 놓고 끝까지 자기 거라네.\n루브, 도면 다시 펴 줘. 남은 복도 끝을 입구로 쓰자.\n소환소도 손봐야겠어. 시체는 F로 옮기면 돼. 일손이 필요하니까.", false, TutorialPortraitMood.Aftermath)
             },
-            new[] { new DialogueEntry(false, "새 권속이 깨어났군! 시체를 회수하고 소환하는 법을 익혔다.\n로웬이 돌아오기 전에 던전을 다시 세우자.") }
+            new[] { new DialogueEntry(false, "깨어났어? 이쪽으로 와. 거긴 아직 위험해.\n루브 혼자 맡던 일도 이제 나눌 수 있겠네.\n…그럼, 아까 그 도면부터 마저 보자. 입구는 다시 짜야겠어.", false, TutorialPortraitMood.Aftermath) }
         };
         public static int DialogueLineCount(int page) => Conversations[Mathf.Clamp(page, 0, 4)].Length;
         public bool SpeakerIsRowen => Conversations[dialoguePage][dialogueLine].Rowen;
-        public string SpeakerName => SpeakerIsRowen ? "로웬 · 토벌대 지휘관" : "마왕 · 플레이어";
+        public bool RowenInConversation => Conversations[dialoguePage][dialogueLine].RowenPresent;
+        public TutorialPortraitMood LiliaMood => Conversations[dialoguePage][dialogueLine].LiliaMood;
+        public TutorialPortraitMood RowenMood => Conversations[dialoguePage][dialogueLine].RowenMood;
+        public string SpeakerName => SpeakerIsRowen ? "로웬 · 현상금 사냥꾼" : "릴리아 · 흑관성의 새 주인";
         public Sprite SpeakerSprite => (SpeakerIsRowen ? prefab.GetComponentInChildren<SpriteRenderer>() : waves.Lord.GetComponentInChildren<SpriteRenderer>())?.sprite;
         public string Heading => DialogueOpen ? SpeakerName : Elapsed < BattleEnds ? "강적 로웬과 토벌대의 침공" : Elapsed < CollapseAt ? "경고 · 복도가 무너집니다!" : "붕괴 · 추격이 끊겼습니다";
         public string Instruction => Conversations[dialoguePage][dialogueLine].Text;

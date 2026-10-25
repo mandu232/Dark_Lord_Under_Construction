@@ -1,0 +1,13 @@
+0/0 speaker=로웬 · 현상금 사냥꾼 lines=2 font=28 height=58.52/136 overflow=False Lilia=Determined Rowen=Neutral RowenPresent=True
+0/1 speaker=릴리아 · 흑관성의 새 주인 lines=2 font=28 height=58.52/136 overflow=False Lilia=Determined Rowen=Determined RowenPresent=True
+1/0 speaker=로웬 · 현상금 사냥꾼 lines=2 font=28 height=58.52/136 overflow=False Lilia=Determined Rowen=Determined RowenPresent=True
+1/1 speaker=릴리아 · 흑관성의 새 주인 lines=1 font=28 height=28.01/136 overflow=False Lilia=Determined Rowen=Determined RowenPresent=True
+2/0 speaker=로웬 · 현상금 사냥꾼 lines=2 font=28 height=58.52/136 overflow=False Lilia=Alarmed Rowen=Alarmed RowenPresent=True
+2/1 speaker=릴리아 · 흑관성의 새 주인 lines=2 font=28 height=58.52/136 overflow=False Lilia=Alarmed Rowen=Alarmed RowenPresent=True
+2/2 speaker=로웬 · 현상금 사냥꾼 lines=2 font=28 height=58.52/136 overflow=False Lilia=Alarmed Rowen=Alarmed RowenPresent=True
+2/3 speaker=릴리아 · 흑관성의 새 주인 lines=2 font=28 height=58.52/136 overflow=False Lilia=Alarmed Rowen=Neutral RowenPresent=False
+3/0 speaker=로웬 · 현상금 사냥꾼 lines=2 font=28 height=58.52/136 overflow=False Lilia=Neutral Rowen=Aftermath RowenPresent=True
+3/1 speaker=릴리아 · 흑관성의 새 주인 lines=2 font=28 height=58.52/136 overflow=False Lilia=Determined Rowen=Aftermath RowenPresent=True
+3/2 speaker=로웬 · 현상금 사냥꾼 lines=2 font=28 height=58.52/136 overflow=False Lilia=Determined Rowen=Determined RowenPresent=True
+3/3 speaker=릴리아 · 흑관성의 새 주인 lines=3 font=28 height=89.03/136 overflow=False Lilia=Aftermath Rowen=Neutral RowenPresent=False
+4/0 speaker=릴리아 · 흑관성의 새 주인 lines=3 font=28 height=89.03/136 overflow=False Lilia=Aftermath Rowen=Neutral RowenPresent=False
