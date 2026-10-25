@@ -1,1 +1,0 @@
-var t=typeof(UnityEditor.TestTools.TestRunner.Api.TestRunnerApi);var m=t.GetMethod("IsRunActive",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);return new {paused=UnityEditor.EditorApplication.isPaused,playing=UnityEditor.EditorApplication.isPlaying,pending=UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode,runActive=m.Invoke(null,null)};

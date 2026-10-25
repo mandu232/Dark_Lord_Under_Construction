@@ -1,3 +1,0 @@
-var waves=UnityEngine.Object.FindFirstObjectByType<DarkLord.Gameplay.WaveDirector>();
-System.Collections.IEnumerator Capture(){yield return new UnityEngine.WaitForSecondsRealtime(.8f);UnityEngine.ScreenCapture.CaptureScreenshot("tmp/RowenPortraitDialogue.png");yield return new UnityEngine.WaitForSecondsRealtime(.15f);waves.Tutorial.NextDialogue();yield return new UnityEngine.WaitForSecondsRealtime(2);UnityEngine.ScreenCapture.CaptureScreenshot("tmp/PlayerPortraitDialogue.png");}
-waves.StartCoroutine(Capture());return new {speaker=waves.Tutorial.SpeakerName,portrait=waves.Tutorial.SpeakerSprite.name};

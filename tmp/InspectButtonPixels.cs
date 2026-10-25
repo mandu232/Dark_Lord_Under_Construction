@@ -1,3 +1,0 @@
-var root = UnityEditor.PrefabUtility.LoadPrefabContents("Assets/Prefabs/UI/MainMenu/NewGameSetupPanel.prefab");
-try { return string.Join("\n",root.GetComponentsInChildren<UnityEngine.UI.Image>(true).Where(i=> new[]{"Back","Begin","Easy","Normal","Hard","Nightmare","Skip Opening","Selection Frame"}.Contains(i.name)).Select(i=> i.name+" sprite="+(i.sprite == null ? "null" : i.sprite.name+" rect="+i.sprite.rect+" border="+i.sprite.border)+" size="+i.rectTransform.sizeDelta+" type="+i.type+" ppu="+i.pixelsPerUnitMultiplier+" scale="+i.transform.localScale)); }
-finally { UnityEditor.PrefabUtility.UnloadPrefabContents(root); }
