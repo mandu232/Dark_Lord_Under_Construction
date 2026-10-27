@@ -384,6 +384,7 @@ namespace DarkLord.UI
         private void AcquirePause()
         {
             if (ownsPause) return;
+            DarkLord.Player.PlayerHitStop.CancelActive();
             ownsPause = true;
             previousTimeScale = Time.timeScale;
             var tutorial = FindTutorialPause();

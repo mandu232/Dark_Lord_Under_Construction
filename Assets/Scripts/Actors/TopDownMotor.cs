@@ -14,6 +14,9 @@ namespace DarkLord.Actors
         private ActorHealth health;
         private Transform approachTarget;
         private float stoppingDistance;
+        private Vector2 knockbackDirection;
+        private float knockbackUntil;
+        private float knockbackSpeed;
         private struct Slow { public float multiplier, until; }
         private readonly List<Slow> slows = new List<Slow>();
         public ActorHealth BlockedBy { get; private set; }
@@ -123,6 +126,16 @@ namespace DarkLord.Actors
             if (body != null) body.linearVelocity = Vector2.zero;
         }
 
+        public void ApplyKnockback(Vector2 direction, float speed = 1.6f, float duration = .10f)
+        {
+            if (!isActiveAndEnabled || direction.sqrMagnitude < .0001f || speed <= 0 || duration <= 0 ||
+                float.IsNaN(speed) || float.IsInfinity(speed) || float.IsNaN(duration) || float.IsInfinity(duration)) return;
+            knockbackDirection = direction.normalized;
+            knockbackSpeed = speed;
+            knockbackUntil = Time.time + duration;
+        }
+        public void ClearKnockback() => knockbackUntil = 0;
+
         private void FixedUpdate()
         {
             BlockedBy = null;
@@ -134,6 +147,8 @@ namespace DarkLord.Actors
                 float remaining = Mathf.Max(0, delta.magnitude - stoppingDistance);
                 velocity = delta.normalized * Mathf.Min(speed, remaining / Time.fixedDeltaTime);
             }
+            if (Time.time < knockbackUntil)
+                velocity = knockbackDirection * knockbackSpeed;
             float step = velocity.magnitude * Time.fixedDeltaTime;
             if (step > 0 && health != null && health.IsAlive && !IgnoreActorBlocking)
             {
@@ -183,6 +198,7 @@ namespace DarkLord.Actors
         }
         private void OnDisable()
         {
+            knockbackUntil = 0;
             slows.Clear();
             Stop();
             ActiveMotors.Remove(this);

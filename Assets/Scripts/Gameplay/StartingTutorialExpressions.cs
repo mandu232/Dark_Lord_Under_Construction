@@ -14,10 +14,11 @@ namespace DarkLord.Gameplay
         {
             if (!isActiveAndEnabled || !Active || !DialogueOpen || waves == null ||
                 waves.Lord == null || !waves.Lord.IsAlive)
-            { ReleasePlayerExpression(); return; }
+            { ReleasePlayerExpression(); storyAnimation?.SetDialogueIdle(false); return; }
             if (storyAnimation == null) storyAnimation = waves.Lord.GetComponent<ActorAnimation>();
             if (storyAnimator == null) storyAnimator = waves.Lord.GetComponent<Animator>();
             if (storyAnimation == null || storyAnimator == null) return;
+            storyAnimation.SetDialogueIdle(true);
             int line = dialoguePage * 100 + dialogueLine;
             if (line != expressionLine)
             {

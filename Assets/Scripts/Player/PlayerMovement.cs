@@ -65,7 +65,8 @@ namespace DarkLord.Player
             else if (combat != null && combat.IsAttacking)
             {
                 motor.Stop();
-                presentation.Present(combat.IsMeleeAttacking ? ActorState.Attack : ActorState.Idle, motor.Facing);
+                presentation.Present(combat.IsMeleeAttacking ? ActorState.Attack : ActorState.Idle, motor.Facing,
+                    combat.UsesSecondSlash ? 1 : 0);
                 return;
             }
             motor.Move(direction);

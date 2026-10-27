@@ -64,6 +64,7 @@ namespace DarkLord.Minions
         }
         private void Interrupt(ActorHealth source)
         {
+            if (controller.IsStaggerImmune) return;
             // Casting can be interrupted; a committed charge is countered by dodging or slowing.
             if (Action == InvaderAction.Healing) { Cancel(); nextAbility = Time.time + 2; }
         }

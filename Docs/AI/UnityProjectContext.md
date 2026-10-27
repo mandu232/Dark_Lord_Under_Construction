@@ -201,3 +201,68 @@ Verified 2026-10-15 while implementing new-game setup.
 - 2026-10-27: Player Walk now uses the new 30-frame Walk.png (5 directions, 6 frames each, 16 PPU); Idle/story expressions and projected shadows preserved. Removed 92 obsolete Vampire/LegacyRed sprites and associated animation/controller assets after dependency checks. See PlayerIdleCollection.md. PlayMode DialogueInteractionTests 11/11 passed.
 
 - 2026-10-27: Normal player walk is 30% faster (2.925 units/sec); carrying a corpse applies a 0.65 movement multiplier, stacks with other slow/bonus effects, follows save restoration and also slows carried dodges. Unloaded dodge keeps its prior speed. Walk animation scales with actual velocity using 2.925 as nominal speed. CorpseRecruitmentTests 15/15 passed.
+
+### 2026-10-27 — Alternating player slash animations
+- Successful basic Slash attacks alternate Slash_1 and Slash_2 (second, fourth, sixth attacks); rejected inputs and technology attacks do not advance the sequence. PlayerCombat owns the variant and PlayerMovement preserves it during attack presentation.
+- Attack2 uses five directional clips, six frames at 14 fps, with horizontal mirroring for eight directions. Slash_2 import matches Slash_1 at 16 PPU, Point filtering, uncompressed.
+- Validation: Unity compilation passed; PlayerDirectionalAnimationTests passed 4/4, including alternation, rejected inputs, all eight directions, frame progress and idle recovery. Controller validation: 30 clips, 168 sprite keys, no missing references.
+
+
+### 2026-10-27 — No construction or minion placement during combat
+- Construction mode and minion handling require the preparation phase and the existing facility/combat permission; active waves, remaining invaders, tutorial combat, and blocked tutorial input prevent entry. Entering combat closes construction and cancels held minion relocation, restoring camera and held state; already queued construction is unchanged.
+- Validation: Unity compiled without errors. The combat interaction PlayMode regression failed before the fix and passed afterward. A further transition regression was added, but the test runner subsequently reported zero tests for repeat runs, so its result is unverified.
+
+
+### 2026-10-27 — Combat impact feedback
+- Successful damage to a character produces a brief white sprite-silhouette overlay, and a living character is pushed away from its attacker for 0.10 scaled seconds using the existing Rigidbody2D motor and wall collisions. No knockback is applied to buildings or source-less damage; blocked damage has no effects.
+- Player-dealt or player-received damage triggers a 45 ms real-time, 95% slow-motion hit stop and a subtle decaying camera shake, rate-limited for multi-target hits. Hit stop restores the prior time scale and yields ownership before menu, tutorial dialogue, or wave reward pauses.
+- Validation: Unity compiled without errors; ActorPhysicsDepthTests passed 8/8, including knockback against a wall and hit-stop pause ownership. An additional render-texture PlayMode test verified the white flash and original color restoration. A subsequent CoreCombatLoopTests invocation reported zero tests, so it was not counted as a pass.
+
+
+### 2026-10-27 — Opening retreat and enemy poise
+- Rowen and every living opening soldier switch from combat to the existing entrance retreat after the warning dialogue. Their moving contact gently pushes nearby living player/guard motors sideways without damage; the Rigidbody2D still collides with terrain. Reaching the exit disables the actor; a soldier killed during retreat still plays death and leaves its normal corpse. Restoring a retreat reconstructs movement from saved positions.
+- Invaders gain 1.5 scaled seconds of stagger/knockback immunity on the third damaging hit in a chain; the chain resets after 2 seconds without damage. Immune enemies retain attacks or healing casts, while damage and hit flashes remain. Allies keep their previous reactions. Optional validated poise fields preserve the short-lived state in normal wave and tutorial saves; older saves default to zero.
+- Validation: Unity compilation passed. Retreat collision, eight surviving soldiers, and save restoration passed in PlayMode. Four poise-specific tests passed for uninterrupted attacks, recovery, healer casts, and save/legacy restoration. ActorBehaviourTests reported 16/18: the unrelated guard-policy assertion and player movement speed expectation failed. A broader Enemy-filter run also failed AreaTrapTests when its construction card was unavailable during tutorial; other 8 tests passed. Test runner returned zero results on a later tutorial-suite attempt.
+
+
+### 2026-10-27 — Rowen boss health and wave status display
+- Opening boss is named 서풍의 용사 로웬 and has 20,000 real health with no hidden 1 HP floor. Tutorial saves mark his identity explicitly; old 900-HP saves migrate to 20,000 while preserving damage already dealt. Story retreat still uses the direct Rowen reference.
+- A top-center non-interactive boss health bar appears during the opening battle, updates from current health, and hides during dialogue, retreat, death and after the encounter. The former top-center prologue/wave status graphics are hidden without disabling their wave controller or forecast.
+- Validation: Unity compiled cleanly; the PlayMode boss bar test passed for health changes, visible/hidden states, explicit and legacy save restoration, zero-health death and hidden old status graphics. The actual screen-space HUD was visually inspected at 1280x720. A later full tutorial suite invocation returned zero tests and was not counted as a pass.
+
+
+### 2026-10-27 — Rowen boss bar entrance
+- When Rowen first appears, his existing top-center bar fades and slides into place with a damped shake and subtle scale-in. The red fill sweeps left-to-right over 1.35 scaled seconds toward current health, with a brief gold glint and thin gold accent. Numeric health remains authoritative, including damage during the reveal. Gameplay pause and hit stop pause the animation; reopening the same actor's HUD does not restart it.
+- Validation: Unity compiled successfully; BossEntranceRevealsCurrentHealthAndPausesWithGameplay passed for partial fill, pause, damage during intro, final health, settled position and glint cleanup. An actual 1280x720 midpoint HUD capture was visually inspected. A later legacy boss-bar test rerun returned zero tests from the Unity test runner, so it is not counted as a pass.
+
+
+### 2026-10-27 — Character idle animation during tutorial dialogue
+- Tutorial dialogue still pauses scaled gameplay, combat and physics, but living scene characters temporarily display their idle animation using unscaled time. Their previous Animator state, movement parameters, trigger requests, update mode and speed are restored when dialogue closes; opening the pause menu freezes these idles. The player keeps story expressions and continues directional idle after an expression finishes.
+- Validation: Unity compilation succeeded. DialoguePlaysCharacterIdlesWhileCombatIsFrozenThenResumes passed after the final change, checking 13 enemies/guards, frozen position/health/time, menu pause, and resumption. StoryExpressionsFollowEveryLineWhileGameplayIsPausedAndRestoreAfterDialogue passed for all dialogue lines, idle continuation, menu pause and save restore before the final StopExpression safeguard.
+
+
+### 2026-10-27 — Corpse draw order
+- All invader corpses, including carried and restored corpses, use the actor sorting layer at order -30001: below the ActorDepthSorting range (-30000..30000) and above dungeon tile artwork (-31998 and below).
+- Validation: Unity compilation succeeded; CorpsesStayBehindCharactersOnGroundCarriedAndAfterRestore passed for actor depth extremes, carrying, dropping, restore and floor ordering.
+
+
+### 2026-10-27 — Smooth camera while carrying corpses
+- The URP PixelPerfectCamera used 1/16-world-unit camera snapping, causing visibly coarse jumps at the reduced diagonal carrying speed. CameraFollow temporarily switches PixelSnapping to screen-pixel snapping (GridSnapping.None) while a corpse is carried, leaving zoom/crop unchanged, then restores the original setting on drop, delivery or follow disable. Other pre-existing snapping modes are not overridden.
+- Validation: Unity compiled successfully. DiagonalCorpseCarryUsesSmoothCameraPixelsAndRestoresCameraSettings reproduced the coarse 0.0625-unit step before the fix and passed afterward with real keyboard input, fine camera steps, camera/corpse alignment, follow disable/re-enable, save restoration, and drop restoration.
+
+
+### 2026-10-27 — Fluid corpse dragging
+- CorpseHarvest now pulls the carried body behind the player's actual movement with a damped follow and bounded 1.3-unit tether; direction changes transition smoothly, stops settle, pickup preserves the nearby position and dropping leaves the body where it is. Large player teleports re-anchor the body; saved carried positions restore without snapping to a fixed offset. Facility absorption still uses the body position.
+- Validation: Unity compiled successfully. CorpseTrailsMovementTurnsSmoothlyAndKeepsPositionOnDropAndRestore passed for real keyboard movement, reverse turns, pause, save, drop, teleport and facility absorption. After a final state-cleanup change, the diagonal-carry camera regression also passed.
+
+
+### 2026-10-27 — Drag dust and keyboard placement pan
+- Dragging a corpse emits small fading ground dust only while it moves; eight reusable sprites bound allocation, never intercept input, and render behind the corpse. The effect pauses with scaled time and clears on disable or scene destruction.
+- While moving a minion, the existing Player/Move action (WASD, arrows or configured bindings) pans the zoomed camera alongside edge scrolling. Combined input is normalized, stays within map bounds, and stops on cancel, release, pause or disable without moving the lord.
+- Validation: Unity compilation succeeded; dust movement/fade/cleanup PlayMode test passed before the final initial-particle visual initialization. RelocationEdgePanTests passed 5/5 after an initially timing-sensitive edge-scroll failure passed on isolated retry and full rerun. A 1280x720 live dragging screenshot was visually inspected; Editor returned to Edit Mode.
+
+
+### 2026-10-28 — Relocation preview follows pointer while camera pans
+- The URP PixelPerfectCamera updates its snapped view matrix during rendering, after the relocation Update/LateUpdate raycasts. PlacementCameraPan now synchronizes the same snapped view immediately after camera movement and when restoring it, so the current frame's pointer projection, held preview and drop location agree.
+- Validation: Unity compiled successfully. A real-input PlayMode regression reproduced up to 4.24 pixels of preview drift before the fix; afterward, the pixel-perfect WASD pan test stays within 1.5 pixels while moving the pointer and successfully drops into the displayed room. All six RelocationEdgePanTests passed, including mouse edge pan, cancellation, bounds and pause.
+

@@ -213,6 +213,7 @@ namespace DarkLord.Gameplay
 
         private void PauseForReward()
         {
+            DarkLord.Player.PlayerHitStop.CancelActive();
             rewardTimeScale = Time.timeScale > 0 ? Time.timeScale : 1;
             Time.timeScale = 0;
         }

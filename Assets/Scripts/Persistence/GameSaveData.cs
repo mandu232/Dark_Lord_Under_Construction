@@ -70,6 +70,7 @@ namespace DarkLord.Persistence
     }
     [Serializable] public sealed class TrapSaveData { public Vector2Int cell; public string designId; public float cooldownRemaining; }
     [Serializable] public sealed class MovementSlowSaveData { public float multiplier, remaining; }
+    [Serializable] public sealed class EnemyPoiseSaveData { public int hits; public float recoveryRemaining, immunityRemaining; }
     [Serializable] public sealed class MinionSaveData
     {
         public Vector3 position;
@@ -84,6 +85,8 @@ namespace DarkLord.Persistence
         public int invasionWave;
         public MinionSupportSaveData support;
         public AugmentStatusSaveData augmentStatus;
+        public EnemyPoiseSaveData poise;
+        public bool tutorialBoss;
     }
     [Serializable] public sealed class WaveSaveData
     {
@@ -331,6 +334,10 @@ namespace DarkLord.Persistence
             var t = actor.tactics;
             if (!Enum.IsDefined(typeof(MinionRole), actor.role) || !InRange(actor.attackCooldown, 10))
                 throw new InvalidDataException("하수인 병과 기록이 올바르지 않습니다.");
+            var poise = actor.poise;
+            if (poise != null && (poise.hits < 0 || poise.hits > 2 || !InRange(poise.recoveryRemaining, 2f) ||
+                !InRange(poise.immunityRemaining, 1.5f) || poise.hits > 0 && poise.immunityRemaining > 0))
+                throw new InvalidDataException("적 강인도 기록이 올바르지 않습니다.");
             var support = actor.support;
             if (support != null && ((actor.role != MinionRole.BloodSupport && (support.casting || support.remaining > 0 || support.cooldown > 0 || support.targetPosition != Vector2.zero)) || !InRange(support.remaining, .55f) || !InRange(support.cooldown, 3.5f) ||
                 !Finite(support.targetPosition) || !support.casting && support.remaining > 0))

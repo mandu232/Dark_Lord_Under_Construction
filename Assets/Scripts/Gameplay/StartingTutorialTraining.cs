@@ -59,9 +59,9 @@ namespace DarkLord.Gameplay
         private void UpdateRetreat()
         {
             if (Elapsed < BattleEnds || collapsed || DialogueOpen) return;
-            var rowen = Rowen;
-            if (rowen != null && rowen.GetComponent<OpeningRetreat>() == null)
-                rowen.gameObject.AddComponent<OpeningRetreat>().Begin(dungeon);
+            foreach (var enemy in enemies)
+                if (enemy != null && enemy.gameObject.activeInHierarchy && enemy.IsAlive && enemy.GetComponent<OpeningRetreat>() == null)
+                    enemy.gameObject.AddComponent<OpeningRetreat>().Begin(dungeon);
         }
     }
 }

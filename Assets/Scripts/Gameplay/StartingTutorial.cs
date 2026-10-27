@@ -51,6 +51,7 @@ namespace DarkLord.Gameplay
     public sealed partial class StartingTutorial : MonoBehaviour
     {
         public const float BattleEnds = 38, CollapseAt = 42, FinishAt = 49;
+        public const int RowenMaximumHealth = 20000;
         private WaveDirector waves;
         private DungeonGrid dungeon;
         private MinionController prefab;
@@ -58,6 +59,7 @@ namespace DarkLord.Gameplay
         private readonly List<ActorHealth> protectedActors = new List<ActorHealth>();
         private int spawned;
         private bool collapsed;
+        private ActorHealth rowen;
         private int dialoguePage, dialogueLine, dialogueClickFrame = -1;
         public bool DialogueOpen { get; private set; }
         public bool BlocksPlayerInput => Active && DialogueOpen || dialogueClickFrame == Time.frameCount;
@@ -65,7 +67,7 @@ namespace DarkLord.Gameplay
         public bool Active { get; private set; }
         public bool Collapsed => collapsed;
         public bool Cinematic => Active && Elapsed >= BattleEnds && Elapsed < CollapseAt + 2;
-        public ActorHealth Rowen => enemies.FirstOrDefault(e => e != null && e.Health.MaximumHealth == 900)?.Health;
+        public ActorHealth Rowen => rowen;
         public int LivingEnemies => enemies.Count(e => e != null && e.IsAlive);
         private readonly struct DialogueEntry
         {
@@ -106,9 +108,9 @@ namespace DarkLord.Gameplay
         public bool RowenInConversation => Conversations[dialoguePage][dialogueLine].RowenPresent;
         public TutorialPortraitMood LiliaMood => Conversations[dialoguePage][dialogueLine].LiliaMood;
         public TutorialPortraitMood RowenMood => Conversations[dialoguePage][dialogueLine].RowenMood;
-        public string SpeakerName => SpeakerIsRowen ? "로웬 · 현상금 사냥꾼" : "릴리아 · 흑관성의 새 주인";
+        public string SpeakerName => SpeakerIsRowen ? "로웬 · 서풍의 용사" : "릴리아 · 흑관성의 새 주인";
         public Sprite SpeakerSprite => (SpeakerIsRowen ? prefab.GetComponentInChildren<SpriteRenderer>() : waves.Lord.GetComponentInChildren<SpriteRenderer>())?.sprite;
-        public string Heading => DialogueOpen ? SpeakerName : Elapsed < BattleEnds ? "강적 로웬과 토벌대의 침공" : Elapsed < CollapseAt ? "경고 · 복도가 무너집니다!" : "붕괴 · 추격이 끊겼습니다";
+        public string Heading => DialogueOpen ? SpeakerName : Elapsed < BattleEnds ? "서풍의 용사 로웬과 토벌대의 침공" : Elapsed < CollapseAt ? "경고 · 복도가 무너집니다!" : "붕괴 · 추격이 끊겼습니다";
         public PlayerExpression? DialogueExpression => Conversations[dialoguePage][dialogueLine].Expression;
         public string Instruction => Conversations[dialoguePage][dialogueLine].Text;
 
@@ -174,16 +176,22 @@ namespace DarkLord.Gameplay
         private void Spawn(MinionSaveData saved, bool boss)
         {
             var actor = Instantiate(prefab, saved != null ? saved.position : dungeon.CellCenter(dungeon.Layout.Entrance) + Vector3.up * ((spawned % 3 - 1) * .4f), Quaternion.identity, transform);
-            actor.name = boss ? "강적 로웬" : "로웬의 토벌대 병사";
-            actor.Health.Configure(Faction.Invader, boss ? 900 : 65);
-            if (boss) actor.Health.ScriptedHealthFloor = 1;
-            if (saved != null) actor.Health.RestoreHealth(saved.maximumHealth, saved.health);
+            actor.name = boss ? "서풍의 용사 로웬" : "로웬의 토벌대 병사";
+            actor.Health.Configure(Faction.Invader, boss ? RowenMaximumHealth : 65);
+            if (saved != null)
+            {
+                int maximum = boss && saved.maximumHealth == 900 ? RowenMaximumHealth : saved.maximumHealth;
+                int health = boss && saved.maximumHealth == 900 ? maximum - (saved.maximumHealth - saved.health) : saved.health;
+                actor.Health.RestoreHealth(maximum, health);
+            }
+            if (boss) rowen = actor.Health;
             var tactics = actor.GetComponent<InvaderTactics>() ?? actor.gameObject.AddComponent<InvaderTactics>();
             tactics.Configure(boss ? InvaderRole.Charger : spawned % 3 == 0 ? InvaderRole.Shieldbearer : InvaderRole.Warrior);
             if (saved != null)
             {
                 tactics.RestoreSave(saved.tactics);
                 actor.RestoreAttackCooldown(saved.attackCooldown);
+                actor.RestorePoise(saved.poise);
                 actor.GetComponent<TopDownMotor>().RestoreSlows(saved.slows);
             }
             if (boss) actor.transform.localScale *= 1.4f;
@@ -215,7 +223,9 @@ namespace DarkLord.Gameplay
         public TutorialSaveData Capture() => !Active ? null : new TutorialSaveData {
             active = true, elapsed = Elapsed, spawned = spawned, collapsed = collapsed,
             trainingVersion = 1, trainingStep = TrainingStep, dialogueVersion = 3, dialoguePage = dialoguePage, dialogueLine = dialogueLine, dialogueOpen = DialogueOpen,
-            enemies = enemies.Where(e => e != null && e.IsAlive).Select(SaveSnapshots.Actor).ToArray()
+            enemies = enemies.Where(e => e != null && e.IsAlive).Select(e => {
+                var saved = SaveSnapshots.Actor(e); saved.tutorialBoss = e.Health == rowen; return saved;
+            }).ToArray()
         };
         public void Restore(TutorialSaveData data)
         {
@@ -229,7 +239,8 @@ namespace DarkLord.Gameplay
             TrainingStep = data.trainingVersion == 1 ? data.trainingStep : TutorialTrainingStep.None;
             if (!Active) return;
             ProtectDefenders(); BindTrainingEvents();
-            if (!collapsed && data.enemies != null) foreach (var saved in data.enemies) Spawn(saved, saved.maximumHealth == 900);
+            if (!collapsed && data.enemies != null) foreach (var saved in data.enemies)
+                Spawn(saved, saved.tutorialBoss || saved.maximumHealth == 900 || saved.maximumHealth == RowenMaximumHealth);
             SynchronizeDialoguePause();
         }
         private void ReleaseProtection()
@@ -242,6 +253,7 @@ namespace DarkLord.Gameplay
             ReleaseDialoguePause();
             foreach (var enemy in enemies) if (enemy != null) { enemy.gameObject.SetActive(false); Destroy(enemy.gameObject); }
             enemies.Clear();
+            rowen = null;
         }
         private void OnDisable() { ReleasePlayerExpression(); ReleaseDialoguePause(); }
         private void OnDestroy() { ReleasePlayerExpression(); UnbindTrainingEvents(); ReleaseProtection(); ReleaseDialoguePause(); }

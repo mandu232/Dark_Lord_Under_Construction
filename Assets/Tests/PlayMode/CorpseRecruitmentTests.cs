@@ -73,6 +73,116 @@ namespace DarkLord.Tests
             waves.Harvest.Restore(new[] { new CorpseSaveData { position = position, role = InvaderRole.Warrior, carried = carried } });
             return waves.Harvest.Corpses.Single();
         }
+        [UnityTest] public IEnumerator DragDustAppearsOnlyDuringMovementAndFadesAfterStopping()
+        {
+            EnableInput(); keyboard = InputSystem.AddDevice<Keyboard>();
+            Vector3 start = grid.CellCenter(grid.Layout.Core + new Vector2Int(-2, -2));
+            MoveLord(start); var corpse = Remains(start + Vector3.left * .8f);
+            Assert.IsTrue(waves.Harvest.TryPickup(corpse));
+            var root = scene.GetRootGameObjects().Single(g => g.name == "Corpse drag dust");
+            var particles = root.GetComponentsInChildren<SpriteRenderer>(true);
+            Assert.AreEqual(8, particles.Length); Assert.IsFalse(particles.Any(p => p.enabled));
+            Assert.IsEmpty(root.GetComponentsInChildren<Collider2D>(true));
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.D));
+            yield return new WaitForSecondsRealtime(.55f);
+            Assert.IsTrue(particles.Any(p => p.enabled && p.color.a > 0));
+            Assert.IsTrue(particles.All(p => p.sortingOrder < corpse.Visual.sortingOrder));
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState());
+            yield return new WaitForSecondsRealtime(.65f);
+            Assert.IsFalse(particles.Any(p => p.enabled));
+            waves.Harvest.DropCarried(); yield return new WaitForSecondsRealtime(.15f);
+            Assert.IsFalse(particles.Any(p => p.enabled));
+        }
+        [UnityTest] public IEnumerator DiagonalCorpseCarryUsesSmoothCameraPixelsAndRestoresCameraSettings()
+        {
+            EnableInput(); keyboard = InputSystem.AddDevice<Keyboard>();
+            var camera = Find<Camera>();
+            var pixelCamera = camera.GetComponents<Behaviour>().First(b => b.GetType().Name == "PixelPerfectCamera");
+            Assert.IsNotNull(pixelCamera);
+            var snapProperty = pixelCamera.GetType().GetProperty("gridSnapping");
+            var original = snapProperty.GetValue(pixelCamera);
+            Assert.AreEqual("PixelSnapping", original.ToString());
+            MoveLord(grid.CellCenter(grid.Layout.Core + new Vector2Int(-2, -2)));
+            var corpse = Remains(waves.Lord.transform.position);
+            Assert.IsTrue(waves.Harvest.TryPickup(corpse));
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.S, Key.A));
+            yield return new WaitForSecondsRealtime(.15f);
+            yield return new WaitForEndOfFrame();
+            Assert.IsTrue(waves.Harvest.Carried == corpse);
+            Assert.That(waves.Lord.GetComponent<TopDownMotor>().Velocity.x, Is.LessThan(-.1f));
+            Assert.That(waves.Lord.GetComponent<TopDownMotor>().Velocity.y, Is.LessThan(-.1f));
+            float spacing = ((Vector3)pixelCamera.GetType().GetMethod("RoundToPixel").Invoke(pixelCamera, new object[] { new Vector3(.04f, 0, 0) })).x;
+            Assert.That(spacing, Is.GreaterThan(0).And.LessThan(.0625f), "Carrying should use screen-pixel camera steps instead of whole art pixels.");
+            Assert.That(Vector2.Distance(camera.transform.position, waves.Lord.transform.position), Is.LessThan(.001f));
+            Assert.That(Vector2.Distance(corpse.transform.position, waves.Lord.transform.position), Is.LessThanOrEqualTo(1.31f));
+            var follow = camera.GetComponent<CameraFollow>();
+            follow.enabled = false; Assert.AreEqual(original, snapProperty.GetValue(pixelCamera));
+            follow.enabled = true; yield return null; yield return new WaitForEndOfFrame();
+            Assert.AreEqual("None", snapProperty.GetValue(pixelCamera).ToString());
+            var saved = session.Capture(); session.Restore(saved); yield return null; yield return new WaitForEndOfFrame();
+            Assert.IsNotNull(waves.Harvest.Carried);
+            Assert.AreEqual("None", snapProperty.GetValue(pixelCamera).ToString());
+            waves.Harvest.DropCarried(); yield return null; yield return new WaitForEndOfFrame();
+            Assert.AreEqual(original, snapProperty.GetValue(pixelCamera));
+        }
+        [UnityTest] public IEnumerator CorpseTrailsMovementTurnsSmoothlyAndKeepsPositionOnDropAndRestore()
+        {
+            EnableInput(); keyboard = InputSystem.AddDevice<Keyboard>();
+            Vector3 start = grid.CellCenter(grid.Layout.Core + new Vector2Int(-2, -2));
+            MoveLord(start);
+            var corpse = Remains(start + Vector3.left * .8f);
+            Assert.IsTrue(waves.Harvest.TryPickup(corpse));
+            Assert.That(Vector2.Distance(corpse.transform.position, start + Vector3.left * .8f), Is.LessThan(.01f));
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.D));
+            yield return new WaitForSecondsRealtime(.35f); yield return new WaitForEndOfFrame();
+            Assert.Less(corpse.transform.position.x, waves.Lord.transform.position.x - .25f);
+            Assert.That(Vector2.Distance(corpse.transform.position, waves.Lord.transform.position), Is.LessThanOrEqualTo(1.31f));
+            Vector3 beforeTurn = corpse.transform.position;
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.A));
+            yield return null; yield return new WaitForEndOfFrame();
+            Assert.Less(Vector2.Distance(corpse.transform.position, beforeTurn), .3f, "Turning should not snap the body to the other side.");
+            yield return new WaitForSecondsRealtime(.5f); yield return new WaitForEndOfFrame();
+            Assert.Greater(corpse.transform.position.x, waves.Lord.transform.position.x);
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState());
+            yield return new WaitForSecondsRealtime(.35f); yield return new WaitForEndOfFrame();
+            Time.timeScale = 0; Vector3 paused = corpse.transform.position;
+            yield return new WaitForSecondsRealtime(.15f);
+            Assert.That(Vector2.Distance(paused, corpse.transform.position), Is.LessThan(.001f));
+            Time.timeScale = 1;
+            var saved = session.Capture(); Vector3 savedPosition = corpse.transform.position;
+            session.Restore(saved); corpse = waves.Harvest.Carried;
+            Assert.IsNotNull(corpse); Assert.That(Vector2.Distance(savedPosition, corpse.transform.position), Is.LessThan(.01f));
+            Vector3 dropped = corpse.transform.position;
+            waves.Harvest.DropCarried(); yield return null;
+            Assert.That(Vector2.Distance(dropped, corpse.transform.position), Is.LessThan(.001f));
+            MoveLord(start); corpse = Remains(start);
+            Assert.IsTrue(waves.Harvest.TryPickup(corpse));
+            station = grid.RecruitmentFacilities.Single();
+            MoveLord(station.transform.position + Vector3.down * 1.2f);
+            yield return null; yield return null;
+            Assert.IsNull(waves.Harvest.Carried);
+            Assert.IsTrue(corpse.Consumed);
+            Assert.AreEqual(1, station.SummonStacks);
+        }
+        [UnityTest] public IEnumerator CorpsesStayBehindCharactersOnGroundCarriedAndAfterRestore()
+        {
+            var corpse = Remains(waves.Lord.transform.position);
+            var actorGroup = waves.Lord.GetComponent<UnityEngine.Rendering.SortingGroup>();
+            var original = waves.Lord.transform.position;
+            foreach (float y in new[] { -2000f, 0f, 2000f })
+            {
+                MoveLord(new Vector3(original.x, y, original.z));
+                yield return null;
+                Assert.AreEqual(actorGroup.sortingLayerID, corpse.Visual.sortingLayerID);
+                Assert.Less(corpse.Visual.sortingOrder, actorGroup.sortingOrder);
+            }
+            Assert.Greater(corpse.Visual.sortingOrder, -31998, "Corpses remain visible above the dungeon artwork.");
+            MoveLord(original); corpse.SetHeld(true); yield return null;
+            Assert.Less(corpse.Visual.sortingOrder, actorGroup.sortingOrder);
+            corpse.SetHeld(false); Assert.Less(corpse.Visual.sortingOrder, actorGroup.sortingOrder);
+            corpse = Remains(original, true); yield return null;
+            Assert.Less(corpse.Visual.sortingOrder, actorGroup.sortingOrder);
+        }
         [Test] public void FreshRunHasCoreRecruitmentAndFourFreeSlimesWithoutRegrantingRemovedGuards()
         {
             Assert.AreSame(grid.Construction.RoomAt(grid.Layout.Core), grid.Construction.RoomAt(station.Cell));
@@ -241,7 +351,7 @@ namespace DarkLord.Tests
             Assert.AreSame(corpse, waves.Harvest.Carried); Assert.IsFalse(summoning.IsOpen);
             InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.A)); yield return null; yield return new WaitForSeconds(.15f);
             Assert.AreSame(corpse, waves.Harvest.Carried); Assert.IsFalse(waves.Harvest.BlocksGameplayInput);
-            Assert.Less(Vector2.Distance(corpse.transform.position, waves.Lord.transform.position), .7f);
+            Assert.LessOrEqual(Vector2.Distance(corpse.transform.position, waves.Lord.transform.position), 1.31f);
             InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.F)); yield return null;
             Assert.IsNull(waves.Harvest.Carried); Assert.IsFalse(summoning.IsOpen);
         }

@@ -22,6 +22,7 @@ namespace DarkLord.Actors
         private static readonly int[] ActionTriggers = { AttackId, Animator.StringToHash("Attack_2"),
             Animator.StringToHash("Block"), HitId, DieId };
         private ActorState? lastState;
+        private int lastAttackVariant;
         private RuntimeAnimatorController lastController;
         private int speedType;
         private int speedId = Animator.StringToHash("speed");
@@ -31,9 +32,28 @@ namespace DarkLord.Actors
         private float expressionEndsAt;
         private bool expressionUsesUnscaledTime;
         private AnimatorUpdateMode previousUpdateMode;
+        private AnimatorUpdateMode dialogueIdlePreviousMode;
+        private bool dialogueIdle;
         private bool expressionOneCycle;
         private int expressionStateId;
         public bool IsExpressionPlaying => expressionPlaying;
+
+        public void SetDialogueIdle(bool active)
+        {
+            if (animator == null || dialogueIdle == active) return;
+            if (active)
+            {
+                dialogueIdlePreviousMode = animator.updateMode;
+                dialogueIdle = true;
+                if (!expressionPlaying) animator.updateMode = AnimatorUpdateMode.UnscaledTime;
+            }
+            else
+            {
+                if (expressionPlaying) StopExpression();
+                dialogueIdle = false;
+                animator.updateMode = dialogueIdlePreviousMode;
+            }
+        }
 
         // Story/Timeline callers own when to request an expression. No input bindings.
         // A negative duration plays one cycle; zero holds until StopExpression.
@@ -65,7 +85,7 @@ namespace DarkLord.Actors
         {
             if (!expressionPlaying) return;
             expressionPlaying = false;
-            if (animator != null) animator.updateMode = previousUpdateMode;
+            if (animator != null) animator.updateMode = dialogueIdle ? AnimatorUpdateMode.UnscaledTime : previousUpdateMode;
             lastState = null;
             if (animator != null && animator.isActiveAndEnabled && animator.runtimeAnimatorController != null &&
                 animator.HasState(0, Animator.StringToHash("Base Layer.Locomotion.Idle_Default")))
@@ -90,7 +110,7 @@ namespace DarkLord.Actors
             return state.fullPathHash == expressionStateId && state.normalizedTime >= 1f;
         }
 
-        private void OnDisable() => StopExpression();
+        private void OnDisable() { StopExpression(); SetDialogueIdle(false); }
 
         private void Awake()
         {
@@ -98,7 +118,7 @@ namespace DarkLord.Actors
             if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         }
 
-        public void Present(ActorState state, Vector2 facing)
+        public void Present(ActorState state, Vector2 facing, int attackVariant = 0)
         {
             if (expressionPlaying)
             {
@@ -127,7 +147,7 @@ namespace DarkLord.Actors
                 animator.SetFloat(FacingXId, Mathf.Abs(direction.x));
                 animator.SetFloat(FacingYId, direction.y);
             }
-            if (lastState == state) return;
+            if (lastState == state && (state != ActorState.Attack || lastAttackVariant == attackVariant)) return;
             if (useActionParameters)
             {
                 animator.SetFloat(MoveSpeedId, state == ActorState.Run ? 1f : 0f);
@@ -150,7 +170,8 @@ namespace DarkLord.Actors
             }
             else
             {
-                int id = Animator.StringToHash("Base Layer." + state);
+                int id = Animator.StringToHash(state == ActorState.Attack && attackVariant == 1
+                    ? "Base Layer.Attack2" : "Base Layer." + state);
                 if (animator.HasState(0, id))
                 {
                     animator.Play(id, 0, 0);
@@ -161,6 +182,7 @@ namespace DarkLord.Actors
                     animator.Play("Base Layer.Dead", 0, 0);
             }
             lastState = state;
+            lastAttackVariant = attackVariant;
         }
 
         public static Vector2 QuantizeFacing(Vector2 facing)

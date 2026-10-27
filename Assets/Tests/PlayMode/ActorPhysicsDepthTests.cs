@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DarkLord.Actors;
 using DarkLord.Minions;
+using DarkLord.Player;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -124,6 +125,88 @@ namespace DarkLord.Tests
             yield return null;
             Assert.IsTrue(Physics2D.GetIgnoreCollision(a, b));
             Assert.That(Vector3.Distance(first.transform.position, second.transform.position), Is.LessThan(0.01f));
+        }
+
+        [UnityTest]
+        public IEnumerator DamageFlashesAndPushesCharactersWithoutMovingThroughWalls()
+        {
+            var attacker = Actor(new Vector2(1000, 1000));
+            attacker.GetComponent<ActorHealth>().Configure(Faction.Invader, 100);
+            var victim = Actor(new Vector2(1001, 1000));
+            victim.gameObject.AddComponent<SpriteRenderer>();
+            var wall = new GameObject("Knockback wall"); objects.Add(wall);
+            wall.transform.position = new Vector3(1001.39f, 1000);
+            wall.AddComponent<BoxCollider2D>().size = new Vector2(.1f, 2);
+            Physics2D.SyncTransforms();
+            Assert.IsTrue(victim.GetComponent<ActorHealth>().TakeDamage(5, attacker.GetComponent<ActorHealth>()));
+            var overlay = victim.transform.Find("Hit flash").GetComponent<SpriteRenderer>();
+            Assert.IsTrue(overlay.enabled);
+            Assert.That(overlay.sharedMaterial.shader.name, Is.EqualTo("DarkLord/Sprites/Hit Flash"));
+            yield return new WaitForSeconds(.25f);
+            Assert.IsFalse(overlay.enabled);
+            Assert.That(victim.GetComponent<Rigidbody2D>().position.x, Is.InRange(1001.02f, 1001.11f));
+        }
+
+        [UnityTest]
+        public IEnumerator PlayerHitsSlowTimeBrieflyAndPauseCanTakeOwnership()
+        {
+            float originalScale = Time.timeScale;
+            var player = Actor(new Vector2(1000, 1000));
+            player.gameObject.AddComponent<PlayerCombat>();
+            var enemy = Actor(new Vector2(1001, 1000));
+            enemy.GetComponent<ActorHealth>().Configure(Faction.Invader, 100);
+            try
+            {
+                Assert.IsTrue(enemy.GetComponent<ActorHealth>().TakeDamage(5, player.GetComponent<ActorHealth>()));
+                Assert.That(Time.timeScale, Is.EqualTo(originalScale * .05f).Within(.001f));
+                yield return new WaitForSecondsRealtime(.1f);
+                Assert.That(Time.timeScale, Is.EqualTo(originalScale).Within(.001f));
+                yield return new WaitForSecondsRealtime(.11f);
+                Assert.IsTrue(player.GetComponent<ActorHealth>().TakeDamage(5, enemy.GetComponent<ActorHealth>()));
+                Assert.That(Time.timeScale, Is.LessThan(originalScale));
+                PlayerHitStop.CancelActive();
+                Time.timeScale = 0;
+                yield return new WaitForSecondsRealtime(.1f);
+                Assert.AreEqual(0, Time.timeScale);
+            }
+            finally { PlayerHitStop.CancelActive(); Time.timeScale = originalScale; }
+        }
+
+        [UnityTest]
+        public IEnumerator HitFlashRendersWhiteThenRestoresSpriteColor()
+        {
+            var attacker = Actor(new Vector2(1000, 1000));
+            attacker.GetComponent<ActorHealth>().Configure(Faction.Invader, 100);
+            var victim = Actor(new Vector2(1001, 1000));
+            var texture = new Texture2D(2, 2);
+            texture.SetPixels(new[] { Color.red, Color.red, Color.red, Color.red }); texture.Apply();
+            var sprite = Sprite.Create(texture, new Rect(0, 0, 2, 2), new Vector2(.5f, .5f), 1);
+            victim.gameObject.AddComponent<SpriteRenderer>().sprite = sprite;
+            var cameraObject = new GameObject("Hit flash camera"); objects.Add(cameraObject);
+            cameraObject.transform.position = new Vector3(1001, 1000, -10);
+            var camera = cameraObject.AddComponent<Camera>();
+            camera.orthographic = true; camera.orthographicSize = 2; camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = Color.black;
+            var render = new RenderTexture(64, 64, 24); camera.targetTexture = render;
+            var pixels = new Texture2D(1, 1);
+            try
+            {
+                Assert.IsTrue(victim.GetComponent<ActorHealth>().TakeDamage(5, attacker.GetComponent<ActorHealth>()));
+                yield return new WaitForEndOfFrame();
+                RenderTexture.active = render; pixels.ReadPixels(new Rect(32, 32, 1, 1), 0, 0); pixels.Apply(); RenderTexture.active = null;
+                var white = pixels.GetPixel(0, 0);
+                Assert.That(white.r, Is.GreaterThan(.9f)); Assert.That(white.g, Is.GreaterThan(.9f)); Assert.That(white.b, Is.GreaterThan(.9f));
+                yield return new WaitForSeconds(.15f);
+                yield return new WaitForEndOfFrame();
+                RenderTexture.active = render; pixels.ReadPixels(new Rect(32, 32, 1, 1), 0, 0); pixels.Apply(); RenderTexture.active = null;
+                var red = pixels.GetPixel(0, 0);
+                Assert.That(red.r, Is.GreaterThan(.9f)); Assert.That(red.g, Is.LessThan(.1f)); Assert.That(red.b, Is.LessThan(.1f));
+            }
+            finally
+            {
+                RenderTexture.active = null; camera.targetTexture = null;
+                Object.DestroyImmediate(pixels); Object.DestroyImmediate(render); Object.DestroyImmediate(sprite); Object.DestroyImmediate(texture);
+            }
         }
 
         [UnityTest]

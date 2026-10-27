@@ -23,6 +23,7 @@ namespace DarkLord.Tests
         private Camera camera;
         private CameraFollow follow;
         private Mouse mouse;
+        private Keyboard keyboard;
         private InputSettings originalSettings,settings;
         private HideFlags flags;
         private float previousTime;
@@ -42,9 +43,63 @@ namespace DarkLord.Tests
         [UnityTearDown]public IEnumerator Cleanup()
         {
             Time.timeScale=1;if(scene.IsValid()&&scene.isLoaded)yield return SceneManager.UnloadSceneAsync(scene);
-            if(mouse!=null)InputSystem.RemoveDevice(mouse);if(originalSettings!=null){InputSystem.settings=originalSettings;originalSettings.hideFlags=flags;}if(settings!=null)Object.DestroyImmediate(settings);Time.timeScale=previousTime;
+            if(mouse!=null)InputSystem.RemoveDevice(mouse);if(keyboard!=null)InputSystem.RemoveDevice(keyboard);if(originalSettings!=null){InputSystem.settings=originalSettings;originalSettings.hideFlags=flags;}if(settings!=null)Object.DestroyImmediate(settings);Time.timeScale=previousTime;
         }
         private void Pointer(Vector2 point,bool held=true)=>InputSystem.QueueStateEvent(mouse,new MouseState{position=point,buttons=(ushort)(held?1:0)});
+        [UnityTest] public IEnumerator HeldPreviewStaysUnderPointerDuringWasdPanWithPixelPerfectCamera()
+        {
+            keyboard=InputSystem.AddDevice<Keyboard>();
+            var pixels=camera.GetComponents<Behaviour>().First(b=>b.GetType().Name=="PixelPerfectCamera");
+            pixels.enabled=true;
+            var guard=grid.Guards.First();
+            Assert.IsTrue(summoning.BeginRelocation(guard,true));
+            Vector2 cursor=camera.pixelRect.center;
+            Pointer(cursor);yield return null;yield return null;
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.W,Key.D));
+            var visual=summoning.GetComponent<MinionRelocationVisuals>();
+            float worst=0;var start=camera.transform.position;
+            for(int i=0;i<25;i++)
+            {
+                yield return new WaitForEndOfFrame();
+                Assert.IsTrue(summoning.IsRelocating);Assert.IsNotNull(visual.GroundShadow);
+                Vector3 screen=camera.WorldToScreenPoint(visual.GroundShadow.transform.position+Vector3.up*.12f);
+                worst=Mathf.Max(worst,Vector2.Distance(screen,cursor));
+                yield return null;
+            }
+            Assert.Greater(Vector2.Distance(start,camera.transform.position),.5f);
+            Assert.Less(worst,1.5f,"Held preview should remain anchored to the pointer while the pixel-perfect view moves.");
+            cursor += new Vector2(80,40);Pointer(cursor);
+            yield return null;yield return new WaitForEndOfFrame();
+            Vector3 moved=camera.WorldToScreenPoint(visual.GroundShadow.transform.position+Vector3.up*.12f);
+            Assert.Less(Vector2.Distance(moved,cursor),1.5f,"Mouse movement must also track during keyboard panning.");
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;
+            var room=grid.Construction.RoomAt(grid.Layout.Core);
+            var cell=room.Cells.First(c=>summoning.CanPlace(c,out _));
+            Vector2 drop=camera.WorldToScreenPoint(grid.CellCenter(cell));
+            Assert.IsTrue(camera.pixelRect.Contains(drop));
+            Pointer(drop);yield return null;yield return new WaitForEndOfFrame();
+            Assert.AreEqual(cell,grid.WorldToCell(visual.GroundShadow.transform.position+Vector3.up*.12f));
+            Pointer(drop,false);yield return null;yield return null;
+            Assert.IsFalse(summoning.IsRelocating);Assert.AreSame(room,guard.AssignedRoom);
+        }
+        [UnityTest]public IEnumerator WasdMovesPlacementCameraWithoutMovingPlayerAndCancelRestoresView()
+        {
+            keyboard=InputSystem.AddDevice<Keyboard>();
+            var lord=Find<WaveDirector>().Lord;
+            var origin=camera.transform.position;var playerOrigin=lord.transform.position;
+            Assert.IsTrue(summoning.BeginRelocation(grid.Guards.First(),true));
+            Pointer(camera.pixelRect.center);yield return null;yield return null;
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.W,Key.D));
+            yield return new WaitForSecondsRealtime(.3f);
+            Assert.Greater(camera.transform.position.x,origin.x+.5f);Assert.Greater(camera.transform.position.y,origin.y+.5f);
+            Assert.Less(Vector3.Distance(lord.transform.position,playerOrigin),.03f);
+            Assert.IsTrue(summoning.IsRelocating);
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;yield return null;
+            var stopped=camera.transform.position;yield return new WaitForSecondsRealtime(.1f);
+            Assert.That(Vector3.Distance(stopped,camera.transform.position),Is.LessThan(.001f));
+            summoning.SetOpen(false);Assert.That(Vector3.Distance(origin,camera.transform.position),Is.LessThan(.001f));
+            Assert.IsTrue(follow.enabled);Assert.AreEqual(8,camera.orthographicSize);
+        }
         [UnityTest]public IEnumerator HeldMouseAtEdgeRevealsRemoteRoomAndDropRestoresCamera()
         {
             var destination=grid.Layout.Core+new Vector2Int(14,9);var session=Find<GameSaveSession>();var saved=session.Capture();
@@ -73,8 +128,10 @@ namespace DarkLord.Tests
         {
             follow.enabled=false;var original=camera.transform.position;Assert.IsTrue(summoning.BeginRelocation(grid.Guards.First()));var pan=camera.GetComponent<PlacementCameraPan>();var viewport=camera.pixelRect;
             Time.timeScale=0;pan.Pan(new Vector2(viewport.xMax-1,viewport.yMax-1),.05f);Assert.AreEqual(original,camera.transform.position);Time.timeScale=1;
+            Time.timeScale=0;pan.Pan(null,Vector2.one,.05f);Assert.AreEqual(original,camera.transform.position);Time.timeScale=1;
             for(int i=0;i<1000;i++)pan.Pan(new Vector2(viewport.xMax-1,viewport.yMax-1),.05f);
             var max=grid.CellCenter(new Vector2Int(grid.Layout.Width-1,grid.Layout.Height-1));Assert.LessOrEqual(camera.transform.position.x,max.x);Assert.LessOrEqual(camera.transform.position.y,max.y);
+            pan.Pan(null,Vector2.one,.05f);Assert.LessOrEqual(camera.transform.position.x,max.x);Assert.LessOrEqual(camera.transform.position.y,max.y);
             summoning.SetOpen(false);Assert.IsFalse(follow.enabled);Assert.AreEqual(original,camera.transform.position);
         }
         [UnityTest]public IEnumerator DisablingSummoningRestoresCameraAndZoom()

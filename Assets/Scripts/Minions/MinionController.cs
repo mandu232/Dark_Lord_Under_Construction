@@ -68,6 +68,11 @@ namespace DarkLord.Minions
         private DarkLord.Dungeon.DungeonGrid defenceDungeon;
         private Vector2 guardPosition;
         private float nextScan, stateEnds, damageAt, nextAttack;
+        private const int PoiseHitThreshold = 3;
+        private const float PoiseRecoveryDelay = 2f;
+        private const float PoiseImmunityDuration = 1.5f;
+        private int consecutiveHits;
+        private float lastPoiseHit, staggerImmuneUntil;
         private bool damagePending;
         private MinionSupport support;
         internal DarkLord.Dungeon.DungeonGrid DefenceDungeon => defenceDungeon;
@@ -81,6 +86,7 @@ namespace DarkLord.Minions
         public Vector2 GuardPosition => guardPosition;
         public ActorHealth Target => target;
         public bool IsAlive => health != null && health.IsAlive;
+        public bool IsStaggerImmune => health != null && health.Faction == Faction.Invader && Time.time < staggerImmuneUntil;
         public ActorHealth Health => health;
         public int AttackDamage
         {
@@ -107,6 +113,7 @@ namespace DarkLord.Minions
         private void OnEnable() { health.Damaged += OnDamaged; health.Died += OnDied; }
         private void OnDisable()
         {
+            consecutiveHits = 0; lastPoiseHit = staggerImmuneUntil = 0;
             health.Damaged -= OnDamaged;
             health.Died -= OnDied;
             damagePending = false;
@@ -349,11 +356,43 @@ namespace DarkLord.Minions
 
         private void OnDamaged(ActorHealth source)
         {
+            if (IsStaggerImmune)
+            {
+                if (State == ActorState.Hit) { stateEnds = 0; SetState(ActorState.Idle); }
+                return;
+            }
             damagePending = false;
             motor.Stop();
             stateEnds = Time.time + hitDuration;
             SetState(ActorState.Hit);
             if (dungeonRoute == null && Order != MinionOrder.Return && ValidTarget(source)) target = source;
+        }
+
+        internal void RegisterPoiseHit()
+        {
+            if (!isActiveAndEnabled || health.Faction != Faction.Invader || IsStaggerImmune) return;
+            if (Time.time - lastPoiseHit > PoiseRecoveryDelay) consecutiveHits = 0;
+            lastPoiseHit = Time.time;
+            if (++consecutiveHits < PoiseHitThreshold) return;
+            consecutiveHits = 0;
+            staggerImmuneUntil = Time.time + PoiseImmunityDuration;
+            motor.ClearKnockback();
+        }
+
+        internal DarkLord.Persistence.EnemyPoiseSaveData CapturePoise()
+        {
+            if (health.Faction != Faction.Invader) return null;
+            float recovery = Mathf.Max(0, lastPoiseHit + PoiseRecoveryDelay - Time.time);
+            return new DarkLord.Persistence.EnemyPoiseSaveData { hits = recovery > 0 ? consecutiveHits : 0,
+                recoveryRemaining = consecutiveHits > 0 ? recovery : 0,
+                immunityRemaining = Mathf.Max(0, staggerImmuneUntil - Time.time) };
+        }
+
+        internal void RestorePoise(DarkLord.Persistence.EnemyPoiseSaveData data)
+        {
+            consecutiveHits = data != null && data.recoveryRemaining > 0 ? Mathf.Clamp(data.hits, 0, PoiseHitThreshold - 1) : 0;
+            lastPoiseHit = Time.time - PoiseRecoveryDelay + (data != null ? Mathf.Clamp(data.recoveryRemaining, 0, PoiseRecoveryDelay) : 0);
+            staggerImmuneUntil = Time.time + (data != null ? Mathf.Clamp(data.immunityRemaining, 0, PoiseImmunityDuration) : 0);
         }
 
         private void OnDied()

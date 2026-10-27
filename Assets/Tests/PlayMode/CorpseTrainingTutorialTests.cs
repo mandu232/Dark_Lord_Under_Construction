@@ -123,6 +123,41 @@ namespace DarkLord.Tests
             Assert.IsFalse(died); Assert.IsTrue(waves.Tutorial.Collapsed);
             Assert.IsFalse(waves.Harvest.Corpses.Any(c => c.Role == InvaderRole.Charger));
         }
+
+        [UnityTest] public IEnumerator RetreatPushesPlayerAndGuardAndSurvivingSoldiersFleeAcrossSave()
+        {
+            TutorialTestActions.DismissDialogue(waves); yield return null;
+            waves.Tutorial.Advance(18);
+            var grid = summoning.Dungeon;
+            var rowen = waves.Tutorial.Rowen;
+            Vector3 origin = grid.CellCenter(grid.Layout.Core + Vector2Int.left * 4);
+            rowen.transform.position = origin; rowen.GetComponent<Rigidbody2D>().position = origin;
+            var soldiers = waves.Tutorial.GetComponentsInChildren<MinionController>()
+                .Where(m => m.IsAlive && m.Health != rowen).ToArray();
+            Assert.AreEqual(8, soldiers.Length);
+            Vector3 soldierStart = grid.CellCenter(grid.Layout.Core + Vector2Int.left * 2);
+            foreach (var soldier in soldiers)
+            { soldier.transform.position = soldierStart; soldier.GetComponent<Rigidbody2D>().position = soldierStart; }
+            var guard = grid.Guards.First(); guard.SetHeld(true);
+            Vector3 guardStart = origin + new Vector3(-.65f, .18f);
+            guard.transform.position = guardStart; guard.GetComponent<Rigidbody2D>().position = guardStart;
+            Vector3 playerStart = origin + new Vector3(-.65f, -.18f);
+            TutorialTestActions.MoveLord(waves, playerStart);
+            int playerHealth = waves.Lord.CurrentHealth, guardHealth = guard.Health.CurrentHealth;
+            waves.Tutorial.Advance(StartingTutorial.BattleEnds - waves.Tutorial.Elapsed);
+            TutorialTestActions.DismissDialogue(waves);
+            yield return new WaitForSecondsRealtime(.25f);
+            Assert.That(Vector2.Distance(guard.transform.position, guardStart), Is.GreaterThan(.08f));
+            Assert.That(Vector2.Distance(waves.Lord.transform.position, playerStart), Is.GreaterThan(.08f));
+            Assert.AreEqual(playerHealth, waves.Lord.CurrentHealth); Assert.AreEqual(guardHealth, guard.Health.CurrentHealth);
+            Assert.IsTrue(soldiers.All(s => s.GetComponent<OpeningRetreat>() != null && !s.enabled));
+            Assert.IsTrue(soldiers.Any(s => s.transform.position.x < soldierStart.x - .4f));
+            RoundTrip(); yield return null; yield return null;
+            var restored = waves.Tutorial.GetComponentsInChildren<MinionController>()
+                .Where(m => m.IsAlive && m.Health != waves.Tutorial.Rowen).ToArray();
+            Assert.AreEqual(8, restored.Length);
+            Assert.IsTrue(restored.All(s => s.GetComponent<OpeningRetreat>() != null && !s.enabled));
+        }
         [UnityTest] public IEnumerator HighlightTracksCorpseFacilityAndActualButtonThenHidesForDialogue()
         {
             yield return TutorialTestActions.BeginTraining(waves);

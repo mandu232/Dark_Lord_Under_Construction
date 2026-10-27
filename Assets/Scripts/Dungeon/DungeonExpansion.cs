@@ -29,7 +29,7 @@ namespace DarkLord.Dungeon
         public bool ExpansionMode { get; private set; }
         public bool BlocksGameplayInput => ExpansionMode || consumedFrame == Time.frameCount;
         private bool PreparationAllowed => GetComponent<DarkLord.Player.PlayerCombat>() == null ||
-            GetComponent<DarkLord.Player.PlayerCombat>().CanPrepare;
+            GetComponent<DarkLord.Player.PlayerCombat>().CanPrepare && GetComponent<DarkLord.Player.PlayerCombat>().CanUseFacilities;
         public ConstructionKind SelectedKind => selectedKind;
         public DungeonGrid Dungeon => dungeon;
         public string Message { get; private set; } = "방 또는 복도를 선택하고 연결할 위치를 클릭하세요.";
@@ -54,7 +54,7 @@ namespace DarkLord.Dungeon
             RestorePlacementView();
             if (ExpansionMode) consumedFrame = Time.frameCount;
             ClearPreview();
-            ExpansionMode = active && isActiveAndEnabled && dungeon != null && Time.timeScale > 0 && (health == null || health.IsAlive);
+            ExpansionMode = active && PreparationAllowed && isActiveAndEnabled && dungeon != null && Time.timeScale > 0 && (health == null || health.IsAlive);
             if (ExpansionMode)
             {
                 summoning?.SetOpen(false);
@@ -190,6 +190,7 @@ namespace DarkLord.Dungeon
         }
         private void Update()
         {
+            if (!PreparationAllowed) { if (ExpansionMode) SetExpansionMode(false); return; }
             if (GetComponent<DarkLord.Player.RunEconomy>()?.BlocksGameplayInput == true) return;
             if (Time.timeScale == 0 || (health != null && !health.IsAlive)) { SetExpansionMode(false); return; }
             if (toggle.WasPressedThisFrame()) SetExpansionMode(!ExpansionMode);
@@ -235,16 +236,6 @@ namespace DarkLord.Dungeon
             if (selectedItem != null && selectedItem.category == BuildCategory.Traps)
             {
                 bool canPlace = selectedItem.prefab != null && dungeon.CanPlaceTrap(cell) && dungeon.Inventory.CanUse(selectedItem);
-                if (!PreparationAllowed)
-                {
-                    Vector3 position = dungeon.CellCenter(cell);
-                    canPlace &= Vector2.Distance(transform.position, position) <= 3;
-                    foreach (var collider in Physics2D.OverlapCircleAll(position, 2))
-                    {
-                        var actor = collider.GetComponentInParent<ActorHealth>();
-                        if (actor != null && actor.IsAlive && actor.Faction == Faction.Invader) { canPlace = false; break; }
-                    }
-                }
                 dungeon.Highlight(cell, canPlace); previewCell = cell;
                 Message = canPlace ? "좌클릭: 함정 배치" : "완성된 빈 바닥에만 배치할 수 있습니다.";
                 if (canPlace && Time.frameCount > openedFrame && build.WasPressedThisFrame())

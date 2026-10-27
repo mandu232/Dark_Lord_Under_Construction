@@ -114,6 +114,48 @@ namespace DarkLord.Tests
             Assert.That(ActorAnimation.QuantizeFacing(new Vector2(0.1f, 1)), Is.EqualTo(Vector2.up));
             Assert.That(ActorAnimation.QuantizeFacing(new Vector2(-0.8f, -1)), Is.EqualTo(-Vector2.one));
         }
+
+        [UnityTest]
+        public IEnumerator SuccessfulSlashesAlternateSheetsInEveryDirection()
+        {
+            actor = new GameObject("Alternating slash test");
+            var sprite = actor.AddComponent<SpriteRenderer>();
+            var animator = actor.AddComponent<Animator>();
+            animator.runtimeAnimatorController = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(
+                "Assets/Animations/Player/PlayerDirectional.controller");
+            var view = actor.AddComponent<ActorAnimation>();
+            var config = new SerializedObject(view);
+            config.FindProperty("useExistingSpeedParameter").boolValue = true;
+            config.FindProperty("useDirectionalParameters").boolValue = true;
+            config.ApplyModifiedPropertiesWithoutUndo();
+            var combat = actor.AddComponent<DarkLord.Player.PlayerCombat>();
+            Vector2[] directions = { Vector2.down, new Vector2(1,-1), Vector2.right,
+                Vector2.one, Vector2.up, new Vector2(-1,1), Vector2.left, -Vector2.one };
+            int[] rows = { 0, 1, 2, 3, 4, 3, 2, 1 };
+            for (int i = 0; i < directions.Length; i++)
+            {
+                Assert.IsFalse(combat.TryAttack(Vector2.zero));
+                Assert.IsTrue(combat.TryAttack(directions[i]));
+                bool second = i % 2 == 1;
+                Assert.That(combat.UsesSecondSlash, Is.EqualTo(second));
+                Assert.IsFalse(combat.TryAttack(directions[i]), "Cooldown must not advance slash sequence");
+                for (int d = 0; d < directions.Length; d++)
+                {
+                    view.Present(ActorState.Attack, directions[d], second ? 1 : 0);
+                    animator.Update(0f);
+                    Assert.That(sprite.sprite.texture.name, Is.EqualTo(second ? "Slash_2" : "Slash_1"));
+                    Assert.That(sprite.sprite.rect.y, Is.EqualTo(256 - rows[d] * 64));
+                    Assert.That(sprite.sprite.pixelsPerUnit, Is.EqualTo(16));
+                    Assert.That(sprite.flipX, Is.EqualTo(directions[d].x < 0));
+                }
+                animator.Update(.25f);
+                Assert.That(sprite.sprite.rect.x, Is.GreaterThan(0), "Slash must advance through its frames");
+                yield return new WaitForSeconds(.51f);
+                view.Present(ActorState.Idle, directions[i]);
+                animator.Update(0f);
+                Assert.That(sprite.sprite.texture.name, Does.StartWith("Idle Collection"));
+            }
+        }
     }
 }
 #endif

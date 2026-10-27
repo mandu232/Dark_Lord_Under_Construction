@@ -139,6 +139,82 @@ namespace DarkLord.Tests
         }
 
         [UnityTest]
+        public IEnumerator EnemyPoisePreventsRepeatedStunAndLetsAttackFinish()
+        {
+            var defender = Actor(new Vector2(1000, 1000), Faction.Dungeon).GetComponent<ActorHealth>();
+            defender.RestoreHealth(1000, 1000);
+            var invader = Actor(new Vector2(1000.7f, 1000), Faction.Invader, true).GetComponent<MinionController>();
+            invader.Health.RestoreHealth(1000, 1000);
+            invader.Assault(defender);
+            Assert.IsTrue(invader.Health.TakeDamage(1, defender)); Assert.AreEqual(ActorState.Hit, invader.State);
+            Assert.IsTrue(invader.Health.TakeDamage(1, defender)); Assert.IsFalse(invader.IsStaggerImmune);
+            Assert.IsTrue(invader.Health.TakeDamage(1, defender));
+            Assert.IsTrue(invader.IsStaggerImmune); Assert.AreNotEqual(ActorState.Hit, invader.State);
+            for (int i = 0; i < 10; i++)
+            {
+                yield return new WaitForSeconds(.1f);
+                Assert.IsTrue(invader.Health.TakeDamage(1, defender));
+                Assert.AreNotEqual(ActorState.Hit, invader.State);
+            }
+            Assert.Less(defender.CurrentHealth, 1000, "An enemy under sustained hits must be able to land its attack.");
+            yield return new WaitForSeconds(.6f);
+            Assert.IsFalse(invader.IsStaggerImmune);
+            Assert.IsTrue(invader.Health.TakeDamage(1, defender)); Assert.AreEqual(ActorState.Hit, invader.State);
+        }
+
+        [UnityTest]
+        public IEnumerator EnemyPoiseRecoversAfterHitsStopAndAlliesStillStagger()
+        {
+            var attacker = Actor(new Vector2(1000, 1000), Faction.Dungeon).GetComponent<ActorHealth>();
+            var invader = Actor(new Vector2(1001, 1000), Faction.Invader, true).GetComponent<MinionController>();
+            invader.Health.RestoreHealth(1000, 1000);
+            invader.Health.TakeDamage(1, attacker); invader.Health.TakeDamage(1, attacker);
+            yield return new WaitForSeconds(2.1f);
+            invader.Health.TakeDamage(1, attacker);
+            Assert.IsFalse(invader.IsStaggerImmune); Assert.AreEqual(ActorState.Hit, invader.State);
+            var ally = Actor(new Vector2(1002, 1000), Faction.Dungeon, true).GetComponent<MinionController>();
+            ally.Health.TakeDamage(1, invader.Health); ally.Health.TakeDamage(1, invader.Health); ally.Health.TakeDamage(1, invader.Health);
+            Assert.IsFalse(ally.IsStaggerImmune); Assert.AreEqual(ActorState.Hit, ally.State);
+        }
+
+        [Test]
+        public void EnemyHealerKeepsCastingWhenPoiseIsActive()
+        {
+            var attacker = Actor(new Vector2(1000, 1000), Faction.Dungeon).GetComponent<ActorHealth>();
+            var enemy = Actor(new Vector2(1001, 1000), Faction.Invader, true);
+            var health = enemy.GetComponent<ActorHealth>();
+            var controller = enemy.GetComponent<MinionController>();
+            var tactics = enemy.AddComponent<InvaderTactics>();
+            var cast = new InvaderTacticsSaveData { role = InvaderRole.Healer, action = InvaderAction.Healing, remaining = .8f };
+            tactics.RestoreSave(cast);
+            health.TakeDamage(1, attacker); Assert.AreEqual(InvaderAction.Ready, tactics.Action);
+            health.TakeDamage(1, attacker); health.TakeDamage(1, attacker);
+            Assert.IsTrue(controller.IsStaggerImmune);
+            tactics.RestoreSave(cast);
+            health.TakeDamage(1, attacker);
+            Assert.AreEqual(InvaderAction.Healing, tactics.Action);
+        }
+
+        [Test]
+        public void EnemyPoiseSurvivesSaveAndLegacyRecordsStartFresh()
+        {
+            var attacker = Actor(new Vector2(1000, 1000), Faction.Dungeon).GetComponent<ActorHealth>();
+            var enemy = Actor(new Vector2(1001, 1000), Faction.Invader, true).GetComponent<MinionController>();
+            enemy.Health.TakeDamage(1, attacker); enemy.Health.TakeDamage(1, attacker);
+            var saved = JsonUtility.FromJson<DarkLord.Persistence.MinionSaveData>(JsonUtility.ToJson(DarkLord.Persistence.SaveSnapshots.Actor(enemy)));
+            Assert.AreEqual(2, saved.poise.hits);
+            var restored = Actor(new Vector2(1002, 1000), Faction.Invader, true).GetComponent<MinionController>();
+            var restore = typeof(MinionController).GetMethod("RestorePoise", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            restore.Invoke(restored, new object[] { saved.poise });
+            restored.Health.TakeDamage(1, attacker); Assert.IsTrue(restored.IsStaggerImmune);
+            var immuneSave = DarkLord.Persistence.SaveSnapshots.Actor(restored);
+            Assert.That(immuneSave.poise.immunityRemaining, Is.GreaterThan(1));
+            restore.Invoke(restored, new object[] { immuneSave.poise }); Assert.IsTrue(restored.IsStaggerImmune);
+            restore.Invoke(restored, new object[] { null }); Assert.IsFalse(restored.IsStaggerImmune);
+            restored.Health.TakeDamage(1, attacker); Assert.IsFalse(restored.IsStaggerImmune);
+        }
+
+        [UnityTest]
         public IEnumerator MovementCannotPassThroughWall()
         {
             var motor = Actor(Vector2.zero, Faction.Dungeon).GetComponent<TopDownMotor>();

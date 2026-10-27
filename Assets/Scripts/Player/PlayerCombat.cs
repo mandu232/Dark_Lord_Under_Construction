@@ -33,6 +33,8 @@ namespace DarkLord.Player
         private float nextAttack, nextNova, nextWard, nextDodge, wardUntil, dodgeUntil, attackUntil, repairProgress;
         private Vector2 dodgeDirection;
         private bool meleeAttack;
+        private bool nextSlashIsSecond;
+        public bool UsesSecondSlash { get; private set; }
         private const float SlashDuration = 6f / 14f;
         public float Mana { get; private set; } = 100;
         public float MaximumMana => 100;
@@ -116,9 +118,11 @@ namespace DarkLord.Player
             if (waves?.Economy != null && waves.Economy.EquippedAttack != AttackStyle.Slash) return TryTechnologyAttack(direction);
             motor.Face(direction);
             meleeAttack = true;
+            UsesSecondSlash = nextSlashIsSecond;
+            nextSlashIsSecond = !nextSlashIsSecond;
             nextAttack = Time.time + 0.5f;
             attackUntil = Time.time + SlashDuration;
-            GetComponent<ActorAnimation>()?.Present(ActorState.Attack, direction);
+            GetComponent<ActorAnimation>()?.Present(ActorState.Attack, direction, UsesSecondSlash ? 1 : 0);
             DamageArea(1.65f, 25 + (waves?.Economy?.AttackBonus ?? 0), direction, 0.25f, DamageType.Physical);
             return true;
         }

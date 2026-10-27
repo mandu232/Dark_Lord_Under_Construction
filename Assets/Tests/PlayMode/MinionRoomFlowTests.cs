@@ -247,5 +247,27 @@ namespace DarkLord.Tests
             InputSystem.QueueStateEvent(mouse, new MouseState { position=drop }); yield return null; yield return null;
             Assert.IsFalse(summoning.IsRelocating); Assert.AreSame(grid.Construction.RoomAt(destination), guard.AssignedRoom);
         }
+
+        [UnityTest] public IEnumerator InvasionCancelsHeldMinionAndRestoresPlacementAfterCombat()
+        {
+            var guard = Summon();
+            var originalPosition = guard.GuardPosition;
+            Assert.IsTrue(summoning.BeginRelocation(guard, true));
+            Assert.IsTrue(guard.IsHeld);
+            waves.RestoreSave(new WaveSaveData { number = 1, state = WaveState.Active, pending = 1, enemies = Array.Empty<MinionSaveData>() });
+            Assert.IsTrue(waves.InCombat);
+            Assert.IsFalse(summoning.TryPlace(destination));
+            yield return null;
+            Assert.IsFalse(summoning.IsRelocating);
+            Assert.IsFalse(guard.IsHeld);
+            Assert.AreEqual(originalPosition, guard.GuardPosition);
+            Assert.IsFalse(summoning.BeginRelocation(guard));
+            waves.RestoreSave(new WaveSaveData { number = 1, state = WaveState.Preparing, enemies = Array.Empty<MinionSaveData>() });
+            yield return null;
+            Assert.IsFalse(waves.InCombat);
+            Assert.IsTrue(summoning.BeginRelocation(guard));
+            Assert.IsTrue(summoning.TryPlace(destination));
+            Assert.AreSame(grid.Construction.RoomAt(destination), guard.AssignedRoom);
+        }
     }
 }

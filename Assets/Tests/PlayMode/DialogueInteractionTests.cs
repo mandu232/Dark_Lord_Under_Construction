@@ -151,8 +151,10 @@ namespace DarkLord.Tests
                     yield return new WaitForSecondsRealtime(.65f);
                     Assert.IsFalse(view.IsExpressionPlaying, $"{page}/{line}: one cycle must finish");
                     Assert.IsTrue(animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_Default"));
+                    float idleFrame = animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
                     yield return new WaitForSecondsRealtime(.1f);
                     Assert.IsFalse(view.IsExpressionPlaying, "An unchanged line must not replay its expression.");
+                    Assert.Greater(animator.GetCurrentAnimatorStateInfo(0).normalizedTime, idleFrame, "Player idle continues after the expression.");
                 }
             var session = Find<GameSaveSession>(); var saved = session.Capture();
             session.Restore(saved); yield return null; yield return null;
@@ -262,7 +264,7 @@ namespace DarkLord.Tests
             Assert.IsTrue(waves.Tutorial.DialogueOpen); Assert.IsFalse(waves.Tutorial.RowenInConversation);
             StringAssert.Contains("…이제 갔네", waves.Tutorial.Instruction);
         }
-        [UnityTest] public IEnumerator CombatBlocksFacilitiesAndHintsButStillAllowsMinionRelocation()
+        [UnityTest] public IEnumerator CombatBlocksFacilitiesConstructionAndMinionRelocation()
         {
             EnableKeyboard();
             yield return TutorialTestActions.Complete(waves);
@@ -279,9 +281,13 @@ namespace DarkLord.Tests
             Assert.IsFalse(summoning.IsRecruiting); Assert.IsFalse(waves.Economy.IsOpen); Assert.IsFalse(waves.Alchemy.IsOpen);
             Assert.IsFalse(Find<RecruitmentPanel>().transform.Find("Recruitment interaction hint").gameObject.activeInHierarchy);
             Assert.IsFalse(Find<EconomyPanel>().transform.Find("Core facility interaction").gameObject.activeInHierarchy);
-            Assert.IsTrue(summoning.BeginRelocation(summoning.Dungeon.Guards.First()));
+            Assert.IsFalse(summoning.BeginRelocation(summoning.Dungeon.Guards.First()));
+            var construction = waves.Lord.GetComponent<DarkLord.Dungeon.DungeonExpansion>();
+            construction.SetExpansionMode(true);
+            Assert.IsFalse(construction.ExpansionMode);
+            Assert.AreEqual(DarkLord.Dungeon.ConstructionResult.Unavailable, construction.TryBuild(summoning.Dungeon.Layout.Core));
         }
-        [UnityTest] public IEnumerator DialogueFreezesAllEnemiesGuardsAnimationAndCombatTimeThenResumes()
+        [UnityTest] public IEnumerator DialoguePlaysCharacterIdlesWhileCombatIsFrozenThenResumes()
         {
             FinishDialogue(); yield return null;
             waves.Tutorial.Advance(18);
@@ -302,9 +308,16 @@ namespace DarkLord.Tests
             {
                 Assert.Less(Vector3.Distance(positions[i], actors[i].transform.position), .001f);
                 Assert.AreEqual(health[i], actors[i].Health.CurrentHealth);
-                Assert.AreEqual(frames[i], animations[i].GetCurrentAnimatorStateInfo(0).normalizedTime);
+                Assert.IsTrue(animations[i].GetCurrentAnimatorStateInfo(0).IsName("Idle"));
+                Assert.Greater(animations[i].GetCurrentAnimatorStateInfo(0).normalizedTime, frames[i]);
             }
+            var menu = Find<GameMenu>(); menu.PauseGame(); yield return null; yield return null;
+            var pausedFrames = animations.Select(a => a.GetCurrentAnimatorStateInfo(0).normalizedTime).ToArray();
+            yield return new WaitForSecondsRealtime(.2f);
+            for (int i = 0; i < animations.Length; i++) Assert.AreEqual(pausedFrames[i], animations[i].GetCurrentAnimatorStateInfo(0).normalizedTime);
+            menu.StartGame(); yield return null;
             FinishDialogue(); Assert.AreEqual(1, Time.timeScale);
+            Assert.IsTrue(animations.All(a => a.updateMode == AnimatorUpdateMode.Normal));
             yield return new WaitForSecondsRealtime(.3f);
             Assert.Greater(Time.time, time);
             Assert.IsTrue(actors.Where((a, i) => Vector3.Distance(a.transform.position, positions[i]) > .05f).Any());

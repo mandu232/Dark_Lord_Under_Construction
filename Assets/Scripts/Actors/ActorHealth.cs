@@ -57,9 +57,16 @@ namespace DarkLord.Actors
             if (DamageMultiplier != null) amount = Mathf.RoundToInt(amount * Mathf.Clamp01(DamageMultiplier(source, damageType)));
             amount = Mathf.RoundToInt(amount * (1f - Resistance(damageType) / 100f));
             if (amount <= 0) return false;
+            int before = currentHealth;
             currentHealth = Mathf.Max(Mathf.Min(currentHealth, ScriptedHealthFloor), currentHealth - amount);
+            if (currentHealth < before)
+            {
+                GetComponent<DarkLord.Minions.MinionController>()?.RegisterPoiseHit();
+                ActorHitFeedback.Show(this, source);
+            }
             if (currentHealth == 0) Died?.Invoke();
             else Damaged?.Invoke(source);
+            if (currentHealth < before) DarkLord.Player.PlayerHitStop.OnDamage(this, source);
             return true;
         }
 

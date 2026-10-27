@@ -15,6 +15,15 @@ namespace DarkLord.UI
         private RectTransform panel;
         private TMP_Text title, detail, boss;
         private TMP_Text objective;
+        private RectTransform bossBar, bossFill;
+        private TMP_Text bossHealth;
+        private RectTransform bossGlint;
+        private Image bossGlintImage;
+        private CanvasGroup bossBarGroup;
+        private DarkLord.Actors.ActorHealth introducedBoss;
+        private float bossIntroElapsed;
+        private const float BossIntroDuration = 1.35f;
+        private static readonly Vector2 BossBarPosition = new Vector2(0, -38);
         private RectTransform companionPortrait;
         private Vector3? retreatFocus;
         private TMP_Text controls;
@@ -70,6 +79,30 @@ namespace DarkLord.UI
             boss.color = new Color(.62f, .65f, .72f);
             title.alignment = TextAlignmentOptions.MidlineLeft; detail.alignment = TextAlignmentOptions.TopLeft;
             boss.alignment = TextAlignmentOptions.MidlineRight;
+            bossBar = Rect("Rowen boss health bar", transform, new Vector2(0, -38), new Vector2(620, 76));
+            var bossFrame = bossBar.gameObject.AddComponent<UnityEngine.UI.Image>();
+            bossFrame.color = new Color(.08f, .045f, .045f, .96f); bossFrame.raycastTarget = false;
+            bossBarGroup = bossBar.gameObject.AddComponent<CanvasGroup>();
+            bossBarGroup.interactable = false; bossBarGroup.blocksRaycasts = false;
+            var accent = Rect("Boss gold accent", bossBar, new Vector2(0, -1), new Vector2(600, 2));
+            var accentImage = accent.gameObject.AddComponent<UnityEngine.UI.Image>();
+            accentImage.color = new Color(.9f, .67f, .34f, .85f); accentImage.raycastTarget = false;
+            var bossName = Label("Boss name", bossBar, font, new Vector2(0, -5), new Vector2(600, 30), 23);
+            bossName.text = "서풍의 용사 · 로웬"; bossName.color = new Color(1, .86f, .65f);
+            var track = Rect("Health track", bossBar, new Vector2(0, -39), new Vector2(590, 22));
+            var trackImage = track.gameObject.AddComponent<UnityEngine.UI.Image>();
+            trackImage.color = new Color(.17f, .08f, .09f, 1); trackImage.raycastTarget = false;
+            bossFill = Stretch("Health fill", track, new Vector2(2, 2), new Vector2(-2, -2));
+            var fillHealth = bossFill.gameObject.AddComponent<UnityEngine.UI.Image>();
+            fillHealth.color = new Color(.73f, .12f, .13f, 1); fillHealth.raycastTarget = false;
+            bossGlint = Rect("Entrance glint", track, Vector2.zero, new Vector2(24, 18));
+            bossGlint.anchorMin = bossGlint.anchorMax = new Vector2(0, .5f);
+            bossGlint.pivot = new Vector2(.5f, .5f);
+            bossGlintImage = bossGlint.gameObject.AddComponent<UnityEngine.UI.Image>();
+            bossGlintImage.color = Color.clear; bossGlintImage.raycastTarget = false;
+            bossHealth = Label("Boss health value", track, font, Vector2.zero, new Vector2(590, 22), 16);
+            bossHealth.color = Color.white; bossHealth.alignment = TextAlignmentOptions.Center;
+            bossBar.gameObject.SetActive(false);
             var task = Rect("Reconstruction objective", transform, new Vector2(-24, -40), new Vector2(390, 160));
             task.anchorMin = task.anchorMax = task.pivot = new Vector2(1, .5f);
             var taskPlate = task.gameObject.AddComponent<Image>(); taskPlate.color = new Color(.07f, .015f, .035f, .94f); taskPlate.raycastTarget = false;
@@ -107,6 +140,36 @@ namespace DarkLord.UI
             var tutorial = waves != null ? waves.Tutorial : null;
             bool active = tutorial != null && tutorial.Active;
             if (panel == null) return;
+            var bossActor = active ? tutorial.Rowen : null;
+            bool showBoss = bossActor != null && bossActor.IsAlive && bossActor.gameObject.activeInHierarchy &&
+                !tutorial.DialogueOpen && tutorial.Elapsed < StartingTutorial.BattleEnds;
+            bossBar.gameObject.SetActive(showBoss);
+            if (showBoss)
+            {
+                if (introducedBoss != bossActor)
+                {
+                    introducedBoss = bossActor;
+                    bossIntroElapsed = 0;
+                }
+                else bossIntroElapsed = Mathf.Min(BossIntroDuration, bossIntroElapsed + Time.deltaTime);
+                float ratio = Mathf.Clamp01((float)bossActor.CurrentHealth / bossActor.MaximumHealth);
+                float reveal = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.18f, BossIntroDuration, bossIntroElapsed));
+                float shownRatio = ratio * reveal;
+                bossFill.anchorMax = new Vector2(shownRatio, 1);
+                float arrival = Mathf.Clamp01(bossIntroElapsed / .35f);
+                float shake = Mathf.Pow(1 - Mathf.Clamp01(bossIntroElapsed / .8f), 2);
+                bossBar.anchoredPosition = BossBarPosition + new Vector2(
+                    Mathf.Sin(bossIntroElapsed * 58f) * 9f * shake,
+                    Mathf.Cos(bossIntroElapsed * 47f) * 4f * shake + (1 - Mathf.SmoothStep(0, 1, arrival)) * 24f);
+                bossBar.localScale = Vector3.one * Mathf.Lerp(.94f, 1f, Mathf.SmoothStep(0, 1, arrival));
+                bossBarGroup.alpha = Mathf.SmoothStep(0, 1, Mathf.Clamp01(bossIntroElapsed / .2f));
+                float glintAlpha = Mathf.Sin(Mathf.PI * reveal) * .7f;
+                bossGlint.anchoredPosition = new Vector2(Mathf.Clamp(shownRatio * 590f, 12f, 578f), 0);
+                bossGlintImage.color = new Color(1f, .76f, .4f, glintAlpha);
+                bossHealth.text = $"{bossActor.CurrentHealth:N0} / {bossActor.MaximumHealth:N0}";
+            }
+            else if (!active || bossActor == null || !bossActor.IsAlive || tutorial.Elapsed >= StartingTutorial.BattleEnds)
+                introducedBoss = null;
             bool training = active && tutorial.IsTraining && !tutorial.DialogueOpen && tutorial.TrainingStep != TutorialTrainingStep.Complete;
             objective.transform.parent.gameObject.SetActive(training);
             if (training)
@@ -221,7 +284,7 @@ namespace DarkLord.UI
                 }
         }
         private void OnDisable() => RestoreCamera();
-        private void OnDestroy() { RestoreCamera(); if (panel != null) Destroy(panel.gameObject); if (flash != null) Destroy(flash.gameObject); if (objective != null) Destroy(objective.transform.parent.gameObject); }
+        private void OnDestroy() { RestoreCamera(); if (panel != null) Destroy(panel.gameObject); if (bossBar != null) Destroy(bossBar.gameObject); if (flash != null) Destroy(flash.gameObject); if (objective != null) Destroy(objective.transform.parent.gameObject); }
     }
     public sealed class OpeningDebris : MonoBehaviour
     {

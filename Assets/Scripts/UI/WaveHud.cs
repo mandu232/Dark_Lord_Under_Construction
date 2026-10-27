@@ -57,6 +57,7 @@ namespace DarkLord.UI
 
         private void OnEnable()
         {
+            HideStatusDisplay();
             if (director != null) director.Changed += Refresh;
             if (startButton != null) startButton.onClick.AddListener(StartWave);
             Refresh();
@@ -76,8 +77,20 @@ namespace DarkLord.UI
         {
             if (director != null) director.Changed -= Refresh;
             director = source; waveText = wave; statusText = status;
+            HideStatusDisplay();
             if (isActiveAndEnabled && director != null) director.Changed += Refresh;
             Refresh();
+        }
+
+        private void HideStatusDisplay()
+        {
+            var background = GetComponent<UnityEngine.UI.Image>();
+            if (background != null) background.enabled = false;
+            var frame = transform.Find("Castle Frame");
+            if (frame != null)
+                foreach (var graphic in frame.GetComponentsInChildren<UnityEngine.UI.Graphic>(true)) graphic.enabled = false;
+            if (waveText != null) waveText.enabled = false;
+            if (statusText != null) statusText.enabled = false;
         }
 
         private void Refresh()

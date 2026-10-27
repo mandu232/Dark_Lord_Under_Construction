@@ -37,8 +37,68 @@ namespace DarkLord.Tests
             Assert.IsTrue(waves.Tutorial.Active); Assert.AreEqual(4, Find<MinionSummoning>().GuardCount);
             Assert.IsFalse(waves.CanStartWave); waves.BeginNextWave(); Assert.AreEqual(0, waves.CurrentWave);
             waves.Tutorial.Advance(18);
-            Assert.AreEqual(9, waves.Tutorial.LivingEnemies); Assert.AreEqual(900, waves.Tutorial.Rowen.MaximumHealth);
+            Assert.AreEqual(9, waves.Tutorial.LivingEnemies); Assert.AreEqual(StartingTutorial.RowenMaximumHealth, waves.Tutorial.Rowen.MaximumHealth);
             Assert.AreEqual(0, waves.RemainingEnemies); yield return null;
+        }
+        [UnityTest] public IEnumerator RowenBossBarTracksHealthAndLegacySaveMigrates()
+        {
+            var presentation = Find<DarkLord.UI.StartingTutorialPresentation>();
+            var bar = presentation.transform.Find("Rowen boss health bar");
+            Assert.IsNotNull(bar); Assert.IsFalse(bar.gameObject.activeSelf);
+            var waveHud = Find<DarkLord.UI.WaveHud>();
+            Assert.IsTrue(waveHud.isActiveAndEnabled);
+            Assert.IsFalse(waveHud.GetComponent<UnityEngine.UI.Image>().enabled);
+            Assert.IsFalse(waveHud.transform.Find("Castle Frame").GetComponent<UnityEngine.UI.Image>().enabled);
+            Assert.IsFalse(waveHud.transform.Find("Wave").GetComponent<TMPro.TMP_Text>().enabled);
+            Assert.IsFalse(waveHud.transform.Find("Status").GetComponent<TMPro.TMP_Text>().enabled);
+            Assert.AreEqual("로웬 · 서풍의 용사", waves.Tutorial.SpeakerName);
+            TutorialTestActions.DismissDialogue(waves); yield return null;
+            waves.Tutorial.Advance(4); yield return null;
+            var rowen = waves.Tutorial.Rowen;
+            Assert.AreEqual(StartingTutorial.RowenMaximumHealth, rowen.MaximumHealth);
+            Assert.IsTrue(bar.gameObject.activeSelf);
+            Assert.AreEqual("서풍의 용사 · 로웬", bar.Find("Boss name").GetComponent<TMPro.TMP_Text>().text);
+            yield return new WaitForSeconds(1.5f);
+            Assert.IsTrue(rowen.TakeDamage(1000)); yield return null;
+            Assert.AreEqual(StartingTutorial.RowenMaximumHealth - 1000, rowen.CurrentHealth);
+            var fill = bar.Find("Health track/Health fill").GetComponent<RectTransform>();
+            Assert.That(fill.anchorMax.x, Is.EqualTo(.95f).Within(.001f));
+            var saved = JsonUtility.FromJson<GameSaveData>(JsonUtility.ToJson(session.Capture()));
+            var boss = saved.tutorial.enemies.Single(e => e.tutorialBoss);
+            SaveSlotStore.Validate(saved); session.Restore(saved); yield return null;
+            Assert.AreEqual(StartingTutorial.RowenMaximumHealth - 1000, waves.Tutorial.Rowen.CurrentHealth);
+            Assert.IsTrue(bar.gameObject.activeSelf);
+            boss.tutorialBoss = false; boss.maximumHealth = 900; boss.health = 400;
+            session.Restore(saved); yield return null;
+            Assert.AreEqual(StartingTutorial.RowenMaximumHealth, waves.Tutorial.Rowen.MaximumHealth);
+            Assert.AreEqual(StartingTutorial.RowenMaximumHealth - 500, waves.Tutorial.Rowen.CurrentHealth);
+            waves.Tutorial.Rowen.TakeDamage(StartingTutorial.RowenMaximumHealth);
+            Assert.IsFalse(waves.Tutorial.Rowen.IsAlive, "Health must reach zero rather than stop at a hidden floor.");
+            yield return null; Assert.IsFalse(bar.gameObject.activeSelf);
+        }
+        [UnityTest] public IEnumerator BossEntranceRevealsCurrentHealthAndPausesWithGameplay()
+        {
+            TutorialTestActions.DismissDialogue(waves); yield return null;
+            waves.Tutorial.Advance(4); yield return null;
+            var bar = Find<DarkLord.UI.StartingTutorialPresentation>().transform.Find("Rowen boss health bar").GetComponent<RectTransform>();
+            var fill = bar.Find("Health track/Health fill").GetComponent<RectTransform>();
+            Assert.IsTrue(bar.gameObject.activeInHierarchy);
+            Assert.Less(fill.anchorMax.x, .1f);
+            yield return new WaitForSeconds(.55f);
+            float partial = fill.anchorMax.x;
+            Assert.That(partial, Is.InRange(.1f, .8f));
+            Assert.IsTrue(waves.Tutorial.Rowen.TakeDamage(2000));
+            Time.timeScale = 0; yield return new WaitForSecondsRealtime(.2f);
+            float paused = fill.anchorMax.x;
+            yield return new WaitForSecondsRealtime(.2f);
+            Assert.That(fill.anchorMax.x, Is.EqualTo(paused).Within(.001f));
+            Time.timeScale = 1; yield return new WaitForSeconds(1.4f);
+            float actual = (float)waves.Tutorial.Rowen.CurrentHealth / waves.Tutorial.Rowen.MaximumHealth;
+            Assert.That(fill.anchorMax.x, Is.EqualTo(actual).Within(.001f));
+            Assert.That(bar.anchoredPosition, Is.EqualTo(new Vector2(0, -38)));
+            Assert.That(bar.GetComponent<CanvasGroup>().alpha, Is.EqualTo(1).Within(.001f));
+            var glint = bar.Find("Health track/Entrance glint").GetComponent<UnityEngine.UI.Image>();
+            Assert.That(glint.color.a, Is.EqualTo(0).Within(.001f));
         }
         [UnityTest] public IEnumerator CollapseChangesTerrainRescuesPlayerAndLeavesUsableEntrance()
         {

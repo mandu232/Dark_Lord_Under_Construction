@@ -5,11 +5,14 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
+using UnityEngine.Rendering;
 
 namespace DarkLord.Gameplay
 {
     public sealed class InvaderCorpse : MonoBehaviour
     {
+        // ActorDepthSorting reserves -30000..30000; dungeon floor artwork is below -31000.
+        private const int CorpseSortingOrder = -30001;
         public InvaderRole Role { get; private set; }
         public bool Consumed { get; private set; }
         public SpriteRenderer Visual { get; private set; }
@@ -20,7 +23,9 @@ namespace DarkLord.Gameplay
             Visual = gameObject.AddComponent<SpriteRenderer>();
             Visual.sprite = source.sprite; Visual.sharedMaterial = source.sharedMaterial;
             Visual.sprite = DeathPose(source) ?? source.sprite;
-            Visual.sortingLayerID = source.sortingLayerID; Visual.sortingOrder = source.sortingOrder - 2;
+            var actorGroup = source.GetComponentInParent<SortingGroup>();
+            Visual.sortingLayerID = actorGroup != null ? actorGroup.sortingLayerID : source.sortingLayerID;
+            Visual.sortingOrder = CorpseSortingOrder;
             Visual.flipX = source.flipX; baseColor = new Color(.65f, .42f, .43f, 1); Visual.color = baseColor;
             transform.localScale = source.transform.lossyScale;
             transform.rotation = source.transform.rotation;
@@ -50,7 +55,7 @@ namespace DarkLord.Gameplay
             Destroy(root); return sprite;
         }
         public void SetHeld(bool held)
-        { if (Visual != null) { Visual.sortingOrder = held ? 32000 : Mathf.RoundToInt(-transform.position.y * 100); Visual.color = baseColor; } }
+        { if (Visual != null) { Visual.sortingOrder = CorpseSortingOrder; Visual.color = baseColor; } }
         public void Absorb(ResourceBuilding facility)
         {
             if (Consumed) return;

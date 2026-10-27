@@ -29,7 +29,7 @@ namespace DarkLord.Player
         private readonly Collider2D[] overlaps = new Collider2D[32];
         private ActorHealth health;
         private MinionCommands commands;
-        private InputAction close, place, cancelPlacement, recruit;
+        private InputAction close, place, cancelPlacement, recruit, relocationMove;
         private Camera worldCamera;
         private int placementStartedFrame, consumedFrame = -1;
         private Vector2Int? highlightedCell;
@@ -56,7 +56,7 @@ namespace DarkLord.Player
         }
         private bool CanHandleMinions => (GetComponent<RunEconomy>() == null || !GetComponent<RunEconomy>().BlocksGameplayInput) && (GetComponent<CorpseHarvest>() == null || !GetComponent<CorpseHarvest>().BlocksGameplayInput) && Time.timeScale > 0 && isActiveAndEnabled && (health == null || health.IsAlive) &&
             dungeon != null && dungeon.isActiveAndEnabled &&
-            (GetComponent<PlayerCombat>() == null || !GetComponent<PlayerCombat>().IsFinished && !GetComponent<PlayerCombat>().BlocksTutorialInput) &&
+            (GetComponent<PlayerCombat>() == null || GetComponent<PlayerCombat>().CanPrepare && GetComponent<PlayerCombat>().CanUseFacilities) &&
             (GetComponent<DungeonExpansion>() == null || !GetComponent<DungeonExpansion>().BlocksGameplayInput) &&
             (GetComponent<AlchemyExchange>() == null || !GetComponent<AlchemyExchange>().BlocksGameplayInput);
         public bool CanInteractRecruitment => !IsOpen && CanHandleMinions && (GetComponent<PlayerCombat>() == null || GetComponent<PlayerCombat>().CanUseFacilities) && dungeon.NearRecruitmentFacility(transform.position);
@@ -68,10 +68,11 @@ namespace DarkLord.Player
             place = new InputAction("Move minion to room", InputActionType.Button, "<Mouse>/leftButton");
             cancelPlacement = new InputAction("Cancel minion move", InputActionType.Button, "<Mouse>/rightButton");
             recruit = new InputAction("Recruit at facility", InputActionType.Button, "<Keyboard>/f");
+            relocationMove = InputSystem.actions?.FindAction("Player/Move")?.Clone();
         }
-        private void OnEnable() { close.Enable(); place.Enable(); cancelPlacement.Enable(); recruit.Enable(); }
-        private void OnDisable() { close.Disable(); place.Disable(); cancelPlacement.Disable(); recruit.Disable(); SetOpen(false); }
-        private void OnDestroy() { close.Dispose(); place.Dispose(); cancelPlacement.Dispose(); recruit.Dispose(); }
+        private void OnEnable() { close.Enable(); place.Enable(); cancelPlacement.Enable(); recruit.Enable(); relocationMove?.Enable(); }
+        private void OnDisable() { close.Disable(); place.Disable(); cancelPlacement.Disable(); recruit.Disable(); relocationMove?.Disable(); SetOpen(false); }
+        private void OnDestroy() { close.Dispose(); place.Dispose(); cancelPlacement.Dispose(); recruit.Dispose(); relocationMove?.Dispose(); }
         public void Configure(DungeonGrid grid, MinionController guardTemplate) { dungeon = grid; guardPrefab = guardTemplate; }
         public bool TryRecruit()
         {
@@ -104,7 +105,9 @@ namespace DarkLord.Player
             if (!IsOpen) { UpdateHold(); return; }
             if (!IsPlacing) return;
             if (!IsRelocating || !relocatingGuard.IsAlive || cancelPlacement.WasPressedThisFrame()) { SetOpen(false); return; }
-            if (Mouse.current != null && (!dragPlacement || place.IsPressed())) relocationPan?.Pan(Mouse.current.position.ReadValue(),Time.deltaTime);
+            if (!dragPlacement || place.IsPressed())
+                relocationPan?.Pan(Mouse.current != null ? Mouse.current.position.ReadValue() : (Vector2?)null,
+                    relocationMove != null ? relocationMove.ReadValue<Vector2>() : Vector2.zero, Time.deltaTime);
             if (!PointerCell(out var cell))
             { ClearPreview(); if (dragPlacement && place.WasReleasedThisFrame()) SetOpen(false); return; }
             bool allowed = CanPlace(cell, out message);
@@ -276,7 +279,7 @@ namespace DarkLord.Player
             placementStartedFrame = Time.frameCount; worldCamera = Camera.main;
             relocationZoom = PlacementCameraZoom.Acquire(worldCamera, this);
             relocationPan = PlacementCameraPan.Acquire(worldCamera, this, dungeon);
-            message = "원하는 방에 놓으면 빈 자리로 순간이동합니다. 우클릭 / Esc: 취소"; return true;
+            message = "원하는 방에 놓으면 빈 자리로 순간이동합니다. WASD: 화면 이동 · 우클릭 / Esc: 취소"; return true;
         }
         public bool RemoveGuard(MinionController guard)
         {
