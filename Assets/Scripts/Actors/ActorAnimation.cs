@@ -3,6 +3,7 @@ using UnityEngine;
 namespace DarkLord.Actors
 {
     public enum ActorState { Idle, Run, Hit, Attack, Die }
+    public enum PlayerExpression { Down, Crying, Blinking, Accept, Decline }
 
     /// <summary>Gameplay owns timing; animation clips and animation events are optional.</summary>
     [DisallowMultipleComponent]
@@ -26,6 +27,70 @@ namespace DarkLord.Actors
         private int speedId = Animator.StringToHash("speed");
         private static readonly int FacingXId = Animator.StringToHash("FacingX");
         private static readonly int FacingYId = Animator.StringToHash("FacingY");
+        private bool expressionPlaying;
+        private float expressionEndsAt;
+        private bool expressionUsesUnscaledTime;
+        private AnimatorUpdateMode previousUpdateMode;
+        private bool expressionOneCycle;
+        private int expressionStateId;
+        public bool IsExpressionPlaying => expressionPlaying;
+
+        // Story/Timeline callers own when to request an expression. No input bindings.
+        // A negative duration plays one cycle; zero holds until StopExpression.
+        public bool PlayExpression(PlayerExpression expression, float duration = -1f, bool unscaledTime = false)
+        {
+            if (!isActiveAndEnabled || animator == null || !animator.isActiveAndEnabled ||
+                animator.runtimeAnimatorController == null || lastState == ActorState.Die ||
+                float.IsNaN(duration) || float.IsInfinity(duration)) return false;
+            string state = "Base Layer.Expression_" + expression;
+            if (!animator.HasState(0, Animator.StringToHash(state))) return false;
+            float cycle = 0f;
+            string clipName = "Expression_" + expression + "_" +
+                (animator.GetFloat(FacingXId) > .5f && Mathf.Abs(animator.GetFloat(FacingYId)) < .5f ? "Side" : "Front");
+            foreach (var clip in animator.runtimeAnimatorController.animationClips)
+                if (clip.name == clipName)
+                    cycle = Mathf.Max(cycle, clip.length);
+            if (!expressionPlaying) previousUpdateMode = animator.updateMode;
+            expressionUsesUnscaledTime = unscaledTime;
+            expressionOneCycle = duration < 0;
+            expressionStateId = Animator.StringToHash(state);
+            animator.updateMode = unscaledTime ? AnimatorUpdateMode.UnscaledTime : previousUpdateMode;
+            expressionPlaying = true;
+            expressionEndsAt = duration == 0 ? float.PositiveInfinity : ExpressionTime + (duration < 0 ? cycle : duration);
+            animator.Play(state, 0, 0f);
+            return true;
+        }
+
+        public void StopExpression()
+        {
+            if (!expressionPlaying) return;
+            expressionPlaying = false;
+            if (animator != null) animator.updateMode = previousUpdateMode;
+            lastState = null;
+            if (animator != null && animator.isActiveAndEnabled && animator.runtimeAnimatorController != null &&
+                animator.HasState(0, Animator.StringToHash("Base Layer.Locomotion.Idle_Default")))
+            {
+                animator.Play("Base Layer.Locomotion.Idle_Default", 0, 0f);
+                // Apply the idle sprite even while dialogue keeps scaled time at zero.
+                animator.Update(0f);
+            }
+        }
+
+        private void Update()
+        {
+            if (expressionPlaying && ExpressionFinished()) StopExpression();
+        }
+        private float ExpressionTime => expressionUsesUnscaledTime ? Time.unscaledTime : Time.time;
+        private bool ExpressionFinished()
+        {
+            if (!expressionOneCycle) return ExpressionTime >= expressionEndsAt;
+            if (animator == null || !animator.isActiveAndEnabled) return false;
+            var state = animator.GetCurrentAnimatorStateInfo(0);
+            // Animation progress pauses with the menu, unlike a real-time deadline.
+            return state.fullPathHash == expressionStateId && state.normalizedTime >= 1f;
+        }
+
+        private void OnDisable() => StopExpression();
 
         private void Awake()
         {
@@ -35,6 +100,11 @@ namespace DarkLord.Actors
 
         public void Present(ActorState state, Vector2 facing)
         {
+            if (expressionPlaying)
+            {
+                if (state == ActorState.Die || ExpressionFinished()) StopExpression();
+                else return;
+            }
             if (spriteRenderer != null && (useDirectionalParameters || Mathf.Abs(facing.x) > 0.01f))
                 spriteRenderer.flipX = Mathf.Abs(facing.x) > 0.01f && (artworkFacesRight ? facing.x < 0 : facing.x > 0);
             if (animator == null || !animator.isActiveAndEnabled || animator.runtimeAnimatorController == null) return;
@@ -72,11 +142,21 @@ namespace DarkLord.Actors
                 int speed = state == ActorState.Run ? 1 : 0;
                 if (speedType == (int)AnimatorControllerParameterType.Int) animator.SetInteger(speedId, speed);
                 else if (speedType == (int)AnimatorControllerParameterType.Float) animator.SetFloat(speedId, speed);
+                if (lastState == ActorState.Attack && useDirectionalParameters)
+                {
+                    string locomotion = state == ActorState.Run ? "Base Layer.Locomotion.Walk" : "Base Layer.Locomotion.Idle_Default";
+                    if (animator.HasState(0, Animator.StringToHash(locomotion))) animator.Play(locomotion, 0, 0);
+                }
             }
             else
             {
                 int id = Animator.StringToHash("Base Layer." + state);
-                if (animator.HasState(0, id)) animator.Play(id, 0, 0);
+                if (animator.HasState(0, id))
+                {
+                    animator.Play(id, 0, 0);
+                    // Show the first slash frame before gameplay applies the immediate hit.
+                    if (state == ActorState.Attack && useDirectionalParameters) animator.Update(0f);
+                }
                 else if (state == ActorState.Die && animator.HasState(0, Animator.StringToHash("Base Layer.Dead")))
                     animator.Play("Base Layer.Dead", 0, 0);
             }

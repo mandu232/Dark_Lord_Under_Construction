@@ -15,11 +15,21 @@ namespace DarkLord.Player
         private MinionSummoning summoning;
         private DarkLord.Dungeon.DungeonExpansion construction;
         private PlayerCombat combat;
+        private CorpseHarvest harvest;
+        private Animator animator;
+        private static readonly int WalkRate = Animator.StringToHash("WalkRate");
+        // The authored walking pace is calibrated at the player's normal movement speed.
+        private const float WalkReferenceSpeed = 2.475f;
+        private const float WalkBoost = 1.1f;
+        private const float CorpseCarryMultiplier = .65f;
 
         private void Awake()
         {
             motor = GetComponent<TopDownMotor>();
             presentation = GetComponent<ActorAnimation>();
+            animator = GetComponentInChildren<Animator>();
+            motor.Face(Vector2.left);
+            presentation.Present(ActorState.Idle, motor.Facing);
             health = GetComponent<ActorHealth>();
             summoning = GetComponent<MinionSummoning>();
             construction = GetComponent<DarkLord.Dungeon.DungeonExpansion>();
@@ -36,13 +46,13 @@ namespace DarkLord.Player
         }
 
         private void OnEnable() => move?.Enable();
-        private void OnDisable() { move?.Disable(); if (motor != null) motor.Stop(); }
+        private void OnDisable() { move?.Disable(); if (motor != null) { motor.MovementMultiplier = 1; motor.Stop(); } }
         private void OnDestroy() => move?.Dispose();
 
         private void Update()
         {
-            if (combat == null) combat = GetComponent<PlayerCombat>();
-            if (GetComponent<RunEconomy>()?.BlocksGameplayInput == true || GetComponent<CorpseHarvest>() != null && GetComponent<CorpseHarvest>().BlocksGameplayInput || Time.timeScale == 0 || (health != null && !health.IsAlive) ||
+            RefreshMovementMultiplier();
+            if (GetComponent<RunEconomy>()?.BlocksGameplayInput == true || harvest != null && harvest.BlocksGameplayInput || Time.timeScale == 0 || (health != null && !health.IsAlive) ||
                 (combat != null && (combat.IsFinished || combat.BlocksTutorialInput)) ||
                 (summoning != null && summoning.BlocksGameplayInput && (construction == null || !construction.ExpansionMode)))
             {
@@ -55,11 +65,23 @@ namespace DarkLord.Player
             else if (combat != null && combat.IsAttacking)
             {
                 motor.Stop();
-                presentation.Present(ActorState.Attack, motor.Facing);
+                presentation.Present(combat.IsMeleeAttacking ? ActorState.Attack : ActorState.Idle, motor.Facing);
                 return;
             }
             motor.Move(direction);
+            if (animator != null && animator.isActiveAndEnabled && animator.runtimeAnimatorController != null)
+                animator.SetFloat(WalkRate, motor.Velocity.magnitude / WalkReferenceSpeed);
             presentation.Present(direction.sqrMagnitude > 0.01f ? ActorState.Run : ActorState.Idle, motor.Facing);
+        }
+
+        internal void RefreshMovementMultiplier()
+        {
+            if (!isActiveAndEnabled || motor == null) return;
+            if (combat == null) combat = GetComponent<PlayerCombat>();
+            if (harvest == null) harvest = GetComponent<CorpseHarvest>();
+            bool carryingCorpse = harvest != null && harvest.isActiveAndEnabled && harvest.Carried != null;
+            motor.MovementMultiplier = (combat != null && combat.IsDodging ? 1f : WalkBoost) *
+                (carryingCorpse ? CorpseCarryMultiplier : 1f);
         }
     }
 }

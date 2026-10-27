@@ -101,37 +101,15 @@ namespace DarkLord.Tests
             yield return new WaitForSecondsRealtime(.1f); Assert.IsTrue(waves.Tutorial.Active);
             FinishDialogue(); Assert.IsTrue(waves.Tutorial.Active); Assert.AreEqual(TutorialTrainingStep.Pickup, waves.Tutorial.TrainingStep);
         }
-        [UnityTest] public IEnumerator PortraitAndSpeakerAlternateAndExactConversationLineSurvivesSave()
+        [UnityTest] public IEnumerator DialogueWithoutPortraitsPreservesSpeakerAndExactLineAcrossSave()
         {
             var panel = Find<StartingTutorialPresentation>().transform.Find("Opening tutorial");
-            var lilia = panel.parent.Find("Dialogue portraits/Lilia portrait").GetComponent<UnityEngine.UI.RawImage>();
-            var rowen = panel.parent.Find("Dialogue portraits/Rowen portrait").GetComponent<UnityEngine.UI.RawImage>();
-            Assert.IsTrue(waves.Tutorial.SpeakerIsRowen); Assert.IsNotNull(rowen.texture); Assert.IsNotNull(lilia.texture);
-            Assert.AreNotSame(rowen.texture, lilia.texture);
-            Assert.AreEqual(Color.white, rowen.color); Assert.Less(lilia.color.r, rowen.color.r);
+            Assert.IsNull(panel.parent.Find("Dialogue portraits"));
+            Assert.IsTrue(waves.Tutorial.SpeakerIsRowen);
             Assert.AreEqual(Color.black, panel.Find("Dialogue background").GetComponent<UnityEngine.UI.Image>().color);
-            var canvas = panel.GetComponentInParent<Canvas>().GetComponent<RectTransform>();
-            var panelCorners = new Vector3[4]; ((RectTransform)panel).GetWorldCorners(panelCorners);
-            foreach (var image in new[] { lilia, rowen })
-            {
-                var corners = new Vector3[4]; image.rectTransform.GetWorldCorners(corners);
-                Assert.Less(corners[0].y, panelCorners[1].y, "Portrait waist must overlap the box rather than standing on it.");
-                Assert.Greater(corners[1].y, panelCorners[1].y, "Portrait face must rise above the box.");
-                Assert.LessOrEqual(canvas.InverseTransformPoint(corners[1]).y, canvas.rect.yMax + 1, "Portrait head must remain on screen.");
-                var left = canvas.InverseTransformPoint(corners[0]).x;
-                var right = canvas.InverseTransformPoint(corners[2]).x;
-                Assert.GreaterOrEqual(left, canvas.rect.xMin, "Portrait must not clip the left screen edge.");
-                Assert.LessOrEqual(right, canvas.rect.xMax, "Portrait must not clip the right screen edge.");
-                Assert.AreEqual(0, image == lilia ? left - canvas.rect.xMin : canvas.rect.xMax - right, 1,
-                    "Portrait must anchor to the screen edge, independently of the dialogue box.");
-                Assert.AreEqual(canvas.rect.yMin, canvas.InverseTransformPoint(corners[0]).y, 1,
-                    "Portrait must touch the bottom screen edge.");
-            }
             Assert.IsTrue(waves.Tutorial.NextDialogue()); yield return null;
-            Assert.IsFalse(waves.Tutorial.SpeakerIsRowen); Assert.AreEqual(Color.white, lilia.color); Assert.Less(rowen.color.r, lilia.color.r);
+            Assert.IsFalse(waves.Tutorial.SpeakerIsRowen);
             StringAssert.Contains("릴리아", panel.Find("Tutorial title").GetComponent<TMPro.TMP_Text>().text);
-            Assert.AreEqual(new Rect(.5f, .5f, .5f, .5f), lilia.uvRect);
-            Assert.AreEqual(new Rect(.5f, .5f, .5f, .5f), rowen.uvRect);
             string reply = waves.Tutorial.Instruction;
             var session = Find<GameSaveSession>(); var saved = JsonUtility.FromJson<GameSaveData>(JsonUtility.ToJson(session.Capture()));
             SaveSlotStore.Validate(saved); Assert.AreEqual(1, saved.tutorial.dialogueLine);
@@ -145,6 +123,102 @@ namespace DarkLord.Tests
             waves.Tutorial.NextDialogue(); Assert.IsFalse(waves.Tutorial.SpeakerIsRowen);
             FinishDialogue(); Assert.IsTrue(waves.Tutorial.Active); Assert.AreEqual(TutorialTrainingStep.Pickup, waves.Tutorial.TrainingStep);
         }
+        [UnityTest] public IEnumerator StoryExpressionsFollowEveryLineWhileGameplayIsPausedAndRestoreAfterDialogue()
+        {
+            var motor = waves.Lord.GetComponent<DarkLord.Actors.TopDownMotor>();
+            var view = waves.Lord.GetComponent<DarkLord.Actors.ActorAnimation>();
+            var animator = waves.Lord.GetComponent<Animator>();
+            var sprite = waves.Lord.GetComponent<SpriteRenderer>();
+            Assert.AreEqual(Vector2.left, motor.Facing);
+            Assert.IsTrue(sprite.flipX);
+            Assert.AreEqual("Idle Collection Sidet", sprite.sprite.texture.name);
+            Assert.AreEqual(AnimatorUpdateMode.UnscaledTime, animator.updateMode);
+            float before = animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
+            yield return new WaitForSecondsRealtime(.05f);
+            Assert.AreEqual(0, Time.timeScale);
+            Assert.Greater(animator.GetCurrentAnimatorStateInfo(0).normalizedTime, before);
+            var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var pageField = typeof(StartingTutorial).GetField("dialoguePage", flags);
+            var lineField = typeof(StartingTutorial).GetField("dialogueLine", flags);
+            for (int page = 0; page < 5; page++)
+                for (int line = 0; line < StartingTutorial.DialogueLineCount(page); line++)
+                {
+                    pageField.SetValue(waves.Tutorial, page); lineField.SetValue(waves.Tutorial, line);
+                    yield return null; yield return null;
+                    Assert.IsTrue(view.IsExpressionPlaying);
+                    Assert.IsTrue(animator.GetCurrentAnimatorStateInfo(0).IsName("Expression_" + waves.Tutorial.DialogueExpression.Value), $"{page}/{line}");
+                    Assert.IsTrue(sprite.flipX);
+                    yield return new WaitForSecondsRealtime(.65f);
+                    Assert.IsFalse(view.IsExpressionPlaying, $"{page}/{line}: one cycle must finish");
+                    Assert.IsTrue(animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_Default"));
+                    yield return new WaitForSecondsRealtime(.1f);
+                    Assert.IsFalse(view.IsExpressionPlaying, "An unchanged line must not replay its expression.");
+                }
+            var session = Find<GameSaveSession>(); var saved = session.Capture();
+            session.Restore(saved); yield return null; yield return null;
+            Assert.IsTrue(animator.GetCurrentAnimatorStateInfo(0).IsName("Expression_Accept"));
+            var menu = Find<GameMenu>(); menu.PauseGame(); yield return null; yield return null;
+            float paused = animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
+            yield return new WaitForSecondsRealtime(.6f);
+            Assert.AreEqual(paused, animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
+            Assert.IsTrue(view.IsExpressionPlaying, "Menu pause must not consume the remaining cycle.");
+            menu.StartGame(); yield return null;
+            yield return new WaitForSecondsRealtime(.6f);
+            Assert.IsFalse(view.IsExpressionPlaying);
+            Assert.IsTrue(animator.GetCurrentAnimatorStateInfo(0).IsName("Idle_Default"));
+            waves.Tutorial.NextDialogue(); yield return null;
+            Assert.IsFalse(view.IsExpressionPlaying);
+            Assert.AreEqual(AnimatorUpdateMode.Normal, animator.updateMode);
+            Assert.AreEqual(1, animator.speed);
+        }
+
+        [UnityTest] public IEnumerator PlayerUsesNewWalkInEightDirectionsAndReturnsToIdleWithMatchingShadow()
+        {
+            FinishDialogue(); yield return null;
+            var view = waves.Lord.GetComponent<DarkLord.Actors.ActorAnimation>();
+            var animator = waves.Lord.GetComponent<Animator>();
+            var sprite = waves.Lord.GetComponent<SpriteRenderer>();
+            var shadow = waves.Lord.GetComponentInChildren<DarkLord.Actors.SpriteProjectedShadow>();
+            animator.SetFloat("WalkRate", 1f);
+            Vector2[] directions = { Vector2.down, new Vector2(1,-1), Vector2.right, Vector2.one,
+                Vector2.up, new Vector2(-1,1), Vector2.left, -Vector2.one };
+            int[] rows = { 0, 1, 2, 3, 4, 3, 2, 1 };
+            for (int i = 0; i < directions.Length; i++)
+            {
+                view.Present(DarkLord.Actors.ActorState.Run, directions[i]);
+                animator.Update(.1f); animator.Update(.1f);
+                Assert.AreEqual("Walk", sprite.sprite.texture.name);
+                Assert.AreEqual(256 - rows[i] * 64, sprite.sprite.rect.y);
+                Assert.AreEqual(directions[i].x < 0, sprite.flipX);
+                Assert.AreEqual(16, sprite.sprite.pixelsPerUnit);
+                var first = sprite.sprite;
+                animator.Update(.08f);
+                Assert.AreNotEqual(first, sprite.sprite, "Walking must advance frames.");
+                shadow.Refresh(); Assert.AreSame(sprite.sprite, shadow.GetComponent<SpriteRenderer>().sprite);
+                view.Present(DarkLord.Actors.ActorState.Idle, directions[i]);
+                animator.Update(.1f); animator.Update(.1f);
+                StringAssert.StartsWith("Idle Collection", sprite.sprite.texture.name);
+            }
+        }
+
+        [UnityTest] public IEnumerator PlayerWalkRateTracksActualMovementAndSlowEffects()
+        {
+            EnableKeyboard(); FinishDialogue(); yield return null; yield return null;
+            var motor = waves.Lord.GetComponent<DarkLord.Actors.TopDownMotor>();
+            var animator = waves.Lord.GetComponent<Animator>();
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.D));
+            yield return new WaitForSecondsRealtime(.2f);
+            Assert.Greater(motor.Velocity.magnitude, 2.3f);
+            Assert.That(animator.GetFloat("WalkRate"), Is.EqualTo(motor.Velocity.magnitude / 2.475f).Within(.05f));
+            motor.ApplySlow(.5f, 2f);
+            yield return new WaitForSecondsRealtime(.2f);
+            Assert.That(motor.Velocity.magnitude, Is.EqualTo(1.2375f).Within(.1f));
+            Assert.That(animator.GetFloat("WalkRate"), Is.EqualTo(.5f).Within(.05f));
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState());
+            yield return new WaitForSecondsRealtime(.1f);
+            Assert.That(animator.GetFloat("WalkRate"), Is.LessThan(.05f));
+        }
+
         [UnityTest] public IEnumerator EveryDialogueFitsAndControlHintsRemainSeparate()
         {
             var panel = Find<StartingTutorialPresentation>().transform.Find("Opening tutorial");
@@ -160,8 +234,7 @@ namespace DarkLord.Tests
                     pageField.SetValue(waves.Tutorial, page); lineField.SetValue(waves.Tutorial, line);
                     yield return null;
                     Canvas.ForceUpdateCanvases();
-                    bool rowenPresent = !(page == 2 && line == 3 || page == 3 && line == 3 || page == 4);
-                    Assert.AreEqual(rowenPresent, panel.parent.Find("Dialogue portraits/Rowen portrait").gameObject.activeSelf, $"{page}/{line}: Rowen presence");
+                    Assert.IsNull(panel.parent.Find("Dialogue portraits"), $"{page}/{line}: dialogue art must stay absent");
                     foreach (var label in new[] { detail, controls, title })
                     {
                         label.maxVisibleCharacters = int.MaxValue; label.ForceMeshUpdate();
@@ -172,26 +245,6 @@ namespace DarkLord.Tests
                     Assert.AreEqual(page == 1 && line == 1, controls.text.Contains("WASD"));
                 }
         }
-        [UnityTest] public IEnumerator ExpressionsReactToCollapseAndSurviveSaveWithoutChangingFraming()
-        {
-            var portraits = Find<StartingTutorialPresentation>().transform.Find("Dialogue portraits");
-            var lilia = portraits.Find("Lilia portrait").GetComponent<UnityEngine.UI.RawImage>();
-            var rowen = portraits.Find("Rowen portrait").GetComponent<UnityEngine.UI.RawImage>();
-            var liliaSize = lilia.rectTransform.sizeDelta; var rowenSize = rowen.rectTransform.sizeDelta;
-            var liliaTexture = lilia.texture; var rowenTexture = rowen.texture;
-            Assert.AreEqual(new Rect(0, .5f, .5f, .5f), rowen.uvRect, "Rowen begins with a confident expression.");
-            FinishDialogue(); yield return null;
-            waves.Tutorial.Advance(StartingTutorial.BattleEnds); yield return null;
-            Assert.AreEqual(new Rect(0, 0, .5f, .5f), lilia.uvRect);
-            Assert.AreEqual(new Rect(0, 0, .5f, .5f), rowen.uvRect);
-            var session = Find<GameSaveSession>(); var saved = session.Capture();
-            session.Restore(saved); yield return null;
-            Assert.AreEqual(new Rect(0, 0, .5f, .5f), rowen.uvRect, "Restoring the line restores its alarmed expression.");
-            Assert.AreSame(liliaTexture, lilia.texture); Assert.AreSame(rowenTexture, rowen.texture);
-            Assert.AreEqual(liliaSize, lilia.rectTransform.sizeDelta); Assert.AreEqual(rowenSize, rowen.rectTransform.sizeDelta);
-            FinishDialogue(); yield return null; waves.Tutorial.Advance(8); yield return null;
-            Assert.AreEqual(new Rect(.5f, 0, .5f, .5f), rowen.uvRect, "Rowen is frustrated when he retreats.");
-        }
         [UnityTest] public IEnumerator RowenDisappearsAfterFarewellAndSaveRestoresHisAbsence()
         {
             FinishDialogue(); yield return null;
@@ -199,13 +252,14 @@ namespace DarkLord.Tests
             FinishDialogue(); yield return null;
             waves.Tutorial.Advance(8);
             waves.Tutorial.NextDialogue(); waves.Tutorial.NextDialogue(); yield return null;
-            var portrait = Find<StartingTutorialPresentation>().transform.Find("Dialogue portraits/Rowen portrait").gameObject;
-            Assert.IsTrue(waves.Tutorial.SpeakerIsRowen); Assert.IsTrue(portrait.activeSelf);
+            var presentation = Find<StartingTutorialPresentation>();
+            Assert.IsNull(presentation.transform.Find("Dialogue portraits"));
+            Assert.IsTrue(waves.Tutorial.SpeakerIsRowen); Assert.IsTrue(waves.Tutorial.RowenInConversation);
             waves.Tutorial.NextDialogue(); yield return null;
-            Assert.IsFalse(waves.Tutorial.SpeakerIsRowen); Assert.IsFalse(portrait.activeSelf);
+            Assert.IsFalse(waves.Tutorial.SpeakerIsRowen); Assert.IsFalse(waves.Tutorial.RowenInConversation);
             var session = Find<GameSaveSession>(); var saved = session.Capture();
             session.Restore(saved); yield return null;
-            Assert.IsTrue(waves.Tutorial.DialogueOpen); Assert.IsFalse(portrait.activeSelf);
+            Assert.IsTrue(waves.Tutorial.DialogueOpen); Assert.IsFalse(waves.Tutorial.RowenInConversation);
             StringAssert.Contains("…이제 갔네", waves.Tutorial.Instruction);
         }
         [UnityTest] public IEnumerator CombatBlocksFacilitiesAndHintsButStillAllowsMinionRelocation()

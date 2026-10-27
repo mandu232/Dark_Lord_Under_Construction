@@ -131,6 +131,8 @@ namespace DarkLord.Tests
             Canvas.ForceUpdateCanvases();
             var renderer = marker.HighlightRect.GetComponent<CanvasRenderer>(); Assert.IsNotNull(renderer);
             var mesh = renderer.GetMesh(); Assert.IsNotNull(mesh); Assert.Greater(mesh.vertexCount, 0);
+            var targetRect = marker.HighlightRect.rect;
+            Assert.IsTrue(mesh.vertices.All(v => v.y > targetRect.yMax || v.y < targetRect.yMin), "Only an arrow outside the target should be rendered, without a target box.");
             TutorialTestActions.MoveLord(waves, corpse.transform.position); Assert.IsTrue(waves.Harvest.TryInteract());
             yield return null; yield return null;
             var facility = summoning.Dungeon.RecruitmentFacilities.Single(); Assert.AreSame(facility, marker.Target);

@@ -24,8 +24,9 @@ namespace DarkLord.UI
         {
             waves = source; parent = GetComponent<RectTransform>(); canvas = GetComponentInParent<Canvas>();
             worldCamera = gameObject.scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<Camera>()).FirstOrDefault(c => c.orthographic);
-            var node = new GameObject("Tutorial target arrow and glow", typeof(RectTransform)); node.transform.SetParent(transform, false);
+            var node = new GameObject("Tutorial target arrow", typeof(RectTransform)); node.transform.SetParent(transform, false);
             graphic = node.AddComponent<TutorialGuideGraphic>(); graphic.raycastTarget = false;
+            graphic.color = new Color(1, .8f, .2f);
             graphic.rectTransform.anchorMin = graphic.rectTransform.anchorMax = graphic.rectTransform.pivot = Vector2.one * .5f;
             Hide();
         }
@@ -104,16 +105,8 @@ namespace DarkLord.UI
         protected override void OnPopulateMesh(VertexHelper mesh)
         {
             mesh.Clear(); float pulse = .72f + .28f * Mathf.Sin(Time.unscaledTime * 5);
-            var gold = new Color(1, .8f, .2f, pulse);
+            var gold = new Color(color.r, color.g, color.b, color.a * pulse);
             var rect = rectTransform.rect;
-            if (!ArrowOnly)
-            {
-                Border(mesh, rect, 8, new Color(1, .65f, .1f, pulse * .2f));
-                Border(mesh, rect, 2.5f, gold);
-                float sparkle = 3 + 2 * Mathf.Sin(Time.unscaledTime * 7);
-                Diamond(mesh, new Vector2(rect.xMin, rect.yMax), sparkle, Color.white);
-                Diamond(mesh, new Vector2(rect.xMax, rect.yMin), sparkle, gold);
-            }
             Vector2 direction = ArrowOnly ? Direction : ArrowBelow ? Vector2.up : Vector2.down;
             float bounce = 4 + 4 * Mathf.Sin(Time.unscaledTime * 5);
             Vector2 tip = ArrowOnly ? rect.center + direction * 17 : new Vector2(rect.center.x, ArrowBelow ? rect.yMin - 8 - bounce : rect.yMax + 8 + bounce);
@@ -123,15 +116,6 @@ namespace DarkLord.UI
             mesh.AddVert(tip, gold, Vector2.zero); mesh.AddVert(tip - direction * 18 + side * 13, gold, Vector2.zero); mesh.AddVert(tip - direction * 18 - side * 13, gold, Vector2.zero);
             mesh.AddTriangle(start, start + 1, start + 2);
         }
-        private static void Border(VertexHelper mesh, Rect r, float width, Color color)
-        {
-            Box(mesh, new Rect(r.xMin - width, r.yMax, r.width + width * 2, width), color);
-            Box(mesh, new Rect(r.xMin - width, r.yMin - width, r.width + width * 2, width), color);
-            Box(mesh, new Rect(r.xMin - width, r.yMin, width, r.height), color);
-            Box(mesh, new Rect(r.xMax, r.yMin, width, r.height), color);
-        }
-        private static void Box(VertexHelper mesh, Rect r, Color c) => Quad(mesh, new Vector2(r.xMin,r.yMin), new Vector2(r.xMin,r.yMax), new Vector2(r.xMax,r.yMax), new Vector2(r.xMax,r.yMin), c);
-        private static void Diamond(VertexHelper mesh, Vector2 p, float size, Color c) => Quad(mesh, p + Vector2.left * size, p + Vector2.up * size, p + Vector2.right * size, p + Vector2.down * size, c);
         private static void Quad(VertexHelper mesh, Vector2 a, Vector2 b, Vector2 c, Vector2 d, Color color)
         {
             int start = mesh.currentVertCount;

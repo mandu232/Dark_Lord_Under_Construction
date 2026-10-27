@@ -40,7 +40,7 @@ namespace DarkLord.Player
         private bool TryFrostNova()
         {
             if(!CanAct||IsDodging||Time.time<nextNova||waves?.Economy?.Has(TechId.FrostNova)!=true||!SpendMana(30))return false;
-            nextNova=Time.time+6;attackUntil=Time.time+.3f;
+            meleeAttack=false;nextNova=Time.time+6;attackUntil=Time.time+.3f;
             DamageArea(4,35+waves.Economy.MagicBonus,Vector2.zero,-1,DamageType.Magic,true);
             MinionShot.Show(transform,transform.position+Vector3.up*2,new Color(.35f,.8f,1));Message="서리 혈파 · 적 이동 둔화 3초";return true;
         }
@@ -48,9 +48,10 @@ namespace DarkLord.Player
         {
             var style=waves.Economy.EquippedAttack;
             if(!waves.Economy.AttackUnlocked(style))return false;
-            motor.Face(direction);nextAttack=Time.time+.75f;attackUntil=Time.time+.3f;
+            meleeAttack=style==AttackStyle.WideSlash;motor.Face(direction);nextAttack=Time.time+.75f;attackUntil=Time.time+(meleeAttack?SlashDuration:.3f);
             if(style==AttackStyle.WideSlash)
             {
+                GetComponent<ActorAnimation>()?.Present(ActorState.Attack,direction);
                 DamageArea(2.7f,Mathf.RoundToInt((25+waves.Economy.AttackBonus)*.85f),direction,-.3f,DamageType.Physical);
                 MinionShot.Show(transform,transform.position+(Vector3)direction*2.7f,new Color(1,.25f,.4f));
             }

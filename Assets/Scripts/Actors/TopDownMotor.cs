@@ -22,6 +22,7 @@ namespace DarkLord.Actors
         public Vector2 Velocity => body != null ? body.linearVelocity : Vector2.zero;
         public float MoveSpeed => moveSpeed;
         public float SpeedMultiplier { get; set; } = 1;
+        public float MovementMultiplier { get; set; } = 1;
         public float SlowMultiplier
         {
             get
@@ -35,7 +36,7 @@ namespace DarkLord.Actors
                 return result;
             }
         }
-        public float EffectiveMoveSpeed => moveSpeed * Mathf.Max(0, SpeedMultiplier) * SlowMultiplier;
+        public float EffectiveMoveSpeed => moveSpeed * Mathf.Max(0, SpeedMultiplier) * Mathf.Max(0, MovementMultiplier) * SlowMultiplier;
         public void ApplySlow(float multiplier, float duration)
         {
             if (!isActiveAndEnabled || duration <= 0 || multiplier < 0 || multiplier >= 1 ||

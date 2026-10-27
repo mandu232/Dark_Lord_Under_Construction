@@ -21,6 +21,7 @@ namespace DarkLord.Gameplay
         }
         private void SynchronizeDialoguePause()
         {
+            SynchronizePlayerExpression();
             if (!isActiveAndEnabled || !Active || !DialogueOpen) { ReleaseDialoguePause(); return; }
             if (!OwnsDialoguePause)
             {

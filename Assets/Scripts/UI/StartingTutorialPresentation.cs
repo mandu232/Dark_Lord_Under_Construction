@@ -13,12 +13,10 @@ namespace DarkLord.UI
     {
         private WaveDirector waves;
         private RectTransform panel;
-        private RectTransform portraitLayer;
         private TMP_Text title, detail, boss;
         private TMP_Text objective;
         private RectTransform companionPortrait;
         private Vector3? retreatFocus;
-        private RawImage liliaPortrait, rowenPortrait;
         private TMP_Text controls;
         private Image nameplate;
         private Image flash;
@@ -38,7 +36,6 @@ namespace DarkLord.UI
         {
             waves = source;
             gameObject.AddComponent<TutorialTargetHighlight>().Configure(source);
-            portraitLayer = Stretch("Dialogue portraits", transform, Vector2.zero, Vector2.zero);
             panel = Rect("Opening tutorial", transform, new Vector2(0, 24), new Vector2(0, 260));
             panel.anchorMin = new Vector2(.24f, 0); panel.anchorMax = new Vector2(.76f, 0); panel.pivot = new Vector2(.5f, 0);
             var plate = panel.gameObject.AddComponent<Image>(); plate.color = Color.black;
@@ -46,9 +43,6 @@ namespace DarkLord.UI
             var next = panel.gameObject.AddComponent<Button>(); next.targetGraphic = plate;
             next.transition = Selectable.Transition.None;
             next.onClick.AddListener(ClickDialogue);
-            // Waist-up portraits sit behind the box with room for the complete hair silhouette.
-            liliaPortrait = CreatePortrait("Lilia portrait", 0, "Story/Portraits/LiliaExpressions");
-            rowenPortrait = CreatePortrait("Rowen portrait", 1, "Story/Portraits/RowenExpressions");
             var paper = Stretch("Dialogue background", panel, new Vector2(4, 4), new Vector2(-4, -4));
             var paperImage = paper.gameObject.AddComponent<Image>(); paperImage.color = Color.black; paperImage.raycastTarget = false;
             var inner = Stretch("Inner border", paper, new Vector2(9, 9), new Vector2(-9, -9));
@@ -92,19 +86,6 @@ namespace DarkLord.UI
             overlay.anchorMin = Vector2.zero; overlay.anchorMax = Vector2.one; overlay.offsetMin = overlay.offsetMax = Vector2.zero;
             flash = overlay.gameObject.AddComponent<Image>(); flash.color = Color.clear; flash.raycastTarget = false;
             panel.gameObject.SetActive(false);
-            portraitLayer.gameObject.SetActive(false);
-        }
-        private RawImage CreatePortrait(string label, float anchor, string resource)
-        {
-            var rect = Rect(label, portraitLayer, Vector2.zero, new Vector2(600, 600));
-            rect.anchorMin = rect.anchorMax = new Vector2(anchor, 0); rect.pivot = new Vector2(anchor, 0);
-            rect.anchoredPosition = Vector2.zero;
-            var image = rect.gameObject.AddComponent<RawImage>(); image.raycastTarget = false;
-            image.texture = Resources.Load<Texture2D>(resource);
-            image.uvRect = ExpressionRect(TutorialPortraitMood.Neutral);
-            if (image.texture != null) rect.sizeDelta = new Vector2(600f * image.texture.width / image.texture.height, 600);
-            image.enabled = image.texture != null;
-            return image;
         }
         private static void SetStretch(RectTransform rect, Vector2 min, Vector2 max)
         { rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one; rect.pivot = Vector2.one * .5f; rect.offsetMin = min; rect.offsetMax = max; }
@@ -140,8 +121,6 @@ namespace DarkLord.UI
                 companionPortrait.anchoredPosition = new Vector2(recruitmentOpen ? 14 : -14, 0);
             }
             panel.gameObject.SetActive(active && tutorial.DialogueOpen);
-            portraitLayer.gameObject.SetActive(active && tutorial.DialogueOpen);
-            FitPortraitsToCorners();
             if (!active) { RestoreCamera(); flash.color = Color.clear; dustShown = false; retreatFocus = null; return; }
             if (tutorial.DialogueOpen)
             {
@@ -181,7 +160,7 @@ namespace DarkLord.UI
         {
             var tutorial = waves.Tutorial;
             title.text = tutorial.Heading;
-            RefreshPortrait(tutorial);
+            title.color = Color.white;
             if (displayedDialogue == tutorial.Instruction) return;
             displayedDialogue = tutorial.Instruction;
             // Keep keyboard instructions legible without making them part of the spoken sentence.
@@ -192,33 +171,6 @@ namespace DarkLord.UI
             detail.ForceMeshUpdate(true);
             dialogueCharacters = detail.textInfo.characterCount;
             UpdateDialogueHint();
-        }
-        private void RefreshPortrait(StartingTutorial tutorial)
-        {
-            bool rowen = tutorial.SpeakerIsRowen;
-            rowenPortrait.gameObject.SetActive(tutorial.RowenInConversation);
-            liliaPortrait.uvRect = ExpressionRect(tutorial.LiliaMood);
-            rowenPortrait.uvRect = ExpressionRect(tutorial.RowenMood);
-            liliaPortrait.color = rowen ? new Color(.40f, .36f, .38f, 1) : Color.white;
-            rowenPortrait.color = rowen ? Color.white : new Color(.40f, .36f, .38f, 1);
-            nameplate.color = Color.black;
-            title.color = Color.white;
-        }
-        private static Rect ExpressionRect(TutorialPortraitMood mood)
-        {
-            int cell = (int)mood;
-            return new Rect((cell % 2) * .5f, cell < 2 ? .5f : 0, .5f, .5f);
-        }
-        private void FitPortraitsToCorners()
-        {
-            if (liliaPortrait.texture == null || rowenPortrait.texture == null) return;
-            float liliaAspect = (float)liliaPortrait.texture.width / liliaPortrait.texture.height;
-            float rowenAspect = (float)rowenPortrait.texture.width / rowenPortrait.texture.height;
-            // Reserve a clear central area for text and keep both characters at the same height.
-            float height = Mathf.Min(600, portraitLayer.rect.width * .28f / Mathf.Max(liliaAspect, rowenAspect));
-            if (Mathf.Abs(liliaPortrait.rectTransform.sizeDelta.y - height) < .1f) return;
-            liliaPortrait.rectTransform.sizeDelta = new Vector2(height * liliaAspect, height);
-            rowenPortrait.rectTransform.sizeDelta = new Vector2(height * rowenAspect, height);
         }
         private void ClickDialogue()
         {
@@ -269,7 +221,7 @@ namespace DarkLord.UI
                 }
         }
         private void OnDisable() => RestoreCamera();
-        private void OnDestroy() { RestoreCamera(); if (portraitLayer != null) Destroy(portraitLayer.gameObject); if (panel != null) Destroy(panel.gameObject); if (flash != null) Destroy(flash.gameObject); if (objective != null) Destroy(objective.transform.parent.gameObject); }
+        private void OnDestroy() { RestoreCamera(); if (panel != null) Destroy(panel.gameObject); if (flash != null) Destroy(flash.gameObject); if (objective != null) Destroy(objective.transform.parent.gameObject); }
     }
     public sealed class OpeningDebris : MonoBehaviour
     {

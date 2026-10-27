@@ -32,11 +32,14 @@ namespace DarkLord.Player
         private readonly HashSet<ActorHealth> struck = new HashSet<ActorHealth>();
         private float nextAttack, nextNova, nextWard, nextDodge, wardUntil, dodgeUntil, attackUntil, repairProgress;
         private Vector2 dodgeDirection;
+        private bool meleeAttack;
+        private const float SlashDuration = 6f / 14f;
         public float Mana { get; private set; } = 100;
         public float MaximumMana => 100;
         public int CoreUpgradeLevel { get; private set; }
         public bool IsDodging => Time.time < dodgeUntil;
         public bool IsAttacking => Time.time < attackUntil;
+        public bool IsMeleeAttacking => IsAttacking && meleeAttack;
         public Vector2 DodgeDirection => dodgeDirection;
         public bool IsFinished => waves != null && waves.IsFinished;
         public bool BlocksTutorialInput => waves != null && waves.BlocksTutorialInput;
@@ -112,8 +115,10 @@ namespace DarkLord.Player
             direction.Normalize();
             if (waves?.Economy != null && waves.Economy.EquippedAttack != AttackStyle.Slash) return TryTechnologyAttack(direction);
             motor.Face(direction);
+            meleeAttack = true;
             nextAttack = Time.time + 0.5f;
-            attackUntil = Time.time + 0.25f;
+            attackUntil = Time.time + SlashDuration;
+            GetComponent<ActorAnimation>()?.Present(ActorState.Attack, direction);
             DamageArea(1.65f, 25 + (waves?.Economy?.AttackBonus ?? 0), direction, 0.25f, DamageType.Physical);
             return true;
         }
@@ -121,6 +126,7 @@ namespace DarkLord.Player
         {
             if (!CanAct || IsDodging || Time.time < nextNova || !SpendMana(30)) return false;
             nextNova = Time.time + 6;
+            meleeAttack = false;
             attackUntil = Time.time + 0.3f;
             DamageArea(3.5f, 45 + (waves?.Economy?.MagicBonus ?? 0), Vector2.zero, -1, DamageType.Magic);
             Message = "혈파 발동";
@@ -142,6 +148,7 @@ namespace DarkLord.Player
             dodgeUntil = Time.time + 0.25f;
             dodgeDirection = direction.normalized;
             motor.SpeedMultiplier = 2.5f * (1 + MovementBonus);
+            GetComponent<PlayerMovement>()?.RefreshMovementMultiplier();
             repairProgress = 0;
             return true;
         }

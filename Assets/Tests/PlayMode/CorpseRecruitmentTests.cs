@@ -94,6 +94,89 @@ namespace DarkLord.Tests
             Assert.IsFalse(waves.Harvest.TryDeliver(corpse, station));
             yield return new WaitForSeconds(1); Assert.IsTrue(corpse == null); Assert.AreEqual(1, station.SummonStacks);
         }
+
+        [UnityTest] public IEnumerator CarryingCorpseSlowsWalkingAndRestoresSpeedAfterDropAndReload()
+        {
+            EnableInput(); keyboard = InputSystem.AddDevice<Keyboard>();
+            var motor = waves.Lord.GetComponent<TopDownMotor>();
+            var animator = waves.Lord.GetComponent<Animator>();
+            var safe = grid.CellCenter(grid.Layout.Core + new Vector2Int(-2, -2));
+            MoveLord(safe);
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.D));
+            yield return new WaitForSecondsRealtime(.2f);
+            Assert.That(motor.Velocity.magnitude, Is.EqualTo(2.475f).Within(.1f));
+            Assert.That(animator.GetFloat("WalkRate"), Is.EqualTo(1f).Within(.08f));
+            MoveLord(safe);
+            var corpse = Remains(safe);
+            Assert.IsTrue(waves.Harvest.TryPickup(corpse));
+            yield return new WaitForSecondsRealtime(.2f);
+            Assert.AreSame(corpse, waves.Harvest.Carried);
+            Assert.That(motor.Velocity.magnitude, Is.EqualTo(2.475f * .65f).Within(.1f));
+            Assert.That(animator.GetFloat("WalkRate"), Is.EqualTo(.65f).Within(.08f));
+            var saved = session.Capture();
+            waves.Harvest.DropCarried(); yield return new WaitForSecondsRealtime(.15f);
+            Assert.That(motor.Velocity.magnitude, Is.EqualTo(2.475f).Within(.1f));
+            session.Restore(saved); MoveLord(safe);
+            yield return new WaitForSecondsRealtime(.2f);
+            Assert.IsNotNull(waves.Harvest.Carried);
+            Assert.That(motor.Velocity.magnitude, Is.EqualTo(2.475f * .65f).Within(.1f));
+            motor.ApplySlow(.5f, 2f);
+            yield return new WaitForSecondsRealtime(.15f);
+            Assert.That(motor.Velocity.magnitude, Is.EqualTo(2.475f * .65f * .5f).Within(.1f));
+            waves.Harvest.enabled = false; yield return new WaitForSecondsRealtime(.15f);
+            Assert.IsNull(waves.Harvest.Carried);
+            Assert.That(motor.Velocity.magnitude, Is.EqualTo(2.475f * .5f).Within(.1f));
+            waves.Harvest.enabled = true;
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState());
+        }
+        [UnityTest] public IEnumerator WalkingBoostDoesNotIncreaseDodgeSpeed()
+        {
+            var motor = waves.Lord.GetComponent<TopDownMotor>();
+            yield return null;
+            Assert.That(motor.EffectiveMoveSpeed, Is.EqualTo(2.475f).Within(.01f));
+            Assert.IsTrue(waves.Combat.TryDodge(Vector2.right));
+            Assert.That(motor.EffectiveMoveSpeed, Is.EqualTo(2.25f * 2.5f).Within(.01f));
+        }
+
+        [UnityTest] public IEnumerator MeleeUsesDirectionalSlashAndReturnsToLocomotionWithoutShadowingTheEffect()
+        {
+            var view = waves.Lord.GetComponent<ActorAnimation>();
+            var animator = waves.Lord.GetComponent<Animator>();
+            var sprite = waves.Lord.GetComponent<SpriteRenderer>();
+            var shadow = waves.Lord.GetComponentInChildren<SpriteProjectedShadow>();
+            Vector2[] directions = { Vector2.down, new Vector2(1,-1), Vector2.right, Vector2.one,
+                Vector2.up, new Vector2(-1,1), Vector2.left, -Vector2.one };
+            int[] rows = { 0, 1, 2, 3, 4, 3, 2, 1 };
+            for (int i = 0; i < directions.Length; i++)
+            {
+                Assert.IsTrue(waves.Combat.TryAttack(directions[i]), $"attack {i}");
+                yield return null; yield return null;
+                Assert.IsTrue(waves.Combat.IsMeleeAttacking);
+                Assert.IsTrue(animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"));
+                Assert.AreEqual("Slash_1", sprite.sprite.texture.name);
+                Assert.AreEqual(256 - rows[i] * 64, sprite.sprite.rect.y, $"direction {i}");
+                Assert.AreEqual(directions[i].x < 0, sprite.flipX);
+                shadow.Refresh();
+                Assert.AreNotEqual("Slash_1", shadow.GetComponent<SpriteRenderer>().sprite.texture.name);
+                yield return new WaitForSecondsRealtime(.48f);
+                Assert.IsFalse(waves.Combat.IsAttacking);
+                Assert.IsFalse(animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"));
+                Assert.IsFalse(view.IsExpressionPlaying);
+                yield return new WaitForSecondsRealtime(.1f);
+            }
+            Assert.IsTrue(waves.Combat.TryNova());
+            yield return null; yield return null;
+            Assert.IsTrue(waves.Combat.IsAttacking);
+            Assert.IsFalse(waves.Combat.IsMeleeAttacking);
+            Assert.AreNotEqual("Slash_1", sprite.sprite.texture.name);
+            yield return new WaitForSecondsRealtime(.35f);
+            Assert.IsTrue(waves.Combat.TryAttack(Vector2.right));
+            yield return null; yield return null;
+            Assert.IsTrue(animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"));
+            Assert.IsTrue(waves.Combat.TryDodge(Vector2.right));
+            yield return null; yield return null;
+            Assert.IsFalse(animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"));
+        }
         [Test] public void RandomSummonSpendsOneStackWithoutManaAndEmptyStackFails()
         {
             MoveLord(station.transform.position + Vector3.down * 2);
@@ -207,13 +290,15 @@ namespace DarkLord.Tests
             camera.transform.position = grid.CellCenter(grid.Layout.Core) + Vector3.back * 10;
             camera.orthographicSize = 14; camera.ResetWorldToCameraMatrix(); camera.ResetProjectionMatrix();
             yield return null;
-            var outline = hud.transform.Find("Nearby corpse outline").gameObject;
+            var outline = hud.transform.Find("Nearby corpse arrow").gameObject;
             var hint = hud.transform.Find("Nearby corpse F hint").gameObject;
             var receiver = hud.transform.Find("Available corpse receiver").gameObject;
             Assert.IsTrue(outline.activeSelf); Assert.IsTrue(hint.activeSelf); Assert.IsFalse(receiver.activeSelf);
             Assert.IsTrue(waves.Harvest.TryInteract()); yield return null;
             Assert.IsFalse(outline.activeSelf); Assert.IsFalse(hint.activeSelf); Assert.IsTrue(receiver.activeSelf);
-            Assert.IsTrue(receiver.GetComponentsInChildren<UnityEngine.UI.Image>().All(i => !i.raycastTarget && i.color.g > i.color.r));
+            var arrow = receiver.GetComponent<DarkLord.UI.TutorialGuideGraphic>();
+            Assert.IsNotNull(arrow); Assert.IsFalse(arrow.raycastTarget); Assert.Greater(arrow.color.g, arrow.color.r);
+            Assert.IsEmpty(receiver.GetComponentsInChildren<UnityEngine.UI.Image>());
             station.Health.TakeDamage(99999); yield return null; Assert.IsFalse(receiver.activeSelf);
             Time.timeScale = 0; yield return null; Assert.IsFalse(outline.activeSelf); Assert.IsFalse(hint.activeSelf);
         }

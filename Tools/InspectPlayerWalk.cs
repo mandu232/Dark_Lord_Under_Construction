@@ -1,0 +1,1 @@
+return "ROOT="+UnityEngine.Application.dataPath+"\nPLAYING="+UnityEditor.EditorApplication.isPlaying+"\n"+string.Join("\n",UnityEditor.AssetDatabase.LoadAllAssetsAtPath("Assets/Sprtie/Characters/Player/Walk.png").OfType<UnityEngine.Sprite>().OrderByDescending(s=>s.rect.y).ThenBy(s=>s.rect.x).Select(s=>s.name+" "+s.rect+" ppu="+s.pixelsPerUnit));
