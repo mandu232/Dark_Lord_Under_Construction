@@ -18,6 +18,7 @@ namespace DarkLord.Minions
         private DungeonSection destinationRoom;
         private int waypoint, revision = -1;
         private float nextSearch;
+        internal DungeonGrid Dungeon => dungeon;
         public DungeonSection LockedRoom { get; private set; }
         public ActorHealth Target { get; private set; }
         public bool HasWaypoint => waypoint < path.Count;
@@ -48,6 +49,19 @@ namespace DarkLord.Minions
             if (LockedRoom == null) LockedRoom = currentRoom;
             if (LockedRoom != null)
             {
+                // Knockback can cross a doorway without clearing the room. A confined
+                // search rejects an outside start, so route back to its first floor cell.
+                if (!LockedRoom.Bounds.Contains(cell))
+                {
+                    if (dungeon.Construction.FindPath(cell, LockedRoom.Center, path))
+                        for (int i = 0; i < path.Count; i++)
+                            if (LockedRoom.Bounds.Contains(path[i]))
+                            {
+                                if (i + 1 < path.Count) path.RemoveRange(i + 1, path.Count - i - 1);
+                                break;
+                            }
+                    return;
+                }
                 dungeon.GetRoomDefenders(LockedRoom, defenders);
                 if (defenders.Count > 0)
                 {

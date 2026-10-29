@@ -287,7 +287,8 @@ namespace DarkLord.Minions
             if (!IsHostile(candidate)) return false;
             if (assaultMode) return true;
             var room = defenceDungeon != null ? defenceDungeon.Construction.RoomAt(defenceDungeon.WorldToCell(guardPosition)) : null;
-            if (room != null && defenceDungeon.Construction.RoomAt(defenceDungeon.WorldToCell(candidate.transform.position)) != room) return false;
+            if (room != null && defenceDungeon.Construction.RoomAt(defenceDungeon.WorldToCell(candidate.transform.position)) != room)
+                return InAttackRange(candidate) && IsDoorwayCell(defenceDungeon, room, candidate.transform.position);
             if (room != null) return true;
             return ((Vector2)candidate.transform.position - Anchor).sqrMagnitude <= detectionRange * detectionRange;
         }
@@ -300,14 +301,26 @@ namespace DarkLord.Minions
             if (candidate == null) return false;
             var building = candidate.GetComponent<DarkLord.Dungeon.ResourceBuilding>();
             if (building != null && building.IsProtected) return false;
-            return dungeonRoute.LockedRoom == null || dungeonRoute.ContainsInLockedRoom(candidate.transform.position);
+            return dungeonRoute.LockedRoom == null || dungeonRoute.ContainsInLockedRoom(candidate.transform.position) ||
+                InAttackRange(candidate) && IsDoorwayCell(dungeonRoute.Dungeon, dungeonRoute.LockedRoom, candidate.transform.position);
         }
+        // Permit fighting across an open door, but never chase outside the assigned room.
+        private static bool IsDoorwayCell(DarkLord.Dungeon.DungeonGrid dungeon,
+            DarkLord.Dungeon.DungeonSection room, Vector3 position)
+        {
+            var cell = dungeon.WorldToCell(position);
+            if (!dungeon.Construction.IsWalkable(cell) || dungeon.Construction.RoomAt(cell) != null) return false;
+            int dx = Mathf.Max(0, Mathf.Max(room.Bounds.xMin - cell.x, cell.x - room.Bounds.xMax + 1));
+            int dy = Mathf.Max(0, Mathf.Max(room.Bounds.yMin - cell.y, cell.y - room.Bounds.yMax + 1));
+            return dx + dy == 1;
+        }
+
         private ActorHealth FindTarget()
         {
             var filter = new ContactFilter2D { useLayerMask = true, layerMask = targetLayers, useTriggers = false };
             var room = defenceDungeon != null ? defenceDungeon.Construction.RoomAt(defenceDungeon.WorldToCell(guardPosition)) : null;
             int count = room != null
-                ? Physics2D.OverlapBox(defenceDungeon.CellCenter(room.Center), new Vector2(room.Bounds.width, room.Bounds.height) * DarkLord.Dungeon.DungeonGrid.CellSize, 0, filter, nearby)
+                ? Physics2D.OverlapBox(defenceDungeon.CellCenter(room.Center), new Vector2(room.Bounds.width, room.Bounds.height) * DarkLord.Dungeon.DungeonGrid.CellSize + Vector2.one * (2 * attackRange), 0, filter, nearby)
                 : Physics2D.OverlapCircle(Anchor, detectionRange, filter, nearby);
             ActorHealth closest = null;
             float bestDistance = float.PositiveInfinity;

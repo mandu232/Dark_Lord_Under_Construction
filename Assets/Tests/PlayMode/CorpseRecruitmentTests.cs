@@ -248,7 +248,7 @@ namespace DarkLord.Tests
             Assert.That(motor.EffectiveMoveSpeed, Is.EqualTo(2.25f * 2.5f).Within(.01f));
         }
 
-        [UnityTest] public IEnumerator MeleeUsesDirectionalSlashAndReturnsToLocomotionWithoutShadowingTheEffect()
+        [UnityTest, Category("AttackShadowRegression")] public IEnumerator MeleeUsesDirectionalSlashAndReturnsToLocomotionWithoutShadowingTheEffect()
         {
             var view = waves.Lord.GetComponent<ActorAnimation>();
             var animator = waves.Lord.GetComponent<Animator>();
@@ -260,14 +260,17 @@ namespace DarkLord.Tests
             for (int i = 0; i < directions.Length; i++)
             {
                 Assert.IsTrue(waves.Combat.TryAttack(directions[i]), $"attack {i}");
+                if (i == 0) yield return new WaitForSeconds(3f / 14f + .03f);
                 yield return null; yield return null;
                 Assert.IsTrue(waves.Combat.IsMeleeAttacking);
-                Assert.IsTrue(animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"));
-                Assert.AreEqual("Slash_1", sprite.sprite.texture.name);
+                Assert.IsTrue(animator.GetCurrentAnimatorStateInfo(0).IsName(i % 2 == 0 ? "Attack" : "Attack2"));
+                Assert.AreEqual(i % 2 == 0 ? "Slash_1" : "Slash_2", sprite.sprite.texture.name);
                 Assert.AreEqual(256 - rows[i] * 64, sprite.sprite.rect.y, $"direction {i}");
                 Assert.AreEqual(directions[i].x < 0, sprite.flipX);
                 shadow.Refresh();
-                Assert.AreNotEqual("Slash_1", shadow.GetComponent<SpriteRenderer>().sprite.texture.name);
+                Assert.AreSame(sprite.sprite, shadow.GetComponent<SpriteRenderer>().sprite);
+                var properties = new MaterialPropertyBlock(); shadow.GetComponent<SpriteRenderer>().GetPropertyBlock(properties);
+                Assert.AreEqual(1f, properties.GetFloat("_ExcludeSlashEffect"));
                 yield return new WaitForSecondsRealtime(.48f);
                 Assert.IsFalse(waves.Combat.IsAttacking);
                 Assert.IsFalse(animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"));

@@ -194,6 +194,7 @@ namespace DarkLord.Gameplay
                 actor.RestorePoise(saved.poise);
                 actor.GetComponent<TopDownMotor>().RestoreSlows(saved.slows);
             }
+            tactics.SetHero(boss);
             if (boss) actor.transform.localScale *= 1.4f;
             actor.Assault(waves.Core, dungeon);
             actor.Health.Died += () => { if (actor != null && !boss) waves.Harvest?.LeaveCorpse(actor.Health); };

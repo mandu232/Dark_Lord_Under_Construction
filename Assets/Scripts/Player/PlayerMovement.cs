@@ -61,7 +61,19 @@ namespace DarkLord.Player
                 return;
             }
             Vector2 direction = move != null ? move.ReadValue<Vector2>() : Vector2.zero;
-            if (combat != null && combat.IsDodging) direction = combat.DodgeDirection;
+            if (combat != null && combat.IsDodging)
+            {
+                direction = combat.DodgeDirection;
+                motor.Move(direction);
+                presentation.Present(combat.DodgeUsesDash ? ActorState.Dash : ActorState.Roll, direction);
+                return;
+            }
+            else if (combat != null && combat.IsChangingWeapon)
+            {
+                motor.Stop();
+                presentation.Present(combat.WeaponAction, motor.Facing);
+                return;
+            }
             else if (combat != null && combat.IsAttacking)
             {
                 motor.Stop();

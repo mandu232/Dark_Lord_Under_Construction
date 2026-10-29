@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace DarkLord.Actors
 {
-    public enum ActorState { Idle, Run, Hit, Attack, Die }
+    public enum ActorState { Idle, Run, Hit, Attack, Die, Sheate, Unsheate, Dash, Roll }
     public enum PlayerExpression { Down, Crying, Blinking, Accept, Decline }
 
     /// <summary>Gameplay owns timing; animation clips and animation events are optional.</summary>
@@ -162,7 +162,7 @@ namespace DarkLord.Actors
                 int speed = state == ActorState.Run ? 1 : 0;
                 if (speedType == (int)AnimatorControllerParameterType.Int) animator.SetInteger(speedId, speed);
                 else if (speedType == (int)AnimatorControllerParameterType.Float) animator.SetFloat(speedId, speed);
-                if (lastState == ActorState.Attack && useDirectionalParameters)
+                if ((lastState == ActorState.Attack || lastState == ActorState.Sheate || lastState == ActorState.Unsheate || lastState == ActorState.Dash || lastState == ActorState.Roll) && useDirectionalParameters)
                 {
                     string locomotion = state == ActorState.Run ? "Base Layer.Locomotion.Walk" : "Base Layer.Locomotion.Idle_Default";
                     if (animator.HasState(0, Animator.StringToHash(locomotion))) animator.Play(locomotion, 0, 0);

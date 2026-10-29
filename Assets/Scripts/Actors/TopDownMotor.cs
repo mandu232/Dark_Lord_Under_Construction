@@ -21,6 +21,7 @@ namespace DarkLord.Actors
         private readonly List<Slow> slows = new List<Slow>();
         public ActorHealth BlockedBy { get; private set; }
         public bool IgnoreActorBlocking { get; set; }
+        public bool IgnoreMinionBlocking { get; set; }
         public Vector2 Facing { get; private set; } = Vector2.down;
         public Vector2 Velocity => body != null ? body.linearVelocity : Vector2.zero;
         public float MoveSpeed => moveSpeed;
@@ -157,6 +158,7 @@ namespace DarkLord.Actors
                 {
                     if (other == null || other == this || other.health == null || !other.health.isActiveAndEnabled ||
                         !other.health.IsAlive || other.health.Faction == health.Faction || !other.HasSolidBody()) continue;
+                    if (IgnoreMinionBlocking && other.health.Faction == Faction.Dungeon && other.GetComponent<DarkLord.Minions.MinionController>() != null) continue;
                     // Sweep the actor footprint before physics, preventing passage without imparting impulses.
                     Vector2 delta = other.body.position - body.position;
                     float along = Vector2.Dot(delta, direction);

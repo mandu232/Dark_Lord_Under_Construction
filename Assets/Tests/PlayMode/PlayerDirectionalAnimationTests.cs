@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System.Collections;
+using System.Linq;
 using DarkLord.Actors;
 using NUnit.Framework;
 using UnityEditor;
@@ -8,6 +9,7 @@ using UnityEngine.TestTools;
 
 namespace DarkLord.Tests
 {
+    [Category("AttackShadowRegression")]
     public sealed class PlayerDirectionalAnimationTests
     {
         private GameObject actor;
@@ -103,6 +105,49 @@ namespace DarkLord.Tests
         }
 
         [Test]
+        public void AttackShadowsFollowEveryFrameAndExcludeEffectsForBothSheets()
+        {
+            actor = new GameObject("Attack shadow test");
+            var source = actor.AddComponent<SpriteRenderer>();
+            var shadowNode = new GameObject("Ground Shadow"); shadowNode.transform.SetParent(actor.transform, false);
+            var shadow = shadowNode.AddComponent<SpriteRenderer>();
+            var projection = shadowNode.AddComponent<SpriteProjectedShadow>();
+            source.sprite = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprite/Characters/Player/Walk.png")
+                .OfType<Sprite>().First();
+            projection.Refresh();
+            foreach (string action in new[] { "Attack", "Attack2" })
+                foreach (string direction in new[] { "Front", "FrontDiagonal", "Side", "BackDiagonal", "Back" })
+                {
+                    var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/Animations/Player/" + action + direction + ".anim");
+                    Assert.IsNotNull(clip);
+                    var frames = AnimationUtility.GetObjectReferenceCurve(clip,
+                        AnimationUtility.GetObjectReferenceCurveBindings(clip).Single());
+                    Assert.AreEqual(6, frames.Length);
+                    for (int frame = 0; frame < 6; frame++)
+                    {
+                        source.sprite = (Sprite)frames[frame].value;
+                        Assert.IsNotNull(source.sprite);
+                        source.flipX = frame % 2 == 0;
+                        projection.Refresh();
+                        Assert.AreSame(source.sprite, shadow.sprite, action + direction + " frame " + frame);
+                        Assert.AreEqual(source.flipX, shadow.flipX);
+                        var properties = new MaterialPropertyBlock(); shadow.GetPropertyBlock(properties);
+                        Assert.AreEqual(1f, properties.GetFloat("_ExcludeSlashEffect"), "Attack effect must not cast a shadow");
+                    }
+                }
+            var walk = AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/Animations/Player/WalkSide.anim");
+            Assert.IsNotNull(walk);
+            source.sprite = (Sprite)AnimationUtility.GetObjectReferenceCurve(walk,
+                AnimationUtility.GetObjectReferenceCurveBindings(walk).Single())[0].value;
+            projection.Refresh();
+            var restored = new MaterialPropertyBlock(); shadow.GetPropertyBlock(restored);
+            Assert.AreSame(source.sprite, shadow.sprite);
+            Assert.AreEqual(0f, restored.GetFloat("_ExcludeSlashEffect"), "Leaving attack must restore normal silhouettes");
+            source.sprite = null; projection.Refresh(); Assert.IsNull(shadow.sprite);
+            source.enabled = false; projection.Refresh(); Assert.IsFalse(shadow.enabled);
+        }
+
+        [Test]
         public void StoppingKeepsLastFacingAndAnalogDirectionsSnapToEightSectors()
         {
             actor = new GameObject("Facing test");
@@ -136,6 +181,14 @@ namespace DarkLord.Tests
             {
                 Assert.IsFalse(combat.TryAttack(Vector2.zero));
                 Assert.IsTrue(combat.TryAttack(directions[i]));
+                if (i == 0)
+                {
+                    Assert.IsTrue(combat.IsChangingWeapon);
+                    Assert.That(combat.WeaponAction, Is.EqualTo(ActorState.Unsheate));
+                    Assert.IsFalse(combat.IsMeleeAttacking);
+                    yield return new WaitForSeconds(.24f);
+                    Assert.IsTrue(combat.IsMeleeAttacking);
+                }
                 bool second = i % 2 == 1;
                 Assert.That(combat.UsesSecondSlash, Is.EqualTo(second));
                 Assert.IsFalse(combat.TryAttack(directions[i]), "Cooldown must not advance slash sequence");
@@ -155,6 +208,17 @@ namespace DarkLord.Tests
                 animator.Update(0f);
                 Assert.That(sprite.sprite.texture.name, Does.StartWith("Idle Collection"));
             }
+            float sheathDeadline = Time.time + 3f;
+            while (!combat.IsChangingWeapon && Time.time < sheathDeadline) yield return null;
+            Assert.IsTrue(combat.IsChangingWeapon);
+            Assert.That(combat.WeaponAction, Is.EqualTo(ActorState.Sheate));
+            yield return new WaitForSeconds(.2f);
+            Assert.IsFalse(combat.IsChangingWeapon);
+            Assert.IsTrue(combat.TryAttack(Vector2.left));
+            Assert.That(combat.WeaponAction, Is.EqualTo(ActorState.Unsheate));
+            Assert.IsTrue(combat.TryDodge(Vector2.right));
+            yield return new WaitForSeconds(.3f);
+            Assert.IsFalse(combat.IsMeleeAttacking, "Dodge cancels a queued slash");
         }
     }
 }

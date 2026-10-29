@@ -33,6 +33,24 @@ namespace DarkLord.Player
         private float nextAttack, nextNova, nextWard, nextDodge, wardUntil, dodgeUntil, attackUntil, repairProgress;
         private Vector2 dodgeDirection;
         private bool meleeAttack;
+        private bool weaponDrawn, pendingSlash;
+        private Vector2 pendingSlashDirection;
+        private float weaponActionUntil, lastMeleeAt;
+        private ActorState weaponAction;
+        public bool IsChangingWeapon => Time.time < weaponActionUntil;
+        public ActorState WeaponAction => weaponAction;
+        private void UpdateWeaponPresentation()
+        {
+            if (!CanAct || IsDodging) { pendingSlash = false; weaponActionUntil = 0; return; }
+            if (IsChangingWeapon) return;
+            if (pendingSlash) { pendingSlash = false; TryAttack(pendingSlashDirection); }
+            if (weaponDrawn && !IsAttacking && Time.time - lastMeleeAt > 2f && motor.Velocity.sqrMagnitude < .001f)
+            {
+                weaponDrawn = false;
+                weaponAction = ActorState.Sheate;
+                weaponActionUntil = Time.time + 2f / 14f;
+            }
+        }
         private bool nextSlashIsSecond;
         public bool UsesSecondSlash { get; private set; }
         private const float SlashDuration = 6f / 14f;
@@ -40,6 +58,7 @@ namespace DarkLord.Player
         public float MaximumMana => 100;
         public int CoreUpgradeLevel { get; private set; }
         public bool IsDodging => Time.time < dodgeUntil;
+        public bool DodgeUsesDash => IsDodging && Time.time < dodgeUntil - 0.5f;
         public bool IsAttacking => Time.time < attackUntil;
         public bool IsMeleeAttacking => IsAttacking && meleeAttack;
         public Vector2 DodgeDirection => dodgeDirection;
@@ -71,6 +90,7 @@ namespace DarkLord.Player
             health.DamageFilter -= AllowDamage;
             health.Damaged -= OnDamaged;
             wardUntil = dodgeUntil = attackUntil = 0;
+            pendingSlash = weaponDrawn = false; weaponActionUntil = 0;
             hasteUntil = 0;
             repairProgress = 0;
             motor.SpeedMultiplier = 1;
@@ -87,6 +107,7 @@ namespace DarkLord.Player
 
         private void Update()
         {
+            UpdateWeaponPresentation();
             motor.SpeedMultiplier = (IsDodging && CanAct ? 2.5f : 1) * (1 + MovementBonus);
             if (health.IsAlive && !IsFinished && Time.timeScale > 0)
                 Mana = Mathf.Min(MaximumMana, Mana + Time.deltaTime * ((waves != null && waves.State == WaveState.Active ? 1 : 10) + (waves?.Economy?.Has(TechId.SoulWell) == true ? 2 : 0)));
@@ -113,10 +134,22 @@ namespace DarkLord.Player
 
         public bool TryAttack(Vector2 direction)
         {
-            if (!CanAct || IsDodging || Time.time < nextAttack || direction.sqrMagnitude < 0.001f) return false;
+            if (!CanAct || IsDodging || IsChangingWeapon || Time.time < nextAttack || direction.sqrMagnitude < 0.001f) return false;
             direction.Normalize();
             if (waves?.Economy != null && waves.Economy.EquippedAttack != AttackStyle.Slash) return TryTechnologyAttack(direction);
             motor.Face(direction);
+            if (!weaponDrawn)
+            {
+                weaponDrawn = true;
+                pendingSlash = true;
+                pendingSlashDirection = direction;
+                weaponAction = ActorState.Unsheate;
+                weaponActionUntil = Time.time + 3f / 14f;
+                lastMeleeAt = Time.time;
+                GetComponent<ActorAnimation>()?.Present(weaponAction, direction);
+                return true;
+            }
+            lastMeleeAt = Time.time;
             meleeAttack = true;
             UsesSecondSlash = nextSlashIsSecond;
             nextSlashIsSecond = !nextSlashIsSecond;
@@ -149,7 +182,7 @@ namespace DarkLord.Player
         {
             if (!CanAct || Time.time < nextDodge || direction.sqrMagnitude < 0.001f) return false;
             nextDodge = Time.time + 3;
-            dodgeUntil = Time.time + 0.25f;
+            dodgeUntil = Time.time + 0.75f;
             dodgeDirection = direction.normalized;
             motor.SpeedMultiplier = 2.5f * (1 + MovementBonus);
             GetComponent<PlayerMovement>()?.RefreshMovementMultiplier();

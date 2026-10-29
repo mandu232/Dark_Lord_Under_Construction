@@ -9,7 +9,7 @@ public static class SetupPlayerAttack
     public static string Run()
     {
         if(EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Stop Play Mode first.");
-        const string root="Assets/Animations/Player/", sheet="Assets/Sprtie/Characters/Player/Slash_1.png";
+        const string root="Assets/Animations/Player/", sheet="Assets/Sprite/Characters/Player/Attack/Slash_1.png";
         var importer=(TextureImporter)AssetImporter.GetAtPath(sheet);
         if(importer==null) throw new InvalidOperationException("Missing Slash_1 sprite sheet");
         importer.spritePixelsPerUnit=16; importer.filterMode=FilterMode.Point; importer.mipmapEnabled=false;

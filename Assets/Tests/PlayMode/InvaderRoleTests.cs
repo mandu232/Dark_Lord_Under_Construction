@@ -45,6 +45,99 @@ namespace DarkLord.Tests
             tactics.RestoreSave(new InvaderTacticsSaveData { role = role });
             return tactics;
         }
+        [Test] public void RowenCleaveHitsAllEnemiesInFrontAndKeepsChargeAtRange()
+        {
+            var hero = Enemy(InvaderRole.Charger); hero.SetHero(true);
+            var front = Actor(Vector3.right, Faction.Dungeon);
+            var flank = Actor(new Vector3(.3f, 1.5f), Faction.Dungeon);
+            var behind = Actor(Vector3.left, Faction.Dungeon);
+            Physics2D.SyncTransforms();
+            hero.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Charger, cooldown = 0 });
+            Assert.IsTrue(hero.TryAct(front));
+            Assert.AreEqual(InvaderAction.HeroCleave, hero.Action);
+            hero.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Charger, action = InvaderAction.HeroCleave, direction = Vector2.right });
+            Assert.IsTrue(hero.TryAct(front));
+            Assert.AreEqual(75, front.CurrentHealth); Assert.AreEqual(75, flank.CurrentHealth);
+            Assert.AreEqual(100, behind.CurrentHealth);
+            hero.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Charger, cooldown = 0 });
+            front.transform.position = Center + Vector3.right * 4;
+            Physics2D.SyncTransforms();
+            Assert.IsTrue(hero.TryAct(front));
+            Assert.AreEqual(InvaderAction.WindingUp, hero.Action);
+        }
+
+        [UnityTest] public IEnumerator RowenCleaveAndChargeKnockTargetsBack()
+        {
+            var hero = Enemy(InvaderRole.Charger); hero.SetHero(true);
+            var target = Actor(Vector3.right, Faction.Dungeon);
+            var motor = target.gameObject.AddComponent<TopDownMotor>();
+            Physics2D.SyncTransforms(); yield return null;
+            hero.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Charger, action = InvaderAction.HeroCleave, direction = Vector2.right });
+            var start = target.transform.position;
+            Assert.IsTrue(hero.TryAct(target));
+            yield return new WaitForSeconds(.16f);
+            Assert.Greater(target.transform.position.x - start.x, .5f, "Cleave must push the target away");
+            motor.ClearKnockback(); motor.Stop();
+            motor.GetComponent<Rigidbody2D>().position = Center + Vector3.right;
+            target.transform.position = Center + Vector3.right; Physics2D.SyncTransforms();
+            hero.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Charger, action = InvaderAction.Charging, remaining = 1, direction = Vector2.right });
+            start = target.transform.position;
+            Assert.IsTrue(hero.TryAct(target));
+            yield return new WaitForSeconds(.16f);
+            Assert.Greater(target.transform.position.x - start.x, .5f, "Charge must push the target away");
+        }
+
+        [UnityTest] public IEnumerator RowenChargePushesMultipleMinionsAndContinues()
+        {
+            var hero = Enemy(InvaderRole.Charger); hero.SetHero(true);
+            var one = Actor(Vector3.right * .7f, Faction.Dungeon); one.gameObject.AddComponent<MinionController>();
+            var two = Actor(Vector3.right * 1.3f, Faction.Dungeon); two.gameObject.AddComponent<MinionController>();
+            // Stop defender AI from chasing while retaining the body-blocking component.
+            one.GetComponent<MinionController>().SetHeld(true); two.GetComponent<MinionController>().SetHeld(true);
+            one.GetComponent<TopDownMotor>().IgnoreActorBlocking = true;
+            two.GetComponent<TopDownMotor>().IgnoreActorBlocking = true;
+            hero.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Charger, action = InvaderAction.Charging, remaining = .35f, direction = Vector2.right });
+            Physics2D.SyncTransforms();
+            Vector3 start = hero.transform.position;
+            float until = Time.time + .3f;
+            while (Time.time < until) { hero.TryAct(one); yield return null; }
+            Assert.Greater(hero.transform.position.x - start.x, .5f, "Charge continues through bodies");
+            Assert.AreEqual(78, one.CurrentHealth, "Each target is hit once");
+            Assert.AreEqual(78, two.CurrentHealth, "Both targets are struck");
+            Assert.Greater(one.transform.position.x, Center.x + .7f);
+            Assert.Greater(two.transform.position.x, Center.x + 1.3f);
+        }
+
+        [Test] public void RowenDangerAreasMatchAttackDirectionAndDisappearAfterAction()
+        {
+            var hero = Enemy(InvaderRole.Charger); hero.SetHero(true);
+            hero.transform.localScale = Vector3.one * 1.4f;
+            var target = Actor(Vector3.right, Faction.Dungeon);
+            Physics2D.SyncTransforms();
+            hero.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Charger, cooldown = 0 });
+            Assert.IsTrue(hero.TryAct(target));
+            var warning = hero.transform.Find("Rowen danger area").GetComponent<SpriteRenderer>();
+            Assert.IsTrue(warning.enabled);
+            Assert.That(warning.color.r, Is.GreaterThan(warning.color.g));
+            Assert.That(warning.bounds.size.x, Is.EqualTo(5f).Within(.02f));
+            Assert.That(warning.bounds.size.y, Is.EqualTo(5f).Within(.02f));
+            var texture = warning.sprite.texture;
+            Assert.Less(texture.GetPixel(25, 32).a, .01f, "Cleave does not cover the rear");
+            Assert.Greater(texture.GetPixel(90, 32).a, .1f, "Cleave covers the front");
+            hero.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Charger, action = InvaderAction.WindingUp, remaining = .75f, direction = Vector2.right });
+            Assert.IsTrue(warning.enabled);
+            float travel = hero.GetComponent<TopDownMotor>().MoveSpeed * 2.6f * .35f;
+            Assert.That(warning.bounds.size.x, Is.EqualTo(travel + 2.3f).Within(.02f));
+            Assert.That(warning.bounds.size.y, Is.EqualTo(2.3f).Within(.02f));
+            Assert.That(warning.bounds.center.x - hero.transform.position.x, Is.EqualTo(travel / 2).Within(.02f));
+            hero.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Charger, action = InvaderAction.Recovering, remaining = .2f });
+            Assert.IsFalse(warning.enabled, "Danger area ends after windup");
+            hero.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Charger, action = InvaderAction.WindingUp, remaining = .3f, direction = Vector2.up });
+            Assert.That(warning.bounds.size.y, Is.EqualTo(travel + 2.3f).Within(.02f));
+            hero.enabled = false;
+            Assert.IsFalse(warning.enabled, "Disabling the actor clears the warning");
+        }
+
         [Test] public void FiveWavesIntroduceDifferentProblemsAndRespectScaledCounts()
         {
             int[][] expected = { new[] {3,0,0,0}, new[] {3,0,0,2}, new[] {6,0,1,0}, new[] {6,2,1,0}, new[] {3,3,2,3} };
@@ -214,3 +307,4 @@ namespace DarkLord.Tests
     }
 }
 #endif
+

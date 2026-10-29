@@ -207,10 +207,10 @@ namespace DarkLord.Tests
         {
             var grid = Grid();
             Assert.That(grid.Construction.RoomAt(grid.Layout.Core).Kind, Is.EqualTo(ConstructionKind.LargeRoom));
-            Assert.That(grid.Construction.Sections.Count, Is.EqualTo(4));
+            Assert.That(grid.Construction.Sections.Count, Is.EqualTo(2));
             foreach (var section in grid.Construction.Sections)
                 Assert.That(section.Bounds.size, Is.EqualTo(section.IsCore ? new Vector2Int(7, 7) :
-                    DungeonConstruction.IsRoom(section.Kind) ? new Vector2Int(5, 5) : new Vector2Int(11, 5)));
+                    new Vector2Int(grid.Layout.Core.x - 3 - grid.Layout.Entrance.x, 3)));
             Assert.That(grid.Construction.CanPlan(ConstructionKind.LargeRoom, grid.Layout.Core + Vector2Int.right * 7), Is.EqualTo(ConstructionResult.TooCloseToRoom));
             grid.Construction.TryPlan(ConstructionKind.HorizontalCorridor, grid.Layout.Core + Vector2Int.right * 6, out var corridor);
             Finish(grid, corridor);
@@ -357,17 +357,95 @@ namespace DarkLord.Tests
             Assert.IsTrue(route.HasWaypoint, "Clearing guards releases the route to the remaining starting rooms.");
         }
 
+        [UnityTest]
+        public IEnumerator DoorwayCombatRecoversAfterInvaderIsPushedOutsideLockedRoom()
+        {
+            var grid = Grid();
+            Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlan(ConstructionKind.HorizontalCorridor, grid.Layout.Core + Vector2Int.right * 6, out var corridor)); Finish(grid, corridor);
+            Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlan(ConstructionKind.Room, corridor.Center + Vector2Int.right * 5, out var room)); Finish(grid, room);
+            var objective = Actor(grid, grid.Layout.Core).GetComponent<ActorHealth>();
+            var guard = Actor(grid, room.Center, true).GetComponent<ActorHealth>();
+            var route = new InvaderDungeonRoute(grid, objective);
+            var entry = new Vector2Int(room.Bounds.xMin, room.Center.y);
+            route.Update(grid.CellCenter(entry));
+            Assert.AreSame(room, route.LockedRoom);
+            yield return new WaitForSeconds(.21f);
+            route.Update(grid.CellCenter(entry + Vector2Int.left));
+            Assert.AreSame(room, route.LockedRoom, "Knockback must not release an uncleared room");
+            Assert.IsTrue(route.HasWaypoint, "Invader stranded outside its locked room needs a return route");
+            Assert.IsTrue(route.Target == null || route.Target == guard);
+        }
+
+        [UnityTest]
+        public IEnumerator DoorwayCombatGuardHitsEnemyAcrossBoundaryWithoutLeavingRoom()
+        {
+            var grid = Grid();
+            Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlan(ConstructionKind.HorizontalCorridor, grid.Layout.Core + Vector2Int.right * 6, out var corridor)); Finish(grid, corridor);
+            Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlan(ConstructionKind.Room, corridor.Center + Vector2Int.right * 5, out var room)); Finish(grid, room);
+            var entry = new Vector2Int(room.Bounds.xMin, room.Center.y);
+            var boundary = grid.CellCenter(entry) + Vector3.left * (DungeonGrid.CellSize * .5f);
+            var guard = Actor(grid, entry, true).GetComponent<MinionController>();
+            var position = boundary + Vector3.right * .25f;
+            guard.Relocate(position);
+            var enemy = Actor(grid, entry + Vector2Int.left).GetComponent<ActorHealth>();
+            enemy.Configure(Faction.Invader, 1000);
+            enemy.transform.position = boundary + Vector3.left * .4f;
+            enemy.GetComponent<Rigidbody2D>().position = enemy.transform.position;
+            Physics2D.SyncTransforms();
+            Assert.IsNull(grid.Construction.RoomAt(grid.WorldToCell(enemy.transform.position)));
+            float deadline = Time.time + 1.5f;
+            while (enemy.CurrentHealth == 1000 && Time.time < deadline) yield return null;
+            Assert.Less(enemy.CurrentHealth, 1000, "Guard must be able to strike a reachable enemy just across the doorway");
+            Assert.IsTrue(room.Bounds.Contains(grid.WorldToCell(guard.transform.position)), "Guard must not chase into the corridor");
+        }
+
+        [UnityTest]
+        public IEnumerator DoorwayCombatActualKnockbackReturnsInvaderToUnclearedRoom()
+        {
+            var grid = Grid();
+            grid.Construction.TryPlan(ConstructionKind.HorizontalCorridor, grid.Layout.Core + Vector2Int.right * 6, out var corridor); Finish(grid, corridor);
+            grid.Construction.TryPlan(ConstructionKind.Room, corridor.Center + Vector2Int.right * 5, out var room); Finish(grid, room);
+            var objective = Actor(grid, grid.Layout.Core).GetComponent<ActorHealth>();
+            var guard = Actor(grid, room.Center, true).GetComponent<MinionController>();
+            guard.Health.Configure(Faction.Dungeon, 1000); guard.SetHeld(true);
+            var entry = new Vector2Int(room.Bounds.xMin, room.Center.y);
+            var enemy = Actor(grid, entry).GetComponent<ActorHealth>(); enemy.Configure(Faction.Invader, 1000);
+            var invader = enemy.gameObject.AddComponent<MinionController>(); invader.Assault(objective, grid);
+            yield return null;
+            Assert.AreSame(room, invader.DungeonRoute.LockedRoom);
+            enemy.GetComponent<TopDownMotor>().ApplyKnockback(Vector2.left, 10, .25f);
+            yield return new WaitForSeconds(.27f);
+            Assert.IsFalse(room.Bounds.Contains(grid.WorldToCell(enemy.transform.position)), "Test must push the enemy through the doorway");
+            float deadline = Time.time + 4f;
+            while (guard.Health.CurrentHealth == 1000 && Time.time < deadline) yield return null;
+            Assert.IsTrue(room.Bounds.Contains(grid.WorldToCell(enemy.transform.position)), "Invader must walk back after knockback");
+            Assert.AreSame(room, invader.DungeonRoute.LockedRoom);
+            Assert.Less(guard.Health.CurrentHealth, 1000, "Combat must resume after returning");
+        }
+
         [Test]
         public void InvaderVisitsConnectedSideRoomBeforeAttackingCore()
         {
             var grid = Grid();
-            // The starting recruitment room branches off the entrance hall, before the core.
-            Assert.IsNotNull(grid.Construction.RoomAt(grid.Layout.Core + new Vector2Int(-9, 5)));
+            // Side rooms are player-built now; construct this routing fixture explicitly.
+            Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlan(ConstructionKind.HorizontalCorridor,
+                grid.Layout.Core + Vector2Int.right * 6, out var corridor)); Finish(grid, corridor);
+            Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlan(ConstructionKind.Room,
+                corridor.Center + Vector2Int.right * 5, out var sideRoom)); Finish(grid, sideRoom);
             var objective = Actor(grid, grid.Layout.Core).GetComponent<ActorHealth>();
             var route = new InvaderDungeonRoute(grid, objective);
             route.Update(grid.CellCenter(grid.Layout.Entrance));
             Assert.IsNull(route.Target, "Do not bypass a side room and rush the core.");
             Assert.IsTrue(route.HasWaypoint);
+            Vector3 position = grid.CellCenter(grid.Layout.Entrance);
+            int steps = 0;
+            while (route.HasWaypoint && steps++ < grid.Layout.Width * grid.Layout.Height)
+            {
+                position = route.NextWaypoint;
+                route.Update(position);
+                Assert.IsNull(route.Target, "The connected room must be visited before selecting the core");
+            }
+            Assert.AreEqual(sideRoom.Center, grid.WorldToCell(position));
         }
 
         [UnityTest]

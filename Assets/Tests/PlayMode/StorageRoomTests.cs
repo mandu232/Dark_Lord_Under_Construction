@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 using DarkLord.Dungeon;
+using DarkLord.Gameplay;
 using DarkLord.Persistence;
 using DarkLord.Player;
 using DarkLord.UI;
@@ -30,6 +31,7 @@ namespace DarkLord.Tests
             scene = SceneManager.GetSceneByPath("Assets/Scenes/InGame.unity");
             yield return null; yield return null;
             Time.timeScale = 1;
+            Find<WaveDirector>().ConfigureRun(new NewGameOptions { difficulty = GameDifficulty.Easy });
         }
         [UnityTearDown] public IEnumerator Cleanup()
         {
@@ -44,14 +46,15 @@ namespace DarkLord.Tests
             Assert.IsTrue(room.IsComplete);
         }
 
-        [UnityTest] public IEnumerator RecruitmentUsesFSelectionAndEscapeWithoutSpendingOrPausing()
+        [UnityTest] public IEnumerator RecruitmentUsesFAndEscapeWithoutSpendingOrPausing()
         {
             var dungeon = Find<DungeonGrid>(); var summoning = Find<MinionSummoning>();
             var room = dungeon.Construction.Sections.Single(s => s.IsCore);
-            summoning.transform.position = dungeon.CellCenter(room.Center);
+            // Stand nearer the facility than the core, which also owns F interaction.
+            summoning.transform.position = dungeon.CellCenter(room.Center + new Vector2Int(2, 1));
             summoning.GetComponent<Rigidbody2D>().position = summoning.transform.position;
             Physics2D.SyncTransforms();
-            var original = UnityEngine.InputSystem.InputSystem.settings; var flags = original.hideFlags; original.hideFlags = HideFlags.None;
+            var original = UnityEngine.InputSystem.InputSystem.settings; var flags = original.hideFlags; original.hideFlags = HideFlags.DontUnloadUnusedAsset;
             var settings = Object.Instantiate(original); settings.backgroundBehavior = UnityEngine.InputSystem.InputSettings.BackgroundBehavior.IgnoreFocus;
             settings.editorInputBehaviorInPlayMode = UnityEngine.InputSystem.InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
             UnityEngine.InputSystem.InputSystem.settings = settings;
@@ -68,8 +71,8 @@ namespace DarkLord.Tests
                 Assert.AreEqual(mana, summoning.GetComponent<PlayerCombat>().Mana);
                 foreach (var label in panel.transform.Find("Recruitment selection").GetComponentsInChildren<TMP_Text>())
                 { label.ForceMeshUpdate(); Assert.IsFalse(label.isTextOverflowing, label.name); }
-                panel.GetComponentsInChildren<UnityEngine.UI.Button>().Single(b => b.name == "Recruit minion").onClick.Invoke();
-                Assert.IsTrue(summoning.IsPlacing);
+                Assert.IsFalse(panel.RandomSummonButton.interactable, "No corpse stacks means random recruitment is unavailable.");
+                Assert.IsFalse(summoning.IsPlacing);
                 Assert.AreEqual(mana, summoning.GetComponent<PlayerCombat>().Mana);
                 UnityEngine.InputSystem.InputSystem.QueueStateEvent(keyboard, new UnityEngine.InputSystem.LowLevel.KeyboardState(UnityEngine.InputSystem.Key.Escape));
                 yield return null; yield return null;
@@ -97,16 +100,28 @@ namespace DarkLord.Tests
             Assert.AreEqual(1, dungeon.GetComponentsInChildren<ResourceBuilding>().Count());
             Assert.AreEqual(250, wallet.Gold, "The starting facility costs no gold.");
             Assert.IsFalse(dungeon.CanPlaceBuilding(stationCell));
-            summoning.transform.position = dungeon.CellCenter(room.Center);
+            // Stand nearer the facility than the core, which also owns F interaction.
+            summoning.transform.position = dungeon.CellCenter(room.Center + new Vector2Int(2, 1));
             Physics2D.SyncTransforms();
             Assert.IsTrue(summoning.TryRecruit(), summoning.Message);
             Assert.IsFalse(summoning.IsPlacing, "Interaction only opens the selection window.");
             yield return null;
             var panel = Find<RecruitmentPanel>();
             Assert.IsTrue(panel.IsVisible);
-            panel.SelectMinion();
-            Assert.IsTrue(summoning.IsPlacing);
-            summoning.SetOpen(false);
+            Assert.IsFalse(panel.RandomSummonButton.interactable);
+            Assert.AreEqual(4, dungeon.Guards.Count(), "Fresh runs grant four guards.");
+            summoning.RemoveGuard(dungeon.Guards.Last());
+            Assert.IsTrue(building.TryAddSummonStack());
+            Assert.IsTrue(building.TryAddSummonStack());
+            float mana = summoning.GetComponent<PlayerCombat>().Mana;
+            yield return null;
+            Assert.IsTrue(panel.RandomSummonButton.interactable);
+            panel.RandomSummonButton.onClick.Invoke();
+            Assert.IsFalse(summoning.IsOpen, "Summoning creates the guard immediately and closes the window.");
+            Assert.IsFalse(summoning.IsPlacing);
+            Assert.AreEqual(4, dungeon.Guards.Count());
+            Assert.AreEqual(1, building.SummonStacks, "Exactly one corpse stack is charged.");
+            Assert.AreEqual(mana, summoning.GetComponent<PlayerCombat>().Mana);
             building.Health.TakeDamage(30);
             int health = building.Health.CurrentHealth;
             var saved = JsonUtility.FromJson<GameSaveData>(JsonUtility.ToJson(session.Capture()));
@@ -116,6 +131,8 @@ namespace DarkLord.Tests
             building = dungeon.BuildingAt(stationCell);
             Assert.IsTrue(building.IsRecruitmentFacility);
             Assert.AreEqual(health, building.Health.CurrentHealth);
+            Assert.AreEqual(1, building.SummonStacks);
+            Assert.AreEqual(4, dungeon.Guards.Count());
             Assert.AreEqual(1, dungeon.GetComponentsInChildren<ResourceBuilding>().Count());
             session.Restore(saved); Time.timeScale = 1;
             yield return null;
@@ -132,15 +149,16 @@ namespace DarkLord.Tests
             var wallet = Find<CurrencyWallet>(); var dungeon = Find<DungeonGrid>();
             var expansion = Find<DungeonExpansion>(); var session = Find<GameSaveSession>();
             var view = Find<ConstructionPanel>(); var summoning = Find<MinionSummoning>();
-            Assert.AreEqual(1, dungeon.Construction.Sections.Count(s => s.Kind == ConstructionKind.StorageRoom));
-            Assert.AreEqual(1, dungeon.Construction.Sections.Count(s => s.Kind == ConstructionKind.Room));
+            Assert.AreEqual(0, dungeon.Construction.Sections.Count(s => s.Kind == ConstructionKind.StorageRoom));
+            Assert.AreEqual(0, dungeon.Construction.Sections.Count(s => s.Kind == ConstructionKind.Room));
             Assert.AreEqual(1, dungeon.Construction.Sections.Count(s => !DungeonConstruction.IsRoom(s.Kind)));
-            Assert.AreEqual(2000, wallet.GetCapacity(CurrencyType.Gold));
-            Assert.AreEqual(400, wallet.GetCapacity(CurrencyType.Souls));
-            Assert.AreEqual(100, wallet.GetCapacity(CurrencyType.DarkCrystals));
+            Assert.AreEqual(1000, wallet.GetCapacity(CurrencyType.Gold));
+            Assert.AreEqual(200, wallet.GetCapacity(CurrencyType.Souls));
+            Assert.AreEqual(50, wallet.GetCapacity(CurrencyType.DarkCrystals));
             var item = AssetDatabase.LoadAssetAtPath<BuildItemDefinition>("Assets/Data/Construction/StorageRoom.asset");
             Assert.IsNotNull(item);
             Assert.AreEqual(new Vector2Int(5, 5), DungeonConstruction.Footprint(item.constructionKind, Vector2Int.zero).size);
+            dungeon.Inventory.Grant(item); dungeon.Inventory.Grant(item);
             expansion.SetExpansionMode(true); view.ShowCategory(BuildCategory.Rooms);
             Assert.IsTrue(view.GetComponentsInChildren<BuildItemButton>().Any(c => c.Item == item));
             expansion.Select(item);
@@ -154,34 +172,34 @@ namespace DarkLord.Tests
             var firstCell = new Vector2Int(28, 22);
             Assert.AreEqual(ConstructionResult.Success, expansion.TryBuild(firstCell));
             var first = dungeon.Construction.At(firstCell);
-            Assert.AreEqual(2000, wallet.GetCapacity(CurrencyType.Gold), "Queued rooms provide no capacity.");
+            Assert.AreEqual(1000, wallet.GetCapacity(CurrencyType.Gold), "Queued rooms provide no capacity.");
             Assert.AreEqual(250, wallet.Gold, "Building storage never grants resources.");
             Finish(dungeon, first);
-            Assert.AreEqual(3000, wallet.GetCapacity(CurrencyType.Gold));
-            Assert.AreEqual(600, wallet.GetCapacity(CurrencyType.Souls));
-            Assert.AreEqual(150, wallet.GetCapacity(CurrencyType.DarkCrystals));
+            Assert.AreEqual(2000, wallet.GetCapacity(CurrencyType.Gold));
+            Assert.AreEqual(400, wallet.GetCapacity(CurrencyType.Souls));
+            Assert.AreEqual(100, wallet.GetCapacity(CurrencyType.DarkCrystals));
             Assert.AreSame(first, dungeon.Construction.RoomAt(firstCell));
             Assert.AreEqual(2, summoning.RoomCapacity(first), "Storage remains a small room for placement.");
             var secondCell = firstCell + Vector2Int.right * 6;
             Assert.AreEqual(ConstructionResult.Success, expansion.TryBuild(secondCell));
             var pendingSave = JsonUtility.FromJson<GameSaveData>(JsonUtility.ToJson(session.Capture()));
             SaveSlotStore.Validate(pendingSave); session.Restore(pendingSave); Time.timeScale = 1;
-            Assert.AreEqual(3000, wallet.GetCapacity(CurrencyType.Gold));
+            Assert.AreEqual(2000, wallet.GetCapacity(CurrencyType.Gold));
             Assert.IsFalse(dungeon.Construction.At(secondCell).IsComplete);
             Finish(dungeon, dungeon.Construction.At(secondCell));
-            Assert.AreEqual(4000, wallet.GetCapacity(CurrencyType.Gold));
-            Assert.AreEqual(800, wallet.GetCapacity(CurrencyType.Souls));
-            Assert.AreEqual(200, wallet.GetCapacity(CurrencyType.DarkCrystals));
+            Assert.AreEqual(3000, wallet.GetCapacity(CurrencyType.Gold));
+            Assert.AreEqual(600, wallet.GetCapacity(CurrencyType.Souls));
+            Assert.AreEqual(150, wallet.GetCapacity(CurrencyType.DarkCrystals));
             wallet.Add(CurrencyType.Gold, int.MaxValue);
             wallet.Add(CurrencyType.Souls, int.MaxValue);
             wallet.Add(CurrencyType.DarkCrystals, int.MaxValue);
             var saved = JsonUtility.FromJson<GameSaveData>(JsonUtility.ToJson(session.Capture()));
             session.Restore(saved); Time.timeScale = 1;
-            Assert.AreEqual(4000, wallet.Gold); Assert.AreEqual(800, wallet.Souls); Assert.AreEqual(200, wallet.DarkCrystals);
+            Assert.AreEqual(3000, wallet.Gold); Assert.AreEqual(600, wallet.Souls); Assert.AreEqual(150, wallet.DarkCrystals);
             yield return null;
             var hudData = new SerializedObject(Find<GameHud>());
             string[] fields = { "goldText", "soulsText", "crystalsText" };
-            string[] balances = { "4,000", "800", "200" };
+            string[] balances = { "3,000", "600", "150" };
             Canvas.ForceUpdateCanvases();
             for (int i = 0; i < fields.Length; i++)
             {
@@ -196,8 +214,8 @@ namespace DarkLord.Tests
             legacy.dungeon.queue = new Vector2Int[0];
             session.Restore(legacy); Time.timeScale = 1;
             Assert.AreEqual(1000, wallet.GetCapacity(CurrencyType.Gold));
-            Assert.AreEqual(4000, wallet.Gold, "Already saved resources survive a lower cap.");
-            wallet.Add(CurrencyType.Gold, 1); Assert.AreEqual(4000, wallet.Gold);
+            Assert.AreEqual(3000, wallet.Gold, "Already saved resources survive a lower cap.");
+            wallet.Add(CurrencyType.Gold, 1); Assert.AreEqual(3000, wallet.Gold);
         }
     }
 }
