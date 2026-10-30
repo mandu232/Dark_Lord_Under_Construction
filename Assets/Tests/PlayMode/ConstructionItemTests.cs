@@ -149,15 +149,15 @@ namespace DarkLord.Tests
             }
             Assert.AreEqual(3, grid.Inventory.Capture().Sum(s => s.count));
         }
-        [UnityTest] public IEnumerator DisconnectedCorridorActuallyFinishesExcavating()
+        [UnityTest] public IEnumerator DisconnectedCorridorCannotQueueExcavation()
         {
             var start = new Vector2Int(3, 3);
-            Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlanCorridor(start, start, out var corridor));
-            grid.QueueConstruction(corridor);
-            float deadline = Time.realtimeSinceStartup + 5;
-            while (!corridor.IsComplete && Time.realtimeSinceStartup < deadline) yield return null;
-            Assert.IsTrue(corridor.IsComplete);
-            Assert.IsTrue(corridor.Cells.All(grid.Layout.IsFloor));
+            int sections = grid.Construction.Sections.Count;
+            Assert.AreEqual(ConstructionResult.Disconnected, grid.Construction.TryPlanCorridor(start, start, out var corridor));
+            Assert.IsNull(corridor);
+            yield return null;
+            Assert.AreEqual(sections, grid.Construction.Sections.Count);
+            Assert.IsFalse(grid.Layout.IsFloor(start));
             Assert.AreEqual(0, grid.RemainingConstructionTiles);
         }
         [Test] public void ClearingWaveAutomaticallyGrantsDailyItemsBeforeRewardSelection()
@@ -193,9 +193,9 @@ namespace DarkLord.Tests
             session.Restore(saved);
             Assert.IsEmpty(grid.Inventory.Capture());
         }
-        [Test] public void FreeCorridorsStartInRockAndCrossPendingCorridorsWithoutStealingOwnership()
+        [Test] public void ConnectedCorridorsCrossPendingCorridorsWithoutStealingOwnership()
         {
-            var start = new Vector2Int(3, 3);
+            var start = grid.Layout.Core + Vector2Int.right * 3;
             Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlanCorridor(start, start + Vector2Int.right * 5, out var first));
             Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlanCorridor(start + Vector2Int.right * 3, start + new Vector2Int(3, 5), out var second));
             Assert.AreSame(first, grid.Construction.At(start + Vector2Int.right * 3));

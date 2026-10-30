@@ -199,6 +199,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ae9bec98562a82d4cabdecedef91d64d, type: 2}
   - {fileID: 11400000, guid: 02d8fb59f316a364e8e93255870fa47e, type: 2}
   - {fileID: 11400000, guid: 04eb69a766cc1d24c9405d215b713d66, type: 2}
+  windowLightSprite: {fileID: 469396953, guid: f21c191486f942045bab6d4942df8264, type: 3}
+  windowLightMaterial: {fileID: 2100000, guid: 4c796f1ada9b55642ae657a5229fe5b2, type: 2}
   initialRecruitmentPrefab: {fileID: 1877158609922879453, guid: a0e5f52cf80bb034aa3669625cf6116a, type: 3}
   width: 41
   height: 31

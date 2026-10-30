@@ -31,6 +31,7 @@ namespace DarkLord.Dungeon
     // A planned footprint reserves its cells; DungeonGrid opens the queued rock.
     public sealed partial class DungeonConstruction
     {
+        public const int CorridorWidth = 3;
         private readonly DungeonLayout layout;
         private readonly List<DungeonSection> sections = new List<DungeonSection>();
         private readonly DungeonSection[,] owners;
@@ -52,13 +53,13 @@ namespace DarkLord.Dungeon
             yield return new DungeonSection(ConstructionKind.LargeRoom,
                 new RectInt(layout.Core.x - 3, layout.Core.y - 3, 7, 7), true, true);
             yield return new DungeonSection(ConstructionKind.HorizontalCorridor,
-                new RectInt(layout.Entrance.x, layout.Core.y - 1, layout.Core.x - 3 - layout.Entrance.x, 3), true);
+                new RectInt(layout.Entrance.x, layout.Core.y - CorridorWidth / 2, layout.Core.x - 3 - layout.Entrance.x, CorridorWidth), true);
         }
 
         public static RectInt Footprint(ConstructionKind kind, Vector2Int center)
         {
             var size = kind == ConstructionKind.LargeRoom ? new Vector2Int(7, 7) : IsRoom(kind) ? new Vector2Int(5, 5) :
-                kind == ConstructionKind.HorizontalCorridor ? new Vector2Int(5, 3) : new Vector2Int(3, 5);
+                kind == ConstructionKind.HorizontalCorridor ? new Vector2Int(5, CorridorWidth) : new Vector2Int(CorridorWidth, 5);
             return new RectInt(center - size / 2, size);
         }
 
@@ -97,7 +98,7 @@ namespace DarkLord.Dungeon
                 foreach (var room in sections)
                     if (IsRoom(room.Kind) && clearance.Overlaps(room.Bounds)) return ConstructionResult.TooCloseToRoom;
             }
-            if (IsRoom(kind) && !connected) return ConstructionResult.Disconnected;
+            if (!connected) return ConstructionResult.Disconnected;
             if (IsRoom(kind) && !touchesCorridor) return ConstructionResult.NeedsCorridor;
             return ConstructionResult.Success;
         }
@@ -114,7 +115,7 @@ namespace DarkLord.Dungeon
             return result;
         }
 
-        // A three-cell-wide cardinal route. The longer axis comes first for an L-shaped drag.
+        // Three-cell-wide routes stay centered on the dragged path, including turns.
         public static List<Vector2Int> CorridorCells(Vector2Int start, Vector2Int end)
         {
             var result = new List<Vector2Int>();
@@ -126,11 +127,12 @@ namespace DarkLord.Dungeon
             {
                 while (true)
                 {
-                    for (int y = -1; y <= 1; y++) for (int x = -1; x <= 1; x++)
-                    {
-                        var cell = current + new Vector2Int(x, y);
-                        if (seen.Add(cell)) result.Add(cell);
-                    }
+                    for (int y = -CorridorWidth / 2; y < CorridorWidth - CorridorWidth / 2; y++)
+                        for (int x = -CorridorWidth / 2; x < CorridorWidth - CorridorWidth / 2; x++)
+                        {
+                            var cell = current + new Vector2Int(x, y);
+                            if (seen.Add(cell)) result.Add(cell);
+                        }
                     if (current == destination) break;
                     current += new Vector2Int(System.Math.Sign(destination.x - current.x), System.Math.Sign(destination.y - current.y));
                 }
@@ -141,14 +143,18 @@ namespace DarkLord.Dungeon
         public ConstructionResult CanPlanCorridor(Vector2Int start, Vector2Int end)
         {
             if (!layout.Contains(start) || !layout.Contains(end)) return ConstructionResult.OutsideMap;
-            bool hasNewCells = false;
+            bool hasNewCells = false, connected = false;
             foreach (var cell in CorridorCells(start, end))
             {
                 if (!layout.Contains(cell) || layout.GetCell(cell) == DungeonCell.Bedrock) return ConstructionResult.OutsideMap;
                 var owner = At(cell);
                 if (owner == null && layout.GetCell(cell) == DungeonCell.Rock) hasNewCells = true;
+                if (owner != null) connected = true;
+                foreach (var direction in Directions)
+                    if (At(cell + direction) != null) connected = true;
             }
-            return hasNewCells ? ConstructionResult.Success : ConstructionResult.Occupied;
+            if (!hasNewCells) return ConstructionResult.Occupied;
+            return connected ? ConstructionResult.Success : ConstructionResult.Disconnected;
         }
 
         public ConstructionResult TryPlanCorridor(Vector2Int start, Vector2Int end, out DungeonSection section)

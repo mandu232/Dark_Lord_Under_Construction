@@ -14,6 +14,170 @@ namespace DarkLord.Tests
     public sealed class DungeonConstructionTests
     {
         private readonly List<GameObject> objects = new List<GameObject>();
+        [Test]
+        public void CorridorsRequireCardinalRoomOrCorridorConnectionWithoutMutatingOnRejection()
+        {
+            var grid = Grid();
+            var disconnected = new Vector2Int(30, 4);
+            int sections = grid.Construction.Sections.Count;
+            int revision = grid.Construction.Revision;
+            Assert.AreEqual(ConstructionResult.Disconnected, grid.Construction.CanPlanCorridor(disconnected, disconnected + Vector2Int.right * 5));
+            Assert.AreEqual(ConstructionResult.Disconnected, grid.Construction.TryPlanCorridor(disconnected, disconnected, out var rejected));
+            Assert.IsNull(rejected);
+            Assert.AreEqual(sections, grid.Construction.Sections.Count);
+            Assert.AreEqual(revision, grid.Construction.Revision);
+            Assert.IsFalse(grid.Layout.IsFloor(disconnected));
+            Assert.AreEqual(ConstructionResult.Disconnected, grid.Construction.CanPlan(ConstructionKind.HorizontalCorridor, disconnected));
+            Assert.AreEqual(ConstructionResult.Disconnected, grid.Construction.CanPlan(ConstructionKind.VerticalCorridor, disconnected));
+            Assert.AreEqual(ConstructionResult.Disconnected, grid.Construction.CanPlanCorridor(new Vector2Int(25, 20), new Vector2Int(25, 20)), "Diagonal-only room contact must not count.");
+            Assert.AreEqual(ConstructionResult.Disconnected, grid.Construction.CanPlanCorridor(new Vector2Int(26, 15), new Vector2Int(30, 15)), "One rock cell between footprints must block placement.");
+            Assert.AreEqual(ConstructionResult.Success, grid.Construction.CanPlanCorridor(new Vector2Int(25, 15), new Vector2Int(30, 15)), "Sharing an edge with a room is connected.");
+            Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlanCorridor(grid.Layout.Core + Vector2Int.right * 3, new Vector2Int(28, 15), out var first));
+            Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlanCorridor(new Vector2Int(28, 15), new Vector2Int(28, 21), out var continuation), "Connected pending corridors can be extended before mining finishes.");
+            Assert.AreSame(first, grid.Construction.At(new Vector2Int(28, 15)), "A branch must preserve the original reservation.");
+            Finish(grid, first); Finish(grid, continuation);
+            Assert.IsTrue(grid.Construction.FindPath(grid.Layout.Core, new Vector2Int(28, 21), new List<Vector2Int>()));
+        }
+        [TestCase(8, 0)]
+        [TestCase(-8, 0)]
+        [TestCase(0, 8)]
+        [TestCase(0, -8)]
+        public void CorridorWidthIsThreeInEveryDragDirection(int dx, int dy)
+        {
+            var start = new Vector2Int(20, 20);
+            var end = start + new Vector2Int(dx, dy);
+            var cells = DungeonConstruction.CorridorCells(start, end);
+            Assert.AreEqual(3 * (Mathf.Abs(dx) + Mathf.Abs(dy) + 3), cells.Count);
+            foreach (var cell in cells)
+                Assert.That(dx == 0 ? cell.x : cell.y, Is.InRange(19, 21), "The corridor stays centered on the dragged path.");
+            CollectionAssert.AreEquivalent(cells, DungeonConstruction.CorridorCells(end, start));
+        }
+        [Test]
+        public void ThreeWideBentAndBranchedCorridorsKeepConnectedCorners()
+        {
+            var bent = new HashSet<Vector2Int>(DungeonConstruction.CorridorCells(new Vector2Int(10, 20), new Vector2Int(20, 12)));
+            foreach (var cell in new RectInt(19, 19, 3, 3).allPositionsWithin) Assert.IsTrue(bent.Contains(cell));
+            Assert.IsFalse(bent.Contains(new Vector2Int(18, 18)), "The inside of the bend must remain rock.");
+            var branched = new HashSet<Vector2Int>(DungeonConstruction.CorridorCells(new Vector2Int(10, 20), new Vector2Int(30, 20)));
+            branched.UnionWith(DungeonConstruction.CorridorCells(new Vector2Int(20, 20), new Vector2Int(20, 12)));
+            foreach (var cell in new RectInt(19, 19, 3, 3).allPositionsWithin) Assert.IsTrue(branched.Contains(cell));
+            Assert.IsFalse(branched.Contains(new Vector2Int(18, 18)));
+            Assert.IsFalse(branched.Contains(new Vector2Int(22, 18)));
+        }
+#if UNITY_EDITOR
+        [UnityTest]
+        public IEnumerator VerticalArtworkFollowsRoomSidesAndRefreshesAfterExcavation()
+        {
+            var go = new GameObject("Vertical wall artwork test"); objects.Add(go);
+            go.SetActive(false);
+            var grid = go.AddComponent<DungeonGrid>();
+            const BindingFlags fields = BindingFlags.Instance | BindingFlags.NonPublic;
+            var floor = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Tilemaps.Tile>("Assets/Sprite/Dungeon/Tiles/Stone_0_0.asset");
+            var carpet = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Tilemaps.Tile>("Assets/Sprite/Dungeon/Tiles/CorridorCarpet.asset");
+            var wall = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Tilemaps.Tile>("Assets/Sprite/Dungeon/Tiles/DungeonWall.asset");
+            typeof(DungeonGrid).GetField("roomFloorTile", fields).SetValue(grid, floor);
+            typeof(DungeonGrid).GetField("corridorCarpetTile", fields).SetValue(grid, carpet);
+            typeof(DungeonGrid).GetField("repeatingWallTile", fields).SetValue(grid, wall);
+            typeof(DungeonGrid).GetField("wallPieces", fields).SetValue(grid, new UnityEngine.Tilemaps.TileBase[] { wall });
+            var windowMask = UnityEditor.AssetDatabase.LoadAllAssetsAtPath("Assets/Sprtie/Dungeon/WindowLight.png");
+            Sprite windowSprite = null;
+            foreach (var asset in windowMask) if (asset is Sprite sprite) windowSprite = sprite;
+            Assert.NotNull(windowSprite);
+            typeof(DungeonGrid).GetField("windowLightSprite", fields).SetValue(grid, windowSprite);
+            typeof(DungeonGrid).GetField("windowLightMaterial", fields).SetValue(grid,
+                UnityEditor.AssetDatabase.LoadAssetAtPath<Material>("Assets/Materials/WindowFloorLight.mat"));
+            go.SetActive(true);
+            grid.Initialize();
+            var map = (UnityEngine.Tilemaps.Tilemap)typeof(DungeonGrid).GetField("wallMap", fields).GetValue(grid);
+            var room = grid.Construction.RoomAt(grid.Layout.Core);
+            var lights = (UnityEngine.Tilemaps.Tilemap)typeof(DungeonGrid).GetField("glowMap", fields).GetValue(grid);
+            var firstWindow = new Vector3Int(-1, -1, 0);
+            foreach (var p in new RectInt(0, 0, grid.Layout.Width * 2, grid.Layout.Height * 2).allPositionsWithin)
+            {
+                var projection = lights.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(p.x, p.y, 0));
+                if (projection == null) continue;
+                Assert.AreSame(windowSprite, projection.sprite);
+                Assert.IsTrue(grid.Layout.IsFloor(new Vector2Int(p.x / 2, p.y / 2)), "Window light must be anchored on the floor.");
+                Assert.IsFalse(grid.Layout.IsFloor(new Vector2Int(p.x / 2, (p.y + 1) / 2)), "Window light must start at a north wall.");
+                Assert.AreEqual(-.5f, projection.transform.m13, .001f);
+                Assert.Greater(projection.color.r, projection.color.g);
+                if (firstWindow.x < 0) firstWindow = new Vector3Int(p.x, p.y, 0);
+            }
+            Assert.GreaterOrEqual(firstWindow.x, 0, "The starting corridor must project the authored window mask.");
+            // South-facing walls show their top surface, and their side walls stay plain.
+            int sideX = room.Bounds.xMax * 2;
+            int sideBottom = room.Bounds.yMin * 2;
+            int corniceY = room.Bounds.yMax * 2 - 1 + 5;
+            Assert.AreEqual(new Rect(192, 240, 16, 16), map.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(sideX, corniceY, 0)).sprite.rect);
+            for (int shaftY = sideBottom; shaftY < corniceY; shaftY++)
+            {
+                var rect = map.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(sideX, shaftY, 0)).sprite.rect;
+                Assert.That(rect.y, Is.EqualTo(112).Or.EqualTo(128), "Decorated pillar fragments must never repeat inside the shaft.");
+            }
+            // The lower doorway edge also joins the new south cornice without a pillar face.
+            int doorwayX = room.Bounds.xMin * 2 - 1;
+            int doorwayBottom = room.Bounds.yMin * 2;
+            int doorwayTop = (grid.Layout.Core.y - 1) * 2 - 1;
+            for (int row = 0; row < 3; row++)
+            {
+                var pillar = map.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(doorwayX, doorwayBottom + row, 0));
+                Assert.That(pillar.sprite.rect.y, Is.EqualTo(112).Or.EqualTo(128));
+            }
+            Assert.AreEqual(new Rect(304, 152, 16, 8), map.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(doorwayX, doorwayTop, 0)).sprite.rect,
+                "The corridor's lower cornice must end with a cap where it meets the room side.");
+            var backingMap = (UnityEngine.Tilemaps.Tilemap)typeof(DungeonGrid).GetField("wallJointMap", fields).GetValue(grid);
+            Assert.AreEqual(new Rect(208, 128, 16, 16), backingMap.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(doorwayX, doorwayTop, 0)).sprite.rect,
+                "A shaft behind the transparent cap must close the inner-corner gap.");
+            int southY = sideBottom - 1;
+            Assert.AreEqual(new Rect(240, 152, 16, 8), map.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(doorwayX, southY, 0)).sprite.rect);
+            Assert.AreEqual(new Rect(304, 152, 16, 8), map.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(sideX, southY, 0)).sprite.rect);
+            for (int southX = room.Bounds.xMin * 2; southX < room.Bounds.xMax * 2; southX++)
+            {
+                var cornice = map.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(southX, southY, 0));
+                Assert.AreEqual(152, cornice.sprite.rect.y);
+                Assert.That(cornice.sprite.rect.x, Is.InRange(240, 304), "The lower boundary must use the authored wall tops.");
+                Assert.IsNull(map.GetTile(new Vector3Int(southX, southY + 1, 0)), "Wall tops must remain outside walkable floor.");
+            }
+            Assert.IsNull(map.GetTile(new Vector3Int(doorwayX, doorwayTop + 1, 0)), "The pillar must not cover the walkable doorway.");
+            // The center row contains the entrance corridor; use an enclosed side above it.
+            int y = (grid.Layout.Core.y + 2) * 2;
+            foreach (int x in new[] { room.Bounds.xMin * 2 - 1, room.Bounds.xMax * 2 })
+            {
+                var tile = map.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(x, y, 0));
+                Assert.NotNull(tile);
+                Assert.AreEqual(208, tile.sprite.rect.x, "Both room sides must use the authored vertical strip.");
+            }
+            var opening = new Vector2Int(room.Bounds.xMin - 1, grid.Layout.Core.y + 2);
+            Assert.AreEqual(ExpansionResult.Success, grid.Layout.TryExpand(opening));
+            Assert.IsNull(map.GetTile(new Vector3Int(opening.x * 2, opening.y * 2, 0)), "Excavation must remove the old wall.");
+            var bounds = new BoundsInt(0, 0, 0, grid.Layout.Width * 2, grid.Layout.Height * 2, 1);
+            var incremental = map.GetTilesBlock(bounds);
+            typeof(DungeonGrid).GetMethod("RefreshAllArtTiles", fields).Invoke(grid, null);
+            CollectionAssert.AreEqual(incremental, map.GetTilesBlock(bounds), "Incremental excavation must match a full repaint, including distant side-wall caps.");
+            Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlanCorridor(new Vector2Int(10, 15), new Vector2Int(10, 7), out var branch));
+            Finish(grid, branch);
+            var corners = (UnityEngine.Tilemaps.Tilemap)typeof(DungeonGrid).GetField("cornerMap", fields).GetValue(grid);
+            var leftInner = corners.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(18, 28, 0));
+            var rightInner = corners.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(23, 28, 0));
+            Assert.NotNull(leftInner); Assert.NotNull(rightInner);
+            Assert.AreEqual(new Rect(64, 32, 16, 16), leftInner.sprite.rect);
+            Assert.AreEqual(new Rect(80, 32, 16, 16), rightInner.sprite.rect);
+            Assert.AreSame(wall.sprite.texture, leftInner.sprite.texture, "Inner corners must use the artist's carpet ornament instead of a generated gold corner.");
+            Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlanCorridor(new Vector2Int(4, 7), new Vector2Int(15, 7), out var lowerBranch));
+            Finish(grid, lowerBranch);
+            Assert.AreEqual(new Rect(64, 48, 16, 16), corners.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(18, 17, 0)).sprite.rect);
+            Assert.AreEqual(new Rect(80, 48, 16, 16), corners.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(23, 17, 0)).sprite.rect);
+            Assert.AreEqual(ExpansionResult.Success, grid.Layout.TryExpand(new Vector2Int(firstWindow.x / 2, firstWindow.y / 2 + 1)));
+            Assert.IsNull(lights.GetTile(firstWindow), "Removing a window's wall must remove its old floor projection.");
+            var incrementalLights = lights.GetTilesBlock(bounds);
+            typeof(DungeonGrid).GetMethod("RefreshAllArtTiles", fields).Invoke(grid, null);
+            CollectionAssert.AreEqual(incrementalLights, lights.GetTilesBlock(bounds), "Window lights must refresh consistently after excavation.");
+            Object.Destroy(go);
+            yield return null;
+            Assert.IsNotNull(wall.sprite.texture, "Destroying a grid must preserve the shared artwork texture.");
+            Assert.IsNotNull(windowSprite.texture, "Destroying the light must preserve the shared window mask.");
+        }
+#endif
         [TestCase(30, 18)]
         [TestCase(29, 18)]
         [TestCase(30, 17)]

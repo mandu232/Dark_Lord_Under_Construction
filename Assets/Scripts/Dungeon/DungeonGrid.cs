@@ -72,7 +72,7 @@ namespace DarkLord.Dungeon
             if (section.IsCore) return;
             design.transform.localScale = DungeonConstruction.IsRoom(section.Kind)
                 ? new Vector3(section.Bounds.width / 7f, section.Bounds.height / 7f, 1)
-                : new Vector3(section.Bounds.width / 5f, 1, 1);
+                : new Vector3(section.Bounds.width / 5f, section.Bounds.height / 3f, 1);
         }
 
         public Vector2Int WorldToCell(Vector3 world)
@@ -474,14 +474,19 @@ namespace DarkLord.Dungeon
             if (ceilingSprite != null) Destroy(ceilingSprite);
             DestroyWallPieces(roomWallPieces);
             DestroyWallPieces(bannerWallPieces);
+            DestroyWallPieces(verticalWallPieces);
+            DestroyWallPieces(southWallPieces);
+            if (compactWallPieces != null)
+                foreach (var pieces in compactWallPieces) DestroyWallPieces(pieces);
             DestroyWallPieces(floorVariants);
             DestroyWallPieces(carpetCorners);
             DestroyEffectTile(wallShadow);
             DestroyEffectTile(pillarShadow);
             DestroyEffectTile(pillarShadowEnd);
             DestroyEffectTile(windowGlow);
+            if (windowFloorLight != null) Destroy(windowFloorLight);
             if (floorShades != null) foreach (var tile in floorShades) DestroyEffectTile(tile);
-            if (carpetInnerCorners != null) foreach (var tile in carpetInnerCorners) DestroyEffectTile(tile);
+            DestroyWallPieces(carpetInnerCorners);
         }
     }
 }

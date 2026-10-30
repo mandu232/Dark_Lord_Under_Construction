@@ -271,9 +271,9 @@ namespace DarkLord.Dungeon
         {
             if (!corridorStart.HasValue)
             {
-                bool allowed = dungeon.Construction.CanPlanCorridor(cell, cell) == ConstructionResult.Success;
+                bool allowed = dungeon.Construction.At(cell) != null || dungeon.Construction.CanPlanCorridor(cell, cell) == ConstructionResult.Success;
                 dungeon.Highlight(cell, allowed); previewCell = cell;
-                Message = allowed ? "좌클릭을 누른 채 끝점까지 드래그하세요. 폭 3칸 복도로 연결됩니다." : "빈 바위나 기존 바닥에서 자유롭게 드래그하세요.";
+                Message = allowed ? "좌클릭을 누른 채 끝점까지 드래그하세요. 폭 3칸 복도로 연결됩니다." : "기존 방 또는 복도에 연결되는 위치에서 시작하세요.";
                 if (allowed && Time.frameCount > openedFrame && build.WasPressedThisFrame()) corridorStart = cell;
                 return;
             }

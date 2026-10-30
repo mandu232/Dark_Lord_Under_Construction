@@ -7,15 +7,19 @@ namespace DarkLord.Dungeon
         [Header("Dungeon artwork")]
         [SerializeField] private TileBase roomFloorTile, corridorCarpetTile, repeatingWallTile;
         [SerializeField] private TileBase[] stonePieces, carpetPieces, wallPieces;
-        private Tilemap floorMap, floorShadeMap, carpetMap, cornerMap, shadowMap, wallMap, glowMap;
+        [SerializeField] private Sprite windowLightSprite;
+        [SerializeField] private Material windowLightMaterial;
+        private Tilemap floorMap, floorShadeMap, carpetMap, cornerMap, shadowMap, wallMap, glowMap, wallJointMap;
         private Tile carpetFill;
         private Sprite carpetFillSprite;
         private Tile ceilingTile;
         private Sprite ceilingSprite;
-        private Tile[] roomWallPieces, bannerWallPieces;
+        private Tile[] roomWallPieces, bannerWallPieces, verticalWallPieces, southWallPieces;
+        private Tile[][] compactWallPieces;
         private Tile[] floorVariants, carpetCorners;
         private Tile[] carpetInnerCorners;
         private Tile wallShadow, pillarShadow, pillarShadowEnd, windowGlow;
+        private Tile windowFloorLight;
         private Tile[] floorShades;
         private Transform artRoot;
         private bool deferArtRefresh;
@@ -46,14 +50,24 @@ namespace DarkLord.Dungeon
             carpetMap = ArtLayer("Continuous corridor carpet", -31999);
             cornerMap = ArtLayer("Carpet inner corners", -31998);
             shadowMap = ArtLayer("Wall and pillar shadows", -31997);
+            wallJointMap = ArtLayer("Inner wall corner backing", -31997);
             wallMap = ArtLayer("North wall faces and brown wall tops", -31996);
             glowMap = ArtLayer("Window glow", -31995);
             wallShadow = MakeEffectTile(false, false, false);
             pillarShadow = MakeEffectTile(false, true, false);
             pillarShadowEnd = MakeEffectTile(false, true, true);
-            windowGlow = MakeEffectTile(true, false, false);
+            if (windowLightSprite != null && windowLightMaterial != null)
+            {
+                windowFloorLight = ScriptableObject.CreateInstance<Tile>();
+                windowFloorLight.sprite = windowLightSprite;
+                windowFloorLight.color = new Color(1f, .055f, .025f, .55f);
+                windowFloorLight.colliderType = Tile.ColliderType.None;
+                // The 16x32 mask reaches down two art cells from the wall/floor boundary.
+                windowFloorLight.transform = Matrix4x4.Translate(new Vector3(0, -.5f, 0));
+                glowMap.GetComponent<TilemapRenderer>().sharedMaterial = windowLightMaterial;
+            }
+            else windowGlow = MakeEffectTile(true, false, false);
             floorShades = MakeFloorShades();
-            carpetInnerCorners = MakeInnerCorners();
             if (wallPieces != null && wallPieces.Length > 0 && wallPieces[0] is Tile wallSource && wallSource.sprite != null)
             {
                 var texture = wallSource.sprite.texture;
@@ -63,8 +77,32 @@ namespace DarkLord.Dungeon
                 ceilingTile.colliderType = Tile.ColliderType.None;
                 roomWallPieces = MakeWallPieces(texture, 192);
                 bannerWallPieces = MakeWallPieces(texture, 96);
+                verticalWallPieces = MakePieces(texture, 208, 144, 1, 8);
+                southWallPieces = MakePieces(texture, 240, 144, 5, 1);
+                // Only the upper eight pixels are the cornice; the lower half is opaque
+                // background in the source and would hide the shaft at inner corners.
+                for (int column = 0; column < southWallPieces.Length; column++)
+                {
+                    Destroy(southWallPieces[column].sprite);
+                    southWallPieces[column].sprite = Sprite.Create(texture, new Rect(240 + column * 16, 152, 16, 8), new Vector2(.5f, 0), 16);
+                }
+                compactWallPieces = new Tile[5][];
+                for (int height = 1; height < 5; height++)
+                {
+                    compactWallPieces[height] = new Tile[height];
+                    float sliceHeight = 80f / height;
+                    for (int row = 0; row < height; row++)
+                    {
+                        var tile = ScriptableObject.CreateInstance<Tile>();
+                        tile.sprite = Sprite.Create(texture, new Rect(208, 32 + (height - row - 1) * sliceHeight, 16, sliceHeight), new Vector2(.5f, .5f), 16);
+                        tile.transform = Matrix4x4.Scale(new Vector3(1, height / 5f, 1));
+                        tile.colliderType = Tile.ColliderType.None;
+                        compactWallPieces[height][row] = tile;
+                    }
+                }
                 floorVariants = MakeFloorVariants(texture);
                 carpetCorners = MakePieces(texture, 112, 48, 2, 2);
+                carpetInnerCorners = MakePieces(texture, 64, 48, 2, 2);
             }
             // The new carpet has borders on both halves, but no separate plain center tile.
             // Stretch one solid-red pixel to fill interior cells without repeating its borders.
@@ -152,27 +190,6 @@ namespace DarkLord.Dungeon
             }
             return result;
         }
-        private static Tile[] MakeInnerCorners()
-        {
-            var result = new Tile[4];
-            for (int corner = 0; corner < 4; corner++)
-            {
-                var texture = new Texture2D(16, 16, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp };
-                var pixels = new Color[256];
-                bool right = (corner & 1) != 0, bottom = corner >= 2;
-                for (int a = 0; a < 4; a++) for (int b = 0; b < 4; b++)
-                {
-                    int x = right ? 15 - a : a, y = bottom ? b : 15 - b;
-                    if (a < 2 || b < 2) pixels[y * 16 + x] = new Color32(218, 139, 62, 255);
-                }
-                texture.SetPixels(pixels); texture.Apply();
-                var tile = ScriptableObject.CreateInstance<Tile>();
-                tile.sprite = Sprite.Create(texture, new Rect(0, 0, 16, 16), new Vector2(.5f, .5f), 16);
-                tile.colliderType = Tile.ColliderType.None;
-                result[corner] = tile;
-            }
-            return result;
-        }
         private static void DestroyEffectTile(Tile tile)
         {
             if (tile == null) return;
@@ -228,13 +245,73 @@ namespace DarkLord.Dungeon
             }
         }
         private bool WallFoot(Vector2Int p) => ArtFloor(p) && !ArtFloor(p + Vector2Int.up);
+        private bool SouthWallEdge(Vector2Int p) => !ArtFloor(p) && ArtFloor(p + Vector2Int.up);
+        private Tile SouthWallAt(Vector2Int p)
+        {
+            if (southWallPieces == null || ArtFloor(p)) return null;
+            var edge = p;
+            if (!SouthWallEdge(edge))
+            {
+                if (SouthWallEdge(p + Vector2Int.left)) edge += Vector2Int.left;
+                else if (SouthWallEdge(p + Vector2Int.right)) edge += Vector2Int.right;
+                else return null;
+            }
+            int left = edge.x, right = edge.x;
+            while (SouthWallEdge(new Vector2Int(left - 1, p.y))) left--;
+            while (SouthWallEdge(new Vector2Int(right + 1, p.y))) right++;
+            if (!ArtFloor(new Vector2Int(left - 1, p.y))) left--;
+            if (!ArtFloor(new Vector2Int(right + 1, p.y))) right++;
+            int column = WallSpanColumn(p.x, left, right, out _, out _);
+            return southWallPieces[column];
+        }
+        private bool VerticalWallEdge(Vector2Int p) => p.x >= 0 && p.y >= 0 && p.x < Layout.Width * 2 && p.y < Layout.Height * 2
+            && !ArtFloor(p) && (ArtFloor(p + Vector2Int.left) || ArtFloor(p + Vector2Int.right));
+        private Tile VerticalWallAt(Vector2Int p)
+        {
+            if (verticalWallPieces == null || ArtFloor(p)) return null;
+            // Extend side walls to the north wall's cornice, five tiles above its floor.
+            var edge = p;
+            int depth = 0;
+            while (!VerticalWallEdge(edge) && depth < 5)
+            {
+                edge += Vector2Int.down;
+                depth++;
+                if (ArtFloor(edge)) return null;
+            }
+            if (!VerticalWallEdge(edge)) return null;
+            int top = edge.y, bottom = edge.y;
+            while (VerticalWallEdge(new Vector2Int(p.x, top + 1))) top++;
+            while (VerticalWallEdge(new Vector2Int(p.x, bottom - 1))) bottom--;
+            int cornice = top;
+            while (cornice < top + 5 && cornice + 1 < Layout.Height * 2 && !ArtFloor(new Vector2Int(p.x, cornice + 1))) cornice++;
+            if (p.y > cornice) return null;
+            // A south-facing boundary shows only the wall top, including its corner caps.
+            // Continue its side as a plain shaft instead of exposing a front-facing pillar.
+            if (SouthWallAt(new Vector2Int(p.x, bottom - 1)) != null)
+                return p.y == cornice ? roomWallPieces[0] : verticalWallPieces[1 + (cornice - 1 - p.y) % 2];
+            int height = cornice - bottom + 1;
+            // A lower doorway can leave fewer than five tiles below walkable floor.
+            // Fit the complete pillar into the available height; never discard ornament slices.
+            if (height < 5) return compactWallPieces[height][cornice - p.y];
+            if (height == 5) return verticalWallPieces[3 + cornice - p.y];
+            // Use the horizontal capital so the corner shares its transparent top inset.
+            if (p.y == cornice) return roomWallPieces[0];
+            // Rows 3..7 form one complete pillar. Only the plain shaft (rows 1..2) repeats.
+            if (p.y <= bottom + 4) return verticalWallPieces[3 + bottom + 4 - p.y];
+            return verticalWallPieces[1 + (cornice - 1 - p.y) % 2];
+        }
         // Distribute spans of three or four cells between single pillars, anchored at both ends.
         private int WallColumn(Vector2Int foot, out int segmentStart, out bool shortenedInterior)
         {
-            shortenedInterior = false;
             int left = foot.x, right = foot.x;
             while (WallFoot(new Vector2Int(left - 1, foot.y))) left--;
             while (WallFoot(new Vector2Int(right + 1, foot.y))) right++;
+            // End pillars share the side-wall columns outside the walkable floor.
+            return WallSpanColumn(foot.x, left - 1, right + 1, out segmentStart, out shortenedInterior);
+        }
+        private static int WallSpanColumn(int x, int left, int right, out int segmentStart, out bool shortenedInterior)
+        {
+            shortenedInterior = false;
             int distance = right - left;
             if (distance == 0) { segmentStart = left; return 0; }
             int intervals = Mathf.CeilToInt(distance / 4f);
@@ -243,12 +320,12 @@ namespace DarkLord.Dungeon
             for (int i = 0; i < intervals; i++)
             {
                 int end = start + shortLength + (i < longer ? 1 : 0);
-                if (foot.x <= end)
+                if (x <= end)
                 {
                     segmentStart = start;
-                    if (foot.x == start) return 0;
-                    if (foot.x == end) return end == right ? 4 : 0;
-                    int offset = foot.x - start;
+                    if (x == start) return 0;
+                    if (x == end) return end == right ? 4 : 0;
+                    int offset = x - start;
                     shortenedInterior = end - start < 4;
                     return end - start == 3 && offset == 2 ? 3 : offset;
                 }
@@ -313,14 +390,21 @@ namespace DarkLord.Dungeon
                 int column = WallColumn(p + Vector2Int.up, out _, out _);
                 shadow = column == 0 || column == 4 ? pillarShadowEnd : null;
             }
+            // The shallow south cap has a transparent lower half. Continue the side shaft
+            // behind that half at inner corners instead of leaving a gap below the cap.
+            wallJointMap.SetTile(position, !floor && SouthWallAt(p) != null
+                ? VerticalWallEdge(p) && verticalWallPieces != null ? verticalWallPieces[1] : ceilingTile
+                : null);
             shadowMap.SetTile(position, shadow);
             TileBase wall = null;
             bool litWindow = false;
+            glowMap.SetTile(position, null);
             if (!floor)
             {
-                wall = ceilingTile != null ? ceilingTile : repeatingWallTile;
-                // Upright faces exist only above open floor. Side/bottom walls remain solid top faces.
-                for (int depth = 1; depth <= 5; depth++)
+                var verticalWall = SouthWallAt(p) ?? VerticalWallAt(p);
+                wall = verticalWall != null ? verticalWall : (ceilingTile != null ? ceilingTile : repeatingWallTile);
+                // A corridor below a room must not paint its tall face over the room's side wall.
+                for (int depth = 1; verticalWall == null && depth <= 5; depth++)
                 {
                     var foot = p + Vector2Int.down * depth;
                     if (!ArtFloor(foot)) continue;
@@ -329,6 +413,8 @@ namespace DarkLord.Dungeon
                     var owner = Construction.At(new Vector2Int(foot.x / 2, foot.y / 2));
                     bool corridor = owner != null && !DungeonConstruction.IsRoom(owner.Kind);
                     litWindow = corridor && !shortenedInterior && wallColumn == 2 && depth <= 3;
+                    if (litWindow && depth == 1 && windowFloorLight != null)
+                        glowMap.SetTile(new Vector3Int(foot.x, foot.y, 0), windowFloorLight);
                     if ((!corridor || shortenedInterior) && roomWallPieces != null) wall = roomWallPieces[index];
                     else if (corridor && bannerWallPieces != null && ArtHash(segmentStart, foot.y) % 5 == 0) wall = bannerWallPieces[index];
                     else wall = Piece(wallPieces, index, repeatingWallTile);
@@ -336,7 +422,7 @@ namespace DarkLord.Dungeon
                 }
             }
             wallMap.SetTile(position, wall);
-            glowMap.SetTile(position, litWindow ? windowGlow : null);
+            if (windowFloorLight == null && litWindow) glowMap.SetTile(position, windowGlow);
         }
         private void RefreshArtTile(Vector2Int cell)
         {
@@ -344,6 +430,10 @@ namespace DarkLord.Dungeon
             // Excavation changes carpet boundaries and the five rows of upright wall above it.
             for (int y = -2; y <= 6; y++)
                 for (int x = 0; x < Layout.Width * 2; x++) PaintArtPiece(new Vector2Int(x, cell.y * 2 + y));
+            // A new opening can move the cap and repeat pattern along an entire side wall.
+            for (int x = cell.x * 2 - 1; x <= cell.x * 2 + 2; x++)
+                for (int y = 0; y < Layout.Height * 2; y++)
+                    if (y < cell.y * 2 - 2 || y > cell.y * 2 + 6) PaintArtPiece(new Vector2Int(x, y));
         }
         private void RefreshAllArtTiles()
         {
