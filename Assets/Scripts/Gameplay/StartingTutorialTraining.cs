@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace DarkLord.Gameplay
 {
-    public enum TutorialTrainingStep { None, Pickup, Deliver, Summon, Complete }
+    public enum TutorialTrainingStep { None, Pickup, Deliver, Summon, Complete, Corridor, Entrance }
     public sealed partial class StartingTutorial
     {
         private CorpseHarvest trainingHarvest;
@@ -14,9 +14,12 @@ namespace DarkLord.Gameplay
         public TutorialTrainingStep TrainingStep { get; private set; }
         public bool IsTraining => Active && TrainingStep != TutorialTrainingStep.None;
         public bool TrainingBlocksSummoning => IsTraining && (TrainingStep == TutorialTrainingStep.Pickup || TrainingStep == TutorialTrainingStep.Deliver);
+        public int TrainingNumber => TrainingStep == TutorialTrainingStep.Corridor ? 4 : TrainingStep == TutorialTrainingStep.Entrance ? 5 : (int)TrainingStep;
         public string TrainingInstruction => TrainingStep == TutorialTrainingStep.Pickup ? "① 시체 옆으로 이동해 F키로 들어 올리세요.\n실제로 시체를 들어야 다음 단계가 열립니다." :
             TrainingStep == TutorialTrainingStep.Deliver ? "② 시체를 든 채 소환소로 이동하세요.\n가까이 가면 시체가 흡수되고 스택이 쌓입니다." :
-            "③ 소환소 옆에서 F → 무작위 소환을 누르세요.\n얻은 스택 1개로 새 하수인을 소환하세요.\n소환소 정비 보상: 시작방 정원 +1";
+            TrainingStep == TutorialTrainingStep.Summon ? "③ 소환소 옆에서 F → 무작위 소환을 누르세요.\n얻은 스택 1개로 새 하수인을 소환하세요.\n소환소 정비 보상: 시작방 정원 +1" :
+            TrainingStep == TutorialTrainingStep.Corridor ? "④ B → 방·복도 → 복도를 선택하세요.\n기존 바닥에서 바깥으로 드래그해 연결 복도를 만들고 굴착이 끝날 때까지 기다리세요." :
+            "⑤ B → 방·복도 → 용사 입구를 선택하세요.\n새로 완성한 복도의 빈 바닥을 클릭해 균열 입구를 옮기세요.";
         private void BindTrainingEvents()
         {
             trainingHarvest = waves.Harvest; trainingSummoning = waves.Lord.GetComponent<MinionSummoning>();
@@ -48,6 +51,16 @@ namespace DarkLord.Gameplay
         private void OnTrainingSummon(MinionController minion)
         {
             if (!IsTraining || TrainingStep != TutorialTrainingStep.Summon) return;
+            TrainingStep = TutorialTrainingStep.Corridor;
+        }
+        private void UpdateExpansionTraining()
+        {
+            if (TrainingStep == TutorialTrainingStep.Corridor && dungeon.Construction.Sections.Any(s => s.Kind == ConstructionKind.Corridor && s.IsComplete &&
+                s.Cells.Any(c => dungeon.Construction.FindPath(c, dungeon.Layout.Core, new System.Collections.Generic.List<Vector2Int>()))))
+                TrainingStep = TutorialTrainingStep.Entrance;
+            if (TrainingStep != TutorialTrainingStep.Entrance || !dungeon.Layout.HasEntrance) return;
+            var entranceSection = dungeon.Construction.At(dungeon.Layout.Entrance);
+            if (entranceSection == null || entranceSection.Kind != ConstructionKind.Corridor || !entranceSection.IsComplete) return;
             TrainingStep = TutorialTrainingStep.Complete;
             dialoguePage = 4; dialogueLine = 0; DialogueOpen = true; SynchronizeDialoguePause();
         }

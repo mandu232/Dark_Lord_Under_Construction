@@ -71,8 +71,17 @@ namespace DarkLord.Tests
             Assert.IsTrue(summoning.IsRecruiting);
             Find<RecruitmentPanel>().SelectMinion();
             Assert.AreEqual(5, summoning.GuardCount); Assert.AreEqual(0, facility.SummonStacks);
+            yield return TutorialTestActions.CompleteExpansion(waves);
             Assert.AreEqual(TutorialTrainingStep.Complete, waves.Tutorial.TrainingStep); Assert.IsTrue(waves.Tutorial.Active);
             TutorialTestActions.DismissDialogue(waves); Assert.IsFalse(waves.Tutorial.Active); Assert.IsTrue(waves.CanStartWave);
+            Assert.AreEqual(2, waves.NextEnemyCount);
+            Assert.AreEqual(28, waves.NextEnemyHealth);
+            Assert.IsTrue(waves.NextFormation.All(role => role == InvaderRole.Warrior));
+            var entrance = waves.EntrancePosition;
+            waves.BeginNextWave(); yield return null; yield return null;
+            var invader = Object.FindObjectsByType<WaveMember>(FindObjectsSortMode.None).First(m => m.Number == 1);
+            Assert.AreEqual(28, invader.GetComponent<ActorHealth>().MaximumHealth);
+            Assert.Less(Vector2.Distance(entrance, invader.transform.position), 1.5f);
         }
         [UnityTest] public IEnumerator CarryAndSummonProgressSurviveSaveAndCapacityRewardPersists()
         {
@@ -86,6 +95,8 @@ namespace DarkLord.Tests
             Assert.AreEqual(TutorialTrainingStep.Summon, waves.Tutorial.TrainingStep); Assert.AreEqual(1, facility.SummonStacks);
             Assert.AreEqual(5, summoning.RoomCapacity(summoning.Dungeon.Construction.RoomAt(facility.Cell)));
             Assert.IsTrue(summoning.TryRecruit()); Assert.IsTrue(summoning.TrySummonRandom());
+            RoundTrip(); Assert.AreEqual(TutorialTrainingStep.Corridor, waves.Tutorial.TrainingStep);
+            yield return TutorialTestActions.CompleteExpansion(waves);
             RoundTrip(); Assert.AreEqual(TutorialTrainingStep.Complete, waves.Tutorial.TrainingStep);
             Assert.AreEqual(5, summoning.GuardCount); Assert.IsTrue(waves.Tutorial.DialogueOpen);
             TutorialTestActions.DismissDialogue(waves); RoundTrip();
@@ -182,7 +193,9 @@ namespace DarkLord.Tests
             Assert.Less(Vector3.Distance(rect.TransformPoint(rect.rect.center), marker.HighlightRect.position), .5f);
             Assert.IsFalse(marker.HighlightRect.GetComponent<UnityEngine.UI.Graphic>().raycastTarget);
             button.onClick.Invoke(); yield return null;
-            Assert.IsTrue(waves.Tutorial.DialogueOpen); Assert.IsFalse(marker.IsVisible); Assert.IsNull(marker.Target);
+            Assert.AreEqual(TutorialTrainingStep.Corridor, waves.Tutorial.TrainingStep); Assert.IsFalse(marker.IsVisible); Assert.IsNull(marker.Target);
+            yield return TutorialTestActions.CompleteExpansion(waves);
+            Assert.IsTrue(waves.Tutorial.DialogueOpen);
             TutorialTestActions.DismissDialogue(waves); yield return null;
             Assert.IsFalse(marker.IsVisible);
         }

@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad5771528024da1458d21f8758dd293e, type: 3}
+  m_Name: InteractionUiSkin
+  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.UI.InteractionUiSkin
+  frame: {fileID: 211460134132854161, guid: 0f6d03194dfba134c836f1b8c5eaaf47, type: 3}
+  normalButton: {fileID: -7345877880146012933, guid: 9513da3019385334b9edd2d44b7b6557, type: 3}
+  activeButton: {fileID: 7534517256166173656, guid: 9513da3019385334b9edd2d44b7b6557, type: 3}
+  windowTemplate: {fileID: 3515636751517772242, guid: 6a7c10accd1fe6645bfae5546f0086b6, type: 3}

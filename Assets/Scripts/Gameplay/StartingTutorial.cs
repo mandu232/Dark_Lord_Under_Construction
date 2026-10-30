@@ -101,7 +101,7 @@ namespace DarkLord.Gameplay
                 new DialogueEntry(true, "잠깐 맡겨 두는 거야. 네 것이 된 줄 알지 마.\n내 코어는 내가 도로 가져갈 테니까.", rowenMood: TutorialPortraitMood.Determined, expression: PlayerExpression.Decline),
                 new DialogueEntry(false, "…이제 갔네. 남의 집 부숴 놓고 끝까지 자기 거라네.\n루브, 도면 다시 펴 줘. 남은 복도 끝을 입구로 쓰자.\n소환소도 손봐야겠어. 시체는 F로 옮기면 돼. 일손이 필요하니까.", false, TutorialPortraitMood.Aftermath, expression: PlayerExpression.Down)
             },
-            new[] { new DialogueEntry(false, "깨어났어? 이쪽으로 와. 거긴 아직 위험해.\n루브 혼자 맡던 일도 이제 나눌 수 있겠네.\n…그럼, 아까 그 도면부터 마저 보자. 입구는 다시 짜야겠어.", false, TutorialPortraitMood.Aftermath, expression: PlayerExpression.Accept) }
+            new[] { new DialogueEntry(false, "복도와 입구를 다시 정비했어. 이제 침입자들이 오면 이곳에서 맞이하자.\n첫 정찰대는 약하겠지만 방심하지 마.", false, TutorialPortraitMood.Aftermath, expression: PlayerExpression.Accept) }
         };
         public static int DialogueLineCount(int page) => Conversations[Mathf.Clamp(page, 0, 4)].Length;
         public bool SpeakerIsRowen => Conversations[dialoguePage][dialogueLine].Rowen;
@@ -155,6 +155,7 @@ namespace DarkLord.Gameplay
             if (IsTraining)
             {
                 if (TrainingStep == TutorialTrainingStep.Pickup || TrainingStep == TutorialTrainingStep.Deliver) EnsureTrainingCorpse();
+                if (TrainingStep == TutorialTrainingStep.Corridor || TrainingStep == TutorialTrainingStep.Entrance) UpdateExpansionTraining();
                 return;
             }
             UpdateRetreat();

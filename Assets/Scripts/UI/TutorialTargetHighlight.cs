@@ -34,9 +34,10 @@ namespace DarkLord.UI
         {
             var tutorial = waves != null ? waves.Tutorial : null;
             if (graphic == null) return;
-            if (tutorial == null || !tutorial.IsTraining || tutorial.DialogueOpen || Time.timeScale <= 0 || tutorial.TrainingStep == TutorialTrainingStep.Complete)
+            if (tutorial == null || !tutorial.IsTraining || tutorial.DialogueOpen || Time.timeScale <= 0 || tutorial.TrainingStep == TutorialTrainingStep.Complete ||
+                tutorial.TrainingStep == TutorialTrainingStep.Corridor || tutorial.TrainingStep == TutorialTrainingStep.Entrance)
             { Hide(); return; }
-            if (recruitment == null) recruitment = GetComponent<RecruitmentPanel>();
+            if (recruitment == null) recruitment = GetComponentInChildren<RecruitmentPanel>(true);
             if (tutorial.TrainingStep == TutorialTrainingStep.Summon && recruitment != null && recruitment.IsVisible && recruitment.RandomSummonButton.interactable)
             {
                 var button = recruitment.RandomSummonButton;

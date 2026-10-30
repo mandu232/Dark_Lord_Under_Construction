@@ -629,6 +629,7 @@ MonoBehaviour:
   guardPrefab: {fileID: 4155510833042006107, guid: b8fd146d6534e1f47851bf72c1aaf242, type: 3}
   guardLimit: 4
   smallRoomLimit: 2
+  holdSeconds: 0.3
 --- !u!114 &254482902
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -740,7 +741,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -1063,6 +1064,55 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 702650911}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &728944000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 728944002}
+  - component: {fileID: 728944001}
+  m_Layer: 0
+  m_Name: Dungeon Atmosphere
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &728944001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 728944000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 20
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 8e2a04ea1182c554ebfe2d5fad14d128, type: 2}
+--- !u!4 &728944002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 728944000}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -2281,7 +2331,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1954671525430196629, guid: 9d9790b5957ff7843856dcdbece8956c, type: 3}
       propertyPath: m_fontColor32.rgba
-      value: 4292272622
+      value: 4292077557
       objectReference: {fileID: 0}
     - target: {fileID: 2313783148582432078, guid: 9d9790b5957ff7843856dcdbece8956c, type: 3}
       propertyPath: director
@@ -2309,11 +2359,11 @@ PrefabInstance:
       objectReference: {fileID: 254482900}
     - target: {fileID: 3624092474171118131, guid: 9d9790b5957ff7843856dcdbece8956c, type: 3}
       propertyPath: m_fontColor32.rgba
-      value: 4292077557
+      value: 4282988502
       objectReference: {fileID: 0}
     - target: {fileID: 4256497760964955863, guid: 9d9790b5957ff7843856dcdbece8956c, type: 3}
       propertyPath: m_fontColor32.rgba
-      value: 4292272622
+      value: 4292077557
       objectReference: {fileID: 0}
     - target: {fileID: 5280106343051881803, guid: 9d9790b5957ff7843856dcdbece8956c, type: 3}
       propertyPath: m_Pivot.x
@@ -2413,7 +2463,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6447411725933651770, guid: 9d9790b5957ff7843856dcdbece8956c, type: 3}
       propertyPath: m_fontColor32.rgba
-      value: 4292077557
+      value: 4282988502
       objectReference: {fileID: 0}
     - target: {fileID: 7338509815616082140, guid: 9d9790b5957ff7843856dcdbece8956c, type: 3}
       propertyPath: wallet
@@ -2472,3 +2522,4 @@ SceneRoots:
   - {fileID: 4074489909886240863}
   - {fileID: 239005173}
   - {fileID: 702650913}
+  - {fileID: 728944002}

@@ -78,7 +78,7 @@ namespace DarkLord.Dungeon
             if (!hasSelection) { Message = "보유 아이템이 없습니다. 날짜 보상이나 전리품에서 획득하세요."; ClearPreview(); return; }
             Message = "위쪽 던전에서 배치할 위치를 클릭하세요.";
             ClearPreview();
-            if (ExpansionMode && item.available && (item.category == BuildCategory.Rooms || item.category == BuildCategory.Corridors)) EnterPlacementView();
+            if (ExpansionMode && item.available && (item.category == BuildCategory.Rooms || item.category == BuildCategory.Corridors || item.category == BuildCategory.Entrances)) EnterPlacementView();
         }
         public void CancelSelection()
         {

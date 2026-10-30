@@ -45,7 +45,7 @@ namespace DarkLord.Gameplay
             Economy?.OnRoundStarted(CurrentWave);
             State = WaveState.Active;
             Combat?.RefillMana();
-            var formation = WaveFormation.Create(CurrentWave, options.EnemyCount(WaveProgression.EnemyCount(CurrentWave, baseEnemyCount, enemyGrowthPerWave)));
+            var formation = WaveFormation.Create(CurrentWave, EnemyCountForWave(CurrentWave));
             foreach (var role in formation) { pendingRoles.Enqueue(role); pendingWaves.Enqueue(CurrentWave); }
             pendingSpawns += formation.Length;
             if (AutomaticWaves) ScheduleNextWave();

@@ -54,7 +54,11 @@ namespace DarkLord.UI
         }
         private void SetupStatsScroll()
         {
-            if (statsText == null || statsText.GetComponentInParent<UnityEngine.UI.ScrollRect>() != null) return;
+            if (statsText == null) return;
+            // The authored window starts hidden. Include inactive parents so we
+            // reuse its viewport instead of nesting a second, zero-height scroll.
+            statsScroll = statsText.GetComponentInParent<UnityEngine.UI.ScrollRect>(true);
+            if (statsScroll != null) return;
             var textRect = statsText.rectTransform;
             var root = new GameObject("Stats Scroll", typeof(RectTransform), typeof(UnityEngine.UI.ScrollRect));
             var rect = root.GetComponent<RectTransform>();

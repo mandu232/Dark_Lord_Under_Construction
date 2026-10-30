@@ -17,6 +17,7 @@ namespace DarkLord.Dungeon
         [SerializeField, Min(0.02f)] private float tileBreakInterval = 0.045f;
         [SerializeField] private GameObject initialRoomPrefab, initialCorridorPrefab, entrancePrefab;
         private GameObject entranceMarker;
+        private Sprite entranceCrackSprite;
         private readonly Dictionary<Vector2Int, GameObject> traps = new Dictionary<Vector2Int, GameObject>();
         private readonly List<Vector2Int> entrancePath = new List<Vector2Int>();
         private Grid grid;
@@ -380,8 +381,39 @@ namespace DarkLord.Dungeon
         private void RefreshEntranceMarker()
         {
             if (entranceMarker != null) { entranceMarker.SetActive(false); Destroy(entranceMarker); entranceMarker = null; }
-            if (Layout.HasEntrance && entrancePrefab != null)
-                entranceMarker = Instantiate(entrancePrefab, CellCenter(Layout.Entrance), transform.rotation, generated.transform);
+            if (!Layout.HasEntrance) return;
+            if (!UsesArtTiles)
+            {
+                if (entrancePrefab != null) entranceMarker = Instantiate(entrancePrefab, CellCenter(Layout.Entrance), transform.rotation, generated.transform);
+                return;
+            }
+            if (entranceCrackSprite == null) entranceCrackSprite = MakeEntranceCrack();
+            entranceMarker = new GameObject("Entrance fissure", typeof(SpriteRenderer));
+            entranceMarker.transform.SetParent(generated.transform, false);
+            entranceMarker.transform.position = CellCenter(Layout.Entrance);
+            var renderer = entranceMarker.GetComponent<SpriteRenderer>();
+            renderer.sprite = entranceCrackSprite;
+            renderer.sortingOrder = -31994;
+        }
+        private static Sprite MakeEntranceCrack()
+        {
+            const int size = 32;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp };
+            var pixels = new Color32[size * size];
+            for (int y = 2; y < 30; y++)
+            {
+                int center = 16 + (y < 10 ? 2 : y < 19 ? -1 : y < 25 ? 1 : 0);
+                int half = Mathf.Max(1, 7 - Mathf.Abs(y - 16) / 3);
+                for (int x = center - half - 2; x <= center + half + 2; x++)
+                {
+                    if (x < 0 || x >= size) continue;
+                    int distance = Mathf.Abs(x - center);
+                    pixels[y * size + x] = distance <= half - 2 ? new Color32(15, 4, 17, 255) :
+                        distance <= half ? new Color32(156, 25, 40, 255) : new Color32(201, 57, 53, 80);
+                }
+            }
+            texture.SetPixels32(pixels); texture.Apply();
+            return Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(.5f, .5f), 16);
         }
         public bool RemoveEntrance()
         {
@@ -435,6 +467,21 @@ namespace DarkLord.Dungeon
             if (mesh != null) Destroy(mesh);
             if (generated != null) Destroy(generated);
             if (rockChips != null) Destroy(rockChips.gameObject);
+            if (entranceCrackSprite != null) { var texture = entranceCrackSprite.texture; Destroy(entranceCrackSprite); if (texture != null) Destroy(texture); }
+            if (carpetFill != null) Destroy(carpetFill);
+            if (carpetFillSprite != null) Destroy(carpetFillSprite);
+            if (ceilingTile != null) Destroy(ceilingTile);
+            if (ceilingSprite != null) Destroy(ceilingSprite);
+            DestroyWallPieces(roomWallPieces);
+            DestroyWallPieces(bannerWallPieces);
+            DestroyWallPieces(floorVariants);
+            DestroyWallPieces(carpetCorners);
+            DestroyEffectTile(wallShadow);
+            DestroyEffectTile(pillarShadow);
+            DestroyEffectTile(pillarShadowEnd);
+            DestroyEffectTile(windowGlow);
+            if (floorShades != null) foreach (var tile in floorShades) DestroyEffectTile(tile);
+            if (carpetInnerCorners != null) foreach (var tile in carpetInnerCorners) DestroyEffectTile(tile);
         }
     }
 }

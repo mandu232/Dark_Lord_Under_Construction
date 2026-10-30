@@ -38,6 +38,7 @@ namespace DarkLord.Dungeon
         {
             sections.Clear(); Array.Clear(owners, 0, owners.Length);
             foreach (var saved in data) Add(new DungeonSection(saved.kind, saved.bounds, saved.complete, saved.core, new List<Vector2Int>(saved.cells)));
+            ReleaseCollapsedOpening();
             Revision++;
         }
     }

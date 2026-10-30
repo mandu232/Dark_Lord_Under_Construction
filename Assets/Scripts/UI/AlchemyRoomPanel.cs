@@ -9,11 +9,11 @@ namespace DarkLord.UI
     public sealed class AlchemyRoomPanel : MonoBehaviour
     {
         private WaveDirector waves;
-        private GameObject window;
-        private TMP_Text balance, status, progress, prompt;
-        private UnityEngine.UI.Button blood, crystal, collect, close;
-        private TMP_Text collectLabel;
-        private UnityEngine.UI.Image progressFill;
+        [SerializeField] private GameObject window;
+        [SerializeField] private TMP_Text balance, status, progress, prompt;
+        [SerializeField] private UnityEngine.UI.Button blood, crystal, collect, close;
+        [SerializeField] private TMP_Text collectLabel;
+        [SerializeField] private UnityEngine.UI.Image progressFill;
         private DungeonExpansion construction;
         private MinionSummoning summoning;
         public bool IsVisible => window != null && window.activeSelf;
@@ -23,72 +23,16 @@ namespace DarkLord.UI
 
         public void Configure(WaveDirector director, TMP_Text fontSource)
         {
-            if (window != null) return;
+            if (waves != null) return;
             waves = director;
             construction = director.Lord.GetComponent<DungeonExpansion>();
             summoning = director.Lord.GetComponent<MinionSummoning>();
-            window = new GameObject("Alchemy room exchange", typeof(RectTransform), typeof(UnityEngine.UI.Image));
-            window.transform.SetParent(transform, false);
-            var rect = window.GetComponent<RectTransform>();
-            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(1, .5f);
-            rect.anchoredPosition = new Vector2(-24, 0); rect.sizeDelta = new Vector2(400, 416);
-            window.GetComponent<UnityEngine.UI.Image>().color = new Color(.12f, .035f, .16f, .97f);
-            Label("Title", "연금술실", 24, -12, 30, fontSource.font);
-            balance = Label("Balances", "", 18, -48, 28, fontSource.font);
-            progress = Label("Progress", "", 17, -80, 26, fontSource.font);
-            var track = new GameObject("Alchemy progress", typeof(RectTransform), typeof(UnityEngine.UI.Image));
-            track.transform.SetParent(window.transform, false);
-            var bar = track.GetComponent<RectTransform>(); bar.anchorMin = bar.anchorMax = bar.pivot = new Vector2(0, 1);
-            bar.anchoredPosition = new Vector2(12, -108); bar.sizeDelta = new Vector2(376, 6);
-            track.GetComponent<UnityEngine.UI.Image>().color = new Color(.25f, .16f, .25f);
-            var fill = new GameObject("Fill", typeof(RectTransform), typeof(UnityEngine.UI.Image)); fill.transform.SetParent(track.transform, false);
-            progressFill = fill.GetComponent<UnityEngine.UI.Image>(); progressFill.color = new Color(.7f, .35f, .9f); progressFill.raycastTarget = false;
-            progressFill.rectTransform.anchorMin = Vector2.zero; progressFill.rectTransform.anchorMax = Vector2.one;
-            progressFill.rectTransform.offsetMin = progressFill.rectTransform.offsetMax = Vector2.zero;
-            blood = Button("Blood exchange", $"혈액 {AlchemyExchange.BloodCost} → 금화 {AlchemyExchange.BloodGold} · {AlchemyExchange.BloodDuration:0}초", -146, fontSource.font);
-            crystal = Button("Crystal exchange", $"혈석 {AlchemyExchange.CrystalCost} → 금화 {AlchemyExchange.CrystalGold} · {AlchemyExchange.CrystalDuration:0}초", -198, fontSource.font);
             blood.onClick.AddListener(ExchangeBlood); crystal.onClick.AddListener(ExchangeCrystal);
-            collect = Button("Collect alchemy", "금화 수령", -250, fontSource.font);
-            collect.image.color = new Color(.5f, .32f, .08f);
-            collectLabel = collect.GetComponentInChildren<TMP_Text>(); collect.onClick.AddListener(Collect);
-            status = Label("Status", "", 16, -282, 60, fontSource.font);
-            close = Button("Close alchemy", "닫기", -382, fontSource.font); close.onClick.AddListener(Close);
-            prompt = Label("Alchemy interaction hint", "F · 중앙 연성 장치 사용", 20, 0, 36, fontSource.font);
-            prompt.transform.SetParent(transform, false);
-            prompt.rectTransform.anchorMin = prompt.rectTransform.anchorMax = prompt.rectTransform.pivot = new Vector2(.5f, 0);
-            prompt.rectTransform.anchoredPosition = new Vector2(0, 150); prompt.rectTransform.sizeDelta = new Vector2(460, 36);
-            prompt.alignment = TextAlignmentOptions.Center; prompt.gameObject.SetActive(false);
-            window.SetActive(false);
+            collect.onClick.AddListener(Collect); close.onClick.AddListener(Close);
+            window.SetActive(false); prompt.gameObject.SetActive(false);
             gameObject.AddComponent<AlchemyReadyOverlay>().Configure(director, fontSource.font);
         }
 
-        private TMP_Text Label(string name, string text, int size, float y, float height, TMP_FontAsset font)
-        {
-            var node = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
-            node.transform.SetParent(window.transform, false);
-            var label = node.GetComponent<TextMeshProUGUI>();
-            label.font = font; label.fontSize = size; label.text = text;
-            label.color = new Color(1, .93f, .86f); label.raycastTarget = false;
-            label.alignment = TextAlignmentOptions.TopLeft; label.textWrappingMode = TextWrappingModes.Normal;
-            var rect = label.rectTransform;
-            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0, 1);
-            rect.anchoredPosition = new Vector2(12, y); rect.sizeDelta = new Vector2(376, height);
-            return label;
-        }
-        private UnityEngine.UI.Button Button(string name, string title, float y, TMP_FontAsset font)
-        {
-            var node = new GameObject(name, typeof(RectTransform), typeof(UnityEngine.UI.Image), typeof(UnityEngine.UI.Button));
-            node.transform.SetParent(window.transform, false);
-            var rect = node.GetComponent<RectTransform>();
-            rect.anchorMin = rect.anchorMax = new Vector2(.5f, 1); rect.anchoredPosition = new Vector2(0, y); rect.sizeDelta = new Vector2(360, 42);
-            node.GetComponent<UnityEngine.UI.Image>().color = new Color(.36f, .12f, .3f);
-            var label = Label(name + " label", title, 20, 0, 42, font);
-            label.transform.SetParent(node.transform, false);
-            label.rectTransform.anchorMin = Vector2.zero; label.rectTransform.anchorMax = Vector2.one;
-            label.rectTransform.offsetMin = new Vector2(8, 2); label.rectTransform.offsetMax = new Vector2(-8, -2);
-            label.alignment = TextAlignmentOptions.Center;
-            return node.GetComponent<UnityEngine.UI.Button>();
-        }
         public void ExchangeBlood() => Exchange(CurrencyType.Souls);
         public void ExchangeCrystal() => Exchange(CurrencyType.DarkCrystals);
         public void Collect()

@@ -35,11 +35,19 @@ namespace DarkLord.UI
                 gameObject.AddComponent<InvasionAlert>().Configure(director, healthText.font);
                 gameObject.AddComponent<StartingTutorialPresentation>().Configure(director, healthText.font);
                 gameObject.AddComponent<CorpseHarvestHud>().Configure(director, healthText.font);
-                gameObject.AddComponent<AlchemyRoomPanel>().Configure(director, healthText);
-                gameObject.AddComponent<RecruitmentPanel>().Configure(summoning, healthText.font);
+                CreatePanel<AlchemyRoomPanel>().Configure(director, healthText);
+                CreatePanel<RecruitmentPanel>().Configure(summoning, healthText.font);
                 gameObject.AddComponent<SummonPresentation>().Configure(summoning, director, healthText.font);
-                gameObject.AddComponent<EconomyPanel>().Configure(director, healthText.font);
+                CreatePanel<EconomyPanel>().Configure(director, healthText.font);
             }
+        }
+
+        private T CreatePanel<T>() where T : Component
+        {
+            var prefab = Resources.Load<T>("UI/" + typeof(T).Name);
+            var panel = Instantiate(prefab, transform, false);
+            panel.gameObject.SetActive(true);
+            return panel;
         }
 
         public void Configure(CurrencyWallet currencyWallet, ActorHealth health, MinionSummoning minionSummoning)

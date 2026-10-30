@@ -125,7 +125,7 @@ namespace DarkLord.Editor
             ((RectTransform)window).sizeDelta = new Vector2(0, 1920 * 105f / 405f);
             Region(window.Find("Close"), .845f, .83f, .115f, .09f);
             Region(window.Find("Demolition"), .725f, .83f, .11f, .09f);
-            var buttonSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprtie/UI/Button/CastleButton.png");
+            var buttonSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Resources/UI/ConstructionCastleButton.asset");
             foreach (string name in new[] { "Close", "Demolition" })
             {
                 var button = window.Find(name).GetComponent<UnityEngine.UI.Button>();
@@ -155,7 +155,7 @@ namespace DarkLord.Editor
             window.Find("Details Divider").gameObject.SetActive(false);
             var viewport = window.Find("Cards Viewport");
             // Keep cards on the left page, including while dragging the row.
-            Region(viewport, .19f, .35f, .30f, .43f);
+            Region(viewport, .19f, .26f, .30f, .52f);
             var mask = viewport.GetComponent<UnityEngine.UI.RectMask2D>();
             if (mask == null) mask = viewport.gameObject.AddComponent<UnityEngine.UI.RectMask2D>();
             mask.enabled = true;
@@ -173,13 +173,13 @@ namespace DarkLord.Editor
             content.pivot = Vector2.up; content.anchoredPosition = Vector2.zero; content.sizeDelta = Vector2.zero;
             var template = items.Find("Item Template");
             var element = template.GetComponent<UnityEngine.UI.LayoutElement>();
-            element.minWidth = element.preferredWidth = 176;
+            element.minWidth = element.preferredWidth = 46 * 1920f / 405f;
             element.minHeight = element.preferredHeight = 0;
             var frameImage = template.Find("Castle Frame").GetComponent<UnityEngine.UI.Image>();
             frameImage.sprite = AssetDatabase.LoadAllAssetsAtPath("Assets/Sprtie/UI/Frame/TextBox.png").OfType<Sprite>().First();
             frameImage.color = Color.white;
             frameImage.type = UnityEngine.UI.Image.Type.Sliced;
-            frameImage.pixelsPerUnitMultiplier = .25f;
+            frameImage.pixelsPerUnitMultiplier = 405f / 1920f;
             template.GetComponent<UnityEngine.UI.Image>().color = Color.clear;
             Region(template.Find("Icon"), .12f, .25f, .76f, .65f);
             Region(template.Find("Label"), .04f, .04f, .92f, .17f);

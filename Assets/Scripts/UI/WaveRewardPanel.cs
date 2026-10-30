@@ -83,6 +83,7 @@ namespace DarkLord.UI
         private void Refresh()
         {
             if (waves == null || root == null) return;
+            EnsureView();
             bool final = waves.CurrentWave >= waves.FinalWave && waves.RemainingEnemies == 0;
             heading.text = final ? "승리의 전리품" : "전리품 획득";
             subtitle.text = final ? "마지막 습격을 격퇴했습니다. 아이템 하나를 골라 획득하세요." : $"습격 {waves.RewardWave} 격퇴 · 날짜 보상: 방·시설·함정 각 1개 · 아이템 하나를 골라 획득하세요";
@@ -115,12 +116,28 @@ namespace DarkLord.UI
         }
         private void UpdateVisibility()
         {
+            if (waves != null && root != null && cards[0] == null)
+            {
+                EnsureView();
+                Refresh();
+                return;
+            }
             bool visible = isActiveAndEnabled && waves != null && waves.State == WaveState.RewardSelection && (menu == null || menu.State == GameMenu.ScreenState.Playing);
             if (root != null && root.activeSelf != visible)
             {
                 root.SetActive(visible);
-                if (visible && EventSystem.current != null) EventSystem.current.SetSelectedGameObject(cards[0].gameObject);
+                if (visible && cards[0] != null && EventSystem.current != null) EventSystem.current.SetSelectedGameObject(cards[0].gameObject);
             }
+        }
+        private void EnsureView()
+        {
+            // A script reload preserves the generated hierarchy but resets readonly arrays.
+            if (root == null || cards[0] != null) return;
+            root.SetActive(false);
+            Destroy(root);
+            Build();
+            waves.Changed -= Refresh;
+            waves.Changed += Refresh;
         }
         private void LateUpdate()
         {

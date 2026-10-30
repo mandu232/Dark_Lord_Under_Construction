@@ -174,7 +174,7 @@ namespace DarkLord.UI
             objective.transform.parent.gameObject.SetActive(training);
             if (training)
             {
-                objective.text = $"<b>재건 훈련 · {(int)tutorial.TrainingStep} / 3</b>\n\n{tutorial.TrainingInstruction}";
+                objective.text = $"<b>재건 훈련 · {tutorial.TrainingNumber} / 5</b>\n\n{tutorial.TrainingInstruction}";
                 bool recruitmentOpen = waves.Lord.GetComponent<MinionSummoning>()?.IsRecruiting == true;
                 var root = objective.transform.parent.GetComponent<RectTransform>();
                 root.anchorMin = root.anchorMax = root.pivot = new Vector2(recruitmentOpen ? 0 : 1, .5f);

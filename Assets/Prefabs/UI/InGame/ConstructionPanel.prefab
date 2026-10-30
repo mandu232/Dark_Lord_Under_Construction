@@ -1013,6 +1013,7 @@ GameObject:
   - component: {fileID: 2628182653324618472}
   - component: {fileID: 5883521184470625892}
   - component: {fileID: 4160994500966574342}
+  - component: {fileID: 8906254863228343041}
   m_Layer: 0
   m_Name: Castle Frame
   m_TagString: Untagged
@@ -1076,7 +1077,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 0.25
+  m_PixelsPerUnitMultiplier: 0.2109375
 --- !u!114 &4160994500966574342
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1099,6 +1100,20 @@ MonoBehaviour:
   m_LayoutPriority: 1
   m_MaxWidth: -1
   m_MaxHeight: -1
+--- !u!114 &8906254863228343041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 915012215716369609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fea3cf0e231f8c449ee11415ed27532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.UI.UiSpritePixelScale
+  referenceArtworkWidth: 405
+  previewCanvasWidth: 1920
 --- !u!1 &977422453446626656
 GameObject:
   m_ObjectHideFlags: 0
@@ -2067,6 +2082,7 @@ MonoBehaviour:
   icon: {fileID: 8683997590607394665}
   label: {fileID: 1128068495667852136}
   selectionFrame: {fileID: 5883521184470625892}
+  cardWidthPixels: 46
 --- !u!114 &57663958773610440
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2080,9 +2096,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
   m_IgnoreLayout: 0
-  m_MinWidth: 176
+  m_MinWidth: 218.07408
   m_MinHeight: 0
-  m_PreferredWidth: 176
+  m_PreferredWidth: 218.07408
   m_PreferredHeight: 0
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
@@ -2412,6 +2428,7 @@ GameObject:
   - component: {fileID: 4874112995657493211}
   - component: {fileID: 1779508287763893356}
   - component: {fileID: 7376109752640887775}
+  - component: {fileID: 547649306278697556}
   m_Layer: 0
   m_Name: Castle Frame
   m_TagString: Untagged
@@ -2436,7 +2453,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 218.07408, y: 12.0889015}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4874112995657493211
 CanvasRenderer:
@@ -2466,7 +2483,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -2934079335627394362, guid: 12eae261bcbe17d45a8851c78315e562, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7f7a0982aa6391f40818b98dbbb5a318, type: 2}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2475,7 +2492,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 0.2109375
 --- !u!114 &7376109752640887775
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2498,6 +2515,20 @@ MonoBehaviour:
   m_LayoutPriority: 1
   m_MaxWidth: -1
   m_MaxHeight: -1
+--- !u!114 &547649306278697556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3001216079055100937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fea3cf0e231f8c449ee11415ed27532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.UI.UiSpritePixelScale
+  referenceArtworkWidth: 405
+  previewCanvasWidth: 1920
 --- !u!1 &3094270388849574763
 GameObject:
   m_ObjectHideFlags: 0
@@ -3133,6 +3164,7 @@ GameObject:
   - component: {fileID: 4326340040694474593}
   - component: {fileID: 8468066773471223785}
   - component: {fileID: 3645483231647296819}
+  - component: {fileID: 2916273463996675345}
   m_Layer: 0
   m_Name: Castle Frame
   m_TagString: Untagged
@@ -3157,7 +3189,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 218.07408, y: 12.0889015}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4326340040694474593
 CanvasRenderer:
@@ -3187,7 +3219,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -2934079335627394362, guid: 12eae261bcbe17d45a8851c78315e562, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7f7a0982aa6391f40818b98dbbb5a318, type: 2}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3196,7 +3228,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 0.2109375
 --- !u!114 &3645483231647296819
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3219,6 +3251,20 @@ MonoBehaviour:
   m_LayoutPriority: 1
   m_MaxWidth: -1
   m_MaxHeight: -1
+--- !u!114 &2916273463996675345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3923486361278401122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fea3cf0e231f8c449ee11415ed27532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.UI.UiSpritePixelScale
+  referenceArtworkWidth: 405
+  previewCanvasWidth: 1920
 --- !u!1 &4070258373966966974
 GameObject:
   m_ObjectHideFlags: 0
@@ -4073,7 +4119,7 @@ RectTransform:
   - {fileID: 9212752201035252950}
   m_Father: {fileID: 235636603866995909}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.19, y: 0.35}
+  m_AnchorMin: {x: 0.19, y: 0.26}
   m_AnchorMax: {x: 0.49, y: 0.78}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}

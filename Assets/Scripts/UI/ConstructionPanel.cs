@@ -34,6 +34,20 @@ namespace DarkLord.UI
         [SerializeField] private RectTransform layer1, layer2, layer3;
         [SerializeField, Min(0)] private float bookLift = 16f;
 
+        private UnityEngine.UI.Image pixelReference;
+
+        // Canvas units occupied by one source pixel of the construction book.
+        public float ArtPixelSize
+        {
+            get
+            {
+                if (pixelReference == null && layer2 != null)
+                    pixelReference = layer2.GetComponent<UnityEngine.UI.Image>();
+                return windowRect != null && pixelReference != null && pixelReference.sprite != null
+                    ? windowRect.rect.width / pixelReference.sprite.rect.width : 1f;
+            }
+        }
+
         private void LateUpdate()
         {
             if (layer2 != null && windowRect != null && window.activeInHierarchy && opening == null)
@@ -262,7 +276,7 @@ namespace DarkLord.UI
             }
         }
         private static bool IsInCategory(BuildItemDefinition item, BuildCategory category) =>
-            item.category == category || category == BuildCategory.Rooms && item.category == BuildCategory.Corridors;
+            item.category == category || category == BuildCategory.Rooms && (item.category == BuildCategory.Corridors || item.category == BuildCategory.Entrances);
         private static Color TabColor(bool active) => active ? new Color32(130, 28, 48, 255) : new Color32(35, 20, 29, 0);
         public void Choose(BuildItemDefinition item)
         {

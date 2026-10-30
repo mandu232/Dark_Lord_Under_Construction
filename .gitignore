@@ -1,4 +1,9 @@
 # Unity .gitignore Template
+# Local AI assistant settings and session state
+/.codex/
+/.claude/
+/.agents/
+
 # Source: https://github.com/github/gitignore/blob/main/Unity.gitignore
 # Last synced: 2026-07-02
 # License: CC0-1.0
