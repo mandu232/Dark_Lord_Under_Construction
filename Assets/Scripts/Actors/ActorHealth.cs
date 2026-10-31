@@ -14,6 +14,9 @@ namespace DarkLord.Actors
         [SerializeField, Min(1)] private int maximumHealth = 100;
         private int currentHealth;
         private bool initialized;
+        private ActorHealth sharedHealthOwner;
+        private readonly System.Collections.Generic.List<ActorHealth> sharedMembers = new System.Collections.Generic.List<ActorHealth>();
+        private ActorHealth HealthOwner => sharedHealthOwner != null ? sharedHealthOwner.HealthOwner : this;
         [SerializeField, Range(0, 100)] private int physicalResistance;
         [SerializeField, Range(0, 100)] private int magicResistance;
         public int PhysicalResistance => Resistance(DamageType.Physical);
@@ -31,8 +34,8 @@ namespace DarkLord.Actors
         }
 
         public Faction Faction => faction;
-        public int CurrentHealth { get { Initialize(); return currentHealth; } }
-        public int MaximumHealth => maximumHealth;
+        public int CurrentHealth { get { var owner = HealthOwner; owner.Initialize(); return owner.currentHealth; } }
+        public int MaximumHealth => HealthOwner.maximumHealth;
         public bool IsAlive => CurrentHealth > 0;
         public event Action<ActorHealth> Damaged;
         public event Action Died;
@@ -49,6 +52,30 @@ namespace DarkLord.Actors
             initialized = true;
         }
 
+        public void ShareHealthWith(ActorHealth owner)
+        {
+            if (owner == null) throw new ArgumentNullException(nameof(owner));
+            owner = owner.HealthOwner;
+            if (owner == this) return;
+            if (sharedMembers.Count > 0) throw new InvalidOperationException("A health owner cannot be linked beneath another owner.");
+            if (sharedHealthOwner != null) sharedHealthOwner.sharedMembers.Remove(this);
+            sharedHealthOwner = owner;
+            owner.Initialize();
+            if (!owner.sharedMembers.Contains(this)) owner.sharedMembers.Add(this);
+        }
+
+        private void NotifyDamage(ActorHealth source, bool died)
+        {
+            if (died) Died?.Invoke(); else Damaged?.Invoke(source);
+            foreach (var member in sharedMembers)
+                if (member != null) { if (died) member.Died?.Invoke(); else member.Damaged?.Invoke(source); }
+        }
+
+        private void OnDestroy()
+        {
+            if (sharedHealthOwner != null) sharedHealthOwner.sharedMembers.Remove(this);
+        }
+
         public bool TakeDamage(int amount, ActorHealth source = null, DamageType damageType = DamageType.Physical)
         {
             if (amount <= 0 || !IsAlive || !isActiveAndEnabled) return false;
@@ -57,48 +84,52 @@ namespace DarkLord.Actors
             if (DamageMultiplier != null) amount = Mathf.RoundToInt(amount * Mathf.Clamp01(DamageMultiplier(source, damageType)));
             amount = Mathf.RoundToInt(amount * (1f - Resistance(damageType) / 100f));
             if (amount <= 0) return false;
-            int before = currentHealth;
-            currentHealth = Mathf.Max(Mathf.Min(currentHealth, ScriptedHealthFloor), currentHealth - amount);
-            if (currentHealth < before)
+            var owner = HealthOwner;
+            int before = owner.currentHealth;
+            int floor = owner.ScriptedHealthFloor;
+            foreach (var member in owner.sharedMembers) if (member != null) floor = Mathf.Max(floor, member.ScriptedHealthFloor);
+            owner.currentHealth = Mathf.Max(Mathf.Min(before, floor), before - amount);
+            if (owner.currentHealth < before)
             {
                 GetComponent<DarkLord.Minions.MinionController>()?.RegisterPoiseHit();
                 ActorHitFeedback.Show(this, source);
             }
-            if (currentHealth == 0) Died?.Invoke();
-            else Damaged?.Invoke(source);
-            if (currentHealth < before) DarkLord.Player.PlayerHitStop.OnDamage(this, source);
+            owner.NotifyDamage(source, owner.currentHealth == 0);
+            if (owner.currentHealth < before) DarkLord.Player.PlayerHitStop.OnDamage(this, source);
             return true;
         }
 
         public void RestoreHealth(int maximum, int current)
         {
-            maximumHealth = Mathf.Max(1, maximum);
-            currentHealth = Mathf.Clamp(current, 0, maximumHealth);
-            initialized = true;
+            var owner = HealthOwner;
+            owner.maximumHealth = Mathf.Max(1, maximum);
+            owner.currentHealth = Mathf.Clamp(current, 0, owner.maximumHealth);
+            owner.initialized = true;
         }
 
         // Healing never revives a dead actor. Loading a save remains explicit via RestoreHealth.
         public int Heal(int amount)
         {
             if (amount <= 0 || !IsAlive) return 0;
-            int recovered = Mathf.Min(amount, maximumHealth - currentHealth);
-            currentHealth += recovered;
+            var owner = HealthOwner;
+            int recovered = Mathf.Min(amount, owner.maximumHealth - owner.currentHealth);
+            owner.currentHealth += recovered;
             return recovered;
         }
 
         public void Kill()
         {
             if (!IsAlive) return;
-            currentHealth = 0;
-            Died?.Invoke();
+            var owner = HealthOwner;
+            owner.currentHealth = 0;
+            owner.NotifyDamage(null, true);
         }
 
         public void Configure(Faction team, int health)
         {
             faction = team;
-            maximumHealth = Mathf.Max(1, health);
-            currentHealth = maximumHealth;
-            initialized = true;
+            int maximum = Mathf.Max(1, health);
+            RestoreHealth(maximum, maximum);
         }
     }
 }

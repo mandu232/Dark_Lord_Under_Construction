@@ -45,6 +45,7 @@ namespace DarkLord.UI
         private void Awake()
         {
             SetupStatsScroll();
+            RewardUiSkin.ConfigureBuffText(statsText);
             inspect = new InputAction("Inspect minion", InputActionType.Button, "<Mouse>/rightButton");
             if (worldCamera == null) worldCamera = Camera.main;
             if (closeButton != null) closeButton.onClick.AddListener(Close);
@@ -255,10 +256,12 @@ namespace DarkLord.UI
             if (activeBuffs.Count == 0) statsText.text += "없음\n";
             foreach (var buff in activeBuffs)
             {
-                statsText.text += buff.DisplayName + "\n";
-                if (buff.AttackBonusPercent > 0) statsText.text += $"  공격력 +{buff.AttackBonusPercent}%\n";
-                if (buff.ResistanceBonus(DamageType.Physical) > 0) statsText.text += $"  물리 내성 +{buff.ResistanceBonus(DamageType.Physical)}%p\n";
-                if (buff.ResistanceBonus(DamageType.Magic) > 0) statsText.text += $"  마법 내성 +{buff.ResistanceBonus(DamageType.Magic)}%p\n";
+                statsText.text += RewardUiSkin.BuffSymbol(buff.BuffIcon) + buff.DisplayName + "\n";
+                string detail = "";
+                if (buff.AttackBonusPercent > 0) detail += $"  공격력 +{buff.AttackBonusPercent}%\n";
+                if (buff.ResistanceBonus(DamageType.Physical) > 0) detail += $"  물리 내성 +{buff.ResistanceBonus(DamageType.Physical)}%p\n";
+                if (buff.ResistanceBonus(DamageType.Magic) > 0) detail += $"  마법 내성 +{buff.ResistanceBonus(DamageType.Magic)}%p\n";
+                statsText.text += RewardUiSkin.BuffDetail(detail);
             }
             statsText.text += "\n행동  방 안에서 자유 이동 · 침입자 자동 공격\n이동  하수인을 꾹 눌러 다른 방에 놓기\n";
             statsText.text += $"\n공격 간격  {Selected.AttackInterval:0.##}초\n공격 사거리  {Selected.AttackRange / DungeonGrid.CellSize:0.##}칸\n감지 범위  {(Selected.AssignedRoom != null ? "배치된 방 전체" : $"{Selected.DetectionRange / DungeonGrid.CellSize:0.##}칸")}\n이동 속도  {Selected.MoveSpeed / DungeonGrid.CellSize:0.##}칸/초\n\n상태  {state}";

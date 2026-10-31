@@ -15,7 +15,13 @@ namespace DarkLord.Actors
             if (motor == null) return; // Buildings and the dungeon core are not characters.
             var minion = target.GetComponent<DarkLord.Minions.MinionController>();
             if (attacker != null && target.IsAlive && (minion == null || !minion.IsStaggerImmune))
-                motor.ApplyKnockback((Vector2)(target.transform.position - attacker.transform.position));
+            {
+                // Keep ordinary hits readable without displacing actors as far as hero abilities.
+                Vector2 direction = target.transform.position - attacker.transform.position;
+                if (direction.sqrMagnitude < .0001f)
+                    direction = attacker.GetComponent<TopDownMotor>()?.Facing ?? Vector2.down;
+                motor.ApplyKnockback(direction, 4.2f, .18f, true);
+            }
             var effect = target.GetComponent<ActorHitFeedback>();
             if (effect == null) effect = target.gameObject.AddComponent<ActorHitFeedback>();
             effect.Flash();

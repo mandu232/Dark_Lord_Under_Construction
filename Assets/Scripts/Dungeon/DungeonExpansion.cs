@@ -27,6 +27,7 @@ namespace DarkLord.Dungeon
         public bool DemolitionMode { get; private set; }
         private ConstructionKind selectedKind = ConstructionKind.Room;
         public bool ExpansionMode { get; private set; }
+        public bool IsMovingCore { get; private set; }
         public bool BlocksGameplayInput => ExpansionMode || consumedFrame == Time.frameCount;
         private bool PreparationAllowed => GetComponent<DarkLord.Player.PlayerCombat>() == null ||
             GetComponent<DarkLord.Player.PlayerCombat>().CanPrepare && GetComponent<DarkLord.Player.PlayerCombat>().CanUseFacilities;
@@ -51,6 +52,7 @@ namespace DarkLord.Dungeon
 
         public void SetExpansionMode(bool active)
         {
+            IsMovingCore = false;
             RestorePlacementView();
             if (ExpansionMode) consumedFrame = Time.frameCount;
             ClearPreview();
@@ -82,6 +84,7 @@ namespace DarkLord.Dungeon
         }
         public void CancelSelection()
         {
+            IsMovingCore = false;
             RestorePlacementView();
             constructionPanel?.ClearDemolitionPresentation();
             DemolitionMode = false; hasSelection = false; selectedItem = null; summoning?.SetOpen(false); ClearPreview();
@@ -104,6 +107,7 @@ namespace DarkLord.Dungeon
         }
         public void ReturnToConstructionMenu()
         {
+            if (IsMovingCore) { SetExpansionMode(false); return; }
             if (!ExpansionMode || (!IsPlacementView && !DemolitionMode)) return;
             CancelSelection();
             consumedFrame = Time.frameCount;
@@ -117,6 +121,21 @@ namespace DarkLord.Dungeon
             CancelSelection(); DemolitionMode = true; hasSelection = true;
             constructionPanel?.ShowDemolition();
             Message = "좌클릭: 하수인·함정·입구 제거 / 우클릭: 건설창으로 / B·Esc: 종료";
+        }
+
+        public bool BeginCoreRelocation()
+        {
+            var economy = GetComponent<DarkLord.Player.RunEconomy>();
+            if (economy == null || !economy.CanManageCore || !dungeon.CanMoveCoreNow) return false;
+            economy.Close();
+            SetExpansionMode(true);
+            if (!ExpansionMode) return false;
+            CancelSelection();
+            IsMovingCore = true;
+            hasSelection = true;
+            EnterPlacementView();
+            Message = "코어 이동 · 연결된 방의 빈 바닥을 클릭하세요. 우클릭·Esc: 취소";
+            return true;
         }
         public bool CanDemolish(Vector2Int cell) => (dungeon.Layout.HasEntrance && cell == dungeon.Layout.Entrance) || dungeon.HasTrap(cell) || dungeon.GuardAt(cell) != null;
         public bool TryDemolish(Vector2Int cell)
@@ -204,6 +223,15 @@ namespace DarkLord.Dungeon
             if (!new Plane(dungeon.transform.forward, dungeon.transform.position).Raycast(ray, out float distance)) return;
             dungeon.Initialize();
             var cell = dungeon.WorldToCell(ray.GetPoint(distance));
+            if (IsMovingCore)
+            {
+                bool available = dungeon.CanRelocateCore(cell);
+                dungeon.Highlight(cell, available); previewCell = cell;
+                Message = available ? "좌클릭: 코어 이동 · 우클릭·Esc: 취소" : "입구와 연결된 방의 빈 바닥을 선택하세요.";
+                if (Time.frameCount > openedFrame && build.WasPressedThisFrame() && dungeon.TryRelocateCore(cell))
+                    SetExpansionMode(false);
+                return;
+            }
             if (DemolitionMode)
             {
                 bool available = CanDemolish(cell);

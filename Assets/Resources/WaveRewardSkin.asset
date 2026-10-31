@@ -14,15 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.UI.RewardUiSkin
   cardFrame: {fileID: -4340475759272727395, guid: d00f8d3578a76234ea8d3188d673eaec, type: 3}
   button: {fileID: -2934079335627394362, guid: 12eae261bcbe17d45a8851c78315e562, type: 3}
+  vitalTrack: {fileID: 21300000, guid: 80e04b00ddb7dd04c8432b05c7df94c9, type: 3}
+  waveStartButton: {fileID: -2934079335627394362, guid: 12eae261bcbe17d45a8851c78315e562, type: 3}
   icons:
   - {fileID: 4245052342988409972, guid: 5e60ebd7f332986479a22a556569e9b2, type: 3}
   - {fileID: -6007857137893288414, guid: 5e60ebd7f332986479a22a556569e9b2, type: 3}
   - {fileID: -7732569738864306783, guid: 5e60ebd7f332986479a22a556569e9b2, type: 3}
   - {fileID: 21300000, guid: a0143d9ac81c103419295820db740717, type: 3}
   - {fileID: 1237066433707095895, guid: 62bd9d2b1c85e8846919f17b928b23b5, type: 3}
-  - {fileID: 21300000, guid: b16bccd128ee2a94c911356686c7768c, type: 3}
-  - {fileID: 21300000, guid: a0143d9ac81c103419295820db740717, type: 3}
-  - {fileID: 1237066433707095895, guid: 62bd9d2b1c85e8846919f17b928b23b5, type: 3}
-  - {fileID: -4942689117923840017, guid: bcd2e65225e189845b109d78fc002409, type: 3}
-  - {fileID: 21300000, guid: a0143d9ac81c103419295820db740717, type: 3}
-  - {fileID: -6007857137893288414, guid: 5e60ebd7f332986479a22a556569e9b2, type: 3}
+  - {fileID: 8568169350685010137, guid: 1f5f9690c0ea289469fcf812f94a6b3e, type: 3}
+  - {fileID: 2848724957842209110, guid: c97fda3c306ada8409cacecf54670099, type: 3}
+  - {fileID: 2358618624146044513, guid: f8898ee134e8afc4eab34fe756b309d0, type: 3}
+  - {fileID: -7409676091446177613, guid: 0a2ab7a98ca7089489191b7aec50eddd, type: 3}
+  - {fileID: -3457023620627777359, guid: 5317ece6c7c03484ba4f3c95cd5a4317, type: 3}
+  - {fileID: 5864129633724766012, guid: 4b8c302faeb0cc94d88754edea9b0f24, type: 3}

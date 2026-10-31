@@ -39,6 +39,7 @@ namespace DarkLord.UI
             var augments = new GameObject("Active combat augments", typeof(RectTransform), typeof(TextMeshProUGUI));
             augments.transform.SetParent(transform, false);
             augmentLabel = augments.GetComponent<TextMeshProUGUI>();
+            RewardUiSkin.ConfigureBuffText(augmentLabel);
             augmentLabel.font = fontSource.font; augmentLabel.fontSize = 17;
             augmentLabel.color = new Color(1, .82f, .6f); augmentLabel.raycastTarget = false;
             augmentLabel.rectTransform.anchorMin = augmentLabel.rectTransform.anchorMax = augmentLabel.rectTransform.pivot = new Vector2(0, 1);
@@ -50,7 +51,8 @@ namespace DarkLord.UI
         private void RefreshAugments()
         {
             var ids = waves.Augments.Capture();
-            lastAugmentText = ids.Length == 0 ? "" : "<b>계승된 전투 효과</b>\n" + string.Join(" · ", System.Array.ConvertAll(ids, WaveRewardCatalog.Name));
+            var skin = Resources.Load<RewardUiSkin>("WaveRewardSkin");
+            lastAugmentText = ids.Length == 0 ? "" : "<b>계승된 전투 효과</b>\n" + string.Join(" · ", System.Array.ConvertAll(ids, id => RewardUiSkin.BuffSymbol(skin != null ? skin.Icon(id) : null) + WaveRewardCatalog.Name(id)));
         }
         private void OnDestroy() { if (waves != null) waves.Changed -= RefreshAugments; }
         private void LateUpdate()
@@ -58,8 +60,7 @@ namespace DarkLord.UI
             if (label == null || waves == null || waves.Core == null || waves.Combat == null) return;
             augmentLabel.text = lastAugmentText + (lastAugmentText.Length > 0 && waves.Augments.LastTrigger.Length > 0 ? "\n<color=#C6A5A5>" + waves.Augments.LastTrigger + "</color>" : "");
             PlayerCombat combat = waves.Combat;
-            label.text = $"코어  {waves.Core.CurrentHealth} / {waves.Core.MaximumHealth} · 강화 {combat.CoreUpgradeLevel}/3\n" +
-                $"마나  {Mathf.FloorToInt(combat.Mana)} / {combat.MaximumMana:0}\n" +
+            label.text = $"공유 체력 강화 {combat.CoreUpgradeLevel}/3\n" +
                 $"좌클릭 {combat.AttackLabel} · Q {combat.OffensiveLabel}\nR {combat.SupportLabel} · 대기 {combat.WardCooldown:0.0}초\n" +
                 combat.Message;
         }

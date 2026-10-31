@@ -13,6 +13,7 @@ namespace DarkLord.Dungeon
         public int Width { get; }
         public int Height { get; }
         public Vector2Int Core { get; }
+        public Vector2Int ActiveCore { get; private set; }
         public Vector2Int Entrance { get; private set; }
         public bool HasEntrance { get; private set; } = true;
         public int ExpandedCells { get; private set; }
@@ -25,6 +26,7 @@ namespace DarkLord.Dungeon
             Height = height;
             cells = new DungeonCell[width, height];
             Core = new Vector2Int(width / 2, height / 2);
+            ActiveCore = Core;
             Entrance = new Vector2Int(2, Core.y);
             for (int y = 0; y < height; y++)
                 for (int x = 0; x < width; x++)
@@ -42,7 +44,7 @@ namespace DarkLord.Dungeon
 
         public bool SetEntrance(Vector2Int cell)
         {
-            if (!IsFloor(cell) || cell == Core) return false;
+            if (!IsFloor(cell) || cell == ActiveCore) return false;
             var previous = Entrance;
             Entrance = cell; HasEntrance = true;
             CellChanged?.Invoke(previous); CellChanged?.Invoke(cell);
@@ -53,6 +55,14 @@ namespace DarkLord.Dungeon
             if (!HasEntrance) return false;
             HasEntrance = false; CellChanged?.Invoke(Entrance);
             return true;
+        }
+
+        internal void MoveCore(Vector2Int cell)
+        {
+            var previous = ActiveCore;
+            ActiveCore = cell;
+            CellChanged?.Invoke(previous);
+            CellChanged?.Invoke(cell);
         }
 
         public ExpansionResult CanExpand(Vector2Int cell)

@@ -11,6 +11,8 @@ namespace DarkLord.Dungeon
         [SerializeField] private string displayName = "생산 건물";
         [Header("Room aura (None keeps resource production)")]
         [SerializeField] private bool buffFacility;
+        [SerializeField] private Sprite buffIcon;
+        public Sprite BuffIcon => buffIcon;
         [SerializeField] private bool recruitmentFacility;
         [SerializeField, Min(0)] private int roomCapacityBonus;
         public bool IsRecruitmentFacility => recruitmentFacility;

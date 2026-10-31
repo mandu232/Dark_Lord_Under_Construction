@@ -49,8 +49,9 @@ namespace DarkLord.UI
             upkeep.text=$"하수인 유지비 · 다음 라운드 혈액 {economy.NextUpkeep}\n1마리당 {RunEconomy.BloodPerMinion} · 이번 납부 {economy.LastBloodPaid}"+
                 (economy.BloodDebt>0?$" · <color=#FF8080>미납 {economy.BloodDebt}</color>":"")+"\n"+
                 (economy.MerchantPresent?$"고블린 상인 방문 중 · {Mathf.CeilToInt(economy.MerchantRemaining)}초" + (waves.CanUseFacilities ? " · 시작방에서 F" : ""):$"고블린 상인 · {economy.NextMerchantWave}라운드에 방문 예정");
-            coreHint.text="[F] 코어 · 능력 강화";
-            WorldHint(coreHint,economy.CorePosition+Vector3.up*1.8f,active&&!economy.IsOpen&&economy.HasNearbyInteraction&&economy.NearCore&&!economy.NearMerchant);
+            bool movingCore=waves.Lord.GetComponent<DarkLord.Dungeon.DungeonExpansion>()?.IsMovingCore==true;
+            coreHint.text=movingCore?"코어 이동 · 좌클릭 배치\n우클릭·Esc: 취소":"[F] 코어 · 능력 강화";
+            WorldHint(coreHint,economy.CorePosition+Vector3.up*1.8f,active&&(movingCore||!economy.IsOpen&&economy.HasNearbyInteraction&&economy.NearCore&&!economy.NearMerchant));
             merchantHint.text=$"고블린 상인 · {Mathf.CeilToInt(economy.MerchantRemaining)}초"+(economy.NearMerchant&&waves.CanUseFacilities?"\n[F] 거래하기":"");
             WorldHint(merchantHint,economy.MerchantPosition+Vector3.up*2.1f,active&&waves.CanUseFacilities&&economy.MerchantPresent&&!economy.IsOpen);
             if(!window.gameObject.activeInHierarchy)return;

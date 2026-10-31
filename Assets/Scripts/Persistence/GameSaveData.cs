@@ -16,6 +16,7 @@ namespace DarkLord.Persistence
         public int gold, souls, crystals;
         public Vector3 playerPosition;
         public int playerHealth, playerMaximumHealth, coreHealth, coreMaximumHealth;
+        public bool sharedCoreHealth;
         public DungeonSaveData dungeon;
         public MinionSaveData[] guards = new MinionSaveData[0];
         public WaveSaveData wave;
@@ -37,6 +38,8 @@ namespace DarkLord.Persistence
         public int width, height, expandedCells;
         public int[] cells;
         public bool hasEntrance;
+        public bool hasCoreCell;
+        public Vector2Int coreCell;
         public Vector2Int entrance;
         public SectionSaveData[] sections;
         public TrapSaveData[] traps;
@@ -158,6 +161,8 @@ namespace DarkLord.Persistence
         {
             if (data == null || data.version != 1) throw new InvalidDataException("지원하지 않는 저장 형식입니다.");
             if (data.options != null && !data.options.IsValid) throw new InvalidDataException("게임 설정이 올바르지 않습니다.");
+            if (data.sharedCoreHealth && (data.playerHealth != data.coreHealth || data.playerMaximumHealth != data.coreMaximumHealth))
+                throw new InvalidDataException("공유 체력 정보가 일치하지 않습니다.");
             if (data.combat != null)
             {
                 var c = data.combat;
@@ -273,6 +278,23 @@ namespace DarkLord.Persistence
                 }
             }
             if (d.hasEntrance) CheckCell(d, d.entrance);
+            if (d.hasCoreCell)
+            {
+                CheckCell(d, d.coreCell);
+                bool room = false;
+                foreach (var section in d.sections)
+                {
+                    if (section.complete && DungeonConstruction.IsRoom(section.kind) && System.Array.IndexOf(section.cells, d.coreCell) >= 0) room = true;
+                    if (section.complete && section.kind == ConstructionKind.AlchemyRoom && d.coreCell == new Vector2Int(section.bounds.xMin + section.bounds.width / 2, section.bounds.yMin + section.bounds.height / 2))
+                        throw new InvalidDataException("연성 시설 위에 코어를 배치할 수 없습니다.");
+                }
+                if (!room || d.cells[d.coreCell.y * d.width + d.coreCell.x] != (int)DungeonCell.Floor ||
+                    d.hasEntrance && d.coreCell == d.entrance ||
+                    System.Array.Exists(d.traps, t => t.cell == d.coreCell) ||
+                    d.buildings != null && System.Array.Exists(d.buildings, b => b.cell == d.coreCell) ||
+                    d.alchemyJobs != null && System.Array.Exists(d.alchemyJobs, j => j.cell == d.coreCell))
+                    throw new InvalidDataException("코어 위치가 올바르지 않습니다.");
+            }
             foreach (var actor in data.guards) CheckActor(actor);
             foreach (var actor in data.wave.enemies) CheckActor(actor);
             if (data.tutorial != null && data.tutorial.active)

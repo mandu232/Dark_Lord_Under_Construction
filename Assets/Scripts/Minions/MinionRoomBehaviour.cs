@@ -19,6 +19,7 @@ namespace DarkLord.Minions
         public void SetHeld(bool held)
         {
             IsHeld = held; target = null; damagePending = false; nextScan = 0;
+            motor.CancelAttackMotion();
             support?.Cancel(); motor.Stop();
             if (IsAlive && State != ActorState.Hit) SetState(ActorState.Idle);
         }
@@ -27,7 +28,7 @@ namespace DarkLord.Minions
             var room = AssignedRoom;
             if (room == null || !room.Bounds.Contains(cell) || !defenceDungeon.Construction.IsWalkable(cell) || defenceDungeon.IsAlchemyStationCell(cell)) return false;
             var building = defenceDungeon.BuildingAt(cell);
-            return cell != defenceDungeon.Layout.Core && (building == null || building.IsRuined);
+            return cell != defenceDungeon.CoreCell && (building == null || building.IsRuined);
         }
         private void WanderInRoom()
         {

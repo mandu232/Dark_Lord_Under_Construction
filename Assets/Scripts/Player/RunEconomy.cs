@@ -122,10 +122,10 @@ namespace DarkLord.Player
         {
             data.nextMerchantWave = number + UnityEngine.Random.Range(2, 4);
             data.merchantRemaining = 90;
-            var room = dungeon.Construction.RoomAt(dungeon.Layout.Core);
-            var preferred = dungeon.Layout.Core + new Vector2Int(-2, 2);
-            var cells = room.Cells.Where(c => c != dungeon.Layout.Core && dungeon.BuildingAt(c) == null && !dungeon.HasTrap(c) && dungeon.Construction.IsWalkable(c)).OrderBy(c => (c - preferred).sqrMagnitude).ToArray();
-            data.merchantPosition = dungeon.CellCenter(cells.Length > 0 ? cells[0] : dungeon.Layout.Core + Vector2Int.left);
+            var room = dungeon.Construction.RoomAt(dungeon.CoreCell);
+            var preferred = dungeon.CoreCell + new Vector2Int(-2, 2);
+            var cells = room.Cells.Where(c => c != dungeon.CoreCell && dungeon.BuildingAt(c) == null && !dungeon.HasTrap(c) && dungeon.Construction.IsWalkable(c)).OrderBy(c => (c - preferred).sqrMagnitude).ToArray();
+            data.merchantPosition = dungeon.CellCenter(cells.Length > 0 ? cells[0] : dungeon.CoreCell + Vector2Int.left);
             offers = new[] { dungeon.Inventory.RandomItem(BuildCategory.Rooms), dungeon.Inventory.RandomItem(BuildCategory.Buildings), dungeon.Inventory.RandomItem(BuildCategory.Traps) };
             data.offers = offers.Select(i => i != null ? i.name : "").ToArray(); data.sold = new bool[4];
             SpawnMerchant(); Message += "\n고블린 상인이 시작방에 도착했습니다! 90초 동안 거래할 수 있습니다.";

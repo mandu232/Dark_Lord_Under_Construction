@@ -113,7 +113,7 @@ namespace DarkLord.Dungeon
             if (Layout.GetCell(cell) == DungeonCell.Rock && miningMarks.TryGetValue(cell, out float progress))
                 return Color.Lerp(new Color(0.95f, 0.65f, 0.12f), new Color(0.2f, 0.85f, 0.9f), progress);
             if (UsesArtTiles) return Color.clear;
-            if (cell == Layout.Core) return new Color(0.60f, 0.28f, 0.78f);
+            if (cell == CoreCell) return new Color(0.60f, 0.28f, 0.78f);
             if (Layout.HasEntrance && cell == Layout.Entrance) return new Color(0.25f, 0.65f, 0.85f);
             switch (Layout.GetCell(cell))
             {
@@ -362,7 +362,7 @@ namespace DarkLord.Dungeon
         public bool HasTrap(Vector2Int cell) => traps.TryGetValue(cell, out var trap) && trap != null && trap.activeSelf;
         private bool EmptyFloor(Vector2Int cell)
         {
-            if (!Construction.IsWalkable(cell) || cell == Layout.Core || IsAlchemyStationCell(cell) || BuildingAt(cell) != null || HasTrap(cell) || GuardPostAt(cell) != null) return false;
+            if (!Construction.IsWalkable(cell) || cell == CoreCell || IsAlchemyStationCell(cell) || BuildingAt(cell) != null || HasTrap(cell) || GuardPostAt(cell) != null) return false;
             Physics2D.SyncTransforms();
             var hits = Physics2D.OverlapCircleAll(CellCenter(cell), 0.65f);
             foreach (var hit in hits) if (hit.GetComponentInParent<ActorHealth>() != null) return false;
@@ -371,7 +371,7 @@ namespace DarkLord.Dungeon
         public bool CanPlaceEntrance(Vector2Int cell)
         {
             Initialize();
-            return EmptyFloor(cell) && Construction.FindPath(cell, Layout.Core, entrancePath);
+            return EmptyFloor(cell) && Construction.FindPath(cell, CoreCell, entrancePath);
         }
         public bool TryPlaceEntrance(Vector2Int cell)
         {

@@ -56,6 +56,7 @@ namespace DarkLord.Player
                 (combat != null && (combat.IsFinished || combat.BlocksTutorialInput)) ||
                 (summoning != null && summoning.BlocksGameplayInput && (construction == null || !construction.ExpansionMode)))
             {
+                motor.CancelAttackMotion();
                 motor.Stop();
                 presentation.Present(health != null && !health.IsAlive ? ActorState.Die : ActorState.Idle, motor.Facing);
                 return;
@@ -76,7 +77,10 @@ namespace DarkLord.Player
             }
             else if (combat != null && combat.IsAttacking)
             {
-                motor.Stop();
+                // Allow limited footwork during recovery while preserving the committed attack facing.
+                Vector2 facing = motor.Facing;
+                motor.Move(direction * .3f);
+                motor.Face(facing);
                 presentation.Present(combat.IsMeleeAttacking ? ActorState.Attack : ActorState.Idle, motor.Facing,
                     combat.UsesSecondSlash ? 1 : 0);
                 return;

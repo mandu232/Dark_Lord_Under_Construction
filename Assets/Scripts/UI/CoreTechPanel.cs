@@ -13,7 +13,7 @@ namespace DarkLord.UI
         private TMP_FontAsset font;
         private RectTransform root, host, backdrop, tooltip;
         private TMP_Text summary, selectedTitle, status, researchLabel, tooltipTitle, tooltipBody, progress, walletLabel;
-        private UnityEngine.UI.Button research, repair;
+        private UnityEngine.UI.Button research, repair, moveCore;
         private TechId selected;
         private TechId? hovered;
         private RunEconomy observedEconomy;
@@ -103,6 +103,7 @@ namespace DarkLord.UI
             selectedTitle=Label("Selected technology title",information,"",20,new Vector2(-225,0),new Vector2(350,42));
             research=Button("Research selected technology",information,new Vector2(90,0),new Vector2(250,42),"",()=>waves.Economy.TryResearch(selected),out researchLabel);
             repair=Button("Repair core in technology tree",root,new Vector2(535,-244),new Vector2(270,42),"코어 수리 +25 · 금화 5",()=>waves.Combat.TryRepairCore(),out _);
+            moveCore=Button("Move dungeon core",root,new Vector2(-535,-244),new Vector2(230,42),"코어 이동",()=>waves.Lord.GetComponent<DarkLord.Dungeon.DungeonExpansion>().BeginCoreRelocation(),out _);
             Label("Technology state legend",root,"금빛: 연구 가능   회색: 선행 조건 잠김   적갈색: 혈석 부족   청록: 최대 연구 완료",16,new Vector2(0,-285),new Vector2(1300,26));
             Label("Attack slot heading",root,"좌클릭",17,new Vector2(-650,-325),new Vector2(100,42));
             for(int i=0;i<3;i++){var style=(AttackStyle)i;attackButtons.Add(Button("Equip attack "+style,root,new Vector2(-480+i*220,-325),new Vector2(200,42),TechCatalog.AttackName(style),()=>waves.Economy.EquipAttack(style),out _));}
@@ -177,7 +178,8 @@ namespace DarkLord.UI
             if(observedEconomy!=economy){if(observedEconomy!=null)observedEconomy.ResearchCompleted-=OnResearchCompleted;observedEconomy=economy;observedEconomy.ResearchCompleted+=OnResearchCompleted;}
             backdrop.gameObject.SetActive(visible);root.gameObject.SetActive(visible);if(!visible){hovered=null;prerequisitePath.Clear();glowUntil.Clear();tooltip.gameObject.SetActive(false);return;}
             backdrop.SetAsLastSibling();root.SetAsLastSibling();root.localScale=Vector3.one*Mathf.Min(1,Mathf.Min((host.rect.width-32)/1400,(host.rect.height-32)/920));
-            summary.text=$"군주 체력 {waves.Lord.CurrentHealth}/{waves.Lord.MaximumHealth} · 공격 {25+economy.AttackBonus} · 방어 {waves.Lord.PhysicalResistance}% · 코어 {waves.Core.CurrentHealth}/{waves.Core.MaximumHealth}";
+            summary.text=$"공유 체력 {waves.Lord.CurrentHealth}/{waves.Lord.MaximumHealth} · 공격 {25+economy.AttackBonus} · 방어 {waves.Lord.PhysicalResistance}%";
+            moveCore.interactable=waves.State==WaveState.Preparing&&!(waves.Tutorial!=null&&waves.Tutorial.Active)&&economy.CanManageCore;
             walletLabel.text=$"BLOODSTONE\n{economy.Wallet.DarkCrystals:0000}  혈석";
             int total=0,learned=0;
             foreach(var node in TechCatalog.All)

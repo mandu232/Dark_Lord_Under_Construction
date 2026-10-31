@@ -119,6 +119,7 @@ namespace DarkLord.Minions
             damagePending = false;
             target = null;
             motor.Stop();
+            motor.CancelAttackMotion();
         }
 
         public void Defend(Vector2 position)
@@ -171,6 +172,7 @@ namespace DarkLord.Minions
 
         private void SetOrder(MinionOrder order)
         {
+            motor.CancelAttackMotion();
             support?.Cancel();
             Order = order;
             assaultMode = false;
@@ -269,6 +271,8 @@ namespace DarkLord.Minions
                     stateEnds = Time.time + Mathf.Max(attackDuration, attackWindup);
                     nextAttack = Time.time + Mathf.Max(attackCooldown, attackDuration, attackWindup);
                     damagePending = true;
+                    if (health.Faction == Faction.Invader || role == MinionRole.BloodSlime)
+                        motor.AttackStep(delta, .26f, .14f, Mathf.Max(0, attackWindup - .10f));
                     SetState(ActorState.Attack);
                 }
                 else SetState(ActorState.Idle);
@@ -377,6 +381,7 @@ namespace DarkLord.Minions
             damagePending = false;
             motor.Stop();
             stateEnds = Time.time + hitDuration;
+            motor.CancelAttackMotion();
             SetState(ActorState.Hit);
             if (dungeonRoute == null && Order != MinionOrder.Return && ValidTarget(source)) target = source;
         }

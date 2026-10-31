@@ -30,7 +30,11 @@ namespace DarkLord.Actors
             }
             if (marker == null) return;
             marker.gameObject.SetActive(visible);
-            if (visible && skin != null) marker.sprite = skin.Icon(Empowered ? 7 : LordMarked ? 6 : 8);
+            if (visible && skin != null)
+            {
+                marker.sprite = skin.Icon(Empowered ? 9 : LordMarked ? 6 : 8);
+                if (marker.sprite != null) marker.transform.localScale = Vector3.one * (.45f / Mathf.Max(marker.sprite.bounds.size.x, marker.sprite.bounds.size.y));
+            }
         }
         private void OnDisable() { if (marker != null) marker.gameObject.SetActive(false); }
         public bool LordMarked => Time.time < lordUntil;

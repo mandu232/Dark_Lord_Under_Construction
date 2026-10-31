@@ -8,6 +8,7 @@ namespace DarkLord.Actors
     public sealed class SpriteProjectedShadow : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer source;
+        [SerializeField] private float groundLocalY = -.84375f;
         private SpriteRenderer shadow;
         private MaterialPropertyBlock properties;
         private static readonly int GroundWorldY = Shader.PropertyToID("_GroundWorldY");
@@ -36,7 +37,7 @@ namespace DarkLord.Actors
             shadow.GetPropertyBlock(properties);
             string sheet = source.sprite != null ? source.sprite.texture.name : null;
             properties.SetFloat(ExcludeSlashEffect, sheet == "Slash_1" || sheet == "Slash_2" ? 1f : 0f);
-            properties.SetFloat(GroundWorldY, transform.TransformPoint(new Vector3(0, -.84375f, 0)).y);
+            properties.SetFloat(GroundWorldY, transform.TransformPoint(new Vector3(0, groundLocalY, 0)).y);
             shadow.SetPropertyBlock(properties);
         }
     }

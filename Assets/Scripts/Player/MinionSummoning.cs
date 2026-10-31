@@ -180,7 +180,7 @@ namespace DarkLord.Player
             if (definition == null) { message = "소환 정보를 찾을 수 없습니다."; return false; }
             var station = recruitmentStation != null ? recruitmentStation : dungeon.NearestRecruitmentFacility(transform.position);
             if (station != null && (station.IsRuined || !station.isActiveAndEnabled || Vector2.Distance(transform.position, station.transform.position) > 3)) return false;
-            Vector2Int origin = station != null ? station.Cell : dungeon.Layout.Core;
+            Vector2Int origin = station != null ? station.Cell : dungeon.CoreCell;
             var room = dungeon.Construction.RoomAt(origin);
             if (room == null || RoomIsFull(room, null)) { message = "소환소가 있는 방의 인원이 가득 찼습니다. 다른 방으로 하수인을 옮기세요."; return false; }
             if (!FindSpawnNear(origin, room, out var spawn)) { message = "소환소 옆에 빈 공간이 없습니다."; return false; }
@@ -218,8 +218,8 @@ namespace DarkLord.Player
         {
             if (startingSlimeGranted || dungeon == null || guardPrefab == null) return;
             if (guards.Count > 0) { startingSlimeGranted = true; return; }
-            var facility = dungeon.Construction.RoomAt(dungeon.Layout.Core).Cells.Select(c => dungeon.BuildingAt(c)).FirstOrDefault(b => b != null && b.IsRecruitmentFacility);
-            var origin = facility != null ? facility.Cell : dungeon.Layout.Core;
+            var facility = dungeon.Construction.RoomAt(dungeon.CoreCell).Cells.Select(c => dungeon.BuildingAt(c)).FirstOrDefault(b => b != null && b.IsRecruitmentFacility);
+            var origin = facility != null ? facility.Cell : dungeon.CoreCell;
             var room = dungeon.Construction.RoomAt(origin);
             while (guards.Count < 4 && !RoomIsFull(room, null) && FindSpawnNear(origin, room, out var cell)) CreateGuard(guardPrefab, cell);
             startingSlimeGranted = guards.Count >= 4;
@@ -250,7 +250,7 @@ namespace DarkLord.Player
         }
         private bool EmptyLanding(Vector2Int cell, MinionController moving)
         {
-            if (!dungeon.Construction.IsWalkable(cell) || cell == dungeon.Layout.Core || dungeon.IsAlchemyStationCell(cell) ||
+            if (!dungeon.Construction.IsWalkable(cell) || cell == dungeon.CoreCell || dungeon.IsAlchemyStationCell(cell) ||
                 dungeon.Layout.HasEntrance && cell == dungeon.Layout.Entrance || dungeon.HasTrap(cell) || dungeon.BuildingAt(cell) != null) return false;
             var post = dungeon.GuardPostAt(cell); if (post != null && post != moving) return false;
             Vector3 center = dungeon.CellCenter(cell);

@@ -34,7 +34,7 @@ namespace DarkLord.Player
             new TechDefinition(TechId.Power,"혈기의 힘","단계당 기본 공격 +5, 공격 마법 피해 +8",5,3,1,0),
             new TechDefinition(TechId.Speed,"기민함","단계당 군주 이동 속도 +5%",5,3,2,0),
             new TechDefinition(TechId.Armor,"혈갑","단계당 군주의 물리·마법 피해 감소 +4%",5,3,0,1,TechId.Vitality),
-            new TechDefinition(TechId.CoreVitality,"코어 생명력","단계당 코어 최대 체력 +100, 체력 100 회복",3,4,3,0),
+            new TechDefinition(TechId.CoreVitality,"코어 생명력","단계당 공유 최대 체력 +100, 체력 100 회복",3,4,3,0),
             new TechDefinition(TechId.CoreArmor,"코어 장갑","단계당 코어의 물리·마법 피해 감소 +8%",3,4,3,1,TechId.CoreVitality),
             new TechDefinition(TechId.BloodLeech,"흡혈 본능","기본 공격 적중 시 체력 3 회복. 공격 한 번에 최대 6",1,5,0,2,TechId.Vitality,2),
             new TechDefinition(TechId.WideSlash,"핏빛 대검","좌클릭 공격 방식 해금. 넓은 부채꼴 베기, 피해 85%, 간격 0.75초",1,4,1,1,TechId.Power),
@@ -43,7 +43,7 @@ namespace DarkLord.Player
             new TechDefinition(TechId.Mend,"혈의 치유","R 보조 마법 해금. 자신 체력 30, 주변 하수인 체력 20 회복. 마나 25 / 10초",1,4,2,2,TechId.Vitality),
             new TechDefinition(TechId.Haste,"붉은 가속","R 보조 마법 해금. 6초 동안 군주 이동 속도 +40%. 마나 20 / 10초",1,5,2,3,TechId.Speed,2),
             new TechDefinition(TechId.Aegis,"심홍의 보호","R 보조 마법 해금. 군주 3초 무적, 주변 하수인 체력 10 회복. 마나 30 / 12초",1,6,0,3,TechId.Armor,2),
-            new TechDefinition(TechId.CoreRegen,"재생하는 심장","코어가 살아 있는 동안 매초 체력 2 회복",1,6,3,2,TechId.CoreVitality,2),
+            new TechDefinition(TechId.CoreRegen,"재생하는 심장","매초 공유 체력 2 회복",1,6,3,2,TechId.CoreVitality,2),
             new TechDefinition(TechId.SoulWell,"마나 순환","군주 마나 재생이 초당 2 증가",1,5,2,4,TechId.Mend),
             new TechDefinition(TechId.Predation,"포식자의 갈증","군주가 적을 처치하면 마나 8 회복",1,6,1,3,TechId.Power,3),
             new TechDefinition(TechId.CorePulse,"심장 파동","8초마다 코어 주변 4칸의 적에게 마법 피해 20. 벽에 막힘",1,8,3,3,TechId.CoreArmor,2)

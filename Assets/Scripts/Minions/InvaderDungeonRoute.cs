@@ -90,7 +90,7 @@ namespace DarkLord.Minions
                     }
                     return;
                 }
-                if (LockedRoom != destinationRoom || cell == LockedRoom.Center || LockedRoom.IsCore)
+                if (LockedRoom != destinationRoom || cell == LockedRoom.Center || LockedRoom == dungeon.CoreRoom)
                     visited.Add(LockedRoom);
                 LockedRoom = null;
             }
@@ -100,7 +100,7 @@ namespace DarkLord.Minions
             int shortest = int.MaxValue;
             foreach (var room in dungeon.Construction.Sections)
             {
-                if (!room.IsComplete || !DungeonConstruction.IsRoom(room.Kind) || room.IsCore || visited.Contains(room)) continue;
+                if (!room.IsComplete || !DungeonConstruction.IsRoom(room.Kind) || room == dungeon.CoreRoom || visited.Contains(room)) continue;
                 if (!dungeon.Construction.FindPath(cell, room.Center, candidatePath) || candidatePath.Count >= shortest) continue;
                 shortest = candidatePath.Count;
                 destinationRoom = room;

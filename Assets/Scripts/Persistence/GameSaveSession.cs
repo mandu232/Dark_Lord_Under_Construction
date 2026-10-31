@@ -125,8 +125,17 @@ namespace DarkLord.Persistence
             player.transform.position = loaded.playerPosition;
             var body = player.GetComponent<Rigidbody2D>();
             if (body != null) body.position = loaded.playerPosition;
-            player.RestoreHealth(loaded.playerMaximumHealth, loaded.playerHealth);
-            core.RestoreHealth(loaded.coreMaximumHealth, loaded.coreHealth);
+            core.ShareHealthWith(player);
+            int sharedHealth = loaded.playerHealth;
+            int sharedMaximum = loaded.playerMaximumHealth;
+            if (!loaded.sharedCoreHealth)
+            {
+                // The original core started at 300; retain its purchased maximum-health bonuses.
+                sharedMaximum += Mathf.Max(0, loaded.coreMaximumHealth - 300);
+                float ratio = Mathf.Min((float)loaded.playerHealth / loaded.playerMaximumHealth, (float)loaded.coreHealth / loaded.coreMaximumHealth);
+                sharedHealth = Mathf.RoundToInt(sharedMaximum * ratio);
+            }
+            player.RestoreHealth(sharedMaximum, sharedHealth);
             wallet.RestoreAmounts(loaded.gold, loaded.souls, loaded.crystals);
             summoning.RestoreGuards(loaded.guards);
             dungeon.MoveStartingRecruitmentToCore();
@@ -161,6 +170,7 @@ namespace DarkLord.Persistence
             options = options.Copy(), playedSeconds = playedSeconds, playerPosition = player.transform.position, combat = waves.Combat?.CaptureSave(),
             playerHealth = player.CurrentHealth, playerMaximumHealth = player.MaximumHealth,
             coreHealth = core.CurrentHealth, coreMaximumHealth = core.MaximumHealth,
+            sharedCoreHealth = true,
             gold = wallet.Gold, souls = wallet.Souls, crystals = wallet.DarkCrystals,
             dungeon = dungeon.CaptureSave(Identify), guards = summoning.CaptureGuards(), wave = waves.CaptureSave(), corpses = waves.Harvest?.Capture(), economy = waves.Economy?.Capture()
         };

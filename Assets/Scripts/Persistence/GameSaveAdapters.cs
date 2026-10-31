@@ -30,6 +30,7 @@ namespace DarkLord.Dungeon
         {
             for (int y = 0; y < Height; y++) for (int x = 0; x < Width; x++) cells[x,y] = (DungeonCell)data.cells[y * Width + x];
             Entrance = data.entrance; HasEntrance = data.hasEntrance; ExpandedCells = data.expandedCells;
+            ActiveCore = data.hasCoreCell ? data.coreCell : Core;
         }
     }
     public sealed partial class DungeonConstruction
@@ -50,6 +51,7 @@ namespace DarkLord.Dungeon
         {
             Initialize();
             var data = new DungeonSaveData { width=Layout.Width, height=Layout.Height, expandedCells=Layout.ExpandedCells,
+                hasCoreCell=true, coreCell=CoreCell,
                 entrance=Layout.Entrance, hasEntrance=Layout.HasEntrance, cells=new int[Layout.Width * Layout.Height], queue=constructionTiles.ToArray() };
             for(int y=0;y<Layout.Height;y++)for(int x=0;x<Layout.Width;x++)data.cells[y*Layout.Width+x]=(int)Layout.GetCell(new Vector2Int(x,y));
             data.sections=Construction.Sections.Select(s=>new SectionSaveData { kind=s.Kind, bounds=s.Bounds, core=s.IsCore, complete=s.IsComplete,
@@ -71,6 +73,7 @@ namespace DarkLord.Dungeon
             alchemyStations.Clear();
             width=data.width; height=data.height; Layout=new DungeonLayout(width,height); Layout.Restore(data);
             Construction=new DungeonConstruction(Layout); Construction.Restore(data.sections);
+            RestoreCorePosition();
             highlighted=-1; areaHighlight.Clear(); miningMarks.Clear(); constructionTiles.Clear(); breakingCell=null;
             nextBreakAt=Time.time+tileBreakInterval; sectionPrefabs.Clear(); savedDesigns.Clear(); traps.Clear(); savedTrapDesigns.Clear(); entranceMarker=null;
             generated=new GameObject("Generated dungeon cells"); generated.layer=gameObject.layer; generated.transform.SetParent(transform,false);

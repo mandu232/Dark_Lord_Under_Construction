@@ -32,6 +32,7 @@ namespace DarkLord.UI
             (summoning == null || !summoning.BlocksGameplayInput);
         private void Awake()
         {
+            RewardUiSkin.ConfigureBuffText(titleText);
             inspect = new InputAction("Inspect building", InputActionType.Button, "<Mouse>/rightButton");
             close = new InputAction("Close building information", InputActionType.Button, "<Keyboard>/escape");
             if (closeButton != null) closeButton.onClick.AddListener(Close);
@@ -82,11 +83,12 @@ namespace DarkLord.UI
         {
             if (Selected == null) { Close(); return; }
             if (healthBar != null) healthBar.SetHealth(Selected.Health.CurrentHealth, Selected.Health.MaximumHealth);
-            titleText.text = Selected.DisplayName;
+            titleText.text = RewardUiSkin.BuffSymbol(Selected.BuffIcon) + Selected.DisplayName;
             string resource = Selected.Resource == CurrencyType.Gold ? "금화" : Selected.Resource == CurrencyType.Souls ? "혈액" : "혈석";
             string state = Selected.IsRuined ? "파괴됨 · 효과 중단" : "가동 중";
             bool canRepair = Selected.CanRepair(wallet, out var reason);
-            statsText.text = (healthBar == null ? $"체력  {Selected.Health.CurrentHealth} / {Selected.Health.MaximumHealth}\n\n" : "") + $"{Selected.EffectDescription}\n\n상태  {state}\n방어  {(Selected.IsProtected ? "하수인이 보호 중" : "하수인 없음")}\n\n수리 비용  금화 {Selected.RepairCost}\n{reason}";
+            string effect = Selected.IsBuffFacility ? RewardUiSkin.BuffDetail(Selected.EffectDescription) : Selected.EffectDescription;
+            statsText.text = (healthBar == null ? $"체력  {Selected.Health.CurrentHealth} / {Selected.Health.MaximumHealth}\n\n" : "") + $"{effect}\n\n상태  {state}\n방어  {(Selected.IsProtected ? "하수인이 보호 중" : "하수인 없음")}\n\n수리 비용  금화 {Selected.RepairCost}\n{reason}";
             repairButton.interactable = canRepair;
             repairLabel.text = $"수리 · 금화 {Selected.RepairCost}";
         }

@@ -17,6 +17,10 @@ namespace DarkLord.Actors
         private Vector2 knockbackDirection;
         private float knockbackUntil;
         private float knockbackSpeed;
+        private float knockbackDuration;
+        private bool easeKnockback;
+        private Vector2 attackDirection;
+        private float attackMoveAt, attackMoveUntil, attackMoveSpeed;
         private struct Slow { public float multiplier, until; }
         private readonly List<Slow> slows = new List<Slow>();
         public ActorHealth BlockedBy { get; private set; }
@@ -127,15 +131,33 @@ namespace DarkLord.Actors
             if (body != null) body.linearVelocity = Vector2.zero;
         }
 
-        public void ApplyKnockback(Vector2 direction, float speed = 1.6f, float duration = .10f)
+        public void ApplyKnockback(Vector2 direction, float speed = 1.6f, float duration = .10f, bool easeOut = false)
         {
             if (!isActiveAndEnabled || direction.sqrMagnitude < .0001f || speed <= 0 || duration <= 0 ||
+                !float.IsFinite(direction.x) || !float.IsFinite(direction.y) ||
                 float.IsNaN(speed) || float.IsInfinity(speed) || float.IsNaN(duration) || float.IsInfinity(duration)) return;
             knockbackDirection = direction.normalized;
             knockbackSpeed = speed;
+            knockbackDuration = duration;
+            easeKnockback = easeOut;
             knockbackUntil = Time.time + duration;
+            CancelAttackMotion();
         }
         public void ClearKnockback() => knockbackUntil = 0;
+
+        // A committed step runs through the same body/terrain collision path as walking.
+        public void AttackStep(Vector2 direction, float distance, float duration = .16f, float delay = 0)
+        {
+            if (!isActiveAndEnabled || direction.sqrMagnitude < .0001f || distance <= 0 || duration <= 0 ||
+                !float.IsFinite(distance) || !float.IsFinite(duration) || !float.IsFinite(delay) ||
+                !float.IsFinite(direction.x) || !float.IsFinite(direction.y)) return;
+            attackDirection = direction.normalized;
+            attackMoveAt = Time.time + Mathf.Max(0, delay);
+            attackMoveUntil = attackMoveAt + duration;
+            attackMoveSpeed = distance / duration;
+        }
+
+        public void CancelAttackMotion() => attackMoveUntil = 0;
 
         private void FixedUpdate()
         {
@@ -148,8 +170,11 @@ namespace DarkLord.Actors
                 float remaining = Mathf.Max(0, delta.magnitude - stoppingDistance);
                 velocity = delta.normalized * Mathf.Min(speed, remaining / Time.fixedDeltaTime);
             }
+            if (Time.time >= attackMoveAt && Time.time < attackMoveUntil)
+                velocity = attackDirection * attackMoveSpeed * SlowMultiplier;
             if (Time.time < knockbackUntil)
-                velocity = knockbackDirection * knockbackSpeed;
+                velocity = knockbackDirection * knockbackSpeed * (easeKnockback ? Mathf.Clamp01((knockbackUntil - Time.time) / knockbackDuration) : 1);
+            if (health != null && !health.IsAlive) velocity = Vector2.zero;
             float step = velocity.magnitude * Time.fixedDeltaTime;
             if (step > 0 && health != null && health.IsAlive && !IgnoreActorBlocking)
             {
@@ -201,6 +226,7 @@ namespace DarkLord.Actors
         private void OnDisable()
         {
             knockbackUntil = 0;
+            CancelAttackMotion();
             slows.Clear();
             Stop();
             ActiveMotors.Remove(this);

@@ -113,7 +113,7 @@ namespace DarkLord.Minions
                 if (Action == InvaderAction.WindingUp) { Begin(InvaderAction.Charging, hero ? HeroChargeDuration : .65f); motor.SpeedMultiplier = ChargeSpeedMultiplier; return true; }
                 if (Action == InvaderAction.HeroCleave)
                 {
-                    if (hero) { presentation.Present(ActorState.Attack, direction); ShowHeroEffect(false); }
+                    if (hero) { motor.AttackStep(direction, .55f, .18f); presentation.Present(ActorState.Attack, direction); ShowHeroEffect(false); }
                     cleaveHits.Clear();
                     int count = Physics2D.OverlapCircle(transform.position, HeroCleaveRadius, new ContactFilter2D { useTriggers = false }, nearby);
                     for (int i = 0; i < count; i++)

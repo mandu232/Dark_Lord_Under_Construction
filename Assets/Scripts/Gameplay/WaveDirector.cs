@@ -85,6 +85,8 @@ namespace DarkLord.Gameplay
         {
             if (!ValidateConfiguration()) { enabled = false; return; }
             dungeon.Initialize();
+            dungeonCore.ShareHealthWith(dungeonLord);
+            dungeon.BindCore(dungeonCore, this);
             dungeon.Augments = Augments;
             foreach (var guard in FindObjectsByType<MinionController>(FindObjectsSortMode.None))
                 if (guard.gameObject.scene == gameObject.scene && guard.Health.Faction == Faction.Dungeon) dungeon.RegisterGuard(guard);
@@ -269,6 +271,7 @@ namespace DarkLord.Gameplay
 
         private void OnDungeonLordDied()
         {
+            if (State == WaveState.Defeated) return;
             if (State == WaveState.RewardSelection) Time.timeScale = rewardTimeScale;
             State = WaveState.Defeated;
             pendingSpawns = 0;

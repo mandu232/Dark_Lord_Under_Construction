@@ -94,6 +94,7 @@ namespace DarkLord.Player
             hasteUntil = 0;
             repairProgress = 0;
             motor.SpeedMultiplier = 1;
+            motor.CancelAttackMotion();
         }
         private bool AllowDamage(ActorHealth source) => !IsDodging && Time.time >= wardUntil;
         private void OnDamaged(ActorHealth source) => repairProgress = 0;
@@ -155,6 +156,7 @@ namespace DarkLord.Player
             nextSlashIsSecond = !nextSlashIsSecond;
             nextAttack = Time.time + 0.5f;
             attackUntil = Time.time + SlashDuration;
+            motor.AttackStep(direction, UsesSecondSlash ? .48f : .36f, .16f);
             GetComponent<ActorAnimation>()?.Present(ActorState.Attack, direction, UsesSecondSlash ? 1 : 0);
             DamageArea(1.65f, 25 + (waves?.Economy?.AttackBonus ?? 0), direction, 0.25f, DamageType.Physical);
             return true;
@@ -184,6 +186,7 @@ namespace DarkLord.Player
             nextDodge = Time.time + 3;
             dodgeUntil = Time.time + 0.75f;
             dodgeDirection = direction.normalized;
+            motor.CancelAttackMotion();
             motor.SpeedMultiplier = 2.5f * (1 + MovementBonus);
             GetComponent<PlayerMovement>()?.RefreshMovementMultiplier();
             repairProgress = 0;

@@ -49,7 +49,7 @@ namespace DarkLord.Tests
         }
 
         [UnityTest]
-        public IEnumerator CombatantsStopAtAttackRangeAndDealDamageWithoutContact()
+        public IEnumerator CombatantsTradeMovingAttacksWithoutOverlappingBodies()
         {
             var invader = Actor(new Vector2(1000, 1000));
             var guard = Actor(new Vector2(1002, 1000));
@@ -64,13 +64,57 @@ namespace DarkLord.Tests
             while (Time.time < deadline)
             {
                 yield return new WaitForFixedUpdate();
-                Assert.That(Vector2.Distance(invader.transform.position, guard.transform.position), Is.GreaterThan(0.6f));
+                Assert.That(Vector2.Distance(invader.transform.position, guard.transform.position), Is.GreaterThan(0.50f));
             }
             // A hit cancels the opponent's windup, so simultaneous attacks need not both land.
             Assert.That(guardHealth.CurrentHealth + enemyHealth.CurrentHealth, Is.LessThan(2000));
-            Assert.That(Vector2.Distance(invader.transform.position, guard.transform.position), Is.InRange(0.7f, 0.86f));
-            Assert.That(invader.Velocity.magnitude, Is.LessThan(0.01f));
-            Assert.That(guard.Velocity.magnitude, Is.LessThan(0.01f));
+            Assert.That(Vector2.Distance(invader.transform.position, guard.transform.position), Is.InRange(0.50f, 1.4f));
+            Assert.That(invader.Velocity.magnitude, Is.LessThanOrEqualTo(4.2f));
+            Assert.That(guard.Velocity.magnitude, Is.LessThanOrEqualTo(4.2f));
+        }
+
+        [UnityTest]
+        public IEnumerator AttackStepMovesWhileStoppedAndEndsWithoutDrifting()
+        {
+            var actor = Actor(new Vector2(1000, 1000));
+            actor.Stop();
+            actor.AttackStep(Vector2.right, .4f, .16f);
+            yield return new WaitForSeconds(.25f);
+            float end = actor.GetComponent<Rigidbody2D>().position.x;
+            Assert.That(end, Is.InRange(1000.25f, 1000.45f));
+            yield return new WaitForSeconds(.15f);
+            Assert.That(actor.GetComponent<Rigidbody2D>().position.x, Is.EqualTo(end).Within(.005f));
+        }
+
+        [UnityTest]
+        public IEnumerator AttackStepCannotPassHostileBodyAndCanBeCancelledBeforeWindup()
+        {
+            var actor = Actor(new Vector2(1000, 1000));
+            var enemy = Actor(new Vector2(1000.8f, 1000));
+            enemy.GetComponent<ActorHealth>().Configure(Faction.Invader, 100);
+            actor.AttackStep(Vector2.right, 2, .16f);
+            yield return new WaitForSeconds(.25f);
+            Assert.That(enemy.GetComponent<Rigidbody2D>().position.x - actor.GetComponent<Rigidbody2D>().position.x,
+                Is.GreaterThanOrEqualTo(.50f));
+            float end = actor.GetComponent<Rigidbody2D>().position.x;
+            actor.AttackStep(Vector2.left, .4f, .16f, .1f);
+            actor.CancelAttackMotion();
+            yield return new WaitForSeconds(.35f);
+            Assert.That(actor.GetComponent<Rigidbody2D>().position.x, Is.EqualTo(end).Within(.005f));
+        }
+
+        [UnityTest]
+        public IEnumerator HitOverridesAttackStepThenWalkingResumes()
+        {
+            var actor = Actor(new Vector2(1000, 1000));
+            actor.Move(Vector2.left);
+            actor.AttackStep(Vector2.left, .8f, .3f);
+            actor.ApplyKnockback(Vector2.right, 4.2f, .18f, true);
+            yield return new WaitForSeconds(.1f);
+            float pushed = actor.GetComponent<Rigidbody2D>().position.x;
+            Assert.That(pushed, Is.GreaterThan(1000.1f));
+            yield return new WaitForSeconds(.3f);
+            Assert.That(actor.GetComponent<Rigidbody2D>().position.x, Is.LessThan(pushed - .3f));
         }
 
         [UnityTest]
