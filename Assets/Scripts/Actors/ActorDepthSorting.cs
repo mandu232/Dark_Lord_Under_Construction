@@ -9,14 +9,22 @@ namespace DarkLord.Actors
     {
         [SerializeField] private float groundOffsetY;
         private SortingGroup group;
+        private SpriteRenderer body;
+        internal static readonly System.Collections.Generic.List<SpriteRenderer> EffectBodies = new System.Collections.Generic.List<SpriteRenderer>();
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetEffectBodies() => EffectBodies.Clear();
 
         private void Awake() => group = GetComponent<SortingGroup>();
         private void OnEnable()
         {
             if (group == null) group = GetComponent<SortingGroup>();
+            body = GetComponent<SpriteRenderer>();
+            if (body != null && !EffectBodies.Contains(body)) EffectBodies.Add(body);
             UpdateDepth();
         }
         private void LateUpdate() => UpdateDepth();
+        private void OnDisable() { if (body != null) EffectBodies.Remove(body); }
 
         private void UpdateDepth()
         {

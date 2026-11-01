@@ -39,7 +39,7 @@ namespace DarkLord.Player
             new TechDefinition(TechId.BloodLeech,"흡혈 본능","기본 공격 적중 시 체력 3 회복. 공격 한 번에 최대 6",1,5,0,2,TechId.Vitality,2),
             new TechDefinition(TechId.WideSlash,"핏빛 대검","좌클릭 공격 방식 해금. 넓은 부채꼴 베기, 피해 85%, 간격 0.75초",1,4,1,1,TechId.Power),
             new TechDefinition(TechId.BloodLance,"혈창","좌클릭 공격 방식 해금. 사거리 6의 직선 마법 공격. 첫 대상에 적중",1,6,1,2,TechId.Power,2),
-            new TechDefinition(TechId.FrostNova,"서리 혈파","Q 마법 해금. 주변 4칸에 마법 피해, 적 이동 속도 40% 감소 3초. 마나 30 / 6초",1,5,2,1,TechId.Power),
+            new TechDefinition(TechId.FrostNova,"서리 혈파","Q 마법 해금. 주변 6칸에 마법 피해, 넉백과 기절 1.5초, 이동 속도 40% 감소 3초. 마나 30 / 6초",1,5,2,1,TechId.Power),
             new TechDefinition(TechId.Mend,"혈의 치유","R 보조 마법 해금. 자신 체력 30, 주변 하수인 체력 20 회복. 마나 25 / 10초",1,4,2,2,TechId.Vitality),
             new TechDefinition(TechId.Haste,"붉은 가속","R 보조 마법 해금. 6초 동안 군주 이동 속도 +40%. 마나 20 / 10초",1,5,2,3,TechId.Speed,2),
             new TechDefinition(TechId.Aegis,"심홍의 보호","R 보조 마법 해금. 군주 3초 무적, 주변 하수인 체력 10 회복. 마나 30 / 12초",1,6,0,3,TechId.Armor,2),

@@ -239,13 +239,35 @@ namespace DarkLord.Tests
             waves.Harvest.enabled = true;
             InputSystem.QueueStateEvent(keyboard, new KeyboardState());
         }
+        [UnityTest] public IEnumerator DodgeUsesSameFrameMovementInputAndReturnsToWalking()
+        {
+            EnableInput(); keyboard = InputSystem.AddDevice<Keyboard>();
+            var motor = waves.Lord.GetComponent<TopDownMotor>();
+            motor.Face(Vector2.left);
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.D, Key.Space));
+            yield return null; yield return null;
+            Assert.IsTrue(waves.Combat.IsDodging);
+            Assert.AreEqual(Vector2.right, waves.Combat.DodgeDirection);
+            yield return new WaitForFixedUpdate();
+            Assert.Greater(motor.Velocity.x, 0);
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.W));
+            yield return new WaitForSeconds(.2f);
+            Assert.AreEqual(Vector2.right, waves.Combat.DodgeDirection);
+            yield return new WaitForSeconds(.45f);
+            Assert.IsFalse(waves.Combat.IsDodging);
+            Assert.Greater(motor.Velocity.y, 0);
+            Assert.That(motor.Velocity.x, Is.EqualTo(0).Within(.01f));
+            Assert.IsFalse(waves.Combat.IsAttacking);
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState());
+        }
+
         [UnityTest] public IEnumerator WalkingBoostDoesNotIncreaseDodgeSpeed()
         {
             var motor = waves.Lord.GetComponent<TopDownMotor>();
             yield return null;
             Assert.That(motor.EffectiveMoveSpeed, Is.EqualTo(2.475f).Within(.01f));
             Assert.IsTrue(waves.Combat.TryDodge(Vector2.right));
-            Assert.That(motor.EffectiveMoveSpeed, Is.EqualTo(2.25f * 2.5f).Within(.01f));
+            Assert.That(motor.EffectiveMoveSpeed, Is.EqualTo(2.25f * waves.Combat.DodgeSpeedMultiplier).Within(.01f));
         }
 
         [UnityTest, Category("AttackShadowRegression")] public IEnumerator MeleeUsesDirectionalSlashAndReturnsToLocomotionWithoutShadowingTheEffect()

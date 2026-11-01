@@ -40,6 +40,92 @@ namespace DarkLord.Tests
             target.GetType().GetField(field, BindingFlags.NonPublic | BindingFlags.Instance).SetValue(target, value);
         private void ClearWave() => typeof(WaveDirector).GetMethod("CheckWaveCleared", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(waves, null);
 
+        [Test]
+        public void NovaShockwaveHitsExpandedRangeStunsAndPushesOnlyVisibleEnemies()
+        {
+            var enemy = Actor("Shockwave enemy", Faction.Invader);
+            enemy.transform.position = lord.transform.position + Vector3.right * 5;
+            var controller = enemy.gameObject.AddComponent<MinionController>();
+            var ally = Actor("Shockwave ally", Faction.Dungeon);
+            ally.transform.position = lord.transform.position + Vector3.up * 4;
+            var distant = Actor("Outside shockwave", Faction.Invader);
+            distant.transform.position = lord.transform.position + Vector3.left * 7;
+            var blocked = Actor("Behind wall", Faction.Invader);
+            blocked.transform.position = lord.transform.position + Vector3.down * 5;
+            var wall = Node("Shockwave wall");
+            wall.transform.position = lord.transform.position + Vector3.down * 3;
+            wall.AddComponent<BoxCollider2D>().size = new Vector2(3, .5f);
+            Physics2D.SyncTransforms();
+            Assert.IsTrue(combat.TryNova());
+            Assert.AreEqual(55, enemy.CurrentHealth);
+            Assert.IsTrue(controller.IsStunned);
+            Assert.AreEqual(100, ally.CurrentHealth);
+            Assert.AreEqual(100, distant.CurrentHealth);
+            Assert.AreEqual(100, blocked.CurrentHealth);
+            var motor = enemy.GetComponent<TopDownMotor>();
+            typeof(TopDownMotor).GetMethod("FixedUpdate", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(motor, null);
+            Assert.Greater(motor.Velocity.x, 10);
+            Set(motor, "knockbackUntil", Time.time);
+            typeof(MinionController).GetMethod("Update", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(controller, null);
+            typeof(TopDownMotor).GetMethod("FixedUpdate", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(motor, null);
+            Assert.AreEqual(Vector2.zero, motor.Velocity);
+            enemy.TakeDamage(1, lord);
+            Assert.IsTrue(controller.IsStunned, "A later hit must not shorten the stun.");
+            Set(controller, "stunnedUntil", Time.time);
+            Assert.IsFalse(controller.IsStunned);
+        }
+
+        [Test]
+        public void NovaCameraZoomAndShakeRestoreOnCompletionAndDisable()
+        {
+            var node = Node("Shockwave camera");
+            var camera = node.AddComponent<Camera>(); camera.orthographic = true; camera.orthographicSize = 8;
+            var pixels = (Behaviour)node.AddComponent(typeof(CameraFollow).GetField("pixelCamera", BindingFlags.NonPublic | BindingFlags.Instance).FieldType);
+            var follow = node.AddComponent<CameraFollow>(); Set(follow, "target", lord.transform);
+            follow.NovaImpact();
+            Assert.IsFalse(pixels.enabled);
+            Set(follow, "impactStarted", Time.unscaledTime - .06f);
+            Set(follow, "shakeStarted", Time.unscaledTime - .02f);
+            var tick = typeof(CameraFollow).GetMethod("LateUpdate", BindingFlags.NonPublic | BindingFlags.Instance);
+            tick.Invoke(follow, null);
+            Assert.That(camera.orthographicSize, Is.EqualTo(7.36f).Within(.01f));
+            Assert.Greater(Vector2.Distance(node.transform.position, lord.transform.position), .01f);
+            Set(follow, "impactStarted", Time.unscaledTime - 1);
+            tick.Invoke(follow, null);
+            Assert.AreEqual(8, camera.orthographicSize); Assert.IsTrue(pixels.enabled);
+            follow.NovaImpact(); follow.enabled = false;
+            Assert.AreEqual(8, camera.orthographicSize); Assert.IsTrue(pixels.enabled);
+        }
+
+        [Test]
+        public void DodgeBurstsThenRecoversAndCancelsAttackWithoutFullRecoveryInvulnerability()
+        {
+            var motor = lord.GetComponent<TopDownMotor>();
+            Set(combat, "attackUntil", Time.time + 1);
+            Set(combat, "weaponActionUntil", Time.time + 1);
+            Set(combat, "pendingSlash", true);
+            motor.AttackStep(Vector2.left, 1, 1);
+            motor.ApplyKnockback(Vector2.left);
+            Assert.IsTrue(combat.TryDodge(Vector2.right));
+            Assert.IsFalse(combat.IsAttacking);
+            Assert.IsFalse(combat.IsChangingWeapon);
+            Assert.AreEqual(Vector2.right, motor.Facing);
+            Assert.IsTrue(combat.DodgeUsesDash);
+            Assert.That(combat.DodgeSpeedMultiplier, Is.EqualTo(5).Within(.01f));
+            Assert.That(combat.DodgeCooldown, Is.EqualTo(1.25f).Within(.01f));
+            Assert.IsFalse(lord.TakeDamage(10, null));
+            Set(combat, "dodgeUntil", Time.time + .15f);
+            Assert.IsTrue(combat.IsDodging);
+            Assert.IsFalse(combat.DodgeUsesDash);
+            Assert.Less(combat.DodgeSpeedMultiplier, 2);
+            Assert.IsTrue(lord.TakeDamage(10, null));
+            Assert.IsFalse(combat.TryDodge(Vector2.up));
+            Set(combat, "dodgeUntil", Time.time);
+            Assert.AreEqual(1, combat.DodgeSpeedMultiplier);
+            Set(combat, "nextDodge", Time.time);
+            Assert.IsTrue(combat.TryDodge(Vector2.up));
+        }
+
         [SetUp]
         public void Setup()
         {

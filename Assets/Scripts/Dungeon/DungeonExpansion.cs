@@ -120,7 +120,7 @@ namespace DarkLord.Dungeon
             if (!ExpansionMode) return;
             CancelSelection(); DemolitionMode = true; hasSelection = true;
             constructionPanel?.ShowDemolition();
-            Message = "좌클릭: 하수인·함정·입구 제거 / 우클릭: 건설창으로 / B·Esc: 종료";
+            Message = "좌클릭: 하수인·함정·균열 제거 / 우클릭: 건설창으로 / B·Esc: 종료";
         }
 
         public bool BeginCoreRelocation()
@@ -227,7 +227,7 @@ namespace DarkLord.Dungeon
             {
                 bool available = dungeon.CanRelocateCore(cell);
                 dungeon.Highlight(cell, available); previewCell = cell;
-                Message = available ? "좌클릭: 코어 이동 · 우클릭·Esc: 취소" : "입구와 연결된 방의 빈 바닥을 선택하세요.";
+                Message = available ? "좌클릭: 코어 이동 · 우클릭·Esc: 취소" : "균열과 연결된 방의 빈 바닥을 선택하세요.";
                 if (Time.frameCount > openedFrame && build.WasPressedThisFrame() && dungeon.TryRelocateCore(cell))
                     SetExpansionMode(false);
                 return;
@@ -236,16 +236,16 @@ namespace DarkLord.Dungeon
             {
                 bool available = CanDemolish(cell);
                 dungeon.Highlight(cell, false); previewCell = cell;
-                Message = available ? "좌클릭: 대상 제거" : "하수인·함정·입구를 선택하세요. 방과 코어는 유지됩니다.";
+                Message = available ? "좌클릭: 대상 제거" : "하수인·함정·균열을 선택하세요. 방과 코어는 유지됩니다.";
                 if (Time.frameCount > openedFrame && build.WasPressedThisFrame()) TryDemolish(cell);
                 return;
             }
             if (selectedItem != null && selectedItem.category == BuildCategory.Entrances)
             {
-                if (!PreparationAllowed) { Message = "침입 중 입구를 변경할 수 없습니다."; ClearPreview(); return; }
+                if (!PreparationAllowed) { Message = "침입 중 균열을 변경할 수 없습니다."; ClearPreview(); return; }
                 bool available = dungeon.CanPlaceEntrance(cell);
                 dungeon.Highlight(cell, available); previewCell = cell;
-                Message = available ? "좌클릭: 입구 지정 · 기존 입구는 이동됩니다." : "코어로 연결된 완성된 빈 바닥을 선택하세요.";
+                Message = available ? "좌클릭: 균열 지정 · 기존 균열은 이동됩니다." : "코어로 연결된 완성된 빈 바닥을 선택하세요.";
                 if (Time.frameCount > openedFrame && build.WasPressedThisFrame()) dungeon.TryPlaceEntrance(cell);
                 return;
             }

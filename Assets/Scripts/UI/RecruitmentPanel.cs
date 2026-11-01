@@ -8,6 +8,7 @@ namespace DarkLord.UI
     public sealed class RecruitmentPanel : MonoBehaviour
     {
         private MinionSummoning summoning;
+        private TMP_Text randomLabel;
         [SerializeField] private GameObject window;
         [SerializeField] private TMP_Text status, hint;
         [SerializeField] private UnityEngine.UI.Button randomButton, closeButton;
@@ -17,6 +18,9 @@ namespace DarkLord.UI
         {
             if (summoning != null) return;
             summoning = controller;
+            foreach (var text in window.GetComponentsInChildren<TMP_Text>(true))
+                text.horizontalAlignment = HorizontalAlignmentOptions.Center;
+            randomLabel = randomButton.GetComponentInChildren<TMP_Text>(true);
             randomButton.onClick.AddListener(() => { if (summoning.TrySummonRandom()) window.SetActive(false); });
             closeButton.onClick.AddListener(() => summoning.SetOpen(false));
             window.SetActive(false); hint.gameObject.SetActive(false);
@@ -34,6 +38,8 @@ namespace DarkLord.UI
             if (IsVisible)
             {
                 int stacks = summoning.RecruitmentStation != null ? summoning.RecruitmentStation.SummonStacks : 0;
+                string label = summoning.GuaranteesBloodSlime ? "혈 슬라임 소환" : "무작위 소환";
+                if (randomLabel != null && randomLabel.text != label) randomLabel.text = label;
                 status.text = $"보유 스택 {stacks}개\n" + summoning.Message;
                 randomButton.interactable = stacks > 0 && (summoning.GetComponent<PlayerCombat>() == null || summoning.GetComponent<PlayerCombat>().CanSpendSummonStack);
             }

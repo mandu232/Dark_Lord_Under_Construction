@@ -17,9 +17,9 @@ namespace DarkLord.Gameplay
         public int TrainingNumber => TrainingStep == TutorialTrainingStep.Corridor ? 4 : TrainingStep == TutorialTrainingStep.Entrance ? 5 : (int)TrainingStep;
         public string TrainingInstruction => TrainingStep == TutorialTrainingStep.Pickup ? "① 시체 옆으로 이동해 F키로 들어 올리세요.\n실제로 시체를 들어야 다음 단계가 열립니다." :
             TrainingStep == TutorialTrainingStep.Deliver ? "② 시체를 든 채 소환소로 이동하세요.\n가까이 가면 시체가 흡수되고 스택이 쌓입니다." :
-            TrainingStep == TutorialTrainingStep.Summon ? "③ 소환소 옆에서 F → 무작위 소환을 누르세요.\n얻은 스택 1개로 새 하수인을 소환하세요.\n소환소 정비 보상: 시작방 정원 +1" :
+            TrainingStep == TutorialTrainingStep.Summon ? "③ 소환소 옆에서 F → 혈 슬라임 소환을 누르세요.\n첫 소환은 반드시 혈 슬라임입니다. 스택 1개가 필요해요.\n소환소 정비 보상: 시작방 정원 +1" :
             TrainingStep == TutorialTrainingStep.Corridor ? "④ B → 방·복도 → 복도를 선택하세요.\n기존 바닥에서 바깥으로 드래그해 연결 복도를 만들고 굴착이 끝날 때까지 기다리세요." :
-            "⑤ B → 방·복도 → 용사 입구를 선택하세요.\n새로 완성한 복도의 빈 바닥을 클릭해 균열 입구를 옮기세요.";
+            "⑤ B → 방·복도 → 균열을 선택하세요.\n새로 완성한 복도의 빈 바닥을 클릭해 균열을 옮기세요.";
         private void BindTrainingEvents()
         {
             trainingHarvest = waves.Harvest; trainingSummoning = waves.Lord.GetComponent<MinionSummoning>();

@@ -40,7 +40,11 @@ namespace DarkLord.Actors
         public bool LordMarked => Time.time < lordUntil;
         public bool TrapBranded => Time.time < trapUntil;
         public bool Empowered => Time.time < empoweredUntil;
-        public void MarkLord() => lordUntil = Time.time + 4;
+        public void MarkLord()
+        {
+            if (!LordMarked) DarkLord.Gameplay.GameplayEffects.Show(transform, DarkLord.Gameplay.GameplayEffectKind.Curse, transform.position, follow: true);
+            lordUntil = Time.time + 4;
+        }
         public void BrandTrap() => trapUntil = Time.time + 4;
         public void Empower() => empoweredUntil = Time.time + 5;
         public void ConsumeLord() => lordUntil = 0;

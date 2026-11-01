@@ -100,6 +100,23 @@ namespace DarkLord.Tests
             Assert.IsFalse(economy.TryBuy(0));Assert.AreEqual(gold-100,wallet.Gold);
             Assert.IsTrue(economy.TryBuy(3));Assert.AreEqual(52,wallet.Souls);
         }
+        [Test] public void MerchantUsesLimitedPalettePixelSpriteAndActorDepth()
+        {
+            Visit();
+            var merchant = scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<GoblinMerchantVisual>())
+                .Single(v => v.gameObject.activeInHierarchy);
+            var sprite = merchant.GetComponent<SpriteRenderer>().sprite;
+            Assert.IsNotNull(sprite);
+            Assert.AreEqual("NibbleMerchant", sprite.name);
+            Assert.AreEqual(16, sprite.pixelsPerUnit);
+            Assert.AreEqual(FilterMode.Point, sprite.texture.filterMode);
+            var pixels = sprite.texture.GetPixels32();
+            Assert.Less(pixels.Where(c => c.a > 0).Distinct().Count(), 12);
+            Assert.IsTrue(pixels.All(c => c.a == 0 || c.a == 255));
+            Assert.IsNotNull(merchant.GetComponent<ActorDepthSorting>());
+            Assert.IsEmpty(merchant.GetComponents<Collider2D>());
+        }
+
         [Test] public void MerchantRejectsNoGoldFullBloodStorageAndRemotePurchase()
         {
             Visit();wallet.RestoreAmounts(0,wallet.GetCapacity(CurrencyType.Souls),5);

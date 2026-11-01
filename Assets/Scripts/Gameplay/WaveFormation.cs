@@ -9,13 +9,17 @@ namespace DarkLord.Gameplay
         public static InvaderRole[] Create(int wave, int count)
         {
             count = Mathf.Max(1, count);
-            int shields = wave >= 4 ? Mathf.Max(1, Mathf.RoundToInt(count * (wave >= 5 ? .27f : .22f))) : 0;
-            int healers = wave >= 3 ? Mathf.Max(1, Mathf.RoundToInt(count * (wave >= 5 ? .18f : .14f))) : 0;
-            int chargers = wave == 2 || wave >= 5 ? Mathf.Max(1, Mathf.RoundToInt(count * (wave == 2 ? .4f : .27f))) : 0;
+            int shields = wave >= 4 ? Mathf.Max(1, Mathf.RoundToInt(count * .2f)) : 0;
+            int healers = wave >= 3 ? Mathf.Max(1, Mathf.RoundToInt(count * .12f)) : 0;
+            int chargers = wave == 2 ? 1 : wave >= 5 ? Mathf.Max(1, Mathf.RoundToInt(count * .18f)) : 0;
+            int specialLimit = wave >= 5 ? Mathf.Min(count - 1, Mathf.Max(3, Mathf.FloorToInt(count * .45f))) : count - 1;
             // Keep at least one ordinary soldier, even for tiny custom/difficulty counts.
-            while (shields + healers + chargers >= count)
+            while (shields + healers + chargers > specialLimit)
             {
-                if (chargers > 0) chargers--;
+                if (chargers > 1) chargers--;
+                else if (shields > 1) shields--;
+                else if (healers > 1) healers--;
+                else if (chargers > 0) chargers--;
                 else if (shields > 0) shields--;
                 else healers--;
             }

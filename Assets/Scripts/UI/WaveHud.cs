@@ -112,10 +112,10 @@ namespace DarkLord.UI
             switch (director.State)
             {
                 case WaveState.Preparing:
-                    statusText.text = director.HasEntrance ? $"다음: {WaveFormation.Name(director.CurrentWave + 1)} · {director.NextEnemyCount}명" : "입구 배치 대기";
+                    statusText.text = director.HasEntrance ? $"다음: {WaveFormation.Name(director.CurrentWave + 1)} · {director.NextEnemyCount}명" : "균열 배치 대기";
                     break;
                 case WaveState.Active:
-                    statusText.text = $"남은 침입자  {director.RemainingEnemies}" + (director.HasEntrance ? "" : " · 입구 대기");
+                    statusText.text = $"남은 침입자  {director.RemainingEnemies}" + (director.HasEntrance ? "" : " · 균열 대기");
                     break;
                 case WaveState.Victorious:
                     waveText.text = "방어 성공";

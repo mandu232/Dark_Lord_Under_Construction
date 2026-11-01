@@ -42,8 +42,8 @@ namespace DarkLord.Editor
             foreach (var folder in new[] { Folder, IconFolder, PrefabFolder, MeshFolder }) EnsureFolder(folder);
             var largeRoom = Item("LargeRoom", "큰 방 7×7", BuildCategory.Rooms, ConstructionKind.LargeRoom,
                 "7 × 7칸 · 복도와 연결\n\n넓은 방을 건설합니다. 모든 타일이 열린 뒤 방 디자인이 생성됩니다. 파수꾼을 모두 처치해야 용사가 다음 방으로 이동합니다.", Design("LargeRoomDesign", 7, 7), 0);
-            var entrance = Item("Entrance", "용사 입구", BuildCategory.Entrances, ConstructionKind.Room,
-                "코어로 연결된 완성된 바닥에 설치합니다.\n\n용사들이 이 위치에서 출현합니다. 입구는 하나만 유지되며 다시 설치하면 이동합니다. 파괴 모드로 제거할 수 있습니다.", Marker("EntranceMarker", 5, false), 5);
+            var entrance = Item("Entrance", "균열", BuildCategory.Entrances, ConstructionKind.Room,
+                "코어로 연결된 완성된 바닥에 설치합니다.\n\n용사들이 이 위치에서 출현합니다. 균열은 하나만 유지되며 다시 설치하면 이동합니다. 파괴 모드로 제거할 수 있습니다.", Marker("EntranceMarker", 5, false), 5);
             var spike = Item("SpikeTrap", "가시 함정", BuildCategory.Traps, ConstructionKind.Room,
                 "침입자에게 1초 간격으로 12 피해를 줍니다.\n\n완성된 빈 바닥에 설치하세요. 아군은 피해를 받지 않습니다. 파괴 모드로 제거할 수 있습니다.", Marker("SpikeTrap", 4, true), 4);
             spike.available = true; EditorUtility.SetDirty(spike);
@@ -71,7 +71,7 @@ namespace DarkLord.Editor
             var rooms = Button(window.transform, font, "Rooms Tab", "방·복도", 20, 72, 162, 46);
             var minions = Button(window.transform, font, "Minions Tab", "함정", 20, 128, 162, 46);
             var traps = Button(window.transform, font, "Traps Tab", "장식", 20, 184, 162, 46);
-            var entrances = Button(window.transform, font, "Entrances Tab", "입구", 20, 240, 162, 46);
+            var entrances = Button(window.transform, font, "Entrances Tab", "균열", 20, 240, 162, 46);
             var demolition = Button(window.transform, font, "Demolition", "파괴 모드", 290, 14, 160, 38);
             var items = Ui("Items", window.transform);
             var ir = items.GetComponent<RectTransform>(); ir.anchorMin = Vector2.zero; ir.anchorMax = Vector2.one;

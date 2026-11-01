@@ -26,10 +26,6 @@ namespace DarkLord.Minions
         private Vector2 direction;
         private ActorHealth healTarget;
         private ActorAnimation presentation;
-        private SpriteRenderer heroEffect;
-        private Texture2D heroEffectTexture;
-        private Sprite heroEffectSprite;
-        private float heroEffectUntil;
         private readonly System.Collections.Generic.HashSet<ActorHealth> chargeHits = new System.Collections.Generic.HashSet<ActorHealth>();
         private bool hero;
         private const float HeroCleaveRadius = 2.5f;
@@ -87,18 +83,18 @@ namespace DarkLord.Minions
             // Casting can be interrupted; a committed charge is countered by dodging or slowing.
             if (Action == InvaderAction.Healing) { Cancel(); nextAbility = Time.time + 2; }
         }
+        internal void CancelForStun() { Cancel(); nextAbility = Mathf.Max(nextAbility, Time.time + 2); }
         private void Cancel()
         {
             Action = InvaderAction.Ready; healTarget = null;
             if (motor != null) motor.IgnoreMinionBlocking = false;
-            if (heroEffect != null) heroEffect.enabled = false;
             if (heroWarning != null) heroWarning.enabled = false;
             if (motor != null) { motor.SpeedMultiplier = 1; motor.Stop(); }
             if (cue != null) cue.gameObject.SetActive(false);
         }
         public bool TryAct(ActorHealth target)
         {
-            if (!isActiveAndEnabled || !controller.enabled || !health.IsAlive || health.Faction != Faction.Invader || Time.timeScale <= 0) return false;
+            if (!isActiveAndEnabled || !controller.enabled || controller.IsStunned || !health.IsAlive || health.Faction != Faction.Invader || Time.timeScale <= 0) return false;
             if (IsPerforming)
             {
                 motor.Stop();
@@ -294,29 +290,9 @@ namespace DarkLord.Minions
         }
         private void ShowHeroEffect(bool charge)
         {
-            if (heroEffect == null)
-            {
-                heroEffectTexture = new Texture2D(64, 64, TextureFormat.RGBA32, false);
-                heroEffectTexture.filterMode = FilterMode.Bilinear;
-                var pixels = new Color[64 * 64];
-                for (int y = 0; y < 64; y++) for (int x = 0; x < 64; x++)
-                {
-                    float dx = (x - 31.5f) / 31f, dy = (y - 31.5f) / 31f;
-                    float radius = Mathf.Sqrt(dx * dx + dy * dy);
-                    float alpha = dx >= 0 && radius < .96f && radius > .72f ? Mathf.Clamp01((.96f - radius) * 15f) : 0;
-                    pixels[y * 64 + x] = new Color(1f, .88f, .45f, alpha * .8f);
-                }
-                heroEffectTexture.SetPixels(pixels); heroEffectTexture.Apply();
-                heroEffectSprite = Sprite.Create(heroEffectTexture, new Rect(0, 0, 64, 64), Vector2.one * .5f, 32);
-                heroEffect = Marker("Rowen attack effect", Vector3.zero, Vector3.one);
-                heroEffect.sprite = heroEffectSprite;
-            }
-            heroEffect.enabled = true;
-            heroEffect.color = charge ? new Color(.65f, .9f, 1f, .9f) : Color.white;
-            heroEffect.transform.localPosition = (Vector3)(direction * (charge ? .7f : 1.1f));
-            heroEffect.transform.localScale = charge ? new Vector3(1.5f, .65f, 1) : new Vector3(2f, 2f, 1);
-            heroEffect.transform.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
-            heroEffectUntil = Time.time + (charge ? .35f : .25f);
+            DarkLord.Gameplay.GameplayEffects.Show(transform,
+                charge ? DarkLord.Gameplay.GameplayEffectKind.HolyCharge : DarkLord.Gameplay.GameplayEffectKind.HolySlash,
+                transform.position + (Vector3)direction * .7f, direction, charge);
         }
         private SpriteRenderer Marker(string title, Vector3 position, Vector3 size)
         {
@@ -334,7 +310,6 @@ namespace DarkLord.Minions
         }
         private void LateUpdate()
         {
-            if (heroEffect != null && Time.time >= heroEffectUntil) heroEffect.enabled = false;
             RefreshHeroWarning();
             if (Role != InvaderRole.Shieldbearer || cue == null) return;
             cue.gameObject.SetActive(health.IsAlive && controller.enabled);
@@ -354,6 +329,6 @@ namespace DarkLord.Minions
             nextAbility = Time.time + data.cooldown;
             if (data.action != InvaderAction.Ready) Begin(data.action, data.remaining);
         }
-        private void OnDestroy() { if (iconSprite != null) Destroy(iconSprite); if (heroEffectSprite != null) Destroy(heroEffectSprite); if (heroEffectTexture != null) Destroy(heroEffectTexture); if (warningSprite != null) Destroy(warningSprite); if (warningTexture != null) Destroy(warningTexture); }
+        private void OnDestroy() { if (iconSprite != null) Destroy(iconSprite); if (warningSprite != null) Destroy(warningSprite); if (warningTexture != null) Destroy(warningTexture); }
     }
 }

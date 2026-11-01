@@ -32,6 +32,13 @@ namespace DarkLord.Player
         private readonly HashSet<ActorHealth> struck = new HashSet<ActorHealth>();
         private float nextAttack, nextNova, nextWard, nextDodge, wardUntil, dodgeUntil, attackUntil, repairProgress;
         private Vector2 dodgeDirection;
+        private const float DodgeDuration = .6f;
+        private const float DodgeDashDuration = .1f;
+        private const float DodgeInvulnerabilityDuration = .32f;
+        private const float DodgeRecovery = 1.25f;
+        // Burst first, then settle into the final roll frames instead of sliding at full speed.
+        public float DodgeSpeedMultiplier => IsDodging
+            ? Mathf.Lerp(5f, .8f, Mathf.SmoothStep(0, 1, 1 - (dodgeUntil - Time.time) / DodgeDuration)) : 1;
         private bool meleeAttack;
         private bool weaponDrawn, pendingSlash;
         private Vector2 pendingSlashDirection;
@@ -58,12 +65,13 @@ namespace DarkLord.Player
         public float MaximumMana => 100;
         public int CoreUpgradeLevel { get; private set; }
         public bool IsDodging => Time.time < dodgeUntil;
-        public bool DodgeUsesDash => IsDodging && Time.time < dodgeUntil - 0.5f;
+        public bool DodgeUsesDash => IsDodging && Time.time < dodgeUntil - (DodgeDuration - DodgeDashDuration);
         public bool IsAttacking => Time.time < attackUntil;
         public bool IsMeleeAttacking => IsAttacking && meleeAttack;
         public Vector2 DodgeDirection => dodgeDirection;
         public bool IsFinished => waves != null && waves.IsFinished;
         public bool BlocksTutorialInput => waves != null && waves.BlocksTutorialInput;
+        public bool IsTutorialFirstSummon => waves?.Tutorial != null && waves.Tutorial.Active && waves.Tutorial.TrainingStep == TutorialTrainingStep.Summon;
         public bool CanUseFacilities => waves == null || waves.CanUseFacilities;
         public bool CanSpendSummonStack => waves == null || waves.Tutorial == null || !waves.Tutorial.TrainingBlocksSummoning;
         public bool CanPrepare => waves == null || waves.State == WaveState.Preparing;
@@ -87,6 +95,7 @@ namespace DarkLord.Player
         private void OnEnable() { health.DamageFilter += AllowDamage; health.Damaged += OnDamaged; }
         private void OnDisable()
         {
+            PlayerHitStop.CancelFor(this);
             health.DamageFilter -= AllowDamage;
             health.Damaged -= OnDamaged;
             wardUntil = dodgeUntil = attackUntil = 0;
@@ -96,7 +105,8 @@ namespace DarkLord.Player
             motor.SpeedMultiplier = 1;
             motor.CancelAttackMotion();
         }
-        private bool AllowDamage(ActorHealth source) => !IsDodging && Time.time >= wardUntil;
+        private bool AllowDamage(ActorHealth source) =>
+            !(IsDodging && Time.time < dodgeUntil - (DodgeDuration - DodgeInvulnerabilityDuration)) && Time.time >= wardUntil;
         private void OnDamaged(ActorHealth source) => repairProgress = 0;
         public void Configure(WaveDirector director) => waves = director;
         public void RefillMana() => Mana = MaximumMana;
@@ -109,17 +119,19 @@ namespace DarkLord.Player
         private void Update()
         {
             UpdateWeaponPresentation();
-            motor.SpeedMultiplier = (IsDodging && CanAct ? 2.5f : 1) * (1 + MovementBonus);
+            motor.SpeedMultiplier = (CanAct ? DodgeSpeedMultiplier : 1) * (1 + MovementBonus);
             if (health.IsAlive && !IsFinished && Time.timeScale > 0)
                 Mana = Mathf.Min(MaximumMana, Mana + Time.deltaTime * ((waves != null && waves.State == WaveState.Active ? 1 : 10) + (waves?.Economy?.Has(TechId.SoulWell) == true ? 2 : 0)));
             if (!CanAct) { repairProgress = 0; return; }
-            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) { repairProgress = 0; return; }
             var keyboard = Keyboard.current;
+            // Resolve dodge before held attacks; use this frame's movement input, not stale attack facing.
+            if (keyboard != null && keyboard.spaceKey.wasPressedThisFrame)
+                TryDodge(GetComponent<PlayerMovement>()?.DodgeInputDirection ?? motor.Facing);
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) { repairProgress = 0; return; }
             if (Mouse.current != null && Mouse.current.leftButton.isPressed) TryAttack(AimDirection());
             if (keyboard == null) return;
             if (keyboard.qKey.wasPressedThisFrame) TryOffensiveSpell();
             if (keyboard.rKey.wasPressedThisFrame) TrySupportSpell();
-            if (keyboard.spaceKey.wasPressedThisFrame) TryDodge(motor.Facing);
             repairProgress = 0;
         }
 
@@ -158,7 +170,8 @@ namespace DarkLord.Player
             attackUntil = Time.time + SlashDuration;
             motor.AttackStep(direction, UsesSecondSlash ? .48f : .36f, .16f);
             GetComponent<ActorAnimation>()?.Present(ActorState.Attack, direction, UsesSecondSlash ? 1 : 0);
-            DamageArea(1.65f, 25 + (waves?.Economy?.AttackBonus ?? 0), direction, 0.25f, DamageType.Physical);
+            DamageArea(1.65f, 25 + (waves?.Economy?.AttackBonus ?? 0), direction, 0.25f, DamageType.Physical,
+                impact: UsesSecondSlash ? PlayerHitStop.ImpactKind.Combo : PlayerHitStop.ImpactKind.Light);
             return true;
         }
         public bool TryNova()
@@ -167,28 +180,42 @@ namespace DarkLord.Player
             nextNova = Time.time + 6;
             meleeAttack = false;
             attackUntil = Time.time + 0.3f;
-            DamageArea(3.5f, 45 + (waves?.Economy?.MagicBonus ?? 0), Vector2.zero, -1, DamageType.Magic);
-            Message = "혈파 발동";
+            DamageArea(6f, 45 + (waves?.Economy?.MagicBonus ?? 0), Vector2.zero, -1, DamageType.Magic, impact: PlayerHitStop.ImpactKind.Spell, shockwave: true);
+            GameplayEffects.Show(transform, GameplayEffectKind.BloodNova, transform.position);
+            PresentNovaImpact();
+            Message = "혈파 · 광역 충격 / 넉백 / 기절 1.5초";
             return true;
+        }
+        private void PresentNovaImpact()
+        {
+            var camera = Camera.main;
+            if (camera != null && camera.gameObject.scene == gameObject.scene)
+                camera.GetComponent<CameraFollow>()?.NovaImpact();
         }
         public bool TryWard()
         {
             if (!CanAct || IsDodging || Time.time < nextWard || !SpendMana(25)) return false;
             nextWard = Time.time + 10;
             wardUntil = Time.time + 2;
+            GameplayEffects.Show(transform, GameplayEffectKind.BloodWard, transform.position, follow: true, duration: 2);
             waves?.Augments.Ward();
             Message = "혈막 · 2초간 피해 방어";
             return true;
         }
         public bool TryDodge(Vector2 direction)
         {
-            if (!CanAct || Time.time < nextDodge || direction.sqrMagnitude < 0.001f) return false;
-            nextDodge = Time.time + 3;
-            dodgeUntil = Time.time + 0.75f;
+            if (!CanAct || IsDodging || Time.time < nextDodge || !float.IsFinite(direction.x) || !float.IsFinite(direction.y) || direction.sqrMagnitude < 0.001f) return false;
+            nextDodge = Time.time + DodgeRecovery;
+            dodgeUntil = Time.time + DodgeDuration;
             dodgeDirection = direction.normalized;
+            attackUntil = weaponActionUntil = 0;
+            pendingSlash = false;
             motor.CancelAttackMotion();
-            motor.SpeedMultiplier = 2.5f * (1 + MovementBonus);
+            motor.ClearKnockback();
+            motor.SpeedMultiplier = DodgeSpeedMultiplier * (1 + MovementBonus);
             GetComponent<PlayerMovement>()?.RefreshMovementMultiplier();
+            motor.Move(dodgeDirection);
+            GetComponent<ActorAnimation>()?.Present(ActorState.Dash, dodgeDirection);
             repairProgress = 0;
             return true;
         }
@@ -198,7 +225,16 @@ namespace DarkLord.Player
             Mana -= amount;
             return true;
         }
-        private void DamageArea(float radius, int damage, Vector2 direction, float minimumDot, DamageType type, bool slow = false)
+        private bool DealDamage(ActorHealth target, int damage, DamageType type, PlayerHitStop.ImpactKind impact)
+        {
+            int before = target.CurrentHealth;
+            bool hit = target.TakeDamage(damage, health, type);
+            if (hit && target != null && target.CurrentHealth < before) PlayerHitStop.OnHit(this, target, impact);
+            return hit;
+        }
+
+        private void DamageArea(float radius, int damage, Vector2 direction, float minimumDot, DamageType type, bool slow = false,
+            PlayerHitStop.ImpactKind impact = PlayerHitStop.ImpactKind.Light, bool shockwave = false)
         {
             struck.Clear();
             int enhancedHits = 0;
@@ -219,10 +255,19 @@ namespace DarkLord.Player
                 {
                     bool novaBonus = direction == Vector2.zero && type == DamageType.Magic && waves != null && waves.Augments.NovaBonus(target);
                     int finalDamage = direction != Vector2.zero && waves != null ? waves.Augments.MeleeDamage(target, damage) : damage;
-                    if (target.TakeDamage(finalDamage + (novaBonus ? 25 : 0), health, type))
+                    if (DealDamage(target, finalDamage + (novaBonus ? 25 : 0), type, impact))
                     {
                         if (novaBonus) enhancedHits++;
                         TechnologyHit(target, direction != Vector2.zero, ref lifeStolen);
+                        if (shockwave && target.IsAlive)
+                        {
+                            var minion = target.GetComponent<DarkLord.Minions.MinionController>();
+                            if (minion == null || !minion.IsStaggerImmune)
+                            {
+                                minion?.ApplyStun(1.5f);
+                                target.GetComponent<TopDownMotor>()?.ApplyKnockback(delta.sqrMagnitude > .001f ? delta : Vector2.up, 12f, .5f, true);
+                            }
+                        }
                         if (slow && target.IsAlive) target.GetComponent<TopDownMotor>()?.ApplySlow(.6f, 3);
                     }
                 }
@@ -267,7 +312,7 @@ namespace DarkLord.Player
             nextAttack = Time.time + Mathf.Clamp(data.attackCooldown, 0, .75f);
             nextNova = Time.time + Mathf.Clamp(data.novaCooldown, 0, 6);
             nextWard = Time.time + Mathf.Clamp(data.wardCooldown, 0, 12);
-            nextDodge = Time.time + Mathf.Clamp(data.dodgeCooldown, 0, 3);
+            nextDodge = Time.time + Mathf.Clamp(data.dodgeCooldown, 0, DodgeRecovery);
             wardUntil = dodgeUntil = attackUntil = repairProgress = 0;
             motor.SpeedMultiplier = 1;
             hasteUntil = Time.time + Mathf.Clamp(data.hasteRemaining,0,6);

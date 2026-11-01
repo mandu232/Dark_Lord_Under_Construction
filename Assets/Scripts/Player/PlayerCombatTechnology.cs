@@ -1,4 +1,5 @@
 using DarkLord.Actors;
+using DarkLord.Gameplay;
 using DarkLord.Minions;
 using UnityEngine;
 
@@ -34,15 +35,16 @@ namespace DarkLord.Player
                     ally.Heal(spell==SupportSpell.Mend?20:10);MinionShot.Show(transform,ally.transform.position,new Color(.4f,1,.65f));
                 }
             }
-            MinionShot.Show(transform,transform.position+Vector3.up*1.7f,spell==SupportSpell.Haste?new Color(1,.8f,.3f):new Color(.4f,1,.65f));
+            if(spell!=SupportSpell.Mend) GameplayEffects.Show(transform,spell==SupportSpell.Haste?GameplayEffectKind.Haste:GameplayEffectKind.Aegis,transform.position,follow:true,duration:spell==SupportSpell.Haste?6:3);
             Message=SupportLabel+" 발동";return true;
         }
         private bool TryFrostNova()
         {
             if(!CanAct||IsDodging||Time.time<nextNova||waves?.Economy?.Has(TechId.FrostNova)!=true||!SpendMana(30))return false;
             meleeAttack=false;nextNova=Time.time+6;attackUntil=Time.time+.3f;
-            DamageArea(4,35+waves.Economy.MagicBonus,Vector2.zero,-1,DamageType.Magic,true);
-            MinionShot.Show(transform,transform.position+Vector3.up*2,new Color(.35f,.8f,1));Message="서리 혈파 · 적 이동 둔화 3초";return true;
+            DamageArea(6,35+waves.Economy.MagicBonus,Vector2.zero,-1,DamageType.Magic,true,PlayerHitStop.ImpactKind.Spell,shockwave:true);
+            PresentNovaImpact();
+            GameplayEffects.Show(transform,GameplayEffectKind.FrostNova,transform.position);Message="서리 혈파 · 넉백 / 기절 1.5초 / 둔화 3초";return true;
         }
         private bool TryTechnologyAttack(Vector2 direction)
         {
@@ -52,8 +54,8 @@ namespace DarkLord.Player
             if(style==AttackStyle.WideSlash)
             {
                 GetComponent<ActorAnimation>()?.Present(ActorState.Attack,direction);
-                DamageArea(2.7f,Mathf.RoundToInt((25+waves.Economy.AttackBonus)*.85f),direction,-.3f,DamageType.Physical);
-                MinionShot.Show(transform,transform.position+(Vector3)direction*2.7f,new Color(1,.25f,.4f));
+                DamageArea(2.7f,Mathf.RoundToInt((25+waves.Economy.AttackBonus)*.85f),direction,-.3f,DamageType.Physical,impact:PlayerHitStop.ImpactKind.Heavy);
+                GameplayEffects.Show(transform,GameplayEffectKind.WideSlash,transform.position+(Vector3)direction*.75f, direction);
             }
             else
             {
@@ -64,7 +66,7 @@ namespace DarkLord.Player
                     var target=hit.collider.GetComponentInParent<ActorHealth>();
                     if(target!=null&&(!target.IsAlive||target.Faction==health.Faction))continue;
                     end=hit.point;
-                    if(target!=null&&target.TakeDamage(30+waves.Economy.MagicBonus,health,DamageType.Magic))
+                    if(target!=null&&DealDamage(target,30+waves.Economy.MagicBonus,DamageType.Magic,PlayerHitStop.ImpactKind.Projectile))
                     {int stolen=0;TechnologyHit(target,true,ref stolen);}
                     break;
                 }

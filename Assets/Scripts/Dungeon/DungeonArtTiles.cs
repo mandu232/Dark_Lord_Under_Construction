@@ -9,6 +9,8 @@ namespace DarkLord.Dungeon
         [SerializeField] private TileBase[] stonePieces, carpetPieces, wallPieces;
         [SerializeField] private Sprite windowLightSprite;
         [SerializeField] private Material windowLightMaterial;
+        [SerializeField] private GameObject wallTorchPrefab;
+        private readonly System.Collections.Generic.Dictionary<Vector2Int, GameObject> wallTorches = new System.Collections.Generic.Dictionary<Vector2Int, GameObject>();
         private Tilemap floorMap, floorShadeMap, carpetMap, cornerMap, shadowMap, wallMap, glowMap, wallJointMap;
         private Tile carpetFill;
         private Sprite carpetFillSprite;
@@ -398,6 +400,7 @@ namespace DarkLord.Dungeon
             shadowMap.SetTile(position, shadow);
             TileBase wall = null;
             bool litWindow = false;
+            bool torch = false;
             glowMap.SetTile(position, null);
             if (!floor)
             {
@@ -412,17 +415,41 @@ namespace DarkLord.Dungeon
                     int index = (5 - depth) * 5 + wallColumn;
                     var owner = Construction.At(new Vector2Int(foot.x / 2, foot.y / 2));
                     bool corridor = owner != null && !DungeonConstruction.IsRoom(owner.Kind);
-                    litWindow = corridor && !shortenedInterior && wallColumn == 2 && depth <= 3;
+                    // Plain room-wall spans and shortened corridor spans have no window.
+                    // Alternate complete corridor wall spans between windows and torches.
+                    // A fixture stays at the span center, away from pillars and doorways.
+                    bool corridorTorch = corridor && !shortenedInterior && (Mathf.Abs(segmentStart / 5) % 2 == 0);
+                    torch = depth == 1 && wallColumn == 2 && (!corridor || shortenedInterior || corridorTorch);
+                    litWindow = corridor && !shortenedInterior && !corridorTorch && wallColumn == 2 && depth <= 3;
                     if (litWindow && depth == 1 && windowFloorLight != null)
                         glowMap.SetTile(new Vector3Int(foot.x, foot.y, 0), windowFloorLight);
-                    if ((!corridor || shortenedInterior) && roomWallPieces != null) wall = roomWallPieces[index];
+                    if ((!corridor || shortenedInterior || corridorTorch) && roomWallPieces != null) wall = roomWallPieces[index];
                     else if (corridor && bannerWallPieces != null && ArtHash(segmentStart, foot.y) % 5 == 0) wall = bannerWallPieces[index];
                     else wall = Piece(wallPieces, index, repeatingWallTile);
                     break;
                 }
             }
             wallMap.SetTile(position, wall);
+            RefreshWallTorch(p, torch);
             if (windowFloorLight == null && litWindow) glowMap.SetTile(position, windowGlow);
+        }
+        private void RefreshWallTorch(Vector2Int position, bool visible)
+        {
+            if (wallTorchPrefab == null) return;
+            if (wallTorches.TryGetValue(position, out var existing))
+            {
+                if (visible) return;
+                existing.SetActive(false);
+                Destroy(existing);
+                wallTorches.Remove(position);
+            }
+            else if (visible)
+            {
+                var instance = Instantiate(wallTorchPrefab, artRoot);
+                // Native 16 PPU artwork, bottom aligned just above the floor.
+                instance.transform.localPosition = new Vector3(position.x + .5f, position.y - .5f, 0);
+                wallTorches.Add(position, instance);
+            }
         }
         private void RefreshArtTile(Vector2Int cell)
         {

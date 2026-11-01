@@ -17,6 +17,9 @@ namespace DarkLord.Gameplay
     public sealed partial class WaveDirector
     {
         private float nextWaveRemaining = -1;
+        private float readyPreparationSeconds;
+        private float placementCheckRemaining;
+        private bool hasPlaceablePreparationItem;
         private readonly Queue<int> pendingWaves = new Queue<int>();
         private readonly HashSet<int> completedWaves = new HashSet<int>();
         private readonly Queue<int> waveRewardQueue = new Queue<int>();
@@ -27,20 +30,43 @@ namespace DarkLord.Gameplay
         public bool HasNextWave => CurrentWave < finalWave && !IsFinished;
         private bool CanLaunchWave => !(Tutorial != null && Tutorial.Active) && isActiveAndEnabled && (State == WaveState.Preparing || State == WaveState.Active) &&
             CurrentWave < finalWave && dungeonLord != null && dungeonLord.IsAlive && dungeonCore != null && dungeonCore.IsAlive && Time.timeScale > 0;
-        private void ScheduleNextWave() => nextWaveRemaining = Random.Range(120f, 300f);
+        private void ScheduleNextWave() => nextWaveRemaining = options.PreparationSeconds(CurrentWave) * Random.Range(.92f, 1.08f);
         private void Update()
         {
-            if (!AutomaticWaves || Tutorial != null && Tutorial.Active) return;
+            if (!AutomaticWaves || Tutorial != null && Tutorial.Active) { readyPreparationSeconds = 0; return; }
             if (State == WaveState.Active && dungeonLord != null && dungeonLord.IsAlive && dungeonCore != null && dungeonCore.IsAlive)
                 CheckAutomaticWaveClears();
-            if (!CanLaunchWave) return;
+            if (!CanLaunchWave) { readyPreparationSeconds = 0; return; }
             if (nextWaveRemaining < 0) ScheduleNextWave();
+            // Let the player finish interacting before quietly compressing an empty preparation phase.
+            readyPreparationSeconds = PreparationIsComplete() ? readyPreparationSeconds + Time.deltaTime : 0;
+            if (readyPreparationSeconds > 5 && nextWaveRemaining > 10)
+                nextWaveRemaining = Mathf.Max(10, nextWaveRemaining - Time.deltaTime * 5);
             nextWaveRemaining = Mathf.Max(0, nextWaveRemaining - Time.deltaTime);
             if (nextWaveRemaining <= 0 && HasEntrance) LaunchWave();
+        }
+        private bool PreparationIsComplete()
+        {
+            if (State != WaveState.Preparing || RemainingEnemies != 0 || !HasEntrance || dungeon == null ||
+                dungeon.Construction == null || dungeon.Construction.PendingCount > 0 || dungeon.RemainingConstructionTiles > 0) return false;
+            placementCheckRemaining -= Time.deltaTime;
+            if (placementCheckRemaining <= 0)
+            {
+                hasPlaceablePreparationItem = dungeon.Inventory.HasPlaceableItem(dungeon);
+                placementCheckRemaining = .5f;
+            }
+            if (hasPlaceablePreparationItem) return false;
+            var expansion = dungeonLord.GetComponent<DungeonExpansion>();
+            var summoning = dungeonLord.GetComponent<MinionSummoning>();
+            return !(expansion != null && expansion.BlocksGameplayInput) &&
+                !(summoning != null && summoning.BlocksGameplayInput) &&
+                !(Alchemy != null && Alchemy.BlocksGameplayInput) &&
+                !(Economy != null && Economy.BlocksGameplayInput);
         }
         private void LaunchWave()
         {
             if (!CanLaunchWave || !HasEntrance || invaderPrefab == null) return;
+            readyPreparationSeconds = 0;
             CurrentWave++;
             Economy?.OnRoundStarted(CurrentWave);
             State = WaveState.Active;
@@ -86,6 +112,8 @@ namespace DarkLord.Gameplay
         }
         private void RestoreSchedule(WaveScheduleSaveData data)
         {
+            readyPreparationSeconds = 0;
+            placementCheckRemaining = 0;
             completedWaves.Clear(); waveRewardQueue.Clear();
             rewardWave = data != null ? data.rewardWave : CurrentWave;
             if (data == null)

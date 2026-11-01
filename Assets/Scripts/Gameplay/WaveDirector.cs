@@ -62,8 +62,8 @@ namespace DarkLord.Gameplay
 
         public int CurrentWave { get; private set; }
         public int FinalWave => finalWave;
-        private int EnemyCountForWave(int wave) => options.EnemyCount(wave == 1 ? Mathf.Max(1, baseEnemyCount - 1) : WaveProgression.EnemyCount(wave, baseEnemyCount, enemyGrowthPerWave));
-        private int EnemyHealthForWave(int wave) => options.EnemyHealth(wave == 1 ? Mathf.Max(1, Mathf.RoundToInt(baseEnemyHealth * .7f)) : WaveProgression.EnemyHealth(wave, baseEnemyHealth, enemyHealthGrowth));
+        private int EnemyCountForWave(int wave) => options.EnemyCount(WaveProgression.EnemyCount(wave, baseEnemyCount, enemyGrowthPerWave));
+        private int EnemyHealthForWave(int wave) => options.EnemyHealth(WaveProgression.EnemyHealth(wave, baseEnemyHealth, enemyHealthGrowth));
         public int NextEnemyCount => EnemyCountForWave(CurrentWave + 1);
         public int NextEnemyHealth => EnemyHealthForWave(CurrentWave + 1);
         public InvaderRole[] NextFormation => WaveFormation.Create(CurrentWave + 1, NextEnemyCount);

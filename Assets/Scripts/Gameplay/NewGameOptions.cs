@@ -13,9 +13,11 @@ namespace DarkLord.Gameplay
         public bool skipOpening;
 
         public bool AutomaticWaves => difficulty != GameDifficulty.Easy;
-        public string WaveRuleDescription => AutomaticWaves ? "2~5분 간격 자동 침공 · 적이 남아 있어도 다음 웨이브 진입" : "웨이브 시작 버튼으로 직접 진행";
-        public float EnemyCountMultiplier => difficulty == GameDifficulty.Easy ? .75f : difficulty == GameDifficulty.Hard ? 1.35f : difficulty == GameDifficulty.Nightmare ? 1.7f : 1f;
-        public float EnemyHealthMultiplier => difficulty == GameDifficulty.Easy ? .75f : difficulty == GameDifficulty.Hard ? 1.4f : difficulty == GameDifficulty.Nightmare ? 1.8f : 1f;
+        public string WaveRuleDescription => AutomaticWaves ? "초반은 여유롭게, 후반은 짧게 · 난이도별 자동 침공 · 남은 적과 다음 웨이브 중첩" : "웨이브 시작 버튼으로 직접 진행";
+        public float EnemyCountMultiplier => difficulty == GameDifficulty.Easy ? .8f : difficulty == GameDifficulty.Hard ? 1.2f : difficulty == GameDifficulty.Nightmare ? 1.4f : 1f;
+        public float EnemyHealthMultiplier => difficulty == GameDifficulty.Easy ? .8f : difficulty == GameDifficulty.Hard ? 1.15f : difficulty == GameDifficulty.Nightmare ? 1.3f : 1f;
+        public float PreparationSeconds(int currentWave) => Mathf.Max(120, 180 - Mathf.Clamp(currentWave, 0, 4) * 15) *
+            (difficulty == GameDifficulty.Nightmare ? .8f : difficulty == GameDifficulty.Hard ? .9f : 1);
         public float RewardMultiplier => difficulty == GameDifficulty.Easy ? 1.2f : difficulty == GameDifficulty.Hard ? 1.3f : difficulty == GameDifficulty.Nightmare ? 1.6f : 1f;
         public string DifficultyName => difficulty == GameDifficulty.Easy ? "쉬움" : difficulty == GameDifficulty.Hard ? "어려움" : difficulty == GameDifficulty.Nightmare ? "악몽" : "보통";
         public NewGameOptions Copy() => new NewGameOptions { difficulty = difficulty, saveName = NormalizeName(saveName), skipOpening = skipOpening };

@@ -236,7 +236,7 @@ namespace DarkLord.UI
             selected = null;
             expansion?.SetDemolitionMode();
             detailTitle.text = "파괴 모드";
-            detailText.text = "던전에서 제거할 하수인·함정·입구를 좌클릭하세요.\n\n플레이어, 코어, 용사, 방과 복도는 제거되지 않습니다.\n다른 항목을 선택하면 파괴 모드가 종료됩니다.";
+            detailText.text = "던전에서 제거할 하수인·함정·균열을 좌클릭하세요.\n\n플레이어, 코어, 용사, 방과 복도는 제거되지 않습니다.\n다른 항목을 선택하면 파괴 모드가 종료됩니다.";
             detailIcon.enabled = false;
         }
         public void ShowCategory(BuildCategory value)

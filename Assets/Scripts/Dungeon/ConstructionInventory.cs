@@ -39,6 +39,26 @@ namespace DarkLord.Dungeon
             var choices = catalog.Where(i => i.category == category).ToArray();
             return choices.Length == 0 ? null : choices[UnityEngine.Random.Range(0, choices.Length)];
         }
+        // Use the same placement rules as the construction preview, without reserving any cells.
+        public bool HasPlaceableItem(DungeonGrid dungeon)
+        {
+            if (dungeon == null || dungeon.Layout == null || dungeon.Construction == null) return false;
+            foreach (var item in catalog)
+            {
+                if (!item.available || item.prefab == null || Count(item) <= 0) continue;
+                if (item.category == BuildCategory.Buildings && item.prefab.GetComponent<ResourceBuilding>() == null) continue;
+                for (int y = 0; y < dungeon.Layout.Height; y++)
+                    for (int x = 0; x < dungeon.Layout.Width; x++)
+                    {
+                        var cell = new Vector2Int(x, y);
+                        if (item.category == BuildCategory.Traps && dungeon.CanPlaceTrap(cell) ||
+                            item.category == BuildCategory.Buildings && dungeon.CanPlaceBuilding(cell) ||
+                            item.category == BuildCategory.Rooms && dungeon.Construction.CanPlan(item.constructionKind, cell) == ConstructionResult.Success)
+                            return true;
+                    }
+            }
+            return false;
+        }
         public int Total(BuildCategory category) => catalog.Where(i => i.category == category).Sum(Count);
         public BuildItemDefinition GrantRandom(BuildCategory category)
         {

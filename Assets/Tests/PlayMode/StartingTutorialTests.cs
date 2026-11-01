@@ -45,12 +45,15 @@ namespace DarkLord.Tests
             var presentation = Find<DarkLord.UI.StartingTutorialPresentation>();
             var bar = presentation.transform.Find("Rowen boss health bar");
             Assert.IsNotNull(bar); Assert.IsFalse(bar.gameObject.activeSelf);
-            var waveHud = Find<DarkLord.UI.WaveHud>();
-            Assert.IsTrue(waveHud.isActiveAndEnabled);
-            Assert.IsFalse(waveHud.GetComponent<UnityEngine.UI.Image>().enabled);
-            Assert.IsFalse(waveHud.transform.Find("Castle Frame").GetComponent<UnityEngine.UI.Image>().enabled);
-            Assert.IsFalse(waveHud.transform.Find("Wave").GetComponent<TMPro.TMP_Text>().enabled);
-            Assert.IsFalse(waveHud.transform.Find("Status").GetComponent<TMPro.TMP_Text>().enabled);
+            // Older scene variants retain this legacy HUD; current scenes use GameHud directly.
+            foreach (var waveHud in scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<DarkLord.UI.WaveHud>(true)))
+            {
+                Assert.IsTrue(waveHud.isActiveAndEnabled);
+                Assert.IsFalse(waveHud.GetComponent<UnityEngine.UI.Image>().enabled);
+                Assert.IsFalse(waveHud.transform.Find("Castle Frame").GetComponent<UnityEngine.UI.Image>().enabled);
+                Assert.IsFalse(waveHud.transform.Find("Wave").GetComponent<TMPro.TMP_Text>().enabled);
+                Assert.IsFalse(waveHud.transform.Find("Status").GetComponent<TMPro.TMP_Text>().enabled);
+            }
             Assert.AreEqual("로웬 · 서풍의 용사", waves.Tutorial.SpeakerName);
             TutorialTestActions.DismissDialogue(waves); yield return null;
             waves.Tutorial.Advance(4); yield return null;
@@ -73,8 +76,9 @@ namespace DarkLord.Tests
             Assert.AreEqual(StartingTutorial.RowenMaximumHealth, waves.Tutorial.Rowen.MaximumHealth);
             Assert.AreEqual(StartingTutorial.RowenMaximumHealth - 500, waves.Tutorial.Rowen.CurrentHealth);
             waves.Tutorial.Rowen.TakeDamage(StartingTutorial.RowenMaximumHealth);
-            Assert.IsFalse(waves.Tutorial.Rowen.IsAlive, "Health must reach zero rather than stop at a hidden floor.");
-            yield return null; Assert.IsFalse(bar.gameObject.activeSelf);
+            Assert.IsTrue(waves.Tutorial.Rowen.IsAlive, "The story boss must retreat; only one soldier may die.");
+            Assert.AreEqual(1, waves.Tutorial.Rowen.CurrentHealth);
+            yield return null; Assert.IsTrue(bar.gameObject.activeSelf);
         }
         [UnityTest] public IEnumerator BossEntranceRevealsCurrentHealthAndPausesWithGameplay()
         {
@@ -100,6 +104,44 @@ namespace DarkLord.Tests
             var glint = bar.Find("Health track/Entrance glint").GetComponent<UnityEngine.UI.Image>();
             Assert.That(glint.color.a, Is.EqualTo(0).Within(.001f));
         }
+        [UnityTest] public IEnumerator OpeningCasualtiesAreOneEnemyAndAllButOneDefenderIncludingAfterSave()
+        {
+            TutorialTestActions.DismissDialogue(waves); yield return null;
+            waves.Tutorial.Advance(18);
+            var army = grid.Guards.ToArray();
+            Assert.AreEqual(4, army.Length);
+            var soldiers = waves.Tutorial.GetComponentsInChildren<DarkLord.Minions.MinionController>()
+                .Where(m => m.Health.Faction == DarkLord.Actors.Faction.Invader).ToArray();
+            Assert.AreEqual(9, soldiers.Length);
+            foreach (var guard in army) guard.Health.TakeDamage(999999);
+            Assert.AreEqual(1, army.Count(g => g.IsAlive), "Only one defender is protected during combat.");
+            foreach (var enemy in soldiers) enemy.Health.TakeDamage(999999);
+            Assert.AreEqual(1, soldiers.Count(e => !e.IsAlive));
+            Assert.IsTrue(waves.Tutorial.Rowen.IsAlive);
+            Assert.AreEqual(1, waves.Harvest.Corpses.Count());
+            var saved = JsonUtility.FromJson<GameSaveData>(JsonUtility.ToJson(session.Capture()));
+            Assert.IsTrue(saved.tutorial.openingEnemyCasualtyResolved);
+            session.Restore(saved); yield return null;
+            foreach (var enemy in waves.Tutorial.GetComponentsInChildren<DarkLord.Minions.MinionController>())
+                if (enemy.Health.Faction == DarkLord.Actors.Faction.Invader) enemy.Health.TakeDamage(999999);
+            Assert.AreEqual(8, waves.Tutorial.LivingEnemies);
+            Assert.AreEqual(1, waves.Harvest.Corpses.Count());
+            waves.Tutorial.Advance(43);
+            Assert.AreEqual(1, grid.Guards.Count(g => g.IsAlive));
+            Assert.AreEqual(1, waves.Harvest.Corpses.Count());
+            Assert.IsNull(Find<DarkLord.UI.StartingTutorialPresentation>().GetComponentsInChildren<Transform>(true)
+                .FirstOrDefault(t => t.name == "Rube companion portrait"));
+        }
+
+        [UnityTest] public IEnumerator PassiveOpeningStillLeavesExactlyOneEnemyCorpseAndOneDefender()
+        {
+            waves.Tutorial.Advance(43);
+            Assert.AreEqual(1, grid.Guards.Count(g => g.IsAlive));
+            Assert.AreEqual(1, waves.Harvest.Corpses.Count());
+            Assert.IsTrue(waves.Tutorial.Capture().openingEnemyCasualtyResolved);
+            yield return null;
+        }
+
         [UnityTest] public IEnumerator CollapseChangesTerrainRescuesPlayerAndLeavesUsableEntrance()
         {
             var old = grid.Layout.Entrance;

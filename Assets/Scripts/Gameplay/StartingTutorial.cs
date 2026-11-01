@@ -18,6 +18,8 @@ namespace DarkLord.Gameplay
         public float elapsed;
         public int spawned;
         public bool collapsed;
+        public bool openingCasualtiesResolved;
+        public bool openingEnemyCasualtyResolved;
         public int trainingVersion;
         public TutorialTrainingStep trainingStep;
         public MinionSaveData[] enemies = Array.Empty<MinionSaveData>();
@@ -59,6 +61,8 @@ namespace DarkLord.Gameplay
         private readonly List<ActorHealth> protectedActors = new List<ActorHealth>();
         private int spawned;
         private bool collapsed;
+        private bool casualtiesResolved;
+        private bool enemyCasualtyResolved;
         private ActorHealth rowen;
         private int dialoguePage, dialogueLine, dialogueClickFrame = -1;
         public bool DialogueOpen { get; private set; }
@@ -99,9 +103,9 @@ namespace DarkLord.Gameplay
                 new DialogueEntry(true, "젠장, 또 길이 막혔군. 이걸 치우다간 날 새겠어.\n철수한다. 도구부터 다시 챙겨 와.", liliaMood: TutorialPortraitMood.Neutral, rowenMood: TutorialPortraitMood.Aftermath, expression: PlayerExpression.Blinking),
                 new DialogueEntry(false, "그만 포기하고 돌아가지?\n남의 집을 이 꼴로 만들어 놓고, 뭘 더 가져가겠다고.", rowenMood: TutorialPortraitMood.Aftermath, expression: PlayerExpression.Decline),
                 new DialogueEntry(true, "잠깐 맡겨 두는 거야. 네 것이 된 줄 알지 마.\n내 코어는 내가 도로 가져갈 테니까.", rowenMood: TutorialPortraitMood.Determined, expression: PlayerExpression.Decline),
-                new DialogueEntry(false, "…이제 갔네. 남의 집 부숴 놓고 끝까지 자기 거라네.\n루브, 도면 다시 펴 줘. 남은 복도 끝을 입구로 쓰자.\n소환소도 손봐야겠어. 시체는 F로 옮기면 돼. 일손이 필요하니까.", false, TutorialPortraitMood.Aftermath, expression: PlayerExpression.Down)
+                new DialogueEntry(false, "…한 마리만 살아남았네. 더 잃을 순 없어.\n루브, 남은 복도 끝으로 균열을 옮기자.\n시체는 F로 소환소에 옮기면 돼. 다시 일어설 일손이 필요해.", false, TutorialPortraitMood.Aftermath, expression: PlayerExpression.Down)
             },
-            new[] { new DialogueEntry(false, "복도와 입구를 다시 정비했어. 이제 침입자들이 오면 이곳에서 맞이하자.\n첫 정찰대는 약하겠지만 방심하지 마.", false, TutorialPortraitMood.Aftermath, expression: PlayerExpression.Accept) }
+            new[] { new DialogueEntry(false, "복도와 균열을 다시 정비했어. 이제 침입자들이 오면 이곳에서 맞이하자.\n첫 정찰대는 약하겠지만 방심하지 마.", false, TutorialPortraitMood.Aftermath, expression: PlayerExpression.Accept) }
         };
         public static int DialogueLineCount(int page) => Conversations[Mathf.Clamp(page, 0, 4)].Length;
         public bool SpeakerIsRowen => Conversations[dialoguePage][dialogueLine].Rowen;
@@ -118,7 +122,7 @@ namespace DarkLord.Gameplay
         { waves = director; dungeon = grid; prefab = enemyPrefab; }
         public void Begin()
         {
-            Clear(); Elapsed = 0; spawned = 0; collapsed = false; Active = true;
+            Clear(); Elapsed = 0; spawned = 0; collapsed = false; casualtiesResolved = false; enemyCasualtyResolved = false; Active = true;
             dialoguePage = 0; dialogueLine = 0; DialogueOpen = true;
             ProtectDefenders(); BindTrainingEvents();
             SynchronizeDialoguePause();
@@ -135,15 +139,22 @@ namespace DarkLord.Gameplay
         }
         private void ProtectDefenders()
         {
+            var survivor = dungeon.Guards.Where(m => m != null && m.IsAlive)
+                .OrderBy(m => (m.GuardPosition - (Vector2)dungeon.CellCenter(dungeon.Layout.Core)).sqrMagnitude)
+                .ThenBy(m => m.GuardPosition.y).ThenBy(m => m.GuardPosition.x).FirstOrDefault();
             foreach (var actor in FindObjectsByType<ActorHealth>(FindObjectsSortMode.None))
                 if (actor.gameObject.scene == gameObject.scene && actor.Faction == Faction.Dungeon && actor.IsAlive)
-                { actor.ScriptedHealthFloor = 1; actor.Damaged += Protect; protectedActors.Add(actor); }
+                {
+                    // Only the survivor and non-minion story actors are rescued during combat.
+                    actor.ScriptedHealthFloor = actor.GetComponent<MinionController>() == null || actor == survivor?.Health ? 1 : 0;
+                    actor.Damaged += Protect; protectedActors.Add(actor);
+                }
         }
-        // The scripted opening teaches defence without consuming the starting army.
+        // Keep the scripted battle playable; the collapse resolves the opening army's losses.
         private void Protect(ActorHealth source)
         {
             foreach (var actor in protectedActors)
-                if (actor != null && actor.IsAlive && actor.CurrentHealth < actor.MaximumHealth / 2)
+                if (actor != null && actor.ScriptedHealthFloor > 0 && actor.IsAlive && actor.CurrentHealth < actor.MaximumHealth / 2)
                     actor.Heal(actor.MaximumHealth / 2 - actor.CurrentHealth);
             if (waves.Core.CurrentHealth <= waves.Core.MaximumHealth / 2 && Elapsed < BattleEnds)
             { Elapsed = BattleEnds; dialoguePage = 2; dialogueLine = 0; DialogueOpen = true; SynchronizeDialoguePause(); }
@@ -169,8 +180,10 @@ namespace DarkLord.Gameplay
             Elapsed = Mathf.Min(CollapseAt + 4, Elapsed + seconds);
             if (previous < BattleEnds && Elapsed >= BattleEnds) { dialoguePage = 2; dialogueLine = 0; DialogueOpen = true; }
             if (previous < CollapseAt + 4 && Elapsed >= CollapseAt + 4) { dialoguePage = 3; dialogueLine = 0; DialogueOpen = true; }
-            while (spawned < 9 && Elapsed >= 4 + spawned * 1.5f && Elapsed < CollapseAt)
+            while (!collapsed && spawned < 9 && Elapsed >= 4 + spawned * 1.5f)
             { Spawn(null, spawned == 0); spawned++; }
+            if (!collapsed && Elapsed >= BattleEnds)
+            { ResolveEnemyCasualty(); ResolveOpeningCasualties(); }
             if (Elapsed >= CollapseAt && !collapsed) Collapse();
             SynchronizeDialoguePause();
         }
@@ -186,6 +199,7 @@ namespace DarkLord.Gameplay
                 actor.Health.RestoreHealth(maximum, health);
             }
             if (boss) rowen = actor.Health;
+            actor.Health.ScriptedHealthFloor = boss || enemyCasualtyResolved ? 1 : 0;
             var tactics = actor.GetComponent<InvaderTactics>() ?? actor.gameObject.AddComponent<InvaderTactics>();
             tactics.Configure(boss ? InvaderRole.Charger : spawned % 3 == 0 ? InvaderRole.Shieldbearer : InvaderRole.Warrior);
             if (saved != null)
@@ -198,8 +212,22 @@ namespace DarkLord.Gameplay
             tactics.SetHero(boss);
             if (boss) actor.transform.localScale *= 1.4f;
             actor.Assault(waves.Core, dungeon);
-            actor.Health.Died += () => { if (actor != null && !boss) waves.Harvest?.LeaveCorpse(actor.Health); };
+            actor.Health.Died += () =>
+            {
+                if (actor == null || boss) return;
+                enemyCasualtyResolved = true;
+                foreach (var survivor in enemies)
+                    if (survivor != null && survivor.IsAlive) survivor.Health.ScriptedHealthFloor = 1;
+                waves.Harvest?.LeaveCorpse(actor.Health);
+            };
             enemies.Add(actor);
+        }
+        private void ResolveEnemyCasualty()
+        {
+            if (enemyCasualtyResolved) return;
+            // A passive player still gets exactly one real casualty for corpse training.
+            var victim = enemies.FirstOrDefault(e => e != null && e.IsAlive && e.Health != rowen);
+            if (victim != null) victim.Health.Kill();
         }
         private void Collapse()
         {
@@ -219,11 +247,25 @@ namespace DarkLord.Gameplay
                 if (corpse != null && dungeon.WorldToCell(corpse.transform.position).x <= dungeon.Layout.Core.x - 5)
                     corpse.transform.position = safe + Vector3.left * 2;
             dungeon.CollapseOpeningCorridor();
+            ResolveOpeningCasualties();
             foreach (var actor in protectedActors) if (actor != null) actor.Heal(actor.MaximumHealth);
             waves.Combat?.RefillMana(); EnsureTrainingCorpse();
         }
+        private void ResolveOpeningCasualties()
+        {
+            if (casualtiesResolved) return;
+            casualtiesResolved = true;
+            var slimes = protectedActors.Where(a => a != null && a.IsAlive)
+                .Select(a => a.GetComponent<MinionController>())
+                .Where(m => m != null)
+                .OrderBy(m => (m.GuardPosition - (Vector2)dungeon.CellCenter(dungeon.Layout.Core)).sqrMagnitude)
+                .ThenBy(m => m.GuardPosition.y).ThenBy(m => m.GuardPosition.x).ToArray();
+            // Kill uses the normal death/animation/unregistration path and bypasses tutorial HP floors.
+            for (int i = 1; i < slimes.Length; i++) slimes[i].Health.Kill();
+        }
         public TutorialSaveData Capture() => !Active ? null : new TutorialSaveData {
-            active = true, elapsed = Elapsed, spawned = spawned, collapsed = collapsed,
+            active = true, elapsed = Elapsed, spawned = spawned, collapsed = collapsed, openingCasualtiesResolved = casualtiesResolved,
+            openingEnemyCasualtyResolved = enemyCasualtyResolved,
             trainingVersion = 1, trainingStep = TrainingStep, dialogueVersion = 3, dialoguePage = dialoguePage, dialogueLine = dialogueLine, dialogueOpen = DialogueOpen,
             enemies = enemies.Where(e => e != null && e.IsAlive).Select(e => {
                 var saved = SaveSnapshots.Actor(e); saved.tutorialBoss = e.Health == rowen; return saved;
@@ -234,6 +276,9 @@ namespace DarkLord.Gameplay
             Clear();
             if (data == null || !data.active) return;
             Elapsed = Mathf.Clamp(data.elapsed, 0, FinishAt); spawned = Mathf.Clamp(data.spawned, 0, 9); collapsed = data.collapsed;
+            casualtiesResolved = data.openingCasualtiesResolved;
+            enemyCasualtyResolved = data.openingEnemyCasualtyResolved || data.collapsed ||
+                data.enemies != null && data.spawned > data.enemies.Length;
             Active = Elapsed < FinishAt;
             dialoguePage = data.dialogueVersion >= 1 ? data.dialoguePage : Elapsed < BattleEnds ? 1 : Elapsed < CollapseAt + 4 ? 2 : 3;
             dialogueLine = data.dialogueVersion >= 2 ? Mathf.Clamp(data.dialogueLine, 0, DialogueLineCount(dialoguePage) - 1) : dialoguePage == 3 ? 3 : dialoguePage == 1 || dialoguePage == 2 ? 1 : 0;
@@ -241,6 +286,13 @@ namespace DarkLord.Gameplay
             TrainingStep = data.trainingVersion == 1 ? data.trainingStep : TutorialTrainingStep.None;
             if (!Active) return;
             ProtectDefenders(); BindTrainingEvents();
+            if (collapsed && !casualtiesResolved)
+            {
+                // Migrate old recovery saves, without killing recruits in already-advanced training saves.
+                if (TrainingStep == TutorialTrainingStep.None || TrainingStep == TutorialTrainingStep.Pickup ||
+                    TrainingStep == TutorialTrainingStep.Deliver || TrainingStep == TutorialTrainingStep.Summon) ResolveOpeningCasualties();
+                else casualtiesResolved = true;
+            }
             if (!collapsed && data.enemies != null) foreach (var saved in data.enemies)
                 Spawn(saved, saved.tutorialBoss || saved.maximumHealth == 900 || saved.maximumHealth == RowenMaximumHealth);
             SynchronizeDialoguePause();

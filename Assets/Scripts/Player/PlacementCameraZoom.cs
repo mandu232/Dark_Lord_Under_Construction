@@ -15,6 +15,7 @@ namespace DarkLord.Player
         public static PlacementCameraZoom Acquire(Camera camera, Object owner)
         {
             if (camera == null || !camera.orthographic) return null;
+            camera.GetComponent<CameraFollow>()?.CancelImpact();
             var zoom = camera.GetComponent<PlacementCameraZoom>();
             if (zoom == null) zoom = camera.gameObject.AddComponent<PlacementCameraZoom>();
             if (zoom.owners.Count == 0)

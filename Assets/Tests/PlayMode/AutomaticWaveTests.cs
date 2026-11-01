@@ -56,6 +56,65 @@ namespace DarkLord.Tests
             Assert.IsFalse(waves.CanStartWave); waves.BeginNextWave();
             Assert.AreEqual(0, waves.CurrentWave);
         }
+        [UnityTest] public IEnumerator EmptyPreparationQuietlyShortensWaitWithoutStartButton()
+        {
+            var grid = Find<DarkLord.Dungeon.DungeonGrid>();
+            grid.Inventory.Restore(Array.Empty<DarkLord.Dungeon.ConstructionItemStack>());
+            Assert.AreEqual(0, grid.Construction.PendingCount);
+            waves.RestoreSave(Timed(0, 100));
+            yield return new WaitForSeconds(5.2f);
+            float before = waves.NextWaveRemaining;
+            yield return new WaitForSeconds(1);
+            Assert.That(before - waves.NextWaveRemaining, Is.InRange(5.5f, 7f));
+            Assert.IsFalse(waves.CanStartWave);
+            var button = scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<UnityEngine.UI.Button>(true))
+                .Single(b => b.name == "Start Wave Button");
+            Assert.IsFalse(button.gameObject.activeInHierarchy);
+            var trap = Resources.FindObjectsOfTypeAll<DarkLord.Dungeon.BuildItemDefinition>()
+                .First(i => i.category == DarkLord.Dungeon.BuildCategory.Traps && i.available && i.prefab != null);
+            grid.Inventory.Grant(trap);
+            yield return new WaitForSeconds(.6f);
+            before = waves.NextWaveRemaining;
+            yield return new WaitForSeconds(1);
+            Assert.That(before - waves.NextWaveRemaining, Is.InRange(.9f, 1.5f));
+            grid.Inventory.Restore(Array.Empty<DarkLord.Dungeon.ConstructionItemStack>());
+            before = waves.NextWaveRemaining;
+            yield return new WaitForSeconds(1);
+            Assert.That(before - waves.NextWaveRemaining, Is.InRange(.9f, 1.5f));
+        }
+        [UnityTest] public IEnumerator LeftoverTrapsWithNoSpaceQuietlyShortenWaitUntilSpaceReopens()
+        {
+            var grid = Find<DarkLord.Dungeon.DungeonGrid>();
+            grid.Inventory.Restore(Array.Empty<DarkLord.Dungeon.ConstructionItemStack>());
+            var trap = Resources.FindObjectsOfTypeAll<DarkLord.Dungeon.BuildItemDefinition>()
+                .First(i => i.category == DarkLord.Dungeon.BuildCategory.Traps && i.available && i.prefab != null);
+            grid.Inventory.Grant(trap);
+            Assert.IsTrue(grid.Inventory.HasPlaceableItem(grid));
+            Vector2Int? occupied = null;
+            for (int y = 0; y < grid.Layout.Height; y++)
+                for (int x = 0; x < grid.Layout.Width; x++)
+                {
+                    var cell = new Vector2Int(x, y);
+                    if (!grid.CanPlaceTrap(cell)) continue;
+                    grid.Inventory.Grant(trap);
+                    Assert.IsTrue(grid.TryPlaceTrapItem(cell, trap));
+                    occupied = cell;
+                }
+            Assert.IsTrue(occupied.HasValue);
+            Assert.Greater(grid.Inventory.Count(trap), 0);
+            Assert.IsFalse(grid.Inventory.HasPlaceableItem(grid));
+            waves.RestoreSave(Timed(0, 100));
+            yield return new WaitForSeconds(5.6f);
+            float before = waves.NextWaveRemaining;
+            yield return new WaitForSeconds(1);
+            Assert.That(before - waves.NextWaveRemaining, Is.InRange(5.5f, 7f));
+            Assert.IsTrue(grid.RemoveTrap(occupied.Value));
+            Assert.IsTrue(grid.Inventory.HasPlaceableItem(grid));
+            yield return new WaitForSeconds(.6f);
+            before = waves.NextWaveRemaining;
+            yield return new WaitForSeconds(1);
+            Assert.That(before - waves.NextWaveRemaining, Is.InRange(.9f, 1.5f));
+        }
         [UnityTest] public IEnumerator EasyWaitsForManualStartAndCannotOverlap()
         {
             waves.ConfigureRun(new NewGameOptions { difficulty = GameDifficulty.Easy });
@@ -78,16 +137,19 @@ namespace DarkLord.Tests
             Assert.IsTrue(save.enemies.Any(e => e.invasionWave == 1));
             Assert.IsTrue(save.enemies.Any(e => e.invasionWave == 2));
             Assert.IsTrue(save.schedule.pendingWaves.All(n => n == 2));
-            Assert.IsFalse(Find<WaveHud>().GetComponentsInChildren<UnityEngine.UI.Button>(true).Any(b => b.gameObject.activeSelf && b.GetComponentsInChildren<TMPro.TMP_Text>().Any(t => t.text.Contains("시작"))));
+            Assert.IsFalse(scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<UnityEngine.UI.Button>(true))
+                .Any(b => b.gameObject.activeInHierarchy && b.GetComponentsInChildren<TMPro.TMP_Text>().Any(t => t.text.Contains("웨이브 시작"))));
         }
         [UnityTest] public IEnumerator PauseAndMissingEntranceDoNotSkipOrRerollArrival()
         {
             waves.RestoreSave(Timed(0, .05f));
             Time.timeScale = 0;
+            Assert.IsFalse(waves.CanStartWave); waves.BeginNextWave();
             yield return new WaitForSecondsRealtime(.12f);
             Assert.AreEqual(0, waves.CurrentWave); Assert.That(waves.NextWaveRemaining, Is.EqualTo(.05f).Within(.001f));
             Time.timeScale = 1;
             var grid = Find<DarkLord.Dungeon.DungeonGrid>(); grid.Layout.RemoveEntrance();
+            Assert.IsFalse(waves.CanStartWave); waves.BeginNextWave();
             yield return new WaitForSeconds(.12f);
             Assert.AreEqual(0, waves.CurrentWave); Assert.AreEqual(0, waves.NextWaveRemaining);
             grid.Layout.SetEntrance(new Vector2Int(2, grid.Layout.Core.y));

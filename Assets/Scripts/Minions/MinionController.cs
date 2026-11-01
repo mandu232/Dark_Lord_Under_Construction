@@ -72,7 +72,8 @@ namespace DarkLord.Minions
         private const float PoiseRecoveryDelay = 2f;
         private const float PoiseImmunityDuration = 1.5f;
         private int consecutiveHits;
-        private float lastPoiseHit, staggerImmuneUntil;
+        private float lastPoiseHit, staggerImmuneUntil, stunnedUntil;
+        public bool IsStunned => Time.time < stunnedUntil;
         private bool damagePending;
         private MinionSupport support;
         internal DarkLord.Dungeon.DungeonGrid DefenceDungeon => defenceDungeon;
@@ -113,7 +114,7 @@ namespace DarkLord.Minions
         private void OnEnable() { health.Damaged += OnDamaged; health.Died += OnDied; }
         private void OnDisable()
         {
-            consecutiveHits = 0; lastPoiseHit = staggerImmuneUntil = 0;
+            consecutiveHits = 0; lastPoiseHit = staggerImmuneUntil = stunnedUntil = 0;
             health.Damaged -= OnDamaged;
             health.Died -= OnDied;
             damagePending = false;
@@ -191,6 +192,7 @@ namespace DarkLord.Minions
         {
             if (!health.IsAlive) { motor.Stop(); return; }
             if (Time.timeScale == 0 || IsHeld) { motor.Stop(); return; }
+            if (IsStunned) return;
             if (State == ActorState.Hit && Time.time < stateEnds) return;
             if (Order != MinionOrder.Return && support != null && support.TryAct())
             { damagePending = false; SetState(ActorState.Attack); return; }
@@ -369,6 +371,18 @@ namespace DarkLord.Minions
             else motor.Move(delta.normalized * Mathf.Min(movementScale, delta.magnitude / Mathf.Max(0.01f, motor.MoveSpeed * Time.fixedDeltaTime)));
             SetState(ActorState.Run);
             return false;
+        }
+
+        public void ApplyStun(float duration)
+        {
+            if (!isActiveAndEnabled || !health.IsAlive || IsStaggerImmune || !float.IsFinite(duration) || duration <= 0) return;
+            stunnedUntil = Mathf.Max(stunnedUntil, Time.time + duration);
+            damagePending = false;
+            GetComponent<InvaderTactics>()?.CancelForStun();
+            motor.Stop();
+            motor.CancelAttackMotion();
+            stateEnds = Mathf.Max(stateEnds, stunnedUntil);
+            SetState(ActorState.Hit);
         }
 
         private void OnDamaged(ActorHealth source)

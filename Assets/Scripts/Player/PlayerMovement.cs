@@ -22,6 +22,14 @@ namespace DarkLord.Player
         private const float WalkReferenceSpeed = 2.475f;
         private const float WalkBoost = 1.1f;
         private const float CorpseCarryMultiplier = .65f;
+        public Vector2 DodgeInputDirection
+        {
+            get
+            {
+                Vector2 input = isActiveAndEnabled && move != null ? move.ReadValue<Vector2>() : Vector2.zero;
+                return input.sqrMagnitude > .01f ? input.normalized : motor.Facing;
+            }
+        }
 
         private void Awake()
         {

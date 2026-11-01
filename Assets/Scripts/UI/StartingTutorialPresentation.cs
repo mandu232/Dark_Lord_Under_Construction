@@ -24,7 +24,6 @@ namespace DarkLord.UI
         private float bossIntroElapsed;
         private const float BossIntroDuration = 1.35f;
         private static readonly Vector2 BossBarPosition = new Vector2(0, -38);
-        private RectTransform companionPortrait;
         private Vector3? retreatFocus;
         private TMP_Text controls;
         private Image nameplate;
@@ -108,13 +107,6 @@ namespace DarkLord.UI
             var taskPlate = task.gameObject.AddComponent<Image>(); taskPlate.color = new Color(.07f, .015f, .035f, .94f); taskPlate.raycastTarget = false;
             objective = Label("Required action", task, font, new Vector2(0, -12), new Vector2(358, 140), 19);
             objective.alignment = TextAlignmentOptions.TopLeft; task.gameObject.SetActive(false);
-            var companion = Rect("Rube companion portrait", task, new Vector2(-14, 0), new Vector2(150, 150));
-            companionPortrait = companion;
-            companion.anchorMin = companion.anchorMax = new Vector2(0, .5f); companion.pivot = new Vector2(1, .5f);
-            var rube = companion.gameObject.AddComponent<RawImage>(); rube.raycastTarget = false;
-            rube.texture = Resources.Load<Texture2D>("Story/Portraits/RubeDungeon");
-            rube.enabled = rube.texture != null;
-            if (rube.texture != null) companion.sizeDelta = new Vector2(150, 150f * rube.texture.height / rube.texture.width);
             var overlay = Rect("Collapse flash", transform, Vector2.zero, Vector2.zero);
             overlay.anchorMin = Vector2.zero; overlay.anchorMax = Vector2.one; overlay.offsetMin = overlay.offsetMax = Vector2.zero;
             flash = overlay.gameObject.AddComponent<Image>(); flash.color = Color.clear; flash.raycastTarget = false;
@@ -179,9 +171,6 @@ namespace DarkLord.UI
                 var root = objective.transform.parent.GetComponent<RectTransform>();
                 root.anchorMin = root.anchorMax = root.pivot = new Vector2(recruitmentOpen ? 0 : 1, .5f);
                 root.anchoredPosition = new Vector2(recruitmentOpen ? 24 : -24, -40);
-                companionPortrait.anchorMin = companionPortrait.anchorMax = new Vector2(recruitmentOpen ? 1 : 0, .5f);
-                companionPortrait.pivot = new Vector2(recruitmentOpen ? 0 : 1, .5f);
-                companionPortrait.anchoredPosition = new Vector2(recruitmentOpen ? 14 : -14, 0);
             }
             panel.gameObject.SetActive(active && tutorial.DialogueOpen);
             if (!active) { RestoreCamera(); flash.color = Color.clear; dustShown = false; retreatFocus = null; return; }

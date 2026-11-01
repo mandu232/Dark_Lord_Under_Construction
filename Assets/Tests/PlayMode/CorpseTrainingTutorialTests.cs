@@ -53,10 +53,100 @@ namespace DarkLord.Tests
             var session = Find<GameSaveSession>(); var data = JsonUtility.FromJson<GameSaveData>(JsonUtility.ToJson(session.Capture()));
             SaveSlotStore.Validate(data); session.Restore(data); return data;
         }
+        [UnityTest] public IEnumerator CollapseKillsThreeOpeningSlimesAndNeverRegrantsThemOnLoad()
+        {
+            var originals = summoning.Dungeon.Guards.Where(g => g.Role == MinionRole.BloodSlime).ToArray();
+            Assert.AreEqual(4, originals.Length);
+            int deaths = 0; foreach (var guard in originals) guard.Health.Died += () => deaths++;
+            yield return TutorialTestActions.BeginTraining(waves);
+            Assert.AreEqual(3, deaths); Assert.AreEqual(1, summoning.GuardCount);
+            Assert.IsTrue(summoning.Dungeon.Guards.All(g => g.Role == MinionRole.BloodSlime));
+            Assert.IsTrue(waves.Lord.IsAlive); Assert.IsTrue(waves.Core.IsAlive);
+            var data = RoundTrip(); Assert.IsTrue(data.tutorial.openingCasualtiesResolved);
+            summoning.GrantStartingSlime(); Assert.AreEqual(1, summoning.GuardCount);
+            RoundTrip(); Assert.AreEqual(1, summoning.GuardCount);
+        }
+
+        [UnityTest] public IEnumerator FirstTrainingSummonIsAlwaysSlimeAcrossRandomSeedsAndSaveRestore()
+        {
+            yield return TutorialTestActions.BeginTraining(waves);
+            var corpse = waves.Harvest.Corpses.Single(); TutorialTestActions.MoveLord(waves, corpse.transform.position);
+            Assert.IsTrue(waves.Harvest.TryInteract()); yield return null;
+            var facility = summoning.Dungeon.RecruitmentFacilities.Single();
+            TutorialTestActions.MoveLord(waves, facility.transform.position + Vector3.down); yield return null; yield return null;
+            Assert.AreEqual(TutorialTrainingStep.Summon, waves.Tutorial.TrainingStep);
+            var session = Find<GameSaveSession>(); var saved = session.Capture(); var randomState = Random.state;
+            try
+            {
+                for (int seed = 0; seed < 5; seed++)
+                {
+                    session.Restore(JsonUtility.FromJson<GameSaveData>(JsonUtility.ToJson(saved))); yield return null; yield return null;
+                    Random.InitState(seed); Assert.IsTrue(summoning.GuaranteesBloodSlime);
+                    Assert.IsTrue(summoning.TryRecruit()); yield return null; yield return null;
+                    Assert.AreEqual("혈 슬라임 소환", Find<RecruitmentPanel>().RandomSummonButton.GetComponentInChildren<TMPro.TMP_Text>().text);
+                    Assert.IsTrue(summoning.TrySummonRandom()); Assert.AreEqual(2, summoning.GuardCount);
+                    Assert.IsTrue(summoning.Dungeon.Guards.All(g => g.Role == MinionRole.BloodSlime));
+                    Assert.AreEqual(TutorialTrainingStep.Corridor, waves.Tutorial.TrainingStep);
+                    Assert.IsFalse(summoning.GuaranteesBloodSlime);
+                }
+                var advanced = session.Capture(); advanced.tutorial.openingCasualtiesResolved = false;
+                session.Restore(advanced); Assert.AreEqual(2, summoning.GuardCount, "Legacy advanced saves must keep their newly recruited slime.");
+            }
+            finally { Random.state = randomState; }
+        }
+
+        [UnityTest] public IEnumerator LegacyRecoverySaveWithFourGuardsMigratesToOneSurvivorOnce()
+        {
+            yield return TutorialTestActions.BeginTraining(waves);
+            var session = Find<GameSaveSession>(); var saved = session.Capture(); var source = saved.guards.Single();
+            saved.guards = Enumerable.Range(0, 4).Select(i =>
+            {
+                var guard = JsonUtility.FromJson<MinionSaveData>(JsonUtility.ToJson(source));
+                guard.position = guard.post = summoning.Dungeon.CellCenter(summoning.Dungeon.Layout.Core + new Vector2Int(i - 1, -1));
+                return guard;
+            }).ToArray();
+            saved.tutorial.openingCasualtiesResolved = false;
+            SaveSlotStore.Validate(saved); session.Restore(saved);
+            Assert.AreEqual(1, summoning.GuardCount); Assert.IsTrue(session.Capture().tutorial.openingCasualtiesResolved);
+            RoundTrip(); Assert.AreEqual(1, summoning.GuardCount);
+        }
+        [UnityTest] public IEnumerator NormalScoutsAreDefeatableWithOnlyTheRecoveryArmyAndBasePlayerStats()
+        {
+            waves.ConfigureRun(new NewGameOptions { difficulty = GameDifficulty.Normal });
+            yield return TutorialTestActions.Complete(waves);
+            Assert.AreEqual(2, summoning.GuardCount); Assert.AreEqual(2, waves.NextEnemyCount); Assert.AreEqual(36, waves.NextEnemyHealth);
+            Assert.That(waves.NextWaveRemaining, Is.InRange(165.6f, 194.5f));
+            var grid = summoning.Dungeon; var guards = grid.Guards.ToArray();
+            for (int i = 0; i < guards.Length; i++)
+                guards[i].Relocate(grid.CellCenter(grid.Layout.Core + new Vector2Int(-2, i == 0 ? -1 : 1)));
+            TutorialTestActions.MoveLord(waves, grid.CellCenter(grid.Layout.Core + Vector2Int.left * 2));
+            var next = waves.CaptureSave(); next.schedule.remaining = .01f; waves.RestoreSave(next);
+            yield return new WaitForSeconds(.1f);
+            Assert.AreEqual(1, waves.CurrentWave); Assert.AreEqual(2, waves.RemainingEnemies);
+            Assert.AreEqual(36, scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<WaveMember>()).First().GetComponent<ActorHealth>().MaximumHealth);
+            float deadline = Time.unscaledTime + 20;
+            while (waves.State == WaveState.Active && Time.unscaledTime < deadline)
+            {
+                var target = scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<WaveMember>())
+                    .Select(m => m.GetComponent<ActorHealth>()).Where(h => h.IsAlive)
+                    .OrderBy(h => Vector2.Distance(h.transform.position, waves.Lord.transform.position)).FirstOrDefault();
+                if (target != null)
+                {
+                    var direction = target.transform.position - waves.Lord.transform.position;
+                    if (direction.magnitude < 1.7f) waves.Combat.TryAttack(direction);
+                    if (direction.magnitude < 3.5f) waves.Combat.TryNova();
+                }
+                yield return null;
+            }
+            Assert.AreEqual(WaveState.RewardSelection, waves.State);
+            Assert.IsTrue(waves.Lord.IsAlive); Assert.IsTrue(waves.Core.IsAlive);
+            Assert.GreaterOrEqual(summoning.GuardCount, 1);
+        }
+
         [UnityTest] public IEnumerator ActualFCarryDeliveryAndRandomSummonAreRequiredToFinish()
         {
             EnableKeyboard(); yield return TutorialTestActions.BeginTraining(waves);
-            Assert.AreEqual(4, summoning.GuardCount); Assert.IsFalse(waves.CanStartWave);
+            Assert.AreEqual(1, summoning.GuardCount); Assert.IsFalse(waves.CanStartWave);
             waves.Tutorial.Advance(999); Assert.IsFalse(waves.Tutorial.NextDialogue());
             Assert.AreEqual(TutorialTrainingStep.Pickup, waves.Tutorial.TrainingStep);
             Assert.IsTrue(Find<StartingTutorialPresentation>().transform.Find("Reconstruction objective").gameObject.activeSelf);
@@ -70,17 +160,17 @@ namespace DarkLord.Tests
             InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.F)); yield return null; yield return null;
             Assert.IsTrue(summoning.IsRecruiting);
             Find<RecruitmentPanel>().SelectMinion();
-            Assert.AreEqual(5, summoning.GuardCount); Assert.AreEqual(0, facility.SummonStacks);
+            Assert.AreEqual(2, summoning.GuardCount); Assert.AreEqual(0, facility.SummonStacks);
             yield return TutorialTestActions.CompleteExpansion(waves);
             Assert.AreEqual(TutorialTrainingStep.Complete, waves.Tutorial.TrainingStep); Assert.IsTrue(waves.Tutorial.Active);
             TutorialTestActions.DismissDialogue(waves); Assert.IsFalse(waves.Tutorial.Active); Assert.IsTrue(waves.CanStartWave);
             Assert.AreEqual(2, waves.NextEnemyCount);
-            Assert.AreEqual(28, waves.NextEnemyHealth);
+            Assert.AreEqual(29, waves.NextEnemyHealth);
             Assert.IsTrue(waves.NextFormation.All(role => role == InvaderRole.Warrior));
             var entrance = waves.EntrancePosition;
             waves.BeginNextWave(); yield return null; yield return null;
             var invader = Object.FindObjectsByType<WaveMember>(FindObjectsSortMode.None).First(m => m.Number == 1);
-            Assert.AreEqual(28, invader.GetComponent<ActorHealth>().MaximumHealth);
+            Assert.AreEqual(29, invader.GetComponent<ActorHealth>().MaximumHealth);
             Assert.Less(Vector2.Distance(entrance, invader.transform.position), 1.5f);
         }
         [UnityTest] public IEnumerator CarryAndSummonProgressSurviveSaveAndCapacityRewardPersists()
@@ -98,9 +188,9 @@ namespace DarkLord.Tests
             RoundTrip(); Assert.AreEqual(TutorialTrainingStep.Corridor, waves.Tutorial.TrainingStep);
             yield return TutorialTestActions.CompleteExpansion(waves);
             RoundTrip(); Assert.AreEqual(TutorialTrainingStep.Complete, waves.Tutorial.TrainingStep);
-            Assert.AreEqual(5, summoning.GuardCount); Assert.IsTrue(waves.Tutorial.DialogueOpen);
+            Assert.AreEqual(2, summoning.GuardCount); Assert.IsTrue(waves.Tutorial.DialogueOpen);
             TutorialTestActions.DismissDialogue(waves); RoundTrip();
-            Assert.IsFalse(waves.Tutorial.Active); Assert.AreEqual(5, summoning.GuardCount);
+            Assert.IsFalse(waves.Tutorial.Active); Assert.AreEqual(2, summoning.GuardCount);
             Assert.IsTrue(summoning.Dungeon.RecruitmentFacilities.Single().TutorialCapacityUnlocked);
         }
         [UnityTest] public IEnumerator NoCorpseOrEarlyGroundDeliveryCannotSoftlockOrSkipTraining()
@@ -161,12 +251,13 @@ namespace DarkLord.Tests
             Assert.That(Vector2.Distance(guard.transform.position, guardStart), Is.GreaterThan(.08f));
             Assert.That(Vector2.Distance(waves.Lord.transform.position, playerStart), Is.GreaterThan(.08f));
             Assert.AreEqual(playerHealth, waves.Lord.CurrentHealth); Assert.AreEqual(guardHealth, guard.Health.CurrentHealth);
-            Assert.IsTrue(soldiers.All(s => s.GetComponent<OpeningRetreat>() != null && !s.enabled));
+            Assert.AreEqual(1, soldiers.Count(s => !s.IsAlive));
+            Assert.IsTrue(soldiers.Where(s => s.IsAlive).All(s => s.GetComponent<OpeningRetreat>() != null && !s.enabled));
             Assert.IsTrue(soldiers.Any(s => s.transform.position.x < soldierStart.x - .4f));
             RoundTrip(); yield return null; yield return null;
             var restored = waves.Tutorial.GetComponentsInChildren<MinionController>()
                 .Where(m => m.IsAlive && m.Health != waves.Tutorial.Rowen).ToArray();
-            Assert.AreEqual(8, restored.Length);
+            Assert.AreEqual(7, restored.Length);
             Assert.IsTrue(restored.All(s => s.GetComponent<OpeningRetreat>() != null && !s.enabled));
         }
         [UnityTest] public IEnumerator HighlightTracksCorpseFacilityAndActualButtonThenHidesForDialogue()

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DarkLord.Actors;
+using DarkLord.Gameplay;
 using DarkLord.Dungeon;
 using DarkLord.Minions;
 using UnityEngine;
@@ -38,6 +39,7 @@ namespace DarkLord.Player
         public string Message => message;
         public MinionController RecruitDefinition => guardPrefab;
         public bool IsRecruiting => recruitmentWindow;
+        public bool GuaranteesBloodSlime => GetComponent<PlayerCombat>()?.IsTutorialFirstSummon == true;
         public ResourceBuilding RecruitmentStation => recruitmentStation;
         public event System.Action<MinionController> RandomMinionSummoned;
         private bool startingSlimeGranted;
@@ -166,6 +168,7 @@ namespace DarkLord.Player
         {
             if (!IsRecruiting || recruitmentStation == null || recruitmentStation.SummonStacks < 1)
             { message = "시체를 소환소에 넣어 스택을 모으세요. 소환에는 스택 1개가 필요합니다."; return false; }
+            if (GuaranteesBloodSlime) return TrySummonInternal(MinionRole.BloodSlime, true);
             var available = new List<MinionRole>();
             for (int i = 0; i < 3; i++) if (RecruitDefinitionFor((MinionRole)i) != null) available.Add((MinionRole)i);
             return available.Count > 0 && TrySummonInternal(available[Random.Range(0, available.Count)], true);
@@ -211,6 +214,7 @@ namespace DarkLord.Player
         {
             var guard = Instantiate(definition, dungeon.CellCenter(cell), Quaternion.identity);
             UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(guard.gameObject, gameObject.scene);
+            GameplayEffects.Show(guard.transform, GameplayEffectKind.Summon, guard.transform.position);
             guard.name = guard.DisplayName; guard.Defend(guard.transform.position);
             guards.Add(guard); dungeon.RegisterGuard(guard); commands?.Register(guard); return guard;
         }
