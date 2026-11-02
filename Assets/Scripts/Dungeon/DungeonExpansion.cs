@@ -307,9 +307,11 @@ namespace DarkLord.Dungeon
             }
             var start = corridorStart.Value;
             var result = dungeon.Construction.CanPlanCorridor(start, cell);
-            dungeon.HighlightCells(DungeonConstruction.CorridorCells(start, cell), result == ConstructionResult.Success);
+            var newCells = DungeonConstruction.CorridorCells(start, cell);
+            newCells.RemoveAll(c => dungeon.Construction.At(c) != null || dungeon.Layout.IsFloor(c));
+            dungeon.HighlightCells(newCells, result == ConstructionResult.Success);
             previewCell = cell;
-            Message = result == ConstructionResult.Success ? "좌클릭을 놓으면 폭 3칸 복도가 생성됩니다. 우클릭: 취소" : ResultMessage(result);
+            Message = result == ConstructionResult.Success ? "좌클릭을 놓으면 표시된 새 구간만 굴착합니다. 기존 방·복도는 유지됩니다. 우클릭: 취소" : ResultMessage(result);
             if (build.WasReleasedThisFrame())
             {
                 TryBuildCorridor(start, cell);

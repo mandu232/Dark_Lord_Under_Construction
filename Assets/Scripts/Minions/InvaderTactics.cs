@@ -64,6 +64,11 @@ namespace DarkLord.Minions
         public void Configure(InvaderRole role)
         {
             Cancel(); Role = role; nextAbility = Time.time + 1;
+            // Distinct uniforms complement the role badges without replacing authored animations.
+            var body = controller.GetComponentInChildren<SpriteRenderer>();
+            if (body != null) body.color = role == InvaderRole.Shieldbearer ? new Color(.65f, .8f, 1) :
+                role == InvaderRole.Healer ? new Color(.65f, 1, .7f) :
+                role == InvaderRole.Charger ? new Color(1, .65f, .45f) : Color.white;
             if (badge == null) CreateMarkers();
             badge.color = role == InvaderRole.Shieldbearer ? new Color(.35f, .7f, 1) : role == InvaderRole.Healer ? new Color(.3f, 1, .5f) : new Color(1, .3f, .2f);
             badge.transform.localScale = role == InvaderRole.Shieldbearer ? new Vector3(.34f, .42f, 1) : new Vector3(.12f, .4f, 1);

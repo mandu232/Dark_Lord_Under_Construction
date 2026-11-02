@@ -32,13 +32,15 @@ namespace DarkLord.Player
         private readonly HashSet<ActorHealth> struck = new HashSet<ActorHealth>();
         private float nextAttack, nextNova, nextWard, nextDodge, wardUntil, dodgeUntil, attackUntil, repairProgress;
         private Vector2 dodgeDirection;
-        private const float DodgeDuration = .6f;
+        private const float DodgeDuration = .38f;
         private const float DodgeDashDuration = .1f;
-        private const float DodgeInvulnerabilityDuration = .32f;
-        private const float DodgeRecovery = 1.25f;
+        private const float DodgeInvulnerabilityDuration = .28f;
+        private const float DodgeRecovery = 1f;
         // Burst first, then settle into the final roll frames instead of sliding at full speed.
         public float DodgeSpeedMultiplier => IsDodging
-            ? Mathf.Lerp(5f, .8f, Mathf.SmoothStep(0, 1, 1 - (dodgeUntil - Time.time) / DodgeDuration)) : 1;
+            ? Mathf.Lerp(6.5f, 1.2f, Mathf.SmoothStep(0, 1, 1 - (dodgeUntil - Time.time) / DodgeDuration)) : 1;
+        public Vector2 AttackFacing { get; private set; } = Vector2.left;
+        private float bufferedAttackUntil;
         private bool meleeAttack;
         private bool weaponDrawn, pendingSlash;
         private Vector2 pendingSlashDirection;
@@ -96,6 +98,7 @@ namespace DarkLord.Player
         private void OnDisable()
         {
             PlayerHitStop.CancelFor(this);
+            bufferedAttackUntil = 0;
             health.DamageFilter -= AllowDamage;
             health.Damaged -= OnDamaged;
             wardUntil = dodgeUntil = attackUntil = 0;
@@ -122,13 +125,18 @@ namespace DarkLord.Player
             motor.SpeedMultiplier = (CanAct ? DodgeSpeedMultiplier : 1) * (1 + MovementBonus);
             if (health.IsAlive && !IsFinished && Time.timeScale > 0)
                 Mana = Mathf.Min(MaximumMana, Mana + Time.deltaTime * ((waves != null && waves.State == WaveState.Active ? 1 : 10) + (waves?.Economy?.Has(TechId.SoulWell) == true ? 2 : 0)));
-            if (!CanAct) { repairProgress = 0; return; }
+            if (!CanAct) { bufferedAttackUntil = 0; repairProgress = 0; return; }
             var keyboard = Keyboard.current;
             // Resolve dodge before held attacks; use this frame's movement input, not stale attack facing.
             if (keyboard != null && keyboard.spaceKey.wasPressedThisFrame)
                 TryDodge(GetComponent<PlayerMovement>()?.DodgeInputDirection ?? motor.Facing);
-            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) { repairProgress = 0; return; }
-            if (Mouse.current != null && Mouse.current.leftButton.isPressed) TryAttack(AimDirection());
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) { bufferedAttackUntil = 0; repairProgress = 0; return; }
+            // F belongs to interaction; never turn the same input frame into a melee strike.
+            if (keyboard != null && keyboard.fKey.wasPressedThisFrame) { bufferedAttackUntil = 0; return; }
+            var mouse = Mouse.current;
+            if (mouse != null && mouse.leftButton.wasPressedThisFrame) bufferedAttackUntil = Time.time + .16f;
+            if (mouse != null && (mouse.leftButton.isPressed || Time.time < bufferedAttackUntil))
+                if (TryAttack(AimDirection())) bufferedAttackUntil = 0;
             if (keyboard == null) return;
             if (keyboard.qKey.wasPressedThisFrame) TryOffensiveSpell();
             if (keyboard.rKey.wasPressedThisFrame) TrySupportSpell();
@@ -149,6 +157,7 @@ namespace DarkLord.Player
         {
             if (!CanAct || IsDodging || IsChangingWeapon || Time.time < nextAttack || direction.sqrMagnitude < 0.001f) return false;
             direction.Normalize();
+            AttackFacing = direction;
             if (waves?.Economy != null && waves.Economy.EquippedAttack != AttackStyle.Slash) return TryTechnologyAttack(direction);
             motor.Face(direction);
             if (!weaponDrawn)
@@ -157,7 +166,7 @@ namespace DarkLord.Player
                 pendingSlash = true;
                 pendingSlashDirection = direction;
                 weaponAction = ActorState.Unsheate;
-                weaponActionUntil = Time.time + 3f / 14f;
+                weaponActionUntil = Time.time + 1f / 14f;
                 lastMeleeAt = Time.time;
                 GetComponent<ActorAnimation>()?.Present(weaponAction, direction);
                 return true;
@@ -205,7 +214,7 @@ namespace DarkLord.Player
         public bool TryDodge(Vector2 direction)
         {
             if (!CanAct || IsDodging || Time.time < nextDodge || !float.IsFinite(direction.x) || !float.IsFinite(direction.y) || direction.sqrMagnitude < 0.001f) return false;
-            nextDodge = Time.time + DodgeRecovery;
+            nextDodge = Time.time + Mathf.Max(.6f, DodgeRecovery - .1f * (waves?.Economy?.Rank(TechId.QuickStep) ?? 0));
             dodgeUntil = Time.time + DodgeDuration;
             dodgeDirection = direction.normalized;
             attackUntil = weaponActionUntil = 0;

@@ -32,6 +32,7 @@ namespace DarkLord.Dungeon
     public sealed partial class DungeonConstruction
     {
         public const int CorridorWidth = 3;
+        public const int StartingCorridorLength = 8;
         private readonly DungeonLayout layout;
         private readonly List<DungeonSection> sections = new List<DungeonSection>();
         private readonly DungeonSection[,] owners;

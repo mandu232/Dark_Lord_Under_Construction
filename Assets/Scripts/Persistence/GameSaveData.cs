@@ -36,6 +36,9 @@ namespace DarkLord.Persistence
     [Serializable] public sealed class DungeonSaveData
     {
         public int width, height, expandedCells;
+        public bool hasMapOrigin;
+        public Vector3 mapOrigin;
+        public Vector2Int initialCore;
         public int[] cells;
         public bool hasEntrance;
         public bool hasCoreCell;
@@ -171,7 +174,10 @@ namespace DarkLord.Persistence
                     throw new InvalidDataException("전투 상태가 올바르지 않습니다.");
             }
             var d = data.dungeon;
-            if (d == null || d.width < 15 || d.width > 101 || d.height < 11 || d.height > 101 ||
+            if (d != null && d.hasMapOrigin && (!Finite(d.mapOrigin) || d.initialCore.x < 1 || d.initialCore.y < 1 ||
+                d.initialCore.x >= d.width - 1 || d.initialCore.y >= d.height - 1))
+                throw new InvalidDataException("저장된 맵 원점이 올바르지 않습니다.");
+            if (d == null || d.width < 15 || d.width > DarkLord.Dungeon.DungeonGrid.MaxMapSize || d.height < 11 || d.height > DarkLord.Dungeon.DungeonGrid.MaxMapSize ||
                 d.cells == null || d.cells.Length != d.width * d.height || d.sections == null || d.traps == null || d.queue == null ||
                 data.guards == null || data.wave == null || data.wave.enemies == null)
                 throw new InvalidDataException("저장 데이터가 불완전합니다.");

@@ -26,6 +26,39 @@ namespace DarkLord.Tests
         private Scene scene;
         private float timeScale;
         private bool audioPaused;
+        [TestCase(41, 31)]
+        [TestCase(101, 101)]
+        [TestCase(202, 202)]
+        public void LegacyMapExpansionPreservesTerrainCoreAndOpensFormerBorder(int width, int height)
+        {
+            var source = new DungeonLayout(width, height);
+            var saved = new DungeonSaveData { width = width, height = height,
+                cells = new int[width * height], entrance = source.Entrance, hasEntrance = true };
+            for (int y = 0; y < height; y++) for (int x = 0; x < width; x++)
+                saved.cells[y * width + x] = (int)source.GetCell(new Vector2Int(x, y));
+            var restore = typeof(DungeonLayout).GetMethod("Restore", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var expanded = new DungeonLayout(202, 202);
+            restore.Invoke(expanded, new object[] { saved });
+            Assert.AreEqual(source.Core, expanded.Core);
+            Assert.AreEqual(source.Core, expanded.ActiveCore);
+            Assert.AreEqual(source.Entrance, expanded.Entrance);
+            for (int y = 1; y < height - 1; y++) for (int x = 1; x < width - 1; x++)
+                Assert.AreEqual(source.GetCell(new Vector2Int(x, y)), expanded.GetCell(new Vector2Int(x, y)));
+            Assert.AreEqual(width < 202 ? DungeonCell.Rock : DungeonCell.Bedrock,
+                expanded.GetCell(new Vector2Int(width - 1, height / 2)));
+            Assert.AreEqual(DungeonCell.Bedrock, expanded.GetCell(new Vector2Int(201, 201)));
+            // Save/reload the expanded map: retain the original core, not the new map center.
+            saved.hasMapOrigin = true; saved.initialCore = expanded.Core;
+            saved.width = saved.height = 202; saved.cells = new int[202 * 202];
+            for (int y = 0; y < 202; y++) for (int x = 0; x < 202; x++)
+                saved.cells[y * 202 + x] = (int)expanded.GetCell(new Vector2Int(x, y));
+            var reloaded = new DungeonLayout(202, 202);
+            restore.Invoke(reloaded, new object[] { saved });
+            Assert.AreEqual(source.Core, reloaded.Core);
+            Assert.AreEqual(source.Core, reloaded.ActiveCore);
+            CollectionAssert.AreEqual(saved.cells, Enumerable.Range(0, 202 * 202)
+                .Select(i => (int)reloaded.GetCell(new Vector2Int(i % 202, i / 202))).ToArray());
+        }
         [SetUp] public void Setup()
         {
             directory=Path.Combine(Application.temporaryCachePath,"SaveTests-"+Guid.NewGuid().ToString("N"));

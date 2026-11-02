@@ -24,7 +24,7 @@ namespace DarkLord.Player
         private Vector2 dragDirection;
         private const float DragDistance = .85f;
         private const float MaxDragDistance = 1.3f;
-        private const float DragSmoothTime = .20f;
+        private const float DragSmoothTime = .10f;
         private const float TeleportDistance = 2f;
         private Transform remains;
         private readonly List<InvaderCorpse> corpses = new List<InvaderCorpse>();
@@ -113,6 +113,7 @@ namespace DarkLord.Player
             bool wasCarried = Carried == corpse;
             corpses.Remove(corpse); if (wasCarried) { Carried = null; dragVelocity = Vector3.zero; }
             corpse.Absorb(facility); consumedFrame = Time.frameCount; Message = $"시체를 흡수했습니다. 소환 스택 {facility.SummonStacks}개";
+            if (waves.Economy?.Has(TechId.Salvage) == true) GetComponent<CurrencyWallet>()?.Add(CurrencyType.Gold, 5);
             CorpseDelivered?.Invoke(corpse, facility, wasCarried); return true;
         }
         private void BeginDrag()

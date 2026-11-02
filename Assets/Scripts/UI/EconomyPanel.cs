@@ -32,6 +32,7 @@ namespace DarkLord.UI
             }
             closeButton.onClick.AddListener(() => economy.Close());
             window.gameObject.SetActive(false);
+            if (upkeep != null) upkeep.gameObject.SetActive(false);
             technology = gameObject.AddComponent<CoreTechPanel>(); technology.Configure(director, font);
         }
         private void WorldHint(TMP_Text label, Vector3 position, bool visible)
@@ -45,10 +46,7 @@ namespace DarkLord.UI
             if(waves==null||window==null)return; if(economy==null)economy=waves.Economy; if(economy==null)return;
             bool active=Time.timeScale>0&&!waves.IsFinished;
             window.gameObject.SetActive(active&&economy.IsMerchantOpen);
-            upkeep.gameObject.SetActive(active);
-            upkeep.text=$"하수인 유지비 · 다음 라운드 혈액 {economy.NextUpkeep}\n1마리당 {RunEconomy.BloodPerMinion} · 이번 납부 {economy.LastBloodPaid}"+
-                (economy.BloodDebt>0?$" · <color=#FF8080>미납 {economy.BloodDebt}</color>":"")+"\n"+
-                (economy.MerchantPresent?$"고블린 상인 방문 중 · {Mathf.CeilToInt(economy.MerchantRemaining)}초" + (waves.CanUseFacilities ? " · 시작방에서 F" : ""):$"고블린 상인 · {economy.NextMerchantWave}라운드에 방문 예정");
+            if (upkeep != null) upkeep.gameObject.SetActive(false);
             bool movingCore=waves.Lord.GetComponent<DarkLord.Dungeon.DungeonExpansion>()?.IsMovingCore==true;
             coreHint.text=movingCore?"코어 이동 · 좌클릭 배치\n우클릭·Esc: 취소":"[F] 코어 · 능력 강화";
             WorldHint(coreHint,economy.CorePosition+Vector3.up*1.8f,active&&(movingCore||!economy.IsOpen&&economy.HasNearbyInteraction&&economy.NearCore&&!economy.NearMerchant));

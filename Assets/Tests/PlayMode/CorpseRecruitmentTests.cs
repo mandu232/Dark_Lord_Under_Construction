@@ -214,28 +214,28 @@ namespace DarkLord.Tests
             MoveLord(safe);
             InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.D));
             yield return new WaitForSecondsRealtime(.2f);
-            Assert.That(motor.Velocity.magnitude, Is.EqualTo(2.475f).Within(.1f));
+            Assert.That(motor.Velocity.magnitude, Is.EqualTo(2.925f).Within(.1f));
             Assert.That(animator.GetFloat("WalkRate"), Is.EqualTo(1f).Within(.08f));
             MoveLord(safe);
             var corpse = Remains(safe);
             Assert.IsTrue(waves.Harvest.TryPickup(corpse));
             yield return new WaitForSecondsRealtime(.2f);
             Assert.AreSame(corpse, waves.Harvest.Carried);
-            Assert.That(motor.Velocity.magnitude, Is.EqualTo(2.475f * .65f).Within(.1f));
-            Assert.That(animator.GetFloat("WalkRate"), Is.EqualTo(.65f).Within(.08f));
+            Assert.That(motor.Velocity.magnitude, Is.EqualTo(2.925f * .85f).Within(.1f));
+            Assert.That(animator.GetFloat("WalkRate"), Is.EqualTo(.85f).Within(.08f));
             var saved = session.Capture();
             waves.Harvest.DropCarried(); yield return new WaitForSecondsRealtime(.15f);
-            Assert.That(motor.Velocity.magnitude, Is.EqualTo(2.475f).Within(.1f));
+            Assert.That(motor.Velocity.magnitude, Is.EqualTo(2.925f).Within(.1f));
             session.Restore(saved); MoveLord(safe);
             yield return new WaitForSecondsRealtime(.2f);
             Assert.IsNotNull(waves.Harvest.Carried);
-            Assert.That(motor.Velocity.magnitude, Is.EqualTo(2.475f * .65f).Within(.1f));
+            Assert.That(motor.Velocity.magnitude, Is.EqualTo(2.925f * .85f).Within(.1f));
             motor.ApplySlow(.5f, 2f);
             yield return new WaitForSecondsRealtime(.15f);
-            Assert.That(motor.Velocity.magnitude, Is.EqualTo(2.475f * .65f * .5f).Within(.1f));
+            Assert.That(motor.Velocity.magnitude, Is.EqualTo(2.925f * .85f * .5f).Within(.1f));
             waves.Harvest.enabled = false; yield return new WaitForSecondsRealtime(.15f);
             Assert.IsNull(waves.Harvest.Carried);
-            Assert.That(motor.Velocity.magnitude, Is.EqualTo(2.475f * .5f).Within(.1f));
+            Assert.That(motor.Velocity.magnitude, Is.EqualTo(2.925f * .5f).Within(.1f));
             waves.Harvest.enabled = true;
             InputSystem.QueueStateEvent(keyboard, new KeyboardState());
         }
@@ -265,7 +265,7 @@ namespace DarkLord.Tests
         {
             var motor = waves.Lord.GetComponent<TopDownMotor>();
             yield return null;
-            Assert.That(motor.EffectiveMoveSpeed, Is.EqualTo(2.475f).Within(.01f));
+            Assert.That(motor.EffectiveMoveSpeed, Is.EqualTo(2.925f).Within(.01f));
             Assert.IsTrue(waves.Combat.TryDodge(Vector2.right));
             Assert.That(motor.EffectiveMoveSpeed, Is.EqualTo(2.25f * waves.Combat.DodgeSpeedMultiplier).Within(.01f));
         }
@@ -282,7 +282,7 @@ namespace DarkLord.Tests
             for (int i = 0; i < directions.Length; i++)
             {
                 Assert.IsTrue(waves.Combat.TryAttack(directions[i]), $"attack {i}");
-                if (i == 0) yield return new WaitForSeconds(3f / 14f + .03f);
+                if (i == 0) yield return new WaitForSeconds(1f / 14f + .03f);
                 yield return null; yield return null;
                 Assert.IsTrue(waves.Combat.IsMeleeAttacking);
                 Assert.IsTrue(animator.GetCurrentAnimatorStateInfo(0).IsName(i % 2 == 0 ? "Attack" : "Attack2"));
@@ -392,7 +392,10 @@ namespace DarkLord.Tests
             Vector2 pointer = camera.WorldToScreenPoint(corpse.Visual.bounds.center);
             InputSystem.QueueStateEvent(mouse, new MouseState { position = pointer }); yield return null; yield return null;
             InputSystem.QueueStateEvent(mouse, new MouseState { position = pointer, buttons = 1 }); yield return null;
-            Assert.IsFalse(waves.Harvest.IsDragging); Assert.IsTrue(waves.Combat.IsAttacking);
+            Assert.IsFalse(waves.Harvest.IsDragging);
+            Assert.IsTrue(waves.Combat.IsChangingWeapon || waves.Combat.IsAttacking);
+            yield return new WaitForSecondsRealtime(.12f);
+            Assert.IsTrue(waves.Combat.IsAttacking);
             Assert.IsFalse(waves.Harvest.BlocksGameplayInput);
             pointer = camera.WorldToScreenPoint(station.transform.position);
             InputSystem.QueueStateEvent(mouse, new MouseState { position = pointer, buttons = 1 }); yield return null;

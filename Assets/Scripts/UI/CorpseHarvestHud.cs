@@ -71,7 +71,7 @@ namespace DarkLord.UI
         {
             var harvest = waves != null ? waves.Harvest : null;
             if (harvest == null || camera == null || canvas == null) return;
-            bool active = Time.timeScale > 0 && !waves.IsFinished;
+            bool active = Time.timeScale > 0 && !waves.IsFinished && waves.Economy?.IsOpen != true;
             bool transporting = harvest.Carried != null;
             var nearby = !transporting && harvest.CanUse ? harvest.NearbyCorpse : null;
             var corpseBounds = nearby != null ? nearby.Visual.bounds : default;

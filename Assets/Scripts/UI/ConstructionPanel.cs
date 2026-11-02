@@ -52,6 +52,12 @@ namespace DarkLord.UI
         {
             if (layer2 != null && windowRect != null && window.activeInHierarchy && opening == null)
                 PresentLayers();
+            if (openButton != null && expansion != null)
+            {
+                bool available = expansion.GetComponent<PlayerCombat>()?.CanUseFacilities == true;
+                openButton.gameObject.SetActive(available && !expansion.ExpansionMode);
+                openButton.interactable = available;
+            }
         }
 
         private static float LayerProgress(float value, float delay)
@@ -104,6 +110,7 @@ namespace DarkLord.UI
         private CanvasGroup windowGroup;
         private float visibility;
         private bool requestedVisible;
+        public bool IsVisible => window != null && window.activeInHierarchy;
 
         private void AnimateVisibility(bool visible, bool immediate = false)
         {
@@ -189,6 +196,33 @@ namespace DarkLord.UI
             if (selectionText != null) selectionText.gameObject.SetActive(false);
             if (detailIcon != null) detailIcon.gameObject.SetActive(false);
             openButton.onClick.AddListener(Toggle);
+            var shortcut = openButton.GetComponentInChildren<TMP_Text>(true);
+            if (shortcut != null)
+            {
+                shortcut.text = "[B] 던전 건설"; shortcut.raycastTarget = false;
+                shortcut.fontSize = 20; shortcut.color = new Color(1, .9f, .78f);
+            }
+            var legacyFrame = openButton.transform.Find("Castle Frame");
+            if (legacyFrame != null) legacyFrame.gameObject.SetActive(false);
+            var shortcutImage = openButton.GetComponent<UnityEngine.UI.Image>();
+            if (shortcutImage != null)
+            {
+                var skin = Resources.Load<RewardUiSkin>("WaveRewardSkin");
+                if (skin != null && skin.waveStartButton != null)
+                {
+                    shortcutImage.sprite = skin.waveStartButton;
+                    shortcutImage.type = UnityEngine.UI.Image.Type.Sliced;
+                    shortcutImage.color = Color.white;
+                    var canvas = openButton.GetComponentInParent<Canvas>();
+                    shortcutImage.pixelsPerUnitMultiplier = (canvas != null ? canvas.referencePixelsPerUnit : 100) /
+                        (shortcutImage.sprite.pixelsPerUnit * 2);
+                }
+                else shortcutImage.color = new Color(.12f, .025f, .05f, .96f);
+            }
+            var shortcutRect = openButton.GetComponent<RectTransform>();
+            shortcutRect.anchorMin = shortcutRect.anchorMax = shortcutRect.pivot = Vector2.zero;
+            shortcutRect.anchoredPosition = new Vector2(28, 28);
+            shortcutRect.sizeDelta = new Vector2(210, 58);
             closeButton.onClick.AddListener(Close);
             roomsTab.onClick.AddListener(Rooms);
             minionsTab.onClick.AddListener(Traps);
@@ -378,7 +412,8 @@ namespace DarkLord.UI
             if (expansion == null || !expansion.ExpansionMode || Time.unscaledTime < nextRefresh) return;
             nextRefresh = Time.unscaledTime + 0.1f;
             RefreshOwnedItems();
-            statusText.text = summoning != null && summoning.IsOpen ? summoning.Message : expansion.Message;
+            statusText.text = summoning != null && summoning.IsOpen ? summoning.Message :
+                string.IsNullOrEmpty(expansion.Message) ? "방: 병력 배치 공간 · 숙소: 정원 증가 · 시설: 생산·전투 강화 · 복도: 방 연결" : expansion.Message;
         }
         private void OnDestroy()
         {

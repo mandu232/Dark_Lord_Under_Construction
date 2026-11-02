@@ -29,7 +29,7 @@ namespace DarkLord.UI
             loading = true;
             Time.timeScale = 1;
             AudioListener.pause = false;
-            SceneManager.LoadSceneAsync(gameplayScene, LoadSceneMode.Single);
+            SceneLoadingScreen.Load(gameplayScene, GetComponentInChildren<TMPro.TMP_Text>(true)?.font);
         }
     }
 }

@@ -15,11 +15,11 @@ namespace DarkLord.Tests
     public sealed class TutorialRegressionProbe : MonoBehaviour
     {
         private Exception failure;
-        public Task<string> RunFixture(string fixtureName)
+        public Task<string> RunFixture(string fixtureName, params string[] selectedTests)
         {
             var type = typeof(TutorialRegressionProbe).Assembly.GetType("DarkLord.Tests." + fixtureName, true);
             var result = new TaskCompletionSource<string>();
-            StartCoroutine(Run(type, result)); return result.Task;
+            StartCoroutine(Run(type, result, selectedTests)); return result.Task;
         }
 
         private IEnumerator Traverse(IEnumerator routine)
@@ -43,13 +43,13 @@ namespace DarkLord.Tests
             if (failure == null && value is IEnumerator routine) yield return Traverse(routine);
         }
 
-        private IEnumerator Run(Type type, TaskCompletionSource<string> completion)
+        private IEnumerator Run(Type type, TaskCompletionSource<string> completion, string[] selectedTests)
         {
             var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
             var setup = methods.Where(m => m.IsDefined(typeof(SetUpAttribute), true) || m.IsDefined(typeof(UnitySetUpAttribute), true)).ToArray();
             var cleanup = methods.Where(m => m.IsDefined(typeof(TearDownAttribute), true) || m.IsDefined(typeof(UnityTearDownAttribute), true)).ToArray();
             int passed = 0, total = 0; var failures = new List<string>();
-            foreach (var test in methods.Where(m => m.IsDefined(typeof(TestAttribute), true) || m.IsDefined(typeof(UnityTestAttribute), true) || m.IsDefined(typeof(TestCaseAttribute), true)))
+            foreach (var test in methods.Where(m => (selectedTests == null || selectedTests.Length == 0 || selectedTests.Contains(m.Name)) && (m.IsDefined(typeof(TestAttribute), true) || m.IsDefined(typeof(UnityTestAttribute), true) || m.IsDefined(typeof(TestCaseAttribute), true))))
             {
                 var cases = test.GetCustomAttributes<TestCaseAttribute>().Select(a => a.Arguments).ToArray();
                 if (cases.Length == 0) cases = new[] { Array.Empty<object>() };

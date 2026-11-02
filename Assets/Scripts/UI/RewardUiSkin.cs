@@ -6,6 +6,7 @@ namespace DarkLord.UI
     {
         public Sprite cardFrame, button;
         public Sprite vitalTrack, waveStartButton;
+        public Sprite technologyTextBox;
         public Sprite[] icons;
         public Sprite Icon(int id) => icons != null && id >= 0 && id < icons.Length ? icons[id] : null;
         public static void ConfigureBuffText(TMPro.TMP_Text text)

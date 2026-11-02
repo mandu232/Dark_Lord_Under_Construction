@@ -19,7 +19,11 @@ namespace DarkLord.Dungeon
             for (int i = 0; i < sections.Count; i++)
             {
                 var section = sections[i];
-                if (section.Kind != ConstructionKind.HorizontalCorridor || section.Bounds.xMin != 2 || !section.IsComplete) continue;
+                // The opening can move when map size or starting corridor length changes.
+                // Identify its connection to the original core room, including legacy saves.
+                var doorway = new Vector2Int(layout.Core.x - 4, layout.Core.y);
+                if (section.Kind != ConstructionKind.HorizontalCorridor || !section.IsComplete ||
+                    section.Bounds.xMax != layout.Core.x - 3 || !section.Bounds.Contains(doorway)) continue;
                 var remaining = new List<Vector2Int>();
                 foreach (var cell in section.Cells)
                 {
@@ -44,10 +48,12 @@ namespace DarkLord.Dungeon
         public void CollapseOpeningCorridor()
         {
             int edge = Layout.Core.x - 5;
+            var opening = Construction.At(new Vector2Int(edge + 1, Layout.Core.y));
+            int start = opening != null ? opening.Bounds.xMin : Layout.Entrance.x;
             deferArtRefresh = true;
             try
             {
-                for (int x = 2; x <= edge; x++)
+                for (int x = start; x <= edge; x++)
                     for (int y = Layout.Core.y - 1; y <= Layout.Core.y + 1; y++)
                         Layout.CollapseFloor(new Vector2Int(x, y));
             }

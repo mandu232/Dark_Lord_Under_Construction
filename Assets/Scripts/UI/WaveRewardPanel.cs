@@ -20,6 +20,10 @@ namespace DarkLord.UI
         private readonly UnityEngine.UI.Button[] cards = new UnityEngine.UI.Button[3];
         private readonly TMP_Text[] titles = new TMP_Text[3], pairs = new TMP_Text[3], descriptions = new TMP_Text[3], durations = new TMP_Text[3];
         private readonly UnityEngine.UI.Image[] icons = new UnityEngine.UI.Image[3];
+        private float selectionReadyAt;
+        private bool selectionArmed;
+        private CanvasGroup selectionInput;
+        public bool CanSelectReward => IsVisible && selectionArmed;
         public bool IsVisible => root != null && root.activeSelf;
 
         public void Configure(WaveDirector source, TMP_FontAsset labelFont)
@@ -45,6 +49,7 @@ namespace DarkLord.UI
         {
             root = new GameObject("Wave reward selection", typeof(RectTransform), typeof(UnityEngine.UI.Image)); root.transform.SetParent(transform, false);
             var full = root.GetComponent<RectTransform>(); full.anchorMin = Vector2.zero; full.anchorMax = Vector2.one; full.offsetMin = full.offsetMax = Vector2.zero;
+            selectionInput = root.AddComponent<CanvasGroup>();
             root.GetComponent<UnityEngine.UI.Image>().color = new Color(.025f, .008f, .025f, .91f);
             layout = Rect("Item acquisition", root.transform, Vector2.zero, new Vector2(1120, 760));
             layout.anchorMin = layout.anchorMax = layout.pivot = new Vector2(.5f, .5f);
@@ -70,7 +75,7 @@ namespace DarkLord.UI
                 descriptions[i].alignment = TextAlignmentOptions.TopLeft;
                 durations[i] = Text("Duration", visual, new Vector2(0, -395), new Vector2(265, 26), 16, "아이템 1개 획득"); durations[i].color = new Color32(205, 171, 176, 255);
                 rect.gameObject.AddComponent<SaveCardHoverLift>();
-                cards[i].onClick.AddListener(() => { if (waves.ChooseReward(index) && EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null); });
+                cards[i].onClick.AddListener(() => { if (CanSelectReward && waves.ChooseReward(index) && EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null); });
             }
             for (int i = 0; i < 3; i++)
             {
@@ -126,7 +131,10 @@ namespace DarkLord.UI
             if (root != null && root.activeSelf != visible)
             {
                 root.SetActive(visible);
-                if (visible && cards[0] != null && EventSystem.current != null) EventSystem.current.SetSelectedGameObject(cards[0].gameObject);
+                selectionArmed = false;
+                selectionReadyAt = Time.unscaledTime + .4f;
+                if (selectionInput != null) selectionInput.interactable = false;
+                if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
             }
         }
         private void EnsureView()
@@ -143,6 +151,20 @@ namespace DarkLord.UI
         {
             UpdateVisibility();
             if (!IsVisible) return;
+            // A second mouse/keyboard can become current while the original input is still held.
+            bool released = true;
+            foreach (var device in UnityEngine.InputSystem.InputSystem.devices)
+            {
+                if (device is UnityEngine.InputSystem.Mouse mouse && mouse.leftButton.isPressed ||
+                    device is UnityEngine.InputSystem.Keyboard keyboard && (keyboard.enterKey.isPressed || keyboard.spaceKey.isPressed))
+                { released = false; break; }
+            }
+            if (!selectionArmed && Time.unscaledTime >= selectionReadyAt && released)
+            {
+                selectionArmed = true;
+                if (selectionInput != null) selectionInput.interactable = true;
+                if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(cards[0].gameObject);
+            }
             var rect = transform as RectTransform;
             if (rect != null) layout.localScale = Vector3.one * Mathf.Min(1, Mathf.Min(rect.rect.width / 1160, rect.rect.height / 800));
         }

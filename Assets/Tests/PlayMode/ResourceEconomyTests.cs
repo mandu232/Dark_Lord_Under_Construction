@@ -54,12 +54,6 @@ namespace DarkLord.Tests
             waves.RestoreSave(new WaveSaveData{number=number,state=WaveState.Preparing,enemies=new MinionSaveData[0]});
             economy.OnRoundStarted(number);
         }
-        private void Visit()
-        {
-            var saved=economy.Capture(); saved.nextMerchantWave=2; economy.Restore(saved); Round(2);
-            Assert.IsTrue(economy.MerchantPresent); Move(economy.MerchantPosition+Vector3.down*.5f);
-            Assert.IsTrue(economy.TryInteract());Assert.IsTrue(economy.IsMerchantOpen);
-        }
         [UnityTest] public IEnumerator WaveLaunchChargesLivingMinionsOnce()
         {
             int blood=wallet.Souls;Assert.AreEqual(8,economy.NextUpkeep);
@@ -93,51 +87,39 @@ namespace DarkLord.Tests
             int balance=wallet.DarkCrystals;Assert.IsFalse(economy.TryUpgrade(LordUpgrade.Power));Assert.AreEqual(balance,wallet.DarkCrystals);
             Move(grid.CellCenter(grid.Layout.Entrance));Assert.IsFalse(economy.TryUpgrade(LordUpgrade.Speed));
         }
-        [Test] public void MerchantSpendsGoldGrantsExactItemAndCannotSellTwice()
+        [Test] public void MerchantNeverArrivesAcrossRounds()
         {
-            Visit();var item=economy.Offer(0);Assert.IsNotNull(item);int count=grid.Inventory.Count(item),gold=wallet.Gold;
-            Assert.IsTrue(economy.TryBuy(0));Assert.AreEqual(count+1,grid.Inventory.Count(item));Assert.AreEqual(gold-100,wallet.Gold);
-            Assert.IsFalse(economy.TryBuy(0));Assert.AreEqual(gold-100,wallet.Gold);
-            Assert.IsTrue(economy.TryBuy(3));Assert.AreEqual(52,wallet.Souls);
+            for (int wave = 1; wave <= 10; wave++)
+            {
+                Round(wave);
+                Assert.IsFalse(economy.MerchantPresent);
+                Assert.IsFalse(economy.CanBuy(0));
+            }
+            Assert.IsEmpty(scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<GoblinMerchantVisual>()));
         }
-        [Test] public void MerchantUsesLimitedPalettePixelSpriteAndActorDepth()
+        [Test] public void LegacyMerchantVisitIsRemovedWithoutChangingResources()
         {
-            Visit();
-            var merchant = scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<GoblinMerchantVisual>())
-                .Single(v => v.gameObject.activeInHierarchy);
-            var sprite = merchant.GetComponent<SpriteRenderer>().sprite;
-            Assert.IsNotNull(sprite);
-            Assert.AreEqual("NibbleMerchant", sprite.name);
-            Assert.AreEqual(16, sprite.pixelsPerUnit);
-            Assert.AreEqual(FilterMode.Point, sprite.texture.filterMode);
-            var pixels = sprite.texture.GetPixels32();
-            Assert.Less(pixels.Where(c => c.a > 0).Distinct().Count(), 12);
-            Assert.IsTrue(pixels.All(c => c.a == 0 || c.a == 255));
-            Assert.IsNotNull(merchant.GetComponent<ActorDepthSorting>());
-            Assert.IsEmpty(merchant.GetComponents<Collider2D>());
+            var saved = economy.Capture(); saved.merchantRemaining = 90; saved.nextMerchantWave = 2;
+            saved.offers = new[] { "legacy stock" }; saved.sold = new[] { true };
+            int gold = wallet.Gold;
+            economy.Restore(saved); economy.Restore(saved);
+            Assert.IsFalse(economy.MerchantPresent); Assert.IsFalse(economy.IsMerchantOpen);
+            Assert.AreEqual(0, economy.MerchantRemaining); Assert.IsNull(economy.Offer(0));
+            Assert.IsFalse(economy.TryBuy(0)); Assert.AreEqual(gold, wallet.Gold);
+            Assert.IsEmpty(scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<GoblinMerchantVisual>()));
         }
-
-        [Test] public void MerchantRejectsNoGoldFullBloodStorageAndRemotePurchase()
+        [Test] public void SavePreservesUpgradesWithoutRestoringMerchant()
         {
-            Visit();wallet.RestoreAmounts(0,wallet.GetCapacity(CurrencyType.Souls),5);
-            Assert.IsFalse(economy.TryBuy(0));Assert.IsFalse(economy.TryBuy(3));Assert.IsFalse(economy.IsSold(3));
-            wallet.RestoreAmounts(250,0,5);Move(grid.CellCenter(grid.Layout.Entrance));Assert.IsFalse(economy.TryBuy(0));Assert.AreEqual(250,wallet.Gold);
-        }
-        [UnityTest] public IEnumerator MerchantVisitTimerPausesAndExpires()
-        {
-            Visit();var saved=economy.Capture();saved.merchantRemaining=.08f;economy.Restore(saved);
-            Time.timeScale=0;yield return new WaitForSecondsRealtime(.12f);Assert.IsTrue(economy.MerchantPresent);
-            Time.timeScale=1;yield return new WaitForSeconds(.12f);Assert.IsFalse(economy.MerchantPresent);Assert.IsFalse(economy.IsMerchantOpen);
-        }
-        [Test] public void SavePreservesUpgradesDebtMerchantStockWithoutDuplicateHealth()
-        {
-            OpenCore();Assert.IsTrue(economy.TryUpgrade(LordUpgrade.Vitality));economy.Close();Visit();Assert.IsTrue(economy.TryBuy(2));
-            var saved=session.Capture();int maximum=waves.Lord.MaximumHealth,gold=wallet.Gold;
-            session.Restore(saved);session.Restore(saved);
-            Assert.AreEqual(maximum,waves.Lord.MaximumHealth);Assert.AreEqual(1,economy.Level(LordUpgrade.Vitality));
-            Assert.AreEqual(gold,wallet.Gold);Assert.IsTrue(economy.IsSold(2));Assert.IsTrue(economy.MerchantPresent);
-            Assert.AreEqual(1,scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<GoblinMerchantVisual>()).Count(v=>v.gameObject.activeInHierarchy));
-            saved.economy=null;session.Restore(saved);Assert.AreEqual(0,economy.Level(LordUpgrade.Vitality));Assert.IsFalse(economy.MerchantPresent);
+            OpenCore(); Assert.IsTrue(economy.TryUpgrade(LordUpgrade.Vitality)); economy.Close();
+            var saved = session.Capture(); int maximum = waves.Lord.MaximumHealth, gold = wallet.Gold;
+            saved.economy.merchantRemaining = 90;
+            saved.economy.offers = new[] { "", "", "" }; saved.economy.sold = new bool[4];
+            session.Restore(saved); session.Restore(saved);
+            Assert.AreEqual(maximum, waves.Lord.MaximumHealth);
+            Assert.AreEqual(1, economy.Level(LordUpgrade.Vitality)); Assert.AreEqual(gold, wallet.Gold);
+            Assert.IsFalse(economy.MerchantPresent);
+            saved.economy = null; session.Restore(saved);
+            Assert.AreEqual(0, economy.Level(LordUpgrade.Vitality)); Assert.IsFalse(economy.MerchantPresent);
         }
         [Test] public void InvalidEconomySaveIsRejectedBeforeChangingLiveState()
         {

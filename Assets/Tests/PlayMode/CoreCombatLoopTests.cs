@@ -111,10 +111,10 @@ namespace DarkLord.Tests
             Assert.IsFalse(combat.IsChangingWeapon);
             Assert.AreEqual(Vector2.right, motor.Facing);
             Assert.IsTrue(combat.DodgeUsesDash);
-            Assert.That(combat.DodgeSpeedMultiplier, Is.EqualTo(5).Within(.01f));
-            Assert.That(combat.DodgeCooldown, Is.EqualTo(1.25f).Within(.01f));
+            Assert.That(combat.DodgeSpeedMultiplier, Is.EqualTo(6.5f).Within(.01f));
+            Assert.That(combat.DodgeCooldown, Is.EqualTo(1f).Within(.01f));
             Assert.IsFalse(lord.TakeDamage(10, null));
-            Set(combat, "dodgeUntil", Time.time + .15f);
+            Set(combat, "dodgeUntil", Time.time + .08f);
             Assert.IsTrue(combat.IsDodging);
             Assert.IsFalse(combat.DodgeUsesDash);
             Assert.Less(combat.DodgeSpeedMultiplier, 2);

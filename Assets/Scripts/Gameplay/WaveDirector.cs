@@ -178,6 +178,7 @@ namespace DarkLord.Gameplay
             if (State != WaveState.Active || pendingSpawns > 0 || aliveInvaders.Count > 0) return;
             if (!dungeonLord.IsAlive || !dungeonCore.IsAlive) { ReconcileHealth(); return; }
             wallet?.Add(CurrencyType.Souls, options.Reward(WaveProgression.ClearReward(CurrentWave, baseSoulReward, soulRewardGrowth)));
+            Economy?.GrantTechnologyIncome();
             dungeon.PayBuildingIncome(wallet, CurrentWave);
             dungeon.GrantDailyConstructionItems(CurrentWave);
             rewardWave = CurrentWave;
@@ -190,9 +191,7 @@ namespace DarkLord.Gameplay
             var offers = new List<int>();
             var designs = new List<BuildItemDefinition>();
             var room = dungeon.Inventory.RandomItem(BuildCategory.Rooms);
-            var facility = dungeon.Inventory.RandomItem(BuildCategory.Buildings);
             if (room != null) { offers.Add(WaveRewardCatalog.RoomItem); designs.Add(room); }
-            if (facility != null) { offers.Add(WaveRewardCatalog.FacilityItem); designs.Add(facility); }
             var trap = dungeon.Inventory.RandomItem(BuildCategory.Traps);
             if (trap != null && UnityEngine.Random.value < .5f) { offers.Add(WaveRewardCatalog.TrapItem); designs.Add(trap); }
             var supplies = new List<int> { 0, 1, 2 };

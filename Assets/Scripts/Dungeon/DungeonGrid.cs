@@ -11,8 +11,9 @@ namespace DarkLord.Dungeon
         // Sprites remain at 16 PPU: a 32px tile occupies two world units.
         public const float CellSize = 2f;
         public static Vector3 GridCellSize => new Vector3(CellSize, CellSize, 1);
-        [SerializeField, Range(15, 101)] private int width = 41;
-        [SerializeField, Range(11, 101)] private int height = 31;
+        public const int MaxMapSize = 202;
+        [SerializeField, Range(15, MaxMapSize)] private int width = 41;
+        [SerializeField, Range(11, MaxMapSize)] private int height = 31;
         [SerializeField] private Material previewMaterial;
         [SerializeField, Min(0.02f)] private float tileBreakInterval = 0.045f;
         [SerializeField] private GameObject initialRoomPrefab, initialCorridorPrefab, entrancePrefab;
@@ -24,6 +25,9 @@ namespace DarkLord.Dungeon
         private Mesh mesh;
         private Color[] colors;
         private BoxCollider2D[,] blockers;
+        private GameObject[] blockerRows;
+        public bool PresentationReady { get; private set; }
+        private bool stagedPresentation;
         private GameObject generated;
         private int highlighted = -1;
         private readonly Dictionary<Vector2Int, float> miningMarks = new Dictionary<Vector2Int, float>();
@@ -46,11 +50,12 @@ namespace DarkLord.Dungeon
             grid = GetComponent<Grid>();
             grid.cellSize = GridCellSize;
             grid.cellGap = Vector3.zero;
-            Layout = new DungeonLayout(Mathf.Clamp(width, 15, 101), Mathf.Clamp(height, 11, 101));
+            Layout = new DungeonLayout(Mathf.Clamp(width, 15, MaxMapSize), Mathf.Clamp(height, 11, MaxMapSize));
             Construction = new DungeonConstruction(Layout);
             generated = new GameObject("Generated dungeon cells");
             generated.layer = gameObject.layer;
             generated.transform.SetParent(transform, false);
+            stagedPresentation = DarkLord.UI.SceneLoadingScreen.IsLoading;
             BuildPresentation();
             Layout.CellChanged += OnCellChanged;
             foreach (var section in Construction.Sections)
@@ -62,6 +67,8 @@ namespace DarkLord.Dungeon
                 design.name = "Initial " + prefab.name;
             }
             RefreshEntranceMarker();
+            if (stagedPresentation) StartCoroutine(FinishLoadingPresentation());
+            else PresentationReady = true;
         }
 
         private GameObject InitialPrefab(DungeonSection section) =>
@@ -132,6 +139,7 @@ namespace DarkLord.Dungeon
             colors = new Color[count * 4];
             var triangles = new int[count * 6];
             blockers = new BoxCollider2D[Layout.Width, Layout.Height];
+            blockerRows = new GameObject[Layout.Height];
             for (int y = 0; y < Layout.Height; y++)
                 for (int x = 0; x < Layout.Width; x++)
                 {
@@ -149,9 +157,9 @@ namespace DarkLord.Dungeon
                     int t = index * 6;
                     triangles[t] = v; triangles[t + 1] = v + 1; triangles[t + 2] = v + 2;
                     triangles[t + 3] = v; triangles[t + 4] = v + 2; triangles[t + 5] = v + 3;
-                    if (!Layout.IsFloor(cell))
+                    if (!stagedPresentation && !Layout.IsFloor(cell))
                     {
-                        var collider = generated.AddComponent<BoxCollider2D>();
+                        var collider = BlockerRow(y).AddComponent<BoxCollider2D>();
                         collider.offset = new Vector2((x + 0.5f) * CellSize, (y + 0.5f) * CellSize);
                         collider.size = Vector2.one * CellSize;
                         blockers[x, y] = collider;
@@ -176,6 +184,45 @@ namespace DarkLord.Dungeon
         {
             if (UsesArtTiles && color.a > 0) color.a = 0.42f;
             for (int i = 0; i < 4; i++) colors[index * 4 + i] = color;
+        }
+
+        private GameObject BlockerRow(int y)
+        {
+            // Keep component lists short: adding tens of thousands to one object is quadratic.
+            if (blockerRows[y] != null) return blockerRows[y];
+            var row = new GameObject("Rock colliders " + y);
+            row.layer = gameObject.layer;
+            row.transform.SetParent(generated.transform, false);
+            return blockerRows[y] = row;
+        }
+
+        private System.Collections.IEnumerator FinishLoadingPresentation()
+        {
+            // Save restoration can change floors; build collision and artwork from the restored layout.
+            yield return null;
+            var session = FindFirstObjectByType<DarkLord.Persistence.GameSaveSession>();
+            while (session != null && !session.Ready && string.IsNullOrEmpty(session.Message)) yield return null;
+            var budget = System.Diagnostics.Stopwatch.StartNew();
+            for (int y = 0; y < Layout.Height; y++)
+            {
+                for (int x = 0; x < Layout.Width; x++)
+                {
+                    if (blockers[x, y] != null || Layout.IsFloor(new Vector2Int(x, y))) continue;
+                    var collider = BlockerRow(y).AddComponent<BoxCollider2D>();
+                    collider.offset = new Vector2((x + .5f) * CellSize, (y + .5f) * CellSize);
+                    collider.size = Vector2.one * CellSize;
+                    blockers[x, y] = collider;
+                    if (budget.ElapsedMilliseconds >= 8) { yield return null; budget.Restart(); }
+                }
+            }
+            if (UsesArtTiles)
+            {
+                var paint = PaintOccupiedArtRoutine();
+                while (paint.MoveNext()) yield return paint.Current;
+            }
+            stagedPresentation = false;
+            Physics2D.SyncTransforms();
+            PresentationReady = true;
         }
 
         public void SetMiningMark(Vector2Int cell, bool queued, float progress = 0)
@@ -217,7 +264,7 @@ namespace DarkLord.Dungeon
             var collider = blockers[cell.x, cell.y];
             if (collider == null && !Layout.IsFloor(cell))
             {
-                collider = generated.AddComponent<BoxCollider2D>();
+                collider = BlockerRow(cell.y).AddComponent<BoxCollider2D>();
                 collider.offset = new Vector2((cell.x + .5f) * CellSize, (cell.y + .5f) * CellSize);
                 collider.size = Vector2.one * CellSize;
                 blockers[cell.x, cell.y] = collider;

@@ -29,7 +29,10 @@ namespace DarkLord.UI
                 var canvas = button.GetComponentInParent<Canvas>();
                 image.pixelsPerUnitMultiplier = (canvas != null ? canvas.referencePixelsPerUnit : 100) / (image.sprite.pixelsPerUnit * 2);
             }
-            button.GetComponent<RectTransform>().sizeDelta = new Vector2(320,64);
+            var rect = button.GetComponent<RectTransform>();
+            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(1, 0);
+            rect.anchoredPosition = new Vector2(-24, 280);
+            rect.sizeDelta = new Vector2(320,64);
             if (label != null) { label.font = font; label.fontSize = 20; label.color = new Color32(250,226,207,255); }
             button.transition = Selectable.Transition.ColorTint;
             var colors = button.colors;

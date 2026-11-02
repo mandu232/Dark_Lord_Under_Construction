@@ -211,10 +211,10 @@ namespace DarkLord.Tests
             InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.D));
             yield return new WaitForSecondsRealtime(.2f);
             Assert.Greater(motor.Velocity.magnitude, 2.3f);
-            Assert.That(animator.GetFloat("WalkRate"), Is.EqualTo(motor.Velocity.magnitude / 2.475f).Within(.05f));
+            Assert.That(animator.GetFloat("WalkRate"), Is.EqualTo(motor.Velocity.magnitude / 2.925f).Within(.05f));
             motor.ApplySlow(.5f, 2f);
             yield return new WaitForSecondsRealtime(.2f);
-            Assert.That(motor.Velocity.magnitude, Is.EqualTo(1.2375f).Within(.1f));
+            Assert.That(motor.Velocity.magnitude, Is.EqualTo(1.4625f).Within(.1f));
             Assert.That(animator.GetFloat("WalkRate"), Is.EqualTo(.5f).Within(.05f));
             InputSystem.QueueStateEvent(keyboard, new KeyboardState());
             yield return new WaitForSecondsRealtime(.1f);
@@ -262,7 +262,7 @@ namespace DarkLord.Tests
             var session = Find<GameSaveSession>(); var saved = session.Capture();
             session.Restore(saved); yield return null;
             Assert.IsTrue(waves.Tutorial.DialogueOpen); Assert.IsFalse(waves.Tutorial.RowenInConversation);
-            StringAssert.Contains("…이제 갔네", waves.Tutorial.Instruction);
+            StringAssert.Contains("…남은 건 너 하나구나", waves.Tutorial.Instruction);
         }
         [UnityTest] public IEnumerator CombatBlocksFacilitiesConstructionAndMinionRelocation()
         {

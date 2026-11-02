@@ -36,6 +36,7 @@ namespace DarkLord.UI
             if (director != null && director.gameObject.scene == gameObject.scene && healthText != null)
             {
                 CreateVitalBars();
+                DungeonMinimap.Create(transform, director);
                 foreach (var button in GetComponentsInChildren<UnityEngine.UI.Button>(true))
                     if (button.name == "Start Wave Button")
                         gameObject.AddComponent<WaveStartButtonPresentation>().Configure(director, button, healthText.font);

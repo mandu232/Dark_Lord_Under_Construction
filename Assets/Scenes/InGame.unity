@@ -203,8 +203,8 @@ MonoBehaviour:
   windowLightMaterial: {fileID: 2100000, guid: 4c796f1ada9b55642ae657a5229fe5b2, type: 2}
   wallTorchPrefab: {fileID: 3055035832026806590, guid: 3a9fe595165f60e44999ed3b7b23cb9e, type: 3}
   initialRecruitmentPrefab: {fileID: 1877158609922879453, guid: a0e5f52cf80bb034aa3669625cf6116a, type: 3}
-  width: 41
-  height: 31
+  width: 202
+  height: 202
   previewMaterial: {fileID: 2100000, guid: a67552224f3b10a409b4abb02e6afe48, type: 2}
   tileBreakInterval: 0.045
   initialRoomPrefab: {fileID: 4298520255018337858, guid: 72beed81c4f59304d9c3c8c5c50c7a3d, type: 3}
@@ -231,7 +231,7 @@ Transform:
   m_GameObject: {fileID: 82295381}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -40.631, y: -31.161999, z: 0}
+  m_LocalPosition: {x: -202.631, y: -203.162, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

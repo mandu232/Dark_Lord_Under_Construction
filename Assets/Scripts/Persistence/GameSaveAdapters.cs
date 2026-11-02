@@ -28,7 +28,17 @@ namespace DarkLord.Dungeon
     {
         internal void Restore(DungeonSaveData data)
         {
-            for (int y = 0; y < Height; y++) for (int x = 0; x < Width; x++) cells[x,y] = (DungeonCell)data.cells[y * Width + x];
+            // Replace constructor terrain completely, retaining excavation and opening old borders.
+            for (int y = 0; y < Height; y++) for (int x = 0; x < Width; x++)
+            {
+                bool border = x == 0 || y == 0 || x == Width - 1 || y == Height - 1;
+                var cell = x < data.width && y < data.height
+                    ? (DungeonCell)data.cells[y * data.width + x] : DungeonCell.Rock;
+                bool oldBorder = x == 0 || y == 0 || x == data.width - 1 || y == data.height - 1;
+                cells[x,y] = border ? DungeonCell.Bedrock
+                    : oldBorder && cell == DungeonCell.Bedrock ? DungeonCell.Rock : cell;
+            }
+            Core = data.hasMapOrigin ? data.initialCore : new Vector2Int(data.width / 2, data.height / 2);
             Entrance = data.entrance; HasEntrance = data.hasEntrance; ExpandedCells = data.expandedCells;
             ActiveCore = data.hasCoreCell ? data.coreCell : Core;
         }
@@ -51,6 +61,7 @@ namespace DarkLord.Dungeon
         {
             Initialize();
             var data = new DungeonSaveData { width=Layout.Width, height=Layout.Height, expandedCells=Layout.ExpandedCells,
+                hasMapOrigin=true, mapOrigin=transform.position, initialCore=Layout.Core,
                 hasCoreCell=true, coreCell=CoreCell,
                 entrance=Layout.Entrance, hasEntrance=Layout.HasEntrance, cells=new int[Layout.Width * Layout.Height], queue=constructionTiles.ToArray() };
             for(int y=0;y<Layout.Height;y++)for(int x=0;x<Layout.Width;x++)data.cells[y*Layout.Width+x]=(int)Layout.GetCell(new Vector2Int(x,y));
@@ -67,11 +78,18 @@ namespace DarkLord.Dungeon
         }
         public void RestoreSave(DungeonSaveData data, Func<string,GameObject> resolve)
         {
+            // Legacy saves predate map-origin serialization. All authored map sizes keep
+            // the initial core at the same world position; recover their original origin.
+            Initialize();
+            var initialCoreWorld = CellCenter(Layout.Core);
+            transform.position = data.hasMapOrigin ? data.mapOrigin : initialCoreWorld -
+                transform.TransformVector(grid.GetCellCenterLocal(new Vector3Int(data.width / 2, data.height / 2, 0)));
             if(Layout!=null)Layout.CellChanged-=OnCellChanged;
             if(generated!=null){generated.SetActive(false);Destroy(generated);}
             if(mesh!=null)Destroy(mesh);
             alchemyStations.Clear();
-            width=data.width; height=data.height; Layout=new DungeonLayout(width,height); Layout.Restore(data);
+            width=Mathf.Max(data.width, MaxMapSize); height=Mathf.Max(data.height, MaxMapSize);
+            Layout=new DungeonLayout(width,height); Layout.Restore(data);
             Construction=new DungeonConstruction(Layout); Construction.Restore(data.sections);
             RestoreCorePosition();
             highlighted=-1; areaHighlight.Clear(); miningMarks.Clear(); constructionTiles.Clear(); breakingCell=null;
@@ -163,6 +181,13 @@ namespace DarkLord.Gameplay
             if (data.rewardItemIds != null)
                 for (int i = 0; i < rewardBuildItems.Length && i < data.rewardItemIds.Length; i++)
                     if (!string.IsNullOrEmpty(data.rewardItemIds[i])) rewardBuildItems[i] = dungeon.Inventory.Find(data.rewardItemIds[i]);
+            // Replace retired facility cards without rerolling the other saved choices.
+            for (int i = 0; i < rewardChoices.Length; i++)
+                if (rewardChoices[i] == WaveRewardCatalog.FacilityItem)
+                {
+                    rewardChoices[i] = Enumerable.Range(0, 3).First(id => !rewardChoices.Contains(id));
+                    rewardBuildItems[i] = null;
+                }
             foreach(var saved in data.enemies)
             {
                 var enemy=Instantiate(invaderPrefab,saved.position,Quaternion.identity,transform);enemy.name=$"Wave {CurrentWave} Invader";

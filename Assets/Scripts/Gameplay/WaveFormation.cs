@@ -11,7 +11,7 @@ namespace DarkLord.Gameplay
             count = Mathf.Max(1, count);
             int shields = wave >= 4 ? Mathf.Max(1, Mathf.RoundToInt(count * .2f)) : 0;
             int healers = wave >= 3 ? Mathf.Max(1, Mathf.RoundToInt(count * .12f)) : 0;
-            int chargers = wave == 2 ? 1 : wave >= 5 ? Mathf.Max(1, Mathf.RoundToInt(count * .18f)) : 0;
+            int chargers = wave >= 2 && wave < 5 ? 1 : wave >= 5 ? Mathf.Max(1, Mathf.RoundToInt(count * .18f)) : 0;
             int specialLimit = wave >= 5 ? Mathf.Min(count - 1, Mathf.Max(3, Mathf.FloorToInt(count * .45f))) : count - 1;
             // Keep at least one ordinary soldier, even for tiny custom/difficulty counts.
             while (shields + healers + chargers > specialLimit)

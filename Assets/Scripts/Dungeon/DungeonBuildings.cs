@@ -112,7 +112,7 @@ namespace DarkLord.Dungeon
         {
             Initialize();
             var room = Construction.RoomAt(cell);
-            return room != null && room != CoreRoom && EmptyFloor(cell);
+            return room != null && EmptyFloor(cell);
         }
         public bool TryPlaceBuilding(Vector2Int cell, GameObject prefab, CurrencyWallet wallet)
         {

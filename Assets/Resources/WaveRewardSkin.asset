@@ -15,7 +15,8 @@ MonoBehaviour:
   cardFrame: {fileID: -4340475759272727395, guid: d00f8d3578a76234ea8d3188d673eaec, type: 3}
   button: {fileID: -2934079335627394362, guid: 12eae261bcbe17d45a8851c78315e562, type: 3}
   vitalTrack: {fileID: 21300000, guid: 80e04b00ddb7dd04c8432b05c7df94c9, type: 3}
-  waveStartButton: {fileID: -2934079335627394362, guid: 12eae261bcbe17d45a8851c78315e562, type: 3}
+  waveStartButton: {fileID: -7759162264996521851, guid: ce75193519fbc4040b49d13de193170b, type: 3}
+  technologyTextBox: {fileID: 3800782402952206127, guid: c491d9bd19009da42b68e0323f44953e, type: 3}
   icons:
   - {fileID: 4245052342988409972, guid: 5e60ebd7f332986479a22a556569e9b2, type: 3}
   - {fileID: -6007857137893288414, guid: 5e60ebd7f332986479a22a556569e9b2, type: 3}

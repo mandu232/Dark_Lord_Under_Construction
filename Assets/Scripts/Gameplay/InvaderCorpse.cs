@@ -17,6 +17,8 @@ namespace DarkLord.Gameplay
         public bool Consumed { get; private set; }
         public SpriteRenderer Visual { get; private set; }
         private Color baseColor;
+        private Sprite contactSprite;
+        private Texture2D contactTexture;
         public void Configure(SpriteRenderer source, InvaderRole role)
         {
             Role = role;
@@ -29,6 +31,19 @@ namespace DarkLord.Gameplay
             Visual.flipX = source.flipX; baseColor = new Color(.65f, .42f, .43f, 1); Visual.color = baseColor;
             transform.localScale = source.transform.lossyScale;
             transform.rotation = source.transform.rotation;
+            contactTexture = new Texture2D(32, 12, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point };
+            var pixels = new Color32[32 * 12];
+            for (int y = 0; y < 12; y++) for (int x = 0; x < 32; x++)
+            {
+                float dx = (x - 15.5f) / 16, dy = (y - 5.5f) / 6;
+                pixels[y * 32 + x] = new Color32(0, 0, 0, (byte)(dx * dx + dy * dy <= 1 ? 100 : 0));
+            }
+            contactTexture.SetPixels32(pixels); contactTexture.Apply();
+            contactSprite = Sprite.Create(contactTexture, new Rect(0, 0, 32, 12), Vector2.one * .5f, 32);
+            var shadow = new GameObject("Corpse ground contact", typeof(SpriteRenderer)); shadow.transform.SetParent(transform, false);
+            var contact = shadow.GetComponent<SpriteRenderer>(); contact.sprite = contactSprite;
+            contact.sharedMaterial = source.sharedMaterial; contact.sortingLayerID = Visual.sortingLayerID;
+            contact.sortingOrder = CorpseSortingOrder - 1;
         }
         private static Sprite DeathPose(SpriteRenderer source)
         {
@@ -53,6 +68,11 @@ namespace DarkLord.Gameplay
             var sprite = renderer.sprite;
             graph.Destroy();
             Destroy(root); return sprite;
+        }
+        private void OnDestroy()
+        {
+            if (contactSprite != null) Destroy(contactSprite);
+            if (contactTexture != null) Destroy(contactTexture);
         }
         public void SetHeld(bool held)
         { if (Visual != null) { Visual.sortingOrder = CorpseSortingOrder; Visual.color = baseColor; } }

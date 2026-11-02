@@ -19,9 +19,9 @@ namespace DarkLord.Player
         private Animator animator;
         private static readonly int WalkRate = Animator.StringToHash("WalkRate");
         // The authored walking pace is calibrated at the player's normal movement speed.
-        private const float WalkReferenceSpeed = 2.475f;
-        private const float WalkBoost = 1.1f;
-        private const float CorpseCarryMultiplier = .65f;
+        private const float WalkReferenceSpeed = 2.925f;
+        private const float WalkBoost = 1.3f;
+        private const float CorpseCarryMultiplier = .85f;
         public Vector2 DodgeInputDirection
         {
             get
@@ -86,7 +86,7 @@ namespace DarkLord.Player
             else if (combat != null && combat.IsAttacking)
             {
                 // Allow limited footwork during recovery while preserving the committed attack facing.
-                Vector2 facing = motor.Facing;
+                Vector2 facing = combat.AttackFacing;
                 motor.Move(direction * .3f);
                 motor.Face(facing);
                 presentation.Present(combat.IsMeleeAttacking ? ActorState.Attack : ActorState.Idle, motor.Facing,
@@ -106,7 +106,7 @@ namespace DarkLord.Player
             if (harvest == null) harvest = GetComponent<CorpseHarvest>();
             bool carryingCorpse = harvest != null && harvest.isActiveAndEnabled && harvest.Carried != null;
             motor.MovementMultiplier = (combat != null && combat.IsDodging ? 1f : WalkBoost) *
-                (carryingCorpse ? CorpseCarryMultiplier : 1f);
+                (carryingCorpse ? Mathf.Min(.95f, CorpseCarryMultiplier + .05f * (GetComponent<RunEconomy>()?.Rank(TechId.FleetFoot) ?? 0)) : 1f);
         }
     }
 }

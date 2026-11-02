@@ -117,7 +117,49 @@ namespace DarkLord.Dungeon
                 carpetFill.sprite = carpetFillSprite;
                 carpetFill.colliderType = Tile.ColliderType.None;
             }
-            foreach (var p in new RectInt(0, 0, Layout.Width * 2, Layout.Height * 2).allPositionsWithin) PaintArtPiece(p);
+            if (!stagedPresentation) PaintOccupiedArt();
+        }
+
+        private void PaintOccupiedArt()
+        {
+            var routine = PaintOccupiedArtRoutine();
+            while (routine.MoveNext()) { }
+        }
+
+        private System.Collections.IEnumerator PaintOccupiedArtRoutine()
+        {
+            var budget = System.Diagnostics.Stopwatch.StartNew();
+            int width = Layout.Width * 2, height = Layout.Height * 2;
+            // Distant rock needs only a ceiling tile, not eight layers of per-cell API calls.
+            var detailed = new bool[width * height];
+            var ceiling = ceilingTile != null ? ceilingTile : repeatingWallTile;
+            floorMap.ClearAllTiles(); floorShadeMap.ClearAllTiles(); carpetMap.ClearAllTiles();
+            cornerMap.ClearAllTiles(); shadowMap.ClearAllTiles(); glowMap.ClearAllTiles(); wallJointMap.ClearAllTiles();
+            // Submit ceilings in rows so a large map cannot monopolize a loading frame.
+            var ceilingRow = new TileBase[width];
+            for (int x = 0; x < width; x++) ceilingRow[x] = ceiling;
+            for (int y = 0; y < height; y++)
+            {
+                wallMap.SetTilesBlock(new BoundsInt(0, y, 0, width, 1, 1), ceilingRow);
+                if (budget.ElapsedMilliseconds >= 8) { yield return null; budget.Restart(); }
+            }
+            foreach (var cell in new RectInt(0, 0, Layout.Width, Layout.Height).allPositionsWithin)
+            {
+                if (!Layout.IsFloor(cell)) continue;
+                // Include side/south caps and the five-piece tall north cornice.
+                for (int y = Mathf.Max(0, cell.y * 2 - 1); y <= Mathf.Min(height - 1, cell.y * 2 + 6); y++)
+                    for (int x = Mathf.Max(0, cell.x * 2 - 1); x <= Mathf.Min(width - 1, cell.x * 2 + 2); x++)
+                        detailed[y * width + x] = true;
+            }
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                    if (detailed[y * width + x]) PaintArtPiece(new Vector2Int(x, y));
+                if (budget.ElapsedMilliseconds >= 8) { yield return null; budget.Restart(); }
+            }
+            // A full redraw can remove torches outside the remaining floor footprint.
+            foreach (var pair in wallTorches)
+                if (!detailed[pair.Key.y * width + pair.Key.x] && pair.Value != null) pair.Value.SetActive(false);
         }
         private bool ArtFloor(Vector2Int p) => p.x >= 0 && p.y >= 0 && p.x < Layout.Width * 2 && p.y < Layout.Height * 2 && Layout.IsFloor(new Vector2Int(p.x / 2, p.y / 2));
         private bool ArtCarpet(Vector2Int p)
@@ -453,7 +495,7 @@ namespace DarkLord.Dungeon
         }
         private void RefreshArtTile(Vector2Int cell)
         {
-            if (deferArtRefresh || !UsesArtTiles || floorMap == null) return;
+            if (stagedPresentation || deferArtRefresh || !UsesArtTiles || floorMap == null) return;
             // Excavation changes carpet boundaries and the five rows of upright wall above it.
             for (int y = -2; y <= 6; y++)
                 for (int x = 0; x < Layout.Width * 2; x++) PaintArtPiece(new Vector2Int(x, cell.y * 2 + y));
@@ -464,8 +506,8 @@ namespace DarkLord.Dungeon
         }
         private void RefreshAllArtTiles()
         {
-            if (!UsesArtTiles || floorMap == null) return;
-            foreach (var p in new RectInt(0, 0, Layout.Width * 2, Layout.Height * 2).allPositionsWithin) PaintArtPiece(p);
+            if (stagedPresentation || !UsesArtTiles || floorMap == null) return;
+            PaintOccupiedArt();
         }
     }
 }

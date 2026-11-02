@@ -99,6 +99,33 @@ namespace DarkLord.Tests
             grid.GrantDailyConstructionItems(2);
             Assert.AreEqual(4, grid.Inventory.Capture().Sum(s => s.count));
         }
+        [Test] public void CoreRoomAllowsAdditionalFacilitiesAndRestoresThem()
+        {
+            var room = grid.CoreRoom;
+            var item = Catalog.First(i => i.category == BuildCategory.Buildings);
+            var wallet = waves.Lord.GetComponent<CurrencyWallet>();
+            wallet.RestoreAmounts(0, 0, 0);
+            int inventoryBefore = grid.Inventory.Count(item);
+            grid.Inventory.Grant(item);
+            grid.Inventory.Grant(item);
+            Assert.IsFalse(grid.CanPlaceBuilding(grid.CoreCell));
+            Assert.IsFalse(grid.CanPlaceBuilding(grid.Layout.Entrance));
+            Assert.IsFalse(grid.CanPlaceBuilding(Vector2Int.zero));
+            var first = room.Cells.First(grid.CanPlaceBuilding);
+            Assert.IsTrue(grid.TryPlaceBuildingItem(first, item));
+            Assert.IsFalse(grid.TryPlaceBuildingItem(first, item), "An occupied cell must reject a second facility.");
+            Assert.AreEqual(inventoryBefore + 1, grid.Inventory.Count(item));
+            var second = room.Cells.First(grid.CanPlaceBuilding);
+            Assert.IsTrue(grid.TryPlaceBuildingItem(second, item));
+            Assert.AreEqual(inventoryBefore, grid.Inventory.Count(item));
+            Assert.AreEqual(0, wallet.Gold);
+            var session = Find<GameSaveSession>();
+            session.Restore(session.Capture());
+            Assert.IsNotNull(grid.BuildingAt(first));
+            Assert.IsNotNull(grid.BuildingAt(second));
+            Assert.AreEqual(grid.CoreRoom, grid.Construction.RoomAt(first));
+            Assert.IsFalse(grid.CanPlaceBuilding(grid.CoreCell));
+        }
         [Test] public void FacilityPlacementConsumesOnlyOnSuccessAndCostsNoGold()
         {
             var item = Catalog.First(i => i.category == BuildCategory.Buildings);
@@ -139,7 +166,7 @@ namespace DarkLord.Tests
         }
         [Test] public void ConstructionRewardsCanBeChosenRepeatedlyAndDoNotBecomeCombatAugments()
         {
-            foreach (int reward in new[] { WaveRewardCatalog.RoomItem, WaveRewardCatalog.FacilityItem, WaveRewardCatalog.RoomItem })
+            foreach (int reward in new[] { WaveRewardCatalog.RoomItem, WaveRewardCatalog.TrapItem, WaveRewardCatalog.RoomItem })
             {
                 waves.RestoreSave(new WaveSaveData { number = 1, state = WaveState.RewardSelection,
                     enemies = Array.Empty<MinionSaveData>(), rewards = new[] { reward, 0, 1 } });
@@ -176,8 +203,9 @@ namespace DarkLord.Tests
             saved.wave.rewards = new[] { WaveRewardCatalog.RoomItem, WaveRewardCatalog.FacilityItem, WaveRewardCatalog.BloodNova };
             SaveSlotStore.Validate(saved);
             session.Restore(saved);
+            Assert.AreEqual(0, waves.RewardChoices[1]);
             Assert.IsTrue(waves.ChooseReward(1));
-            Assert.AreEqual(3, grid.Inventory.Capture().Sum(s => s.count));
+            Assert.AreEqual(2, grid.Inventory.Capture().Sum(s => s.count));
         }
         [Test] public void FullSavePreservesInventoryAndLegacyOmissionRestoresEmpty()
         {

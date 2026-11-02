@@ -12,7 +12,7 @@ namespace DarkLord.Dungeon
         private readonly DungeonCell[,] cells;
         public int Width { get; }
         public int Height { get; }
-        public Vector2Int Core { get; }
+        public Vector2Int Core { get; private set; }
         public Vector2Int ActiveCore { get; private set; }
         public Vector2Int Entrance { get; private set; }
         public bool HasEntrance { get; private set; } = true;
@@ -27,7 +27,8 @@ namespace DarkLord.Dungeon
             cells = new DungeonCell[width, height];
             Core = new Vector2Int(width / 2, height / 2);
             ActiveCore = Core;
-            Entrance = new Vector2Int(2, Core.y);
+            // Keep the opening route compact even when the buildable map grows.
+            Entrance = new Vector2Int(Mathf.Max(2, Core.x - 3 - DungeonConstruction.StartingCorridorLength), Core.y);
             for (int y = 0; y < height; y++)
                 for (int x = 0; x < width; x++)
                 {

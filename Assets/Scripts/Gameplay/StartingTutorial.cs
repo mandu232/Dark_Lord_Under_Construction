@@ -86,26 +86,26 @@ namespace DarkLord.Gameplay
         }
         private static readonly DialogueEntry[][] Conversations = {
             new[] {
-                new DialogueEntry(true, "도면까지 펴 놨군. 여기가 네 성이라도 된 줄 알아?\n마왕을 쓰러뜨린 건 나야. 그 코어는 내 몫이고.", expression: PlayerExpression.Blinking),
-                new DialogueEntry(false, "네가 부수고 간 곳에서 우린 아직 살아.\n코어도 이 성도 원래 우리 것이었어.", rowenMood: TutorialPortraitMood.Determined, expression: PlayerExpression.Decline)
+                new DialogueEntry(true, "주인 행세를 하는군.\n마왕을 쓰러뜨린 건 나다. 그 코어를 내놔.", expression: PlayerExpression.Blinking),
+                new DialogueEntry(false, "이곳은 원래 우리들의 집이었어.\n우리 집에서 당장나가.", rowenMood: TutorialPortraitMood.Determined, expression: PlayerExpression.Decline)
             },
             new[] {
-                new DialogueEntry(true, "말로 해선 안 되겠군. 앞줄, 길을 열어!\n코어는 건드리지 마. 저 녀석부터 치운다.", rowenMood: TutorialPortraitMood.Determined, expression: PlayerExpression.Down),
-                new DialogueEntry(false, "다들 방 안쪽을 지켜. 통로는 내가 막을 테니.\nWASD 이동 · 좌클릭 공격 · Space 회피 · 하수인을 꾹 눌러 방에 배치", rowenMood: TutorialPortraitMood.Determined, expression: PlayerExpression.Accept)
+                new DialogueEntry(true, "좋게 말할 때 내놓을 것을거야. 이봐!, 길을 열어!\n코어를 가지러간다. 저 녀석부터 쓰러뜨려!", rowenMood: TutorialPortraitMood.Determined, expression: PlayerExpression.Down),
+                new DialogueEntry(false, "다들 코어 곁을 지켜!\n놈들이 들어오는 길은 내가 막을게.", rowenMood: TutorialPortraitMood.Determined, expression: PlayerExpression.Accept)
             },
             new[] {
-                new DialogueEntry(true, "조금만 더 밀어! 코어가 바로 앞이다!\n…잠깐. 천장에 금이 가는데?", liliaMood: TutorialPortraitMood.Alarmed, rowenMood: TutorialPortraitMood.Alarmed, expression: PlayerExpression.Down),
-                new DialogueEntry(false, "지지대가 벌어졌어… 모두 시작방으로 물러나!\n다친 녀석 두고 오지 말고!", liliaMood: TutorialPortraitMood.Alarmed, rowenMood: TutorialPortraitMood.Alarmed, expression: PlayerExpression.Decline),
-                new DialogueEntry(true, "무너진다! 전부 뒤로!\n짐 버려! 거기 깔리면 코어고 뭐고 끝이야!", liliaMood: TutorialPortraitMood.Alarmed, rowenMood: TutorialPortraitMood.Alarmed, expression: PlayerExpression.Down),
-                new DialogueEntry(false, "…발소리가 멀어졌어. 우리도 더 안쪽으로 가자.\n벽엔 기대지 마. 저 균열도 벌어지고 있으니까.", false, TutorialPortraitMood.Alarmed, expression: PlayerExpression.Blinking)
+                new DialogueEntry(true, "조금만 더 밀어붙여! 코어가 바로 앞이다!\n…잠깐, 천장이 무너지고 있다!", liliaMood: TutorialPortraitMood.Alarmed, rowenMood: TutorialPortraitMood.Alarmed, expression: PlayerExpression.Down),
+                new DialogueEntry(false, "지지대가 버티질 못해… 모두 코어가 있는 방으로!\n다친 애들도 데려와!", liliaMood: TutorialPortraitMood.Alarmed, rowenMood: TutorialPortraitMood.Alarmed, expression: PlayerExpression.Decline),
+                new DialogueEntry(true, "무너진다! 전원 후퇴!\n짐은 버려! 목숨부터 챙겨라!", liliaMood: TutorialPortraitMood.Alarmed, rowenMood: TutorialPortraitMood.Alarmed, expression: PlayerExpression.Down),
+                new DialogueEntry(false, "…물러난 모양이야. 우리도 안쪽으로 가자.\n벽에서 떨어져. 아직 무너질지도 몰라.", false, TutorialPortraitMood.Alarmed, expression: PlayerExpression.Blinking)
             },
             new[] {
-                new DialogueEntry(true, "젠장, 또 길이 막혔군. 이걸 치우다간 날 새겠어.\n철수한다. 도구부터 다시 챙겨 와.", liliaMood: TutorialPortraitMood.Neutral, rowenMood: TutorialPortraitMood.Aftermath, expression: PlayerExpression.Blinking),
-                new DialogueEntry(false, "그만 포기하고 돌아가지?\n남의 집을 이 꼴로 만들어 놓고, 뭘 더 가져가겠다고.", rowenMood: TutorialPortraitMood.Aftermath, expression: PlayerExpression.Decline),
-                new DialogueEntry(true, "잠깐 맡겨 두는 거야. 네 것이 된 줄 알지 마.\n내 코어는 내가 도로 가져갈 테니까.", rowenMood: TutorialPortraitMood.Determined, expression: PlayerExpression.Decline),
-                new DialogueEntry(false, "…한 마리만 살아남았네. 더 잃을 순 없어.\n루브, 남은 복도 끝으로 균열을 옮기자.\n시체는 F로 소환소에 옮기면 돼. 다시 일어설 일손이 필요해.", false, TutorialPortraitMood.Aftermath, expression: PlayerExpression.Down)
+                new DialogueEntry(true, "젠장, 잔해가 길을 막았군. 맨손으론 어림없겠어.\n일단 철수한다.", liliaMood: TutorialPortraitMood.Neutral, rowenMood: TutorialPortraitMood.Aftermath, expression: PlayerExpression.Blinking),
+                new DialogueEntry(false, "그대로 돌아오지 마.\n남의 집을 이 꼴로 만들고도 아직도 가져갈 게 남아있어?", rowenMood: TutorialPortraitMood.Aftermath, expression: PlayerExpression.Decline),
+                new DialogueEntry(true, "이번엔 물러나 주지.\n다음엔 반드시 코어를 가져가겠다.", rowenMood: TutorialPortraitMood.Determined, expression: PlayerExpression.Decline),
+                new DialogueEntry(false, "…남은 건 너 하나구나. 더는 잃고 싶지 않아.\n저 병사의 시체를 소환소로 옮겨야겠어.\n성을 지키려면 우리 편을 늘려야 해.", false, TutorialPortraitMood.Aftermath, expression: PlayerExpression.Down)
             },
-            new[] { new DialogueEntry(false, "복도와 균열을 다시 정비했어. 이제 침입자들이 오면 이곳에서 맞이하자.\n첫 정찰대는 약하겠지만 방심하지 마.", false, TutorialPortraitMood.Aftermath, expression: PlayerExpression.Accept) }
+            new[] { new DialogueEntry(false, "좋아, 길도 다시 냈고 균열도 옮겼어.\n다음엔 여기서 막는 거야. 다들 준비하자.", false, TutorialPortraitMood.Aftermath, expression: PlayerExpression.Accept) }
         };
         public static int DialogueLineCount(int page) => Conversations[Mathf.Clamp(page, 0, 4)].Length;
         public bool SpeakerIsRowen => Conversations[dialoguePage][dialogueLine].Rowen;

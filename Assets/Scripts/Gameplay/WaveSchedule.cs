@@ -89,6 +89,7 @@ namespace DarkLord.Gameplay
                 waveRewardQueue.Enqueue(number);
                 dungeon.GrantClearedConstructionItems(number);
                 wallet?.Add(CurrencyType.Souls, options.Reward(WaveProgression.ClearReward(number, baseSoulReward, soulRewardGrowth)));
+                Economy?.GrantTechnologyIncome();
                 dungeon.PayBuildingIncome(wallet, completedWaves.Count);
             }
             BeginQueuedWaveReward();

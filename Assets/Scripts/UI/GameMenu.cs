@@ -313,7 +313,7 @@ namespace DarkLord.UI
             // Scene transitions start a fresh clock, even when the title inherited a paused clock.
             Time.timeScale = 1;
             AudioListener.pause = false;
-            SceneManager.LoadSceneAsync(path, LoadSceneMode.Single);
+            SceneLoadingScreen.Load(path, startLabel != null ? startLabel.font : null);
         }
 
         private void RefreshSettings()

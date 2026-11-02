@@ -48,7 +48,7 @@ namespace DarkLord.Player
         public int NextUpkeep => (int)Math.Min(int.MaxValue, (long)dungeon.Guards.Count(g => g != null && g.IsAlive && g.isActiveAndEnabled) * BloodPerMinion + BloodDebt);
         public int LastUpkeepWave => data.lastUpkeepWave;
         public int NextMerchantWave => data.nextMerchantWave;
-        public bool MerchantPresent => data.merchantRemaining > 0;
+        public bool MerchantPresent => false; // Retired feature; keep the public API for existing UI and saves.
         public float MerchantRemaining => data.merchantRemaining;
         public Vector3 MerchantPosition => data.merchantPosition;
         public Vector3 CorePosition => waves.Core.transform.position;
@@ -78,7 +78,7 @@ namespace DarkLord.Player
         {
             waves = director; dungeon = grid; wallet = resources; health = GetComponent<ActorHealth>();
             harvest = GetComponent<CorpseHarvest>(); summoning = GetComponent<MinionSummoning>(); construction = GetComponent<DungeonExpansion>(); alchemy = GetComponent<AlchemyExchange>();
-            data.nextMerchantWave = UnityEngine.Random.Range(2, 4);
+            ClearMerchantState();
             RestoreTechnology();
         }
         public bool HasNearbyInteraction
@@ -116,25 +116,15 @@ namespace DarkLord.Player
             int due = NextUpkeep; int paid = Mathf.Min(wallet.Souls, due);
             wallet.TrySpend(CurrencyType.Souls, paid); data.bloodDebt = due - paid; data.lastBloodPaid = paid; data.lastUpkeepWave = number;
             Message = $"하수인 유지비 · 혈액 {paid} 소모" + (BloodDebt > 0 ? $" · 미납 {BloodDebt} 이월" : "");
-            if (number >= data.nextMerchantWave && !MerchantPresent) BeginMerchantVisit(number);
         }
-        private void BeginMerchantVisit(int number)
+        private void ClearMerchantState()
         {
-            data.nextMerchantWave = number + UnityEngine.Random.Range(2, 4);
-            data.merchantRemaining = 90;
-            var room = dungeon.Construction.RoomAt(dungeon.CoreCell);
-            var preferred = dungeon.CoreCell + new Vector2Int(-2, 2);
-            var cells = room.Cells.Where(c => c != dungeon.CoreCell && dungeon.BuildingAt(c) == null && !dungeon.HasTrap(c) && dungeon.Construction.IsWalkable(c)).OrderBy(c => (c - preferred).sqrMagnitude).ToArray();
-            data.merchantPosition = dungeon.CellCenter(cells.Length > 0 ? cells[0] : dungeon.CoreCell + Vector2Int.left);
-            offers = new[] { dungeon.Inventory.RandomItem(BuildCategory.Rooms), dungeon.Inventory.RandomItem(BuildCategory.Buildings), dungeon.Inventory.RandomItem(BuildCategory.Traps) };
-            data.offers = offers.Select(i => i != null ? i.name : "").ToArray(); data.sold = new bool[4];
-            SpawnMerchant(); Message += "\n고블린 상인이 시작방에 도착했습니다! 90초 동안 거래할 수 있습니다.";
-        }
-        private void SpawnMerchant()
-        {
-            if (merchant != null) { merchant.gameObject.SetActive(false); Destroy(merchant.gameObject); }
-            var node = new GameObject("Visiting goblin merchant"); node.transform.SetParent(waves.transform, false); node.transform.position = MerchantPosition;
-            merchant = node.AddComponent<GoblinMerchantVisual>();
+            if (merchant != null) { merchant.gameObject.SetActive(false); Destroy(merchant.gameObject); merchant = null; }
+            IsMerchantOpen = false;
+            data.merchantRemaining = 0;
+            data.nextMerchantWave = int.MaxValue;
+            data.offers = Array.Empty<string>(); data.sold = Array.Empty<bool>();
+            offers = Array.Empty<BuildItemDefinition>();
         }
         public BuildItemDefinition Offer(int index) => index >= 0 && index < offers.Length ? offers[index] : null;
         public static int Price(int index) => index == 0 ? 100 : index == 1 ? 120 : index == 2 ? 60 : 50;
@@ -161,9 +151,9 @@ namespace DarkLord.Player
             data = saved != null ? JsonUtility.FromJson<EconomySaveData>(JsonUtility.ToJson(saved)) : new EconomySaveData { lastUpkeepWave = waves.CurrentWave, nextMerchantWave = waves.CurrentWave + 2 };
             // Unity serializes null inline classes as default objects; preserve the legacy migration signal.
             if (saved == null || saved.technology == null) data.technology = null;
-            offers = data.offers.Select(id => dungeon.Inventory.Find(id)).ToArray();
+            ClearMerchantState();
             RestoreTechnology();
-            if (MerchantPresent) SpawnMerchant(); Message = "";
+            Message = "";
         }
     }
 }

@@ -150,7 +150,7 @@ namespace DarkLord.Tests
                 waves.RestoreSave(new WaveSaveData { number = wave, state = WaveState.Active, enemies = Array.Empty<MinionSaveData>(), augments = selected.ToArray() });
                 typeof(WaveDirector).GetMethod("CheckWaveCleared", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(waves, null);
                 Assert.AreEqual(3, waves.RewardChoices.Distinct().Count()); Assert.AreEqual(0, Time.timeScale);
-                Assert.IsTrue(waves.RewardChoices.All(id => id >= 0 && id <= 2 || id == WaveRewardCatalog.RoomItem || id == WaveRewardCatalog.FacilityItem));
+                Assert.IsTrue(waves.RewardChoices.All(id => id >= 0 && id <= 2 || id == WaveRewardCatalog.RoomItem || id == WaveRewardCatalog.TrapItem));
                 var snapshot = JsonUtility.FromJson<WaveSaveData>(JsonUtility.ToJson(waves.CaptureSave()));
                 waves.RestoreSave(snapshot); CollectionAssert.AreEqual(snapshot.rewards, waves.RewardChoices);
                 int chosen = waves.RewardChoices[0]; Assert.IsTrue(waves.ChooseReward(0)); Assert.IsFalse(waves.ChooseReward(0));

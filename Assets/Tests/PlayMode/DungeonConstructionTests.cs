@@ -14,6 +14,62 @@ namespace DarkLord.Tests
     public sealed class DungeonConstructionTests
     {
         private readonly List<GameObject> objects = new List<GameObject>();
+        [TestCase(202, 202, false)]
+        [TestCase(41, 31, false)]
+        [TestCase(15, 11, false)]
+        [TestCase(202, 202, true)]
+        [TestCase(41, 31, true)]
+        [TestCase(15, 11, true)]
+        public void CollapsedOpeningReleasesReservationsAndCanBeRebuilt(int width, int height, bool restoreExisting)
+        {
+            var layout = new DungeonLayout(width, height);
+            var construction = new DungeonConstruction(layout);
+            var opening = construction.Sections[1];
+            var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+            var collapse = typeof(DungeonLayout).GetMethod("CollapseFloor", flags);
+            var release = typeof(DungeonConstruction).GetMethod("ReleaseCollapsedOpening", flags);
+            foreach (var cell in opening.Cells)
+                if (cell.x <= layout.Core.x - 5) collapse.Invoke(layout, new object[] { cell });
+            if (restoreExisting)
+            {
+                var saved = new DarkLord.Persistence.SectionSaveData[construction.Sections.Count];
+                for (int i = 0; i < saved.Length; i++)
+                {
+                    var section = construction.Sections[i];
+                    saved[i] = new DarkLord.Persistence.SectionSaveData { kind = section.Kind, bounds = section.Bounds,
+                        complete = section.IsComplete, core = section.IsCore, cells = new List<Vector2Int>(section.Cells).ToArray() };
+                }
+                typeof(DungeonConstruction).GetMethod("Restore", flags).Invoke(construction, new object[] { saved });
+            }
+            else release.Invoke(construction, null);
+            foreach (var cell in opening.Cells)
+                if (!layout.IsFloor(cell)) Assert.IsNull(construction.At(cell), "Collapsed rock must not keep its old reservation.");
+            var doorway = new Vector2Int(layout.Core.x - 4, layout.Core.y);
+            Assert.IsTrue(construction.IsWalkable(doorway));
+            int revision = construction.Revision;
+            release.Invoke(construction, null);
+            Assert.AreEqual(revision, construction.Revision, "Repeated cleanup must preserve surviving sections.");
+            var target = new Vector2Int(opening.Bounds.xMin + 1, layout.Core.y);
+            Assert.AreEqual(ConstructionResult.Success, construction.TryPlanCorridor(doorway, target, out var rebuilt));
+            for (int pass = 0; pass < rebuilt.Cells.Count; pass++)
+                foreach (var cell in rebuilt.Cells) if (!layout.IsFloor(cell)) layout.TryExpand(cell);
+            Assert.IsTrue(rebuilt.IsComplete);
+            Assert.IsTrue(construction.FindPath(target, layout.Core, new List<Vector2Int>()));
+        }
+        [TestCase(202, 202, 8)]
+        [TestCase(41, 31, 8)]
+        [TestCase(15, 11, 2)]
+        public void StartingCorridorStaysCompactAndConnectsEntranceToCore(int width, int height, int expectedLength)
+        {
+            var layout = new DungeonLayout(width, height);
+            var construction = new DungeonConstruction(layout);
+            var corridor = construction.Sections[1];
+            Assert.AreEqual(expectedLength, corridor.Bounds.width);
+            Assert.AreEqual(DungeonConstruction.CorridorWidth, corridor.Bounds.height);
+            Assert.IsTrue(corridor.Bounds.Contains(layout.Entrance));
+            Assert.IsTrue(construction.FindPath(layout.Entrance, layout.Core, new List<Vector2Int>()));
+            Assert.IsFalse(layout.IsFloor(new Vector2Int(corridor.Bounds.xMin - 1, layout.Core.y)));
+        }
         [Test]
         public void CorridorsRequireCardinalRoomOrCorridorConnectionWithoutMutatingOnRejection()
         {

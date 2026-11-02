@@ -153,7 +153,14 @@ namespace DarkLord.Tests
             Assert.AreEqual(grid.Layout.Core, grid.WorldToCell(waves.Lord.transform.position));
             Physics2D.SyncTransforms();
             Assert.IsTrue(Physics2D.OverlapPointAll(grid.CellCenter(old)).Any(c => c is BoxCollider2D));
-            Assert.AreEqual(0, waves.Tutorial.LivingEnemies); yield return null;
+            Assert.AreEqual(0, waves.Tutorial.LivingEnemies);
+            Assert.IsNull(grid.Construction.At(old), "Collapsed opening must release the previous corridor reservation.");
+            Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlanCorridor(grid.Layout.Entrance, old + Vector2Int.right, out var rebuilt));
+            for (int pass = 0; pass < rebuilt.Cells.Count; pass++)
+                foreach (var cell in rebuilt.Cells) if (!grid.Layout.IsFloor(cell)) grid.Layout.TryExpand(cell);
+            Assert.IsTrue(rebuilt.IsComplete);
+            Assert.IsTrue(grid.Construction.FindPath(old + Vector2Int.right, grid.Layout.Core, new System.Collections.Generic.List<Vector2Int>()));
+            yield return null;
         }
         [UnityTest] public IEnumerator TutorialSaveRoundTripPreservesEncounterAndLegacyDoesNotRestart()
         {
