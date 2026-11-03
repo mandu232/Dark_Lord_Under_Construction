@@ -67,6 +67,14 @@ namespace DarkLord.Dungeon
         public static bool IsRoom(ConstructionKind kind) => kind == ConstructionKind.Room || kind == ConstructionKind.LargeRoom ||
             kind == ConstructionKind.StorageRoom || kind == ConstructionKind.AlchemyRoom;
         public DungeonSection At(Vector2Int cell) => layout.Contains(cell) ? owners[cell.x, cell.y] : null;
+        public DungeonSection GarrisonAt(Vector2Int cell)
+        {
+            var section = At(cell);
+            if (section == null || !section.IsComplete) return null;
+            if (IsRoom(section.Kind)) return section;
+            RefreshGarrisonAreas();
+            return corridorGarrisons.TryGetValue(cell, out var area) ? area : null;
+        }
         public DungeonSection RoomAt(Vector2Int cell)
         {
             var section = At(cell);

@@ -24,6 +24,8 @@ namespace DarkLord.Dungeon
         public bool TutorialCapacityUnlocked { get; private set; }
         public void RestoreTutorialCapacity(bool value) => TutorialCapacityUnlocked = recruitmentFacility && value;
         public int RoomCapacityBonus => roomCapacityBonus + (TutorialCapacityUnlocked ? 1 : 0);
+        [SerializeField, Min(.5f)] private float buffRadius = 6f;
+        public float BuffRadius => buffRadius > 0 ? buffRadius : 6f;
         [SerializeField] private MinionTrait requiredTrait;
         [SerializeField, Range(0, 200)] private int attackBonusPercent;
         [SerializeField, Range(0, 100)] private int physicalResistanceBonus, magicResistanceBonus;
@@ -32,9 +34,10 @@ namespace DarkLord.Dungeon
         public int AttackBonusPercent => attackBonusPercent;
         public int ResistanceBonus(DamageType type) => type == DamageType.Magic ? magicResistanceBonus : physicalResistanceBonus;
         public bool Buffs(DarkLord.Minions.MinionController minion) => buffFacility && isActiveAndEnabled && !IsRuined &&
-            minion != null && (requiredTrait == MinionTrait.None || (minion.Traits & requiredTrait) == requiredTrait);
+            minion != null && minion.IsAlive && minion.Health.Faction == Faction.Dungeon &&
+            minion.gameObject.scene == gameObject.scene && ((Vector2)(minion.transform.position - transform.position)).sqrMagnitude <= BuffRadius * BuffRadius && (requiredTrait == MinionTrait.None || (minion.Traits & requiredTrait) == requiredTrait);
         public string EffectDescription => recruitmentFacility ? $"소환 스택 {SummonStacks}개 · 시체 1구당 +1\n시체 옆에서 F로 들어 소환소에 가져오세요.\nF: 소환 창 · 스택 1개로 무작위 하수인 즉시 소환" : roomCapacityBonus > 0 ? $"이 방의 하수인 배치 한도 +{roomCapacityBonus}\n여러 숙소의 효과는 합산됩니다. 파괴 시 효과 중단" : !buffFacility ? $"생산  {(resource == CurrencyType.Gold ? "금화" : resource == CurrencyType.Souls ? "혈액" : "혈석")} +{productionPerRound}\n라운드 클리어마다 지급" :
-            $"방 전체 강화 · {(requiredTrait == MinionTrait.None ? "모든 하수인" : requiredTrait == MinionTrait.Magic ? "마법 특성" : requiredTrait == MinionTrait.Acid ? "산성 특성" : "근접 특성")}\n" +
+            $"반경 {BuffRadius / DungeonGrid.CellSize:0.#}칸 강화 · {(requiredTrait == MinionTrait.None ? "모든 하수인" : requiredTrait == MinionTrait.Magic ? "마법 특성" : requiredTrait == MinionTrait.Acid ? "산성 특성" : "근접 특성")}\n" +
             (attackBonusPercent > 0 ? $"공격력 +{attackBonusPercent}%\n" : "") +
             (physicalResistanceBonus > 0 ? $"물리 내성 +{physicalResistanceBonus}%p\n" : "") +
             (magicResistanceBonus > 0 ? $"마법 내성 +{magicResistanceBonus}%p\n" : "");
@@ -78,6 +81,23 @@ namespace DarkLord.Dungeon
             originalColors = new Color[intactRenderers.Length];
             for (int i = 0; i < intactRenderers.Length; i++) originalColors[i] = intactRenderers[i].color;
             RefreshVisuals();
+        }
+        private FacilityCoverageDisplay coverage;
+        public void SetCoverageVisible(bool visible)
+        {
+            if (!visible || IsRuined || !isActiveAndEnabled)
+            { if (coverage != null) coverage.Hide(); return; }
+            if (coverage == null)
+            {
+                var node = new GameObject("Facility effect coverage"); node.transform.SetParent(transform, false);
+                coverage = node.AddComponent<FacilityCoverageDisplay>();
+            }
+            coverage.Show(this, dungeon, Cell);
+        }
+        public void PlayPlacementEffect()
+        {
+            if (intactVisual != null)
+                (intactVisual.GetComponent<FacilityPlacementBounce>() ?? intactVisual.AddComponent<FacilityPlacementBounce>()).Play();
         }
         public void Bind(DungeonGrid grid, Vector2Int cell, GameObject design)
         { dungeon = grid; Cell = cell; Design = design; }

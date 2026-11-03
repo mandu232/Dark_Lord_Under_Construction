@@ -37,8 +37,8 @@ namespace DarkLord.Minions
                 ally.gameObject.scene != gameObject.scene || ally.GetComponent<MinionController>() == null ||
                 ally.CurrentHealth >= ally.MaximumHealth || Vector2.Distance(transform.position, ally.transform.position) > 4.5f || !controller.HasTerrainLineOfSight(ally)) return false;
             var dungeon = controller.DefenceDungeon;
-            var room = dungeon != null ? dungeon.Construction.RoomAt(dungeon.WorldToCell(controller.GuardPosition)) : null;
-            return room == null || dungeon.Construction.RoomAt(dungeon.WorldToCell(ally.transform.position)) == room;
+            var room = dungeon != null ? dungeon.Construction.GarrisonAt(dungeon.WorldToCell(controller.GuardPosition)) : null;
+            return room == null || dungeon.Construction.GarrisonAt(dungeon.WorldToCell(ally.transform.position)) == room;
         }
         private ActorHealth FindTarget(bool restoring)
         {

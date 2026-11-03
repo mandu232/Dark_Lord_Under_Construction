@@ -70,9 +70,9 @@ namespace DarkLord.UI
         public void Show(ResourceBuilding building)
         {
             if (!CanInspect || building == null || !building.isActiveAndEnabled || dungeon.BuildingAt(building.Cell) != building) return;
-            minionInspection?.Close(); Selected = building; window.SetActive(true); Refresh();
+            minionInspection?.Close(); Selected?.SetCoverageVisible(false); Selected = building; window.SetActive(true); Refresh();
         }
-        public void Close() { Selected = null; if (window != null) window.SetActive(false); }
+        public void Close() { Selected?.SetCoverageVisible(false); Selected = null; if (window != null) window.SetActive(false); }
         public void RepairSelected()
         {
             if (!CanInspect || Selected == null || dungeon.BuildingAt(Selected.Cell) != Selected) return;
@@ -82,6 +82,7 @@ namespace DarkLord.UI
         private void Refresh()
         {
             if (Selected == null) { Close(); return; }
+            Selected.SetCoverageVisible(true);
             if (healthBar != null) healthBar.SetHealth(Selected.Health.CurrentHealth, Selected.Health.MaximumHealth);
             titleText.text = RewardUiSkin.BuffSymbol(Selected.BuffIcon) + Selected.DisplayName;
             string resource = Selected.Resource == CurrencyType.Gold ? "금화" : Selected.Resource == CurrencyType.Souls ? "혈액" : "혈석";

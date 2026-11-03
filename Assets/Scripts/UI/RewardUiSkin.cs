@@ -8,7 +8,11 @@ namespace DarkLord.UI
         public Sprite vitalTrack, waveStartButton;
         public Sprite technologyTextBox;
         public Sprite[] icons;
-        public Sprite Icon(int id) => icons != null && id >= 0 && id < icons.Length ? icons[id] : null;
+        public Sprite Icon(int id)
+        {
+            int index = id == 14 ? 9 : id == 15 ? 6 : id == 16 ? 10 : id == 17 ? 5 : id;
+            return icons != null && index >= 0 && index < icons.Length ? icons[index] : null;
+        }
         public static void ConfigureBuffText(TMPro.TMP_Text text)
         {
             if (text != null) text.spriteAsset = Resources.Load<TMPro.TMP_SpriteAsset>("BuffIcons");

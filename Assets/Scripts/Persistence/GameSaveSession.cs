@@ -135,6 +135,7 @@ namespace DarkLord.Persistence
                 float ratio = Mathf.Min((float)loaded.playerHealth / loaded.playerMaximumHealth, (float)loaded.coreHealth / loaded.coreMaximumHealth);
                 sharedHealth = Mathf.RoundToInt(sharedMaximum * ratio);
             }
+            player.RestoreExperience(loaded.playerLevel, loaded.playerExperience);
             player.RestoreHealth(sharedMaximum, sharedHealth);
             wallet.RestoreAmounts(loaded.gold, loaded.souls, loaded.crystals);
             summoning.RestoreGuards(loaded.guards);
@@ -142,6 +143,7 @@ namespace DarkLord.Persistence
             waves.RestoreSave(loaded.wave);
             waves.Combat?.RestoreSave(loaded.combat);
             waves.Harvest?.Restore(loaded.corpses);
+            DeathLoot.Restore(loaded.loot, player.transform, waves.transform);
             waves.Economy?.Restore(loaded.economy);
             waves.RestoreTutorial(loaded.tutorial);
             playedSeconds = loaded.playedSeconds;
@@ -169,6 +171,7 @@ namespace DarkLord.Persistence
             tutorial = waves.Tutorial?.Capture(),
             options = options.Copy(), playedSeconds = playedSeconds, playerPosition = player.transform.position, combat = waves.Combat?.CaptureSave(),
             playerHealth = player.CurrentHealth, playerMaximumHealth = player.MaximumHealth,
+            playerLevel = player.Level, playerExperience = player.Experience, loot = DeathLoot.Capture(player.transform),
             coreHealth = core.CurrentHealth, coreMaximumHealth = core.MaximumHealth,
             sharedCoreHealth = true,
             gold = wallet.Gold, souls = wallet.Souls, crystals = wallet.DarkCrystals,

@@ -18,6 +18,7 @@ namespace DarkLord.Dungeon
         private DarkLord.Player.PlacementCameraZoom placementZoom;
         public bool IsPlacementView { get; private set; }
         private Vector2Int? previewCell;
+        private FacilityCoverageDisplay facilityCoveragePreview;
         private Vector2Int? corridorStart;
         public bool IsDraggingCorridor => corridorStart.HasValue;
         private bool previewAllowed;
@@ -255,6 +256,7 @@ namespace DarkLord.Dungeon
                 var definition = selectedItem.prefab != null ? selectedItem.prefab.GetComponent<ResourceBuilding>() : null;
                 bool buildingAllowed = !selectedItem.repairTool && definition != null && dungeon.CanPlaceBuilding(cell) && dungeon.Inventory.CanUse(selectedItem);
                 dungeon.Highlight(cell, buildingAllowed); previewCell = cell;
+                ShowFacilityCoveragePreview(definition, cell, buildingAllowed);
                 if (building != null)
                     Message = building.IsRuined ? $"{building.DisplayName} 잔해 · 건설 모드를 종료하고 우클릭 정보창에서 수리하세요." : $"{building.DisplayName} · 체력 {building.Health.CurrentHealth}/{building.Health.MaximumHealth} · 매 라운드 +{building.ProductionPerRound}";
                 else Message = "코어를 제외한 완성된 방의 빈 바닥에 설치할 수 있습니다. 시설 아이템 1개가 필요합니다.";
@@ -288,8 +290,18 @@ namespace DarkLord.Dungeon
             if (Time.frameCount > openedFrame && build.WasPressedThisFrame()) TryBuild(cell);
         }
 
+        private void ShowFacilityCoveragePreview(ResourceBuilding definition, Vector2Int cell, bool allowed)
+        {
+            if (facilityCoveragePreview == null)
+            {
+                var node = new GameObject("Facility placement range preview"); node.transform.SetParent(transform, false);
+                facilityCoveragePreview = node.AddComponent<FacilityCoverageDisplay>();
+            }
+            facilityCoveragePreview.Show(definition, dungeon, cell, allowed);
+        }
         private void ClearPreview()
         {
+            if (facilityCoveragePreview != null) facilityCoveragePreview.Hide();
             if (previewCell.HasValue && dungeon != null) dungeon.Highlight(null, false);
             previewCell = null;
             corridorStart = null;

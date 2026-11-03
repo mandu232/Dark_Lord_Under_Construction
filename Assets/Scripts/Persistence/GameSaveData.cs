@@ -16,6 +16,8 @@ namespace DarkLord.Persistence
         public int gold, souls, crystals;
         public Vector3 playerPosition;
         public int playerHealth, playerMaximumHealth, coreHealth, coreMaximumHealth;
+        public int playerLevel = 1, playerExperience;
+        public LootSaveData[] loot;
         public bool sharedCoreHealth;
         public DungeonSaveData dungeon;
         public MinionSaveData[] guards = new MinionSaveData[0];
@@ -82,6 +84,7 @@ namespace DarkLord.Persistence
         public Vector3 position;
         public Vector2 post;
         public int health, maximumHealth;
+        public int level = 1, experience;
         public MinionOrder order;
         public MinionBehaviour behaviour;
         public MovementSlowSaveData[] slows;
@@ -97,6 +100,9 @@ namespace DarkLord.Persistence
     [Serializable] public sealed class WaveSaveData
     {
         public int number, pending;
+        public bool minionRecoveryDisabled;
+        public int tributeCharges;
+        public float thornCooldown;
         public WaveState state;
         public int[] rewards;
         public string[] rewardItemIds;
@@ -204,6 +210,8 @@ namespace DarkLord.Persistence
                     if (!string.IsNullOrEmpty(data.wave.rewardItemIds[i]) && data.wave.rewards[i] != WaveRewardCatalog.RoomItem && data.wave.rewards[i] != WaveRewardCatalog.FacilityItem && data.wave.rewards[i] != WaveRewardCatalog.TrapItem)
                         throw new InvalidDataException("보상 아이템 종류가 올바르지 않습니다.");
             }
+            if (!InRange(data.wave.thornCooldown,2)) throw new InvalidDataException("반격 재사용 시간이 올바르지 않습니다.");
+            if (data.wave.tributeCharges < 0 || data.wave.tributeCharges > 5) throw new InvalidDataException("과충전 수치가 올바르지 않습니다.");
             if (data.wave.augments != null)
             {
                 var selected = new System.Collections.Generic.HashSet<int>();
@@ -371,7 +379,7 @@ namespace DarkLord.Persistence
                 !Finite(support.targetPosition) || !support.casting && support.remaining > 0))
                 throw new InvalidDataException("하수인 치유 기록이 올바르지 않습니다.");
             var status = actor.augmentStatus;
-            if (status != null && (!InRange(status.lordMark, 4) || !InRange(status.trapBrand, 4) || !InRange(status.empowered, 5)))
+            if (status != null && (!InRange(status.lordMark, 6) || !InRange(status.trapBrand, 8) || !InRange(status.empowered, 5) || !InRange(status.broodRemaining,4) || status.broodHits < 0 || status.broodHits > 2))
                 throw new InvalidDataException("증강 효과 시간이 올바르지 않습니다.");
             if (t != null && (!Enum.IsDefined(typeof(InvaderRole), t.role) || !Enum.IsDefined(typeof(InvaderAction), t.action) ||
                 !InRange(t.remaining, 1) || !InRange(t.cooldown, 6) || !Finite(t.direction) || !Finite(t.healPosition) ||

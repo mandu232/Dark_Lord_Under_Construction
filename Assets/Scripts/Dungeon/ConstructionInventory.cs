@@ -104,7 +104,7 @@ namespace DarkLord.Dungeon
         {
             if (Time.timeScale <= 0 || !isActiveAndEnabled || item == null || !item.available || item.category != BuildCategory.Buildings ||
                 item.prefab == null || item.prefab.GetComponent<ResourceBuilding>() == null || !Inventory.CanUse(item) || !CanPlaceBuilding(cell)) return false;
-            SpawnBuilding(cell, item.prefab);
+            SpawnBuilding(cell, item.prefab).PlayPlacementEffect();
             Inventory.Consume(item);
             return true;
         }

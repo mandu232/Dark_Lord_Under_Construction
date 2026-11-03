@@ -394,8 +394,8 @@ namespace DarkLord.UI
             if ((trait & DarkLord.Actors.MinionTrait.Magic) != 0) targets.Add("마법");
             if ((trait & DarkLord.Actors.MinionTrait.Acid) != 0) targets.Add("산성");
             if ((trait & DarkLord.Actors.MinionTrait.Melee) != 0) targets.Add("근접");
-            string target = targets.Count == 0 ? "설치된 방의 모든 하수인" : "설치된 방의 " + string.Join("·", targets) + " 특성을 가진 하수인";
-            return gold + "\n\n" + WrapWords(target + "의 " + string.Join(", ", effects) + " 높입니다.");
+            string target = targets.Count == 0 ? "범위 내 모든 하수인" : "범위 내 " + string.Join("·", targets) + " 특성을 가진 하수인";
+            return gold + $"\n\n반경 {facility.BuffRadius / DungeonGrid.CellSize:0.#}칸\n" + WrapWords(target + "의 " + string.Join(", ", effects) + " 높입니다.");
         }
         // Keep Korean words together while TMP chooses line breaks for the current width.
         private static string WrapWords(string sentence) => "<nobr>" + sentence.Replace(" ", "</nobr> <nobr>") + "</nobr>";

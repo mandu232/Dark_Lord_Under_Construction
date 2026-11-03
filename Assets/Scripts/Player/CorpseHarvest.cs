@@ -62,6 +62,7 @@ namespace DarkLord.Player
         public InvaderCorpse LeaveCorpse(ActorHealth enemy)
         {
             if (enemy == null || enemy.IsAlive || enemy.Faction != Faction.Invader) return null;
+            DeathLoot.Scatter(enemy.transform.position, transform, remains != null ? remains : waves.transform);
             var source = enemy.GetComponentInChildren<SpriteRenderer>(); if (source == null) return null;
             var role = enemy.GetComponent<InvaderTactics>()?.Role ?? InvaderRole.Warrior;
             var corpse = Create(enemy.transform.position, role, source);
@@ -113,7 +114,6 @@ namespace DarkLord.Player
             bool wasCarried = Carried == corpse;
             corpses.Remove(corpse); if (wasCarried) { Carried = null; dragVelocity = Vector3.zero; }
             corpse.Absorb(facility); consumedFrame = Time.frameCount; Message = $"시체를 흡수했습니다. 소환 스택 {facility.SummonStacks}개";
-            if (waves.Economy?.Has(TechId.Salvage) == true) GetComponent<CurrencyWallet>()?.Add(CurrencyType.Gold, 5);
             CorpseDelivered?.Invoke(corpse, facility, wasCarried); return true;
         }
         private void BeginDrag()

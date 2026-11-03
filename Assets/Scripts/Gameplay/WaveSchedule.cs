@@ -33,6 +33,7 @@ namespace DarkLord.Gameplay
         private void ScheduleNextWave() => nextWaveRemaining = options.PreparationSeconds(CurrentWave) * Random.Range(.92f, 1.08f);
         private void Update()
         {
+            UpdatePreparationHealing(Time.deltaTime);
             if (!AutomaticWaves || Tutorial != null && Tutorial.Active) { readyPreparationSeconds = 0; return; }
             if (State == WaveState.Active && dungeonLord != null && dungeonLord.IsAlive && dungeonCore != null && dungeonCore.IsAlive)
                 CheckAutomaticWaveClears();

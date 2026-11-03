@@ -7,13 +7,16 @@ namespace DarkLord.Actors
     public sealed class AugmentStatusSaveData
     {
         public float lordMark, trapBrand, empowered;
+        public float broodRemaining;
+        public int broodHits;
     }
 
     // Per-actor timers use scaled time, including pause and save restoration.
     [DisallowMultipleComponent]
     public sealed class AugmentStatus : MonoBehaviour
     {
-        private float lordUntil, trapUntil, empoweredUntil;
+        private float lordUntil, trapUntil, empoweredUntil, broodUntil;
+        private int broodHits;
         private SpriteRenderer marker;
         private ActorHealth health;
         private DarkLord.UI.RewardUiSkin skin;
@@ -43,17 +46,30 @@ namespace DarkLord.Actors
         public void MarkLord()
         {
             if (!LordMarked) DarkLord.Gameplay.GameplayEffects.Show(transform, DarkLord.Gameplay.GameplayEffectKind.Curse, transform.position, follow: true);
-            lordUntil = Time.time + 4;
+            lordUntil = Time.time + 6;
         }
-        public void BrandTrap() => trapUntil = Time.time + 4;
-        public void Empower() => empoweredUntil = Time.time + 5;
+        public void BrandTrap() => trapUntil = Time.time + 8;
+        public void Empower()
+        {
+            if (!Empowered) DarkLord.Gameplay.GameplayEffects.Show(transform,DarkLord.Gameplay.GameplayEffectKind.Aegis,transform.position,follow:true,duration:5);
+            empoweredUntil = Time.time + 5;
+        }
+        public bool RegisterBroodHit()
+        {
+            if (Time.time >= broodUntil) broodHits = 0;
+            broodUntil = Time.time + 4;
+            if (++broodHits < 3) return false;
+            broodHits = 0; return true;
+        }
         public void ConsumeLord() => lordUntil = 0;
         public void ConsumeTrap() => trapUntil = 0;
         public void ConsumeEmpower() => empoweredUntil = 0;
         public AugmentStatusSaveData CaptureSave() => new AugmentStatusSaveData {
+            broodHits = Time.time < broodUntil ? broodHits : 0, broodRemaining = Mathf.Max(0, broodUntil - Time.time),
             lordMark = Mathf.Max(0, lordUntil - Time.time), trapBrand = Mathf.Max(0, trapUntil - Time.time), empowered = Mathf.Max(0, empoweredUntil - Time.time) };
         public void RestoreSave(AugmentStatusSaveData data)
         {
+            broodHits = Mathf.Clamp(data?.broodHits ?? 0,0,2); broodUntil = Time.time + Mathf.Clamp(data?.broodRemaining ?? 0,0,4);
             lordUntil = Time.time + (data?.lordMark ?? 0);
             trapUntil = Time.time + (data?.trapBrand ?? 0);
             empoweredUntil = Time.time + (data?.empowered ?? 0);

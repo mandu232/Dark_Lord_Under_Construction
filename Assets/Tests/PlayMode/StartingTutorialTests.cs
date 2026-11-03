@@ -32,6 +32,29 @@ namespace DarkLord.Tests
         }
         [UnityTearDown] public IEnumerator Cleanup()
         { Time.timeScale = 1; if (scene.IsValid() && scene.isLoaded) yield return SceneManager.UnloadSceneAsync(scene); }
+        [UnityTest, Category("TutorialLastDefender")] public IEnumerator LastSurvivingMinionEndsOpeningWithPlayerAboveHalfHealth()
+        {
+            var guards=grid.Guards.Where(g=>g != null && g.IsAlive).ToArray(); Assert.AreEqual(4,guards.Length);
+            Assert.Greater(waves.Lord.CurrentHealth,waves.Lord.MaximumHealth/2);
+            guards[0].Health.Kill(); guards[1].Health.Kill();
+            Assert.Less(waves.Tutorial.Elapsed,StartingTutorial.BattleEnds,"Two survivors should not end the battle");
+            guards[2].Health.Kill();
+            Assert.AreEqual(1,grid.Guards.Count(g=>g != null && g.IsAlive));
+            Assert.AreEqual(StartingTutorial.BattleEnds,waves.Tutorial.Elapsed);
+            Assert.IsTrue(waves.Tutorial.DialogueOpen); Assert.IsTrue(waves.Tutorial.Instruction.Contains("천장"));
+            Assert.Greater(waves.Lord.CurrentHealth,waves.Lord.MaximumHealth/2);
+            waves.Tutorial.Advance(5); Assert.IsTrue(waves.Tutorial.Collapsed);
+            Assert.AreEqual(1,grid.Guards.Count(g=>g != null && g.IsAlive));
+            yield return null;
+        }
+        [UnityTest, Category("TutorialLastDefender")] public IEnumerator HalfHealthStillEndsOpeningWithMultipleMinionsAlive()
+        {
+            Assert.AreEqual(4,grid.Guards.Count(g=>g != null && g.IsAlive));
+            waves.Lord.TakeDamage(waves.Lord.MaximumHealth);
+            Assert.GreaterOrEqual(waves.Tutorial.Elapsed,StartingTutorial.BattleEnds);
+            Assert.IsTrue(waves.Tutorial.DialogueOpen);
+            yield return null;
+        }
         [UnityTest] public IEnumerator FreshGameStartsTutorialWithFourGuardsAndBlocksWaves()
         {
             Assert.IsTrue(waves.Tutorial.Active); Assert.AreEqual(4, Find<MinionSummoning>().GuardCount);

@@ -17,7 +17,7 @@ namespace DarkLord.Dungeon
         private Tile ceilingTile;
         private Sprite ceilingSprite;
         private Tile[] roomWallPieces, bannerWallPieces, verticalWallPieces, southWallPieces;
-        private Tile[][] compactWallPieces;
+        private Tile[][] compactWallPieces, compactFacePieces;
         private Tile[] floorVariants, carpetCorners;
         private Tile[] carpetInnerCorners;
         private Tile wallShadow, pillarShadow, pillarShadowEnd, windowGlow;
@@ -85,8 +85,24 @@ namespace DarkLord.Dungeon
                 // background in the source and would hide the shaft at inner corners.
                 for (int column = 0; column < southWallPieces.Length; column++)
                 {
-                    Destroy(southWallPieces[column].sprite);
+                    if (Application.isPlaying) Destroy(southWallPieces[column].sprite);
+                    else DestroyImmediate(southWallPieces[column].sprite);
                     southWallPieces[column].sprite = Sprite.Create(texture, new Rect(240 + column * 16, 152, 16, 8), new Vector2(.5f, 0), 16);
+                }
+                compactFacePieces = new Tile[5][];
+                for (int height = 1; height < 5; height++)
+                {
+                    compactFacePieces[height] = new Tile[height * 5];
+                    float slice = 80f / height;
+                    for (int row = 0; row < height; row++)
+                        for (int column = 0; column < 5; column++)
+                        {
+                            var tile = ScriptableObject.CreateInstance<Tile>();
+                            tile.sprite = Sprite.Create(texture, new Rect(192 + column * 16, 176 + (height - row - 1) * slice, 16, slice), new Vector2(.5f, .5f), 16);
+                            tile.transform = Matrix4x4.Scale(new Vector3(1, height / 5f, 1));
+                            tile.colliderType = Tile.ColliderType.None;
+                            compactFacePieces[height][row * 5 + column] = tile;
+                        }
                 }
                 compactWallPieces = new Tile[5][];
                 for (int height = 1; height < 5; height++)
@@ -328,7 +344,9 @@ namespace DarkLord.Dungeon
             while (VerticalWallEdge(new Vector2Int(p.x, bottom - 1))) bottom--;
             int cornice = top;
             while (cornice < top + 5 && cornice + 1 < Layout.Height * 2 && !ArtFloor(new Vector2Int(p.x, cornice + 1))) cornice++;
-            if (p.y > cornice) return null;
+            // Reserve the upper corridor's shallow south cap instead of clipping a pillar into it.
+            if (SouthWallAt(new Vector2Int(p.x, cornice)) != null) cornice--;
+            if (p.y > cornice || cornice < bottom) return null;
             // A south-facing boundary shows only the wall top, including its corner caps.
             // Continue its side as a plain shaft instead of exposing a front-facing pillar.
             if (SouthWallAt(new Vector2Int(p.x, bottom - 1)) != null)
@@ -343,6 +361,18 @@ namespace DarkLord.Dungeon
             // Rows 3..7 form one complete pillar. Only the plain shaft (rows 1..2) repeats.
             if (p.y <= bottom + 4) return verticalWallPieces[3 + bottom + 4 - p.y];
             return verticalWallPieces[1 + (cornice - 1 - p.y) % 2];
+        }
+        // A full north face needs five art cells. Keep the upper floor and its south cap free.
+        private int NorthFaceHeight(Vector2Int foot)
+        {
+            int height = 0;
+            for (int depth = 1; depth <= 5; depth++)
+            {
+                var cell = foot + Vector2Int.up * depth;
+                if (ArtFloor(cell) || SouthWallAt(cell) != null) break;
+                height++;
+            }
+            return height;
         }
         // Distribute spans of three or four cells between single pillars, anchored at both ends.
         private int WallColumn(Vector2Int foot, out int segmentStart, out bool shortenedInterior)
@@ -453,10 +483,17 @@ namespace DarkLord.Dungeon
                 {
                     var foot = p + Vector2Int.down * depth;
                     if (!ArtFloor(foot)) continue;
+                    int faceHeight = NorthFaceHeight(foot);
+                    if (depth > faceHeight) break;
                     int wallColumn = WallColumn(foot, out int segmentStart, out bool shortenedInterior);
                     int index = (5 - depth) * 5 + wallColumn;
                     var owner = Construction.At(new Vector2Int(foot.x / 2, foot.y / 2));
                     bool corridor = owner != null && !DungeonConstruction.IsRoom(owner.Kind);
+                    if (faceHeight < 5 && compactFacePieces != null)
+                    {
+                        wall = compactFacePieces[faceHeight][(faceHeight - depth) * 5 + wallColumn];
+                        break;
+                    }
                     // Plain room-wall spans and shortened corridor spans have no window.
                     // Alternate complete corridor wall spans between windows and torches.
                     // A fixture stays at the span center, away from pillars and doorways.

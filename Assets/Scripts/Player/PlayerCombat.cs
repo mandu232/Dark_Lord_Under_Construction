@@ -110,7 +110,7 @@ namespace DarkLord.Player
         }
         private bool AllowDamage(ActorHealth source) =>
             !(IsDodging && Time.time < dodgeUntil - (DodgeDuration - DodgeInvulnerabilityDuration)) && Time.time >= wardUntil;
-        private void OnDamaged(ActorHealth source) => repairProgress = 0;
+        private void OnDamaged(ActorHealth source) { repairProgress = 0; waves?.Augments.LordDamaged(source); }
         public void Configure(WaveDirector director) => waves = director;
         public void RefillMana() => Mana = MaximumMana;
         public void RecoverMana(float amount) => Mana = Mathf.Min(MaximumMana, Mana + Mathf.Max(0, amount));
@@ -179,7 +179,7 @@ namespace DarkLord.Player
             attackUntil = Time.time + SlashDuration;
             motor.AttackStep(direction, UsesSecondSlash ? .48f : .36f, .16f);
             GetComponent<ActorAnimation>()?.Present(ActorState.Attack, direction, UsesSecondSlash ? 1 : 0);
-            DamageArea(1.65f, 25 + (waves?.Economy?.AttackBonus ?? 0), direction, 0.25f, DamageType.Physical,
+            DamageArea(1.65f, 15 + (waves?.Economy?.AttackBonus ?? 0), direction, 0.25f, DamageType.Physical,
                 impact: UsesSecondSlash ? PlayerHitStop.ImpactKind.Combo : PlayerHitStop.ImpactKind.Light);
             return true;
         }
@@ -189,7 +189,7 @@ namespace DarkLord.Player
             nextNova = Time.time + 6;
             meleeAttack = false;
             attackUntil = Time.time + 0.3f;
-            DamageArea(6f, 45 + (waves?.Economy?.MagicBonus ?? 0), Vector2.zero, -1, DamageType.Magic, impact: PlayerHitStop.ImpactKind.Spell, shockwave: true);
+            DamageArea(6f, 45 + (waves?.Economy?.MagicBonus ?? 0) + (waves?.Augments.BeginNovaCast() ?? 0), Vector2.zero, -1, DamageType.Magic, impact: PlayerHitStop.ImpactKind.Spell, shockwave: true);
             GameplayEffects.Show(transform, GameplayEffectKind.BloodNova, transform.position);
             PresentNovaImpact();
             Message = "혈파 · 광역 충격 / 넉백 / 기절 1.5초";
@@ -236,9 +236,11 @@ namespace DarkLord.Player
         }
         private bool DealDamage(ActorHealth target, int damage, DamageType type, PlayerHitStop.ImpactKind impact)
         {
+            bool canTrigger = waves?.Augments.CanTrigger == true;
             int before = target.CurrentHealth;
-            bool hit = target.TakeDamage(damage, health, type);
+            bool hit = target.TakeDamage(damage + health.GrowthAttackBonus, health, type);
             if (hit && target != null && target.CurrentHealth < before) PlayerHitStop.OnHit(this, target, impact);
+            if (canTrigger && hit && before > 0 && target != null && !target.IsAlive) waves.Augments.LordKill(target);
             return hit;
         }
 
@@ -264,7 +266,7 @@ namespace DarkLord.Player
                 {
                     bool novaBonus = direction == Vector2.zero && type == DamageType.Magic && waves != null && waves.Augments.NovaBonus(target);
                     int finalDamage = direction != Vector2.zero && waves != null ? waves.Augments.MeleeDamage(target, damage) : damage;
-                    if (DealDamage(target, finalDamage + (novaBonus ? 25 : 0), type, impact))
+                    if (DealDamage(target, finalDamage + (novaBonus ? 35 : 0), type, impact))
                     {
                         if (novaBonus) enhancedHits++;
                         TechnologyHit(target, direction != Vector2.zero, ref lifeStolen);

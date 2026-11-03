@@ -42,7 +42,7 @@ namespace DarkLord.Player
         {
             if(!CanAct||IsDodging||Time.time<nextNova||waves?.Economy?.Has(TechId.FrostNova)!=true||!SpendMana(30))return false;
             meleeAttack=false;nextNova=Time.time+6;attackUntil=Time.time+.3f;
-            DamageArea(6,35+waves.Economy.MagicBonus,Vector2.zero,-1,DamageType.Magic,true,PlayerHitStop.ImpactKind.Spell,shockwave:true);
+            DamageArea(6,35+waves.Economy.MagicBonus+waves.Augments.BeginNovaCast(),Vector2.zero,-1,DamageType.Magic,true,PlayerHitStop.ImpactKind.Spell,shockwave:true);
             PresentNovaImpact();
             GameplayEffects.Show(transform,GameplayEffectKind.FrostNova,transform.position);Message="서리 혈파 · 넉백 / 기절 1.5초 / 둔화 3초";return true;
         }
@@ -54,7 +54,7 @@ namespace DarkLord.Player
             if(style==AttackStyle.WideSlash)
             {
                 GetComponent<ActorAnimation>()?.Present(ActorState.Attack,direction);
-                DamageArea(2.7f,Mathf.RoundToInt((25+waves.Economy.AttackBonus)*.85f),direction,-.3f,DamageType.Physical,impact:PlayerHitStop.ImpactKind.Heavy);
+                DamageArea(2.7f,Mathf.RoundToInt((15+waves.Economy.AttackBonus)*.85f),direction,-.3f,DamageType.Physical,impact:PlayerHitStop.ImpactKind.Heavy);
                 GameplayEffects.Show(transform,GameplayEffectKind.WideSlash,transform.position+(Vector3)direction*.75f, direction);
             }
             else

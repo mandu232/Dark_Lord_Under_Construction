@@ -73,29 +73,30 @@ namespace DarkLord.Tests
             slowed[0].gameObject.AddComponent<BoxCollider2D>().size = Vector2.one * .1f;
             var fast = Actor(Vector3.up); var ally = Actor(Vector3.left, true);
             Physics2D.SyncTransforms(); Assert.IsTrue(combat.TryNova());
-            Assert.IsTrue(slowed.All(t => t.CurrentHealth == 130)); Assert.AreEqual(155, fast.CurrentHealth);
+            CollectionAssert.AreEqual(new[]{60,80,80,80},slowed.Select(t=>t.CurrentHealth).OrderBy(h=>h).ToArray()); Assert.AreEqual(95, fast.CurrentHealth);
             Assert.AreEqual(200, ally.CurrentHealth); Assert.AreEqual(85, combat.Mana);
         }
         [UnityTest] public IEnumerator LordMarkIsConsumedByExactlyOneRealMinionAttack()
         {
             Active(WaveRewardCatalog.LordsHunt);
             var target = Actor(Vector3.right); var guard = Actor(Vector3.right * 1.7f, true);
-            Physics2D.SyncTransforms(); Assert.IsTrue(combat.TryAttack(Vector2.right)); Assert.AreEqual(175, target.CurrentHealth);
+            Physics2D.SyncTransforms(); target.TakeDamage(waves.Augments.MeleeDamage(target,15),waves.Lord); Assert.AreEqual(185, target.CurrentHealth);
             Assert.IsTrue(target.GetComponent<AugmentStatus>().LordMarked);
             yield return new WaitForSeconds(.32f);
-            Assert.AreEqual(147, target.CurrentHealth); Assert.IsFalse(target.GetComponent<AugmentStatus>().LordMarked);
+            Assert.AreEqual(135, target.CurrentHealth); Assert.IsFalse(target.GetComponent<AugmentStatus>().LordMarked);
             yield return new WaitForSeconds(.85f);
-            Assert.AreEqual(137, target.CurrentHealth, "The second attack gets no consumed mark bonus.");
+            Assert.AreEqual(125, target.CurrentHealth, "The second attack gets no consumed mark bonus.");
         }
         [UnityTest] public IEnumerator MinionSlowEnablesNovaAndExpiresWhenAttacksStop()
         {
             Active(WaveRewardCatalog.BindingBrood, WaveRewardCatalog.BloodNova);
             var target = Actor(Vector3.right); var guard = Actor(Vector3.right * 1.7f, true);
-            yield return new WaitForSeconds(.32f);
-            Assert.AreEqual(.65f, target.GetComponent<TopDownMotor>().SlowMultiplier); Assert.AreEqual(190, target.CurrentHealth);
-            Physics2D.SyncTransforms(); Assert.IsTrue(combat.TryNova()); Assert.AreEqual(120, target.CurrentHealth);
-            guard.GetComponent<MinionController>().enabled = false;
-            yield return new WaitForSeconds(1.4f);
+            var minion=guard.GetComponent<MinionController>();minion.enabled=false;
+            for(int i=0;i<3;i++) target.TakeDamage(waves.Augments.MinionDamage(minion,target,10),guard);
+            minion.enabled=true;
+            Assert.AreEqual(.35f, target.GetComponent<TopDownMotor>().SlowMultiplier); Assert.AreEqual(155, target.CurrentHealth);
+            Physics2D.SyncTransforms(); Assert.IsTrue(combat.TryNova()); Assert.AreEqual(75, target.CurrentHealth);
+            minion.enabled=false; yield return new WaitForSeconds(3.2f);
             Assert.AreEqual(1, target.GetComponent<TopDownMotor>().SlowMultiplier);
         }
         [Test] public void ActualTrapBrandsEnemyAndLordConsumesBrandOnlyOnce()
@@ -106,9 +107,9 @@ namespace DarkLord.Tests
             var node = Object.Instantiate(prefab, Center + Vector3.right, Quaternion.identity, dungeon.transform); objects.Add(node);
             Physics2D.SyncTransforms(); Assert.AreEqual(1, node.GetComponent<SpikeTrap>().TryPulse());
             Assert.AreEqual(188, target.CurrentHealth); Assert.IsTrue(target.GetComponent<AugmentStatus>().TrapBranded);
-            Assert.IsTrue(combat.TryAttack(Vector2.right)); Assert.AreEqual(143, target.CurrentHealth);
+            target.TakeDamage(waves.Augments.MeleeDamage(target,15),waves.Lord); Assert.AreEqual(148, target.CurrentHealth);
             Assert.IsFalse(target.GetComponent<AugmentStatus>().TrapBranded);
-            combat.RestoreSave(new CombatSaveData()); Assert.IsTrue(combat.TryAttack(Vector2.right)); Assert.AreEqual(118, target.CurrentHealth);
+            target.TakeDamage(waves.Augments.MeleeDamage(target,15),waves.Lord); Assert.AreEqual(133, target.CurrentHealth);
         }
         [UnityTest] public IEnumerator WardHealsAndEmpowersNearbyMinionsOnceDespiteExtraHitboxes()
         {
@@ -120,7 +121,7 @@ namespace DarkLord.Tests
             Physics2D.SyncTransforms(); Assert.IsTrue(combat.TryWard()); Assert.AreEqual(70, guard.CurrentHealth);
             Assert.AreEqual(50, outside.CurrentHealth); Assert.IsTrue(guard.GetComponent<AugmentStatus>().Empowered);
             yield return new WaitForSeconds(.55f); // The setup wound causes the existing 0.2-second hit reaction first.
-            Assert.AreEqual(175, target.CurrentHealth); Assert.IsFalse(guard.GetComponent<AugmentStatus>().Empowered);
+            Assert.AreEqual(185, target.CurrentHealth); Assert.IsTrue(guard.GetComponent<AugmentStatus>().Empowered);
         }
         [UnityTest] public IEnumerator MinionKillReturnsManaAndReducesNovaCooldown()
         {
@@ -128,7 +129,7 @@ namespace DarkLord.Tests
             combat.RestoreSave(new CombatSaveData { mana = 30, novaCooldown = 4 });
             Actor(Vector3.right * 4, false, 5); Actor(Vector3.right * 3.3f, true);
             yield return new WaitForSeconds(.32f);
-            Assert.That(combat.Mana, Is.InRange(38, 39)); Assert.That(combat.NovaCooldown, Is.InRange(2.5f, 3));
+            Assert.That(combat.Mana, Is.InRange(42, 43)); Assert.That(combat.NovaCooldown, Is.InRange(1.5f, 2));
         }
         [Test] public void EffectsAreDisabledDuringPreparationPauseAndWithoutSelection()
         {
@@ -142,7 +143,7 @@ namespace DarkLord.Tests
             Time.timeScale = 1;
             Assert.AreEqual(25, waves.Augments.MeleeDamage(target, 25)); Assert.IsFalse(waves.Augments.NovaBonus(target));
         }
-        [Test] public void AllRewardRoundsOfferItemsWithoutAddingCombatAugments()
+        [Test] public void AllRewardRoundsOfferTwoUnownedCombatAugmentsAndOneSupply()
         {
             var selected = new List<int>();
             for (int wave = 1; wave <= 5; wave++)
@@ -150,7 +151,8 @@ namespace DarkLord.Tests
                 waves.RestoreSave(new WaveSaveData { number = wave, state = WaveState.Active, enemies = Array.Empty<MinionSaveData>(), augments = selected.ToArray() });
                 typeof(WaveDirector).GetMethod("CheckWaveCleared", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(waves, null);
                 Assert.AreEqual(3, waves.RewardChoices.Distinct().Count()); Assert.AreEqual(0, Time.timeScale);
-                Assert.IsTrue(waves.RewardChoices.All(id => id >= 0 && id <= 2 || id == WaveRewardCatalog.RoomItem || id == WaveRewardCatalog.TrapItem));
+                Assert.AreEqual(2,waves.RewardChoices.Count(WaveRewardCatalog.IsAugment));
+                Assert.IsFalse(waves.RewardChoices.Where(WaveRewardCatalog.IsAugment).Any(selected.Contains));
                 var snapshot = JsonUtility.FromJson<WaveSaveData>(JsonUtility.ToJson(waves.CaptureSave()));
                 waves.RestoreSave(snapshot); CollectionAssert.AreEqual(snapshot.rewards, waves.RewardChoices);
                 int chosen = waves.RewardChoices[0]; Assert.IsTrue(waves.ChooseReward(0)); Assert.IsFalse(waves.ChooseReward(0));
@@ -159,18 +161,18 @@ namespace DarkLord.Tests
             }
             Assert.AreEqual(WaveState.Victorious, waves.State);
         }
-        [Test] public void SaveRestoresSelectedEffectsAndActorTimersAndRejectsInvalidRecords()
+        [Test, Category("TraitRework")] public void SaveRestoresSelectedEffectsAndActorTimersAndRejectsInvalidRecords()
         {
             Active(5, 6, 8, 9);
             var session = Find<GameSaveSession>(); var saved = session.Capture();
             saved.guards = new[] { new MinionSaveData { position = Center + Vector3.left, post = Center, health = 80, maximumHealth = 100,
                 augmentStatus = new AugmentStatusSaveData {empowered = 3}} };
-            saved.wave.enemies = new[] {new MinionSaveData { position = Center + Vector3.right, health = 100, maximumHealth = 100,
-                augmentStatus = new AugmentStatusSaveData {lordMark = 2, trapBrand = 1}}};
+            saved.wave.enemies = new[] {new MinionSaveData { position = Center + Vector3.right, health = 100, maximumHealth = 100, invasionWave = 2,
+                augmentStatus = new AugmentStatusSaveData {lordMark = 6, trapBrand = 8}}};
             SaveSlotStore.Validate(saved); session.Restore(JsonUtility.FromJson<GameSaveData>(JsonUtility.ToJson(saved)));
             var restored = session.Capture(); CollectionAssert.AreEqual(new[] {5,6,8,9}, restored.wave.augments);
-            Assert.That(restored.wave.enemies[0].augmentStatus.lordMark, Is.EqualTo(2).Within(.001f));
-            Assert.That(restored.wave.enemies[0].augmentStatus.trapBrand, Is.EqualTo(1).Within(.001f));
+            Assert.That(restored.wave.enemies[0].augmentStatus.lordMark, Is.EqualTo(6).Within(.001f));
+            Assert.That(restored.wave.enemies[0].augmentStatus.trapBrand, Is.EqualTo(8).Within(.001f));
             Assert.That(restored.guards[0].augmentStatus.empowered, Is.EqualTo(3).Within(.001f));
             restored.wave.augments = new[] {5,5}; Assert.Throws<System.IO.InvalidDataException>(() => SaveSlotStore.Validate(restored));
             restored.wave.augments = new[] {99}; Assert.Throws<System.IO.InvalidDataException>(() => SaveSlotStore.Validate(restored));

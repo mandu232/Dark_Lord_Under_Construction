@@ -241,12 +241,12 @@ namespace DarkLord.UI
         {
             if (!Alive(Selected)) { Close(); return; }
             if (healthBar != null) healthBar.SetHealth(Selected.Health.CurrentHealth, Selected.Health.MaximumHealth);
-            titleText.text = Selected.DisplayName;
+            titleText.text = $"{Selected.DisplayName} · Lv.{Selected.Health.Level}";
             string state = Selected.State == ActorState.Attack ? "공격 중" : Selected.State == ActorState.Hit ? "피격 중" : Selected.State == ActorState.Run ? "이동 중" : "대기 중";
             Selected.GetRoomBonuses(out int attackPercent, out _, out _, activeBuffs);
             int attack = Selected.AttackDamage, basicAttack = Selected.BaseAttackDamage;
             var health = Selected.Health;
-            statsText.text = (healthBar == null ? $"체력  {health.CurrentHealth} / {health.MaximumHealth}\n\n" : "") +
+            statsText.text = $"경험치 {health.Experience} / {health.ExperienceToNextLevel}\n" + (healthBar == null ? $"체력  {health.CurrentHealth} / {health.MaximumHealth}\n\n" : "") +
                 $"역할  {Selected.RoleName}\n특성  {Selected.TraitText}\n공격 유형  {(Selected.AttackType == DamageType.Magic ? "마법공격" : "물리공격")}\n\n" +
                 $"공격력  {attack}\n기본 {basicAttack} + 시설 {attack - basicAttack} (+{attackPercent}%)\n" +
                 $"물리 내성  {health.PhysicalResistance}%\n기본 {health.BasePhysicalResistance}% + 시설 {health.PhysicalResistance - health.BasePhysicalResistance}%p\n" +
@@ -263,14 +263,16 @@ namespace DarkLord.UI
                 if (buff.ResistanceBonus(DamageType.Magic) > 0) detail += $"  마법 내성 +{buff.ResistanceBonus(DamageType.Magic)}%p\n";
                 statsText.text += RewardUiSkin.BuffDetail(detail);
             }
-            statsText.text += "\n행동  방 안에서 자유 이동 · 침입자 자동 공격\n이동  하수인을 꾹 눌러 다른 방에 놓기\n";
+            statsText.text += "\n행동  배치 구역 안에서 자유 이동 · 침입자 자동 공격\n이동  하수인을 꾹 눌러 다른 방·복도에 놓기\n";
             statsText.text += $"\n공격 간격  {Selected.AttackInterval:0.##}초\n공격 사거리  {Selected.AttackRange / DungeonGrid.CellSize:0.##}칸\n감지 범위  {(Selected.AssignedRoom != null ? "배치된 방 전체" : $"{Selected.DetectionRange / DungeonGrid.CellSize:0.##}칸")}\n이동 속도  {Selected.MoveSpeed / DungeonGrid.CellSize:0.##}칸/초\n\n상태  {state}";
+            var recovery = Selected.GetComponentInChildren<DarkLord.Gameplay.MinionRecoveryIndicator>();
+            if (recovery != null && recovery.IsVisible) statsText.text += "\n<color=#70FF9A>혈액으로 회복 중</color>";
             var support = Selected.GetComponent<MinionSupport>();
             if (support != null) statsText.text += $"\n치유 {support.HealAmount} · 간격 3.5초 · 사거리 2.25칸\n" + (support.IsCasting ? "치유 시전 중" : $"치유 대기 {support.Cooldown:0.0}초");
             if (summoning != null)
             {
-                var room = dungeon.Construction.RoomAt(dungeon.WorldToCell(Selected.GuardPosition));
-                statsText.text += $"\n방 인원  {summoning.RoomGuardCount(room)} / {summoning.RoomCapacity(room)}";
+                var room = dungeon.Construction.GarrisonAt(dungeon.WorldToCell(Selected.GuardPosition));
+                statsText.text += $"\n구역 인원  {summoning.RoomGuardCount(room)} / {summoning.RoomCapacity(room)}";
             }
         }
     }

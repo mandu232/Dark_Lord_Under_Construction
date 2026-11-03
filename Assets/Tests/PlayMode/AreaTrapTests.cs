@@ -47,6 +47,20 @@ namespace DarkLord.Tests
             if (motor) obj.AddComponent<TopDownMotor>();
             return health;
         }
+        [UnityTest, Category("SpikeTrapSprites")] public IEnumerator NewSpritesShowIdlePulsePauseAndReturnWithoutChangingDamageArea()
+        {
+            var trap=Trap("SpikeTrap",1);var visual=trap.GetComponent<SpriteRenderer>();
+            Assert.AreEqual("SpikeTrap_0",visual.sprite.name);Assert.AreEqual(32,visual.sprite.rect.width);Assert.AreEqual(32,visual.sprite.rect.height);
+            Assert.AreEqual(2,visual.sprite.bounds.size.x);Assert.AreEqual(new Vector2(1.6f,1.6f),trap.GetComponent<BoxCollider2D>().size);
+            var target=Actor(Center);Physics2D.SyncTransforms();Assert.AreEqual(1,trap.TryPulse());
+            Assert.AreEqual(88,target.CurrentHealth);Assert.AreEqual("SpikeTrap_1",visual.sprite.name);
+            Time.timeScale=0;yield return new WaitForSecondsRealtime(.1f);Assert.AreEqual("SpikeTrap_1",visual.sprite.name);
+            Time.timeScale=1;target.gameObject.SetActive(false);yield return new WaitForSeconds(.35f);Assert.AreEqual("SpikeTrap_0",visual.sprite.name);
+            target.gameObject.SetActive(true);trap.RestoreCooldown(0);Physics2D.SyncTransforms();Assert.AreEqual(1,trap.TryPulse());
+            Assert.AreEqual("SpikeTrap_1",visual.sprite.name);trap.enabled=false;Assert.AreEqual("SpikeTrap_0",visual.sprite.name);
+            var item=AssetDatabase.LoadAssetAtPath<BuildItemDefinition>("Assets/Data/Construction/SpikeTrap.asset");
+            Assert.AreEqual(visual.sprite,item.icon);
+        }
         [UnityTest] public IEnumerator OneClockHitsEveryOccupantAndNewArrivalsWait()
         {
             var trap = Trap("SpikeTrap");

@@ -46,7 +46,7 @@ namespace DarkLord.Dungeon
         }
         public int RoomCapacityBonus(DungeonSection room)
         {
-            if (room == null) return 0;
+            if (room == null || !DungeonConstruction.IsRoom(room.Kind)) return 0;
             int bonus = 0;
             foreach (var building in buildings.Values)
                 if (building != null && building.isActiveAndEnabled && !building.IsRuined && Construction.RoomAt(building.Cell) == room)
@@ -80,12 +80,10 @@ namespace DarkLord.Dungeon
             attack = physical = magic = 0;
             designs.Clear();
             activeBuffs?.Clear();
-            var room = Construction.RoomAt(WorldToCell(minion.transform.position));
-            if (room == null) return null;
             ResourceBuilding first = null;
             foreach (var building in buildings.Values)
             {
-                if (building == null || Construction.RoomAt(building.Cell) != room || !building.Buffs(minion)) continue;
+                if (building == null || !building.Buffs(minion)) continue;
                 // Copies share the authored prefab identity, including after save restoration.
                 if (!designs.Add(building.Design)) continue;
                 activeBuffs?.Add(building);
@@ -119,7 +117,7 @@ namespace DarkLord.Dungeon
             if (Time.timeScale <= 0 || !isActiveAndEnabled || prefab == null || wallet == null || !CanPlaceBuilding(cell)) return false;
             var definition = prefab.GetComponent<ResourceBuilding>();
             if (definition == null || !wallet.TrySpend(CurrencyType.Gold, definition.ConstructionCost)) return false;
-            SpawnBuilding(cell, prefab);
+            SpawnBuilding(cell, prefab).PlayPlacementEffect();
             return true;
         }
         private ResourceBuilding SpawnBuilding(Vector2Int cell, GameObject prefab)

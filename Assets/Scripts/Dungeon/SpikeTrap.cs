@@ -13,6 +13,10 @@ namespace DarkLord.Dungeon
         private float cooldown = 1f;
         [SerializeField, Range(0, 1)] private float slowMultiplier = 1;
         [SerializeField, Min(0)] private float slowDuration;
+        [Header("Trap presentation")]
+        [SerializeField] private Sprite idleSprite, activeSprite;
+        private SpriteRenderer visual;
+        private float activeUntil;
         private BoxCollider2D area;
         private DungeonGrid dungeon;
         private float nextPulse;
@@ -24,9 +28,11 @@ namespace DarkLord.Dungeon
         public int Damage => damage;
         public float SlowMultiplier => slowMultiplier;
         public float SlowDuration => slowDuration;
-        private void Awake() { area = GetComponent<BoxCollider2D>(); dungeon = GetComponentInParent<DungeonGrid>(); }
-        private void OnEnable() => nextPulse = Time.time;
-        private void OnDisable() { overlaps.Clear(); targets.Clear(); }
+        private void Awake() { area = GetComponent<BoxCollider2D>(); dungeon = GetComponentInParent<DungeonGrid>(); visual = GetComponent<SpriteRenderer>(); }
+        private void OnEnable() { nextPulse = Time.time; activeUntil = 0; RestoreIdleSprite(); }
+        private void Update() { if (activeUntil > 0 && Time.time >= activeUntil) { activeUntil = 0; RestoreIdleSprite(); } }
+        private void RestoreIdleSprite() { if (visual != null && idleSprite != null) visual.sprite = idleSprite; }
+        private void OnDisable() { overlaps.Clear(); targets.Clear(); activeUntil = 0; RestoreIdleSprite(); }
         private void FixedUpdate() => TryPulse();
         public int TryPulse()
         {
@@ -42,6 +48,11 @@ namespace DarkLord.Dungeon
             if (targets.Count == 0) return 0;
             // One clock belongs to this trap. Late arrivals wait for its next pulse.
             nextPulse = Time.time + AttackInterval;
+            if (visual != null && activeSprite != null)
+            {
+                visual.sprite = activeSprite;
+                activeUntil = Time.time + Mathf.Min(.3f, AttackInterval * .45f);
+            }
             foreach (var target in targets)
             {
                 if (target == null || !target.isActiveAndEnabled || !target.IsAlive) continue;

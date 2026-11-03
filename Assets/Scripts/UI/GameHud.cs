@@ -22,6 +22,9 @@ namespace DarkLord.UI
         [SerializeField] private UnityEngine.UI.Image healthFill;
 
         private int lastHealth = -1;
+        private int lastExperience = -1, lastLevel = -1;
+        private TMP_Text experienceText;
+        private UnityEngine.UI.Image experienceFill;
         private int lastMaximumHealth = -1;
         private int lastGuardCount = -1;
         private int lastGoldCapacity = -1, lastSoulsCapacity = -1, lastCrystalsCapacity = -1;
@@ -84,7 +87,7 @@ namespace DarkLord.UI
                 lastSoulsCapacity != wallet.GetCapacity(CurrencyType.Souls) || lastCrystalsCapacity != wallet.GetCapacity(CurrencyType.DarkCrystals)))
                 RefreshCurrencies();
             if (playerHealth != null && (playerHealth.CurrentHealth != lastHealth ||
-                playerHealth.MaximumHealth != lastMaximumHealth)) RefreshHealth();
+                playerHealth.MaximumHealth != lastMaximumHealth || playerHealth.Experience != lastExperience || playerHealth.Level != lastLevel)) RefreshHealth();
             if (summoning != null && summoning.GuardCount != lastGuardCount) RefreshMinions();
         }
 
@@ -127,7 +130,10 @@ namespace DarkLord.UI
             if (playerHealth == null || healthText == null) return;
             lastHealth = playerHealth.CurrentHealth;
             lastMaximumHealth = playerHealth.MaximumHealth;
+            lastExperience = playerHealth.Experience; lastLevel = playerHealth.Level;
             healthText.text = $"{lastHealth} / {playerHealth.MaximumHealth}";
+            if (experienceText != null) experienceText.text = $"Lv.{lastLevel}  EXP {lastExperience}/{playerHealth.ExperienceToNextLevel}";
+            SetBarRatio(experienceFill, (float)lastExperience / playerHealth.ExperienceToNextLevel);
             SetBarRatio(healthBarFill, (float)lastHealth / playerHealth.MaximumHealth);
             if (healthFill != null)
             {
@@ -147,6 +153,8 @@ namespace DarkLord.UI
                 new Color32(190,47,76,255), healthText, out healthBarFill, out _);
             CreateBar("Mana Bar", parent, new Vector2(208,-116), new Vector2(310,28),
                 new Color32(57,115,194,255), null, out manaBarFill, out manaText);
+            CreateBar("Experience Bar", parent, new Vector2(208,-156), new Vector2(310,28),
+                new Color32(61,190,151,255), null, out experienceFill, out experienceText);
             RefreshHealth(); RefreshMana();
         }
 

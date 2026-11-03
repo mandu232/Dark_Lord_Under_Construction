@@ -403,6 +403,11 @@ namespace DarkLord.Dungeon
         {
             if (guard == null) return;
             guard.AssignDefenceDungeon(this);
+            if (guard.GetComponentInChildren<DarkLord.Minions.MinionBuffIndicator>(true) == null)
+            {
+                var node = new GameObject("Active facility buffs"); node.transform.SetParent(guard.transform,false);
+                node.AddComponent<DarkLord.Minions.MinionBuffIndicator>();
+            }
             if (!guards.Contains(guard)) guards.Add(guard);
         }
 
@@ -519,6 +524,8 @@ namespace DarkLord.Dungeon
             if (carpetFillSprite != null) Destroy(carpetFillSprite);
             if (ceilingTile != null) Destroy(ceilingTile);
             if (ceilingSprite != null) Destroy(ceilingSprite);
+            if (compactFacePieces != null)
+                foreach (var pieces in compactFacePieces) DestroyWallPieces(pieces);
             DestroyWallPieces(roomWallPieces);
             DestroyWallPieces(bannerWallPieces);
             DestroyWallPieces(verticalWallPieces);

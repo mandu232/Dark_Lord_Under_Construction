@@ -14,6 +14,7 @@ namespace DarkLord.Persistence
         {
             position = actor.transform.position, post = actor.GuardPosition, order = actor.Order, behaviour = actor.Behaviour,
             health = actor.Health.CurrentHealth, maximumHealth = actor.Health.MaximumHealth,
+            level = actor.Health.Level, experience = actor.Health.Experience,
             slows = actor.GetComponent<TopDownMotor>().CaptureSlows(),
             tactics = actor.GetComponent<InvaderTactics>()?.CaptureSave(),
             role = actor.Role, attackCooldown = actor.AttackCooldownRemaining, support = actor.GetComponent<MinionSupport>()?.CaptureSave(),
@@ -142,7 +143,7 @@ namespace DarkLord.Player
                 if (definition == null) throw new InvalidOperationException("저장된 하수인 병과를 찾을 수 없습니다.");
                 var guard=Instantiate(definition,data.position,Quaternion.identity);guard.name=guard.DisplayName;
                 UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(guard.gameObject, gameObject.scene);
-                guard.Health.RestoreHealth(data.maximumHealth,data.health);guard.Defend(data.post);guard.SetBehaviour(data.behaviour);
+                guard.Health.RestoreExperience(data.level,data.experience);guard.Health.RestoreHealth(data.maximumHealth,data.health);guard.Defend(data.post);guard.SetBehaviour(data.behaviour);
                 guard.RestoreAttackCooldown(data.attackCooldown);
                 guard.GetComponent<MinionSupport>()?.RestoreSave(data.support);
                 guard.GetComponent<TopDownMotor>().RestoreSlows(data.slows);
@@ -157,20 +158,23 @@ namespace DarkLord.Gameplay
 {
     public sealed partial class WaveDirector
     {
-        public WaveSaveData CaptureSave() => new WaveSaveData { number=CurrentWave, state=State, pending=pendingSpawns, rewards=(int[])rewardChoices.Clone(),
+        public WaveSaveData CaptureSave() => new WaveSaveData { minionRecoveryDisabled = !AutoMinionRecoveryEnabled, number=CurrentWave, state=State, pending=pendingSpawns, rewards=(int[])rewardChoices.Clone(),
             rewardItemIds=rewardBuildItems.Select(i => i != null ? i.name : "").ToArray(),
             pendingRoles=pendingRoles.ToArray(),
-            augments=Augments.Capture(), schedule=CaptureSchedule(),
+            augments=Augments.Capture(), tributeCharges=Augments.TributeCharges, thornCooldown=Augments.ThornCooldown, schedule=CaptureSchedule(),
             enemies=aliveInvaders.Where(e=>e!=null && e.IsAlive).Select(e=>SaveSnapshots.Actor(e.GetComponent<MinionController>())).ToArray() };
         public void RestoreSave(WaveSaveData data)
         {
+            SetAutoMinionRecovery(!data.minionRecoveryDisabled);
+            ClearRecoveryIndicators();
+            minionRecoveryElapsed = 0; minionRecoveryCursor = 0;
             if (State == WaveState.RewardSelection) Time.timeScale = rewardTimeScale;
             if(spawnRoutine!=null)StopCoroutine(spawnRoutine);spawnRoutine=null;
             foreach(var pair in deathHandlers)if(pair.Key!=null)pair.Key.Died-=pair.Value;
             deathHandlers.Clear();
             foreach(var enemy in aliveInvaders)if(enemy!=null){enemy.gameObject.SetActive(false);Destroy(enemy.gameObject);}
             aliveInvaders.Clear();CurrentWave=data.number;State=data.state;pendingSpawns=data.pending;
-            Augments.Restore(data.augments);
+            Augments.Restore(data.augments,data.tributeCharges,data.thornCooldown);
             pendingRoles.Clear(); pendingWaves.Clear();
             RestoreSchedule(data.schedule);
             for (int i = 0; i < pendingSpawns; i++) pendingRoles.Enqueue(data.pendingRoles != null && i < data.pendingRoles.Length ? data.pendingRoles[i] : InvaderRole.Warrior);

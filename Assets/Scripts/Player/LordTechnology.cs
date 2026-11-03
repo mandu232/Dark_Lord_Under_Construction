@@ -55,7 +55,7 @@ namespace DarkLord.Player
             new TechDefinition(TechId.Scavenger,"금화 회수","단계당 웨이브 클리어 시 금화 +10",3,3,0,5),
             new TechDefinition(TechId.BloodTithe,"피의 공납","단계당 웨이브 클리어 시 혈액 +3",3,4,1,5,TechId.Scavenger,1),
             new TechDefinition(TechId.CrystalStudy,"혈석 정제","웨이브 클리어 시 혈석 +1",1,8,2,5,TechId.BloodTithe,1),
-            new TechDefinition(TechId.Salvage,"잔해 회수","시체를 소환소에 전달할 때 금화 +5",1,6,3,5,TechId.BloodTithe,1),
+            new TechDefinition(TechId.Salvage,"잔해 회수","적의 금화 드롭 확률 +10%",1,6,3,5,TechId.BloodTithe,1),
         };
         private static readonly int[] LegacyParents = { -1,-1,-1,0,-1,4,0,1,1,1,0,2,3,4,10,1,5 };
         private static readonly int[] LegacyRequirements = { 1,1,1,1,1,1,2,1,2,1,1,2,2,2,1,3,2 };

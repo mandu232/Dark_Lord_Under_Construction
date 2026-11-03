@@ -14,8 +14,9 @@ namespace DarkLord.Minions
         private readonly Dictionary<Vector2Int, Vector2Int> roomParents = new Dictionary<Vector2Int, Vector2Int>();
         private static readonly Vector2Int[] RoomDirections = { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
         public bool IsHeld { get; private set; }
+        // Historical API name: the assigned patrol area can now also be a corridor.
         public DungeonSection AssignedRoom => defenceDungeon != null && health != null && health.Faction == Faction.Dungeon
-            ? defenceDungeon.Construction.RoomAt(defenceDungeon.WorldToCell(guardPosition)) : null;
+            ? defenceDungeon.Construction.GarrisonAt(defenceDungeon.WorldToCell(guardPosition)) : null;
         public void SetHeld(bool held)
         {
             IsHeld = held; target = null; damagePending = false; nextScan = 0;
@@ -26,7 +27,7 @@ namespace DarkLord.Minions
         private bool RoomWalkable(Vector2Int cell)
         {
             var room = AssignedRoom;
-            if (room == null || !room.Bounds.Contains(cell) || !defenceDungeon.Construction.IsWalkable(cell) || defenceDungeon.IsAlchemyStationCell(cell)) return false;
+            if (room == null || defenceDungeon.Construction.GarrisonAt(cell) != room || !defenceDungeon.Construction.IsWalkable(cell) || defenceDungeon.IsAlchemyStationCell(cell)) return false;
             var building = defenceDungeon.BuildingAt(cell);
             return cell != defenceDungeon.CoreCell && (building == null || building.IsRuined);
         }
@@ -34,7 +35,7 @@ namespace DarkLord.Minions
         {
             var room = AssignedRoom;
             if (room == null) { MoveTo(Anchor); return; }
-            if (!room.Bounds.Contains(defenceDungeon.WorldToCell(transform.position))) { Relocate(guardPosition); return; }
+            if (defenceDungeon.Construction.GarrisonAt(defenceDungeon.WorldToCell(transform.position)) != room) { Relocate(guardPosition); return; }
             if (patrolDestination.HasValue)
             {
                 if (!RoomWalkable(patrolDestination.Value) || MoveWithinRoom(defenceDungeon.CellCenter(patrolDestination.Value), null, .35f))
@@ -58,8 +59,8 @@ namespace DarkLord.Minions
             if (room == null) return SteerTo(destination, combatTarget, movementScale);
             var start = defenceDungeon.WorldToCell(transform.position);
             var goal = defenceDungeon.WorldToCell(destination);
-            if (!room.Bounds.Contains(start)) { Relocate(guardPosition); return false; }
-            if (!room.Bounds.Contains(goal)) { motor.Stop(); return false; }
+            if (defenceDungeon.Construction.GarrisonAt(start) != room) { Relocate(guardPosition); return false; }
+            if (defenceDungeon.Construction.GarrisonAt(goal) != room) { motor.Stop(); return false; }
             if (start == goal) return SteerTo(destination, combatTarget, movementScale);
             if (pathGoal != goal || Time.time >= nextRoomPath)
             {
@@ -77,7 +78,7 @@ namespace DarkLord.Minions
                     foreach (var direction in RoomDirections)
                     {
                         var next = cell + direction;
-                        if (!room.Bounds.Contains(next) || roomParents.ContainsKey(next) || !RoomWalkable(next) && next != goal) continue;
+                        if (defenceDungeon.Construction.GarrisonAt(next) != room || roomParents.ContainsKey(next) || !RoomWalkable(next) && next != goal) continue;
                         roomParents[next] = cell; roomSearch.Enqueue(next);
                     }
                 }

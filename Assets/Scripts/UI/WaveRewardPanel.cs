@@ -73,6 +73,7 @@ namespace DarkLord.UI
                 titles[i] = Text("Item name", visual, new Vector2(0, -190), new Vector2(265, 48), 27, ""); titles[i].fontStyle = FontStyles.Bold;
                 descriptions[i] = Text("Effect description", visual, new Vector2(0, -251), new Vector2(250, 125), 19, "");
                 descriptions[i].alignment = TextAlignmentOptions.TopLeft;
+                descriptions[i].enableAutoSizing = true; descriptions[i].fontSizeMin = 14; descriptions[i].fontSizeMax = 19;
                 durations[i] = Text("Duration", visual, new Vector2(0, -395), new Vector2(265, 26), 16, "아이템 1개 획득"); durations[i].color = new Color32(205, 171, 176, 255);
                 rect.gameObject.AddComponent<SaveCardHoverLift>();
                 cards[i].onClick.AddListener(() => { if (CanSelectReward && waves.ChooseReward(index) && EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null); });
@@ -90,8 +91,8 @@ namespace DarkLord.UI
             if (waves == null || root == null) return;
             EnsureView();
             bool final = waves.CurrentWave >= waves.FinalWave && waves.RemainingEnemies == 0;
-            heading.text = final ? "승리의 전리품" : "전리품 획득";
-            subtitle.text = final ? "마지막 습격을 격퇴했습니다. 아이템 하나를 골라 획득하세요." : $"습격 {waves.RewardWave} 격퇴 · 날짜 보상: 방·시설·함정 각 1개 · 아이템 하나를 골라 획득하세요";
+            heading.text = final ? "승리의 전리품" : "전투 특성 선택";
+            subtitle.text = final ? "마지막 습격을 격퇴했습니다. 특성 또는 보상 하나를 고르세요." : $"습격 {waves.RewardWave} 격퇴 · 날짜 보상: 방·시설·함정 각 1개 · 특성 또는 보상 하나를 고르세요";
             for (int i = 0; i < 3; i++)
             {
                 bool valid = i < waves.RewardChoices.Count; cards[i].interactable = valid;
@@ -99,9 +100,9 @@ namespace DarkLord.UI
                 int id = waves.RewardChoices[i];
                 var item = waves.RewardItem(i);
                 titles[i].text = item != null ? item.displayName : WaveRewardCatalog.Name(id);
-                pairs[i].text = item != null ? item.category == BuildCategory.Rooms ? "방 아이템" : item.category == BuildCategory.Traps ? "함정 아이템" : "시설 아이템" : "자원 꾸러미";
+                pairs[i].text = item != null ? item.category == BuildCategory.Rooms ? "방 아이템" : item.category == BuildCategory.Traps ? "함정 아이템" : "시설 아이템" : WaveRewardCatalog.IsAugment(id) ? WaveRewardCatalog.Pair(id) : "자원 꾸러미";
                 descriptions[i].text = ItemDescription(item, id);
-                durations[i].text = item != null ? "보관함에 추가 · 설치 시 1개 소모" : "획득 즉시 적용";
+                durations[i].text = item != null ? "보관함에 추가 · 설치 시 1개 소모" : WaveRewardCatalog.IsAugment(id) ? "선택 후 이번 원정 내내 유지" : "획득 즉시 적용";
                 icons[i].sprite = item != null ? item.icon : skin != null ? skin.Icon(id) : null;
                 icons[i].enabled = icons[i].sprite != null;
             }

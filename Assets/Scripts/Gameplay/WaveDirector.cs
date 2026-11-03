@@ -187,13 +187,20 @@ namespace DarkLord.Gameplay
 
         private void OfferRewards()
         {
-            // Offer concrete construction items and one resource bundle, with no new augments.
             var offers = new List<int>();
             var designs = new List<BuildItemDefinition>();
+            var available = new List<int>();
+            foreach(int id in WaveRewardCatalog.AugmentIds)
+                if(!Augments.Has(id)) available.Add(id);
+            while(offers.Count<2 && available.Count>0)
+            {
+                int index=UnityEngine.Random.Range(0,available.Count);
+                offers.Add(available[index]);designs.Add(null);available.RemoveAt(index);
+            }
             var room = dungeon.Inventory.RandomItem(BuildCategory.Rooms);
-            if (room != null) { offers.Add(WaveRewardCatalog.RoomItem); designs.Add(room); }
             var trap = dungeon.Inventory.RandomItem(BuildCategory.Traps);
-            if (trap != null && UnityEngine.Random.value < .5f) { offers.Add(WaveRewardCatalog.TrapItem); designs.Add(trap); }
+            var item = room != null && (trap == null || UnityEngine.Random.value < .65f) ? room : trap;
+            if(item != null) { offers.Add(item.category==BuildCategory.Rooms ? WaveRewardCatalog.RoomItem : WaveRewardCatalog.TrapItem); designs.Add(item); }
             var supplies = new List<int> { 0, 1, 2 };
             while (offers.Count < 3)
             {
@@ -246,9 +253,6 @@ namespace DarkLord.Gameplay
             }
             Time.timeScale = rewardTimeScale;
             if (RemainingEnemies == 0) dungeonLord.Heal(dungeonLord.MaximumHealth);
-            foreach (var guard in FindObjectsByType<MinionController>(FindObjectsSortMode.None))
-                if (RemainingEnemies == 0 && guard.gameObject.scene == gameObject.scene && guard.Health.Faction == Faction.Dungeon)
-                    guard.Health.Heal(guard.Health.MaximumHealth);
             State = RemainingEnemies > 0 ? WaveState.Active : CurrentWave >= finalWave && waveRewardQueue.Count == 0 ? WaveState.Victorious : WaveState.Preparing;
             if (AutomaticWaves) BeginQueuedWaveReward();
             Changed?.Invoke();

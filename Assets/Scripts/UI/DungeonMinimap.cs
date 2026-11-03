@@ -31,6 +31,8 @@ namespace DarkLord.UI
             if (grid == null) return;
             var frame = new GameObject("Dungeon Minimap", typeof(RectTransform), typeof(UnityEngine.UI.Image), typeof(CanvasGroup));
             frame.transform.SetParent(parent, false);
+            // Draw the minimap behind every sibling HUD element and inspection window.
+            frame.transform.SetAsFirstSibling();
             var rect = frame.GetComponent<RectTransform>();
             rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(1, 0);
             rect.anchoredPosition = new Vector2(-24, 24);

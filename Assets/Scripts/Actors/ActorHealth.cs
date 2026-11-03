@@ -39,6 +39,30 @@ namespace DarkLord.Actors
         public bool IsAlive => CurrentHealth > 0;
         public event Action<ActorHealth> Damaged;
         public event Action Died;
+        public int Experience { get; private set; }
+        public int Level { get; private set; } = 1;
+        public int ExperienceToNextLevel => 30 + (Level - 1) * 20;
+        public int GrowthAttackBonus => (Level - 1) * 2;
+        public void RestoreExperience(int level, int experience)
+        {
+            Level = Mathf.Clamp(level, 1, 100);
+            Experience = Mathf.Clamp(experience, 0, ExperienceToNextLevel - 1);
+        }
+        public void AddExperience(int amount)
+        {
+            if (amount <= 0 || !IsAlive || faction != Faction.Dungeon || Level >= 100) return;
+            int previousLevel = Level;
+            Experience += Mathf.Min(amount, 100000);
+            while (Level < 100 && Experience >= ExperienceToNextLevel)
+            {
+                Experience -= ExperienceToNextLevel;
+                Level++;
+                // Player and core intentionally share the same health pool.
+                RestoreHealth(MaximumHealth + 10, CurrentHealth + 10);
+            }
+            if (Level == 100) Experience = 0;
+            if (Level > previousLevel) DarkLord.Gameplay.GrowthFeedback.LevelUp(transform);
+        }
         internal Func<ActorHealth, bool> DamageFilter;
         internal int ScriptedHealthFloor;
         internal Func<ActorHealth, DamageType, float> DamageMultiplier;
@@ -82,6 +106,7 @@ namespace DarkLord.Actors
             if (source != null && (!source.IsAlive || source.Faction == faction)) return false;
             if (DamageFilter != null && !DamageFilter(source)) return false;
             if (DamageMultiplier != null) amount = Mathf.RoundToInt(amount * Mathf.Clamp01(DamageMultiplier(source, damageType)));
+            if (faction == Faction.Dungeon && GetComponent<AugmentStatus>()?.Empowered == true) amount = Mathf.RoundToInt(amount * .5f);
             amount = Mathf.RoundToInt(amount * (1f - Resistance(damageType) / 100f));
             if (amount <= 0) return false;
             var owner = HealthOwner;
@@ -94,6 +119,9 @@ namespace DarkLord.Actors
                 GetComponent<DarkLord.Minions.MinionController>()?.RegisterPoiseHit();
                 ActorHitFeedback.Show(this, source);
             }
+            if (before > 0 && owner.currentHealth == 0 && faction == Faction.Invader && source != null &&
+                source.Faction == Faction.Dungeon && source.GetComponent<DarkLord.Minions.MinionController>() != null)
+                source.AddExperience(10);
             owner.NotifyDamage(source, owner.currentHealth == 0);
             if (owner.currentHealth < before) DarkLord.Player.PlayerHitStop.OnDamage(this, source);
             return true;

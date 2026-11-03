@@ -17,6 +17,7 @@ namespace DarkLord.UI
         private readonly Dictionary<DungeonSection, UnityEngine.UI.Image> roomTints = new Dictionary<DungeonSection, UnityEngine.UI.Image>();
         private DarkLord.Minions.MinionController lastHeld;
         private DungeonConstruction layout;
+        private int layoutRevision = -1;
         private float nextCountUpdate;
         private bool wasVisible;
         private RectTransform rect;
@@ -29,7 +30,8 @@ namespace DarkLord.UI
         private void LateUpdate()
         {
             if (dungeon == null || summoning == null || labelPrefab == null || worldCamera == null) return;
-            if (layout != dungeon.Construction) { Clear(); layout = dungeon.Construction; }
+            if (layout != dungeon.Construction || layoutRevision != dungeon.Construction.Revision)
+            { Clear(); layout = dungeon.Construction; layoutRevision = layout.Revision; wasVisible = false; }
             bool visible = IsVisible;
             if (!visible) { wasVisible = false; lastHeld = null; Hide(); return; }
             var held = summoning.RelocatingGuard;
@@ -38,22 +40,23 @@ namespace DarkLord.UI
             if (held == null) foreach (var tint in roomTints.Values) tint.gameObject.SetActive(false);
             wasVisible = true;
             if (refresh) nextCountUpdate = Time.unscaledTime + 0.1f;
-            foreach (var room in dungeon.Construction.Sections)
+            foreach (var room in dungeon.Construction.GarrisonAreas)
             {
-                if (!room.IsComplete || !DungeonConstruction.IsRoom(room.Kind)) continue;
+                if (!room.IsComplete) continue;
                 if (!labels.TryGetValue(room, out var label))
                 {
                     label = Instantiate(labelPrefab, transform); labels.Add(room, label);
                     label.name = "Room Capacity " + room.Center;
                     refresh = true;
                 }
+                var anchor = dungeon.Construction.GarrisonAnchor(room);
                 if (refresh)
                 {
                     label.SetCount(summoning.RoomGuardCount(room, held), summoning.RoomCapacity(room), skullIcon);
-                    if (held != null) label.SetPlacementAvailability(summoning.CanPlace(room.Center, out _));
+                    if (held != null) label.SetPlacementAvailability(summoning.CanPlace(anchor, out _));
                 }
-                if (held != null) UpdateRoomTint(room, label.PlacementAllowed);
-                var world = dungeon.CellCenter(room.Center);
+                if (held != null && DungeonConstruction.IsRoom(room.Kind)) UpdateRoomTint(room, label.PlacementAllowed);
+                var world = dungeon.CellCenter(anchor);
                 var screen = worldCamera.WorldToScreenPoint(world);
                 bool onScreen = screen.z > 0 && worldCamera.pixelRect.Contains(screen);
                 label.gameObject.SetActive(onScreen);

@@ -91,9 +91,9 @@ namespace DarkLord.Minions
         public ActorHealth Health => health;
         public int AttackDamage
         {
-            get { GetRoomBonuses(out int attack, out _, out _); return Mathf.RoundToInt(attackDamage * (1 + attack / 100f)); }
+            get { GetRoomBonuses(out int attack, out _, out _); return Mathf.RoundToInt((attackDamage + health.GrowthAttackBonus) * (1 + attack / 100f)); }
         }
-        public int BaseAttackDamage => attackDamage;
+        public int BaseAttackDamage => attackDamage + (health != null ? health.GrowthAttackBonus : 0);
         public float AttackInterval => Mathf.Max(attackCooldown, attackDuration, attackWindup);
         public float AttackRange => attackRange;
         public float DetectionRange => detectionRange;
@@ -211,7 +211,7 @@ namespace DarkLord.Minions
                         bool canTrigger = augments != null && augments.CanTrigger;
                         int damage = augments != null ? augments.MinionDamage(this, target, AttackDamage) : AttackDamage;
                         bool applied = target.TakeDamage(damage, health, attackType);
-                        if (canTrigger && applied && !target.IsAlive) augments.MinionKill();
+                        if (canTrigger && applied && !target.IsAlive) augments.MinionKill(this);
                     }
                 }
                 if (Time.time < stateEnds) return;
@@ -292,8 +292,8 @@ namespace DarkLord.Minions
         {
             if (!IsHostile(candidate)) return false;
             if (assaultMode) return true;
-            var room = defenceDungeon != null ? defenceDungeon.Construction.RoomAt(defenceDungeon.WorldToCell(guardPosition)) : null;
-            if (room != null && defenceDungeon.Construction.RoomAt(defenceDungeon.WorldToCell(candidate.transform.position)) != room)
+            var room = defenceDungeon != null ? defenceDungeon.Construction.GarrisonAt(defenceDungeon.WorldToCell(guardPosition)) : null;
+            if (room != null && defenceDungeon.Construction.GarrisonAt(defenceDungeon.WorldToCell(candidate.transform.position)) != room)
                 return InAttackRange(candidate) && IsDoorwayCell(defenceDungeon, room, candidate.transform.position);
             if (room != null) return true;
             return ((Vector2)candidate.transform.position - Anchor).sqrMagnitude <= detectionRange * detectionRange;
@@ -315,16 +315,17 @@ namespace DarkLord.Minions
             DarkLord.Dungeon.DungeonSection room, Vector3 position)
         {
             var cell = dungeon.WorldToCell(position);
-            if (!dungeon.Construction.IsWalkable(cell) || dungeon.Construction.RoomAt(cell) != null) return false;
-            int dx = Mathf.Max(0, Mathf.Max(room.Bounds.xMin - cell.x, cell.x - room.Bounds.xMax + 1));
-            int dy = Mathf.Max(0, Mathf.Max(room.Bounds.yMin - cell.y, cell.y - room.Bounds.yMax + 1));
-            return dx + dy == 1;
+            if (!dungeon.Construction.IsWalkable(cell) || dungeon.Construction.GarrisonAt(cell) == room) return false;
+            return dungeon.Construction.GarrisonAt(cell + Vector2Int.up) == room ||
+                dungeon.Construction.GarrisonAt(cell + Vector2Int.down) == room ||
+                dungeon.Construction.GarrisonAt(cell + Vector2Int.left) == room ||
+                dungeon.Construction.GarrisonAt(cell + Vector2Int.right) == room;
         }
 
         private ActorHealth FindTarget()
         {
             var filter = new ContactFilter2D { useLayerMask = true, layerMask = targetLayers, useTriggers = false };
-            var room = defenceDungeon != null ? defenceDungeon.Construction.RoomAt(defenceDungeon.WorldToCell(guardPosition)) : null;
+            var room = defenceDungeon != null ? defenceDungeon.Construction.GarrisonAt(defenceDungeon.WorldToCell(guardPosition)) : null;
             int count = room != null
                 ? Physics2D.OverlapBox(defenceDungeon.CellCenter(room.Center), new Vector2(room.Bounds.width, room.Bounds.height) * DarkLord.Dungeon.DungeonGrid.CellSize + Vector2.one * (2 * attackRange), 0, filter, nearby)
                 : Physics2D.OverlapCircle(Anchor, detectionRange, filter, nearby);

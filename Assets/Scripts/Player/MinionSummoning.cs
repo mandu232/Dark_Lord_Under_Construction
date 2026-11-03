@@ -35,7 +35,7 @@ namespace DarkLord.Player
         private int placementStartedFrame, consumedFrame = -1;
         private Vector2Int? highlightedCell;
         private bool highlightedAllowed;
-        private string message = "소환하면 소환소 옆에 생성됩니다. 하수인을 꾹 눌러 원하는 방에 놓으세요.";
+        private string message = "소환하면 소환소 옆에 생성됩니다. 하수인을 꾹 눌러 원하는 방·복도에 놓으세요.";
         public string Message => message;
         public MinionController RecruitDefinition => guardPrefab;
         public bool IsRecruiting => recruitmentWindow;
@@ -115,8 +115,8 @@ namespace DarkLord.Player
             bool allowed = CanPlace(cell, out message);
             if (highlightedCell != cell || highlightedAllowed != allowed)
             {
-                var room = dungeon.Construction.RoomAt(cell);
-                if (room != null) dungeon.HighlightArea(room.Bounds, allowed); else dungeon.Highlight(cell, false);
+                var room = dungeon.Construction.GarrisonAt(cell);
+                if (room != null) dungeon.HighlightCells(new List<Vector2Int>(room.Cells), allowed); else dungeon.Highlight(cell, false);
                 highlightedCell = cell; highlightedAllowed = allowed;
             }
             if (Time.frameCount > placementStartedFrame && (dragPlacement ? place.WasReleasedThisFrame() : place.WasPressedThisFrame()))
@@ -194,7 +194,7 @@ namespace DarkLord.Player
             else if (combat != null && !combat.PaySummonCost()) return false;
             var guard = CreateGuard(definition, spawn);
             SetOpen(false);
-            message = $"{guard.DisplayName}을 소환했습니다. 꾹 누른 뒤 원하는 방에 놓으세요.";
+            message = $"{guard.DisplayName}을 소환했습니다. 꾹 누른 뒤 원하는 방·복도에 놓으세요.";
             if (useStack) RandomMinionSummoned?.Invoke(guard);
             return true;
         }
@@ -232,16 +232,16 @@ namespace DarkLord.Player
         {
             if (!ResolveDestination(cell, out var landing, out message)) return false;
             relocatingGuard.Relocate(dungeon.CellCenter(landing));
-            SetOpen(false); message = "하수인이 선택한 방으로 순간이동했습니다."; return true;
+            SetOpen(false); message = "하수인이 선택한 구역으로 순간이동했습니다."; return true;
         }
         public bool CanPlace(Vector2Int target, out string reason) => ResolveDestination(target, out _, out reason);
         private bool ResolveDestination(Vector2Int target, out Vector2Int landing, out string reason)
         {
-            landing = default; reason = "하수인을 꾹 눌러 원하는 방에 놓으세요.";
+            landing = default; reason = "하수인을 꾹 눌러 원하는 방·복도에 놓으세요.";
             if (!IsOpen || !IsPlacing || !IsRelocating || !CanHandleMinions || !relocatingGuard.IsAlive) return false;
-            var room = dungeon.Construction.RoomAt(target);
-            if (room == null) { reason = "완성된 방 위에 놓으세요. 복도에는 배치할 수 없습니다."; return false; }
-            if (RoomIsFull(room, relocatingGuard)) { reason = $"방 인원이 가득 찼습니다. ({RoomGuardCount(room)}/{RoomCapacity(room)})"; return false; }
+            var room = dungeon.Construction.GarrisonAt(target);
+            if (room == null) { reason = "완성된 방이나 복도 위에 놓으세요."; return false; }
+            if (RoomIsFull(room, relocatingGuard)) { reason = $"구역 인원이 가득 찼습니다. ({RoomGuardCount(room)}/{RoomCapacity(room)})"; return false; }
             Physics2D.SyncTransforms(); float best = float.PositiveInfinity; bool found = false;
             foreach (var cell in room.Cells)
             {
@@ -249,7 +249,7 @@ namespace DarkLord.Player
                 if (distance >= best || !EmptyLanding(cell, relocatingGuard)) continue;
                 best = distance; landing = cell; found = true;
             }
-            reason = found ? $"놓으면 이 방으로 순간이동 · {RoomGuardCount(room)}/{RoomCapacity(room)} · 우클릭/Esc 취소" : "이 방에 배치할 빈 공간이 없습니다.";
+            reason = found ? $"놓으면 이 구역으로 순간이동 · {RoomGuardCount(room)}/{RoomCapacity(room)} · 우클릭/Esc 취소" : "이 구역에 배치할 빈 공간이 없습니다.";
             return found;
         }
         private bool EmptyLanding(Vector2Int cell, MinionController moving)
@@ -264,13 +264,16 @@ namespace DarkLord.Player
             return Vector2.Distance(center, transform.position) > .65f;
         }
         public int RoomCapacity(DungeonSection room) => room == null ? 0 :
+            !DungeonConstruction.IsRoom(room.Kind) ? 2 :
             (room.Kind == ConstructionKind.LargeRoom ? guardLimit : smallRoomLimit) + (dungeon != null ? dungeon.RoomCapacityBonus(room) : 0);
         public int RoomGuardCount(DungeonSection room, MinionController excluding = null)
         {
             if (room == null || dungeon == null) return 0;
+            room = dungeon.Construction.GarrisonAt(room.Cells[0]);
+            if (room == null) return 0;
             int count = 0;
             foreach (var guard in dungeon.Guards)
-                if (guard != null && guard != excluding && guard.isActiveAndEnabled && guard.IsAlive && dungeon.Construction.RoomAt(dungeon.WorldToCell(guard.GuardPosition)) == room) count++;
+                if (guard != null && guard != excluding && guard.isActiveAndEnabled && guard.IsAlive && dungeon.Construction.GarrisonAt(dungeon.WorldToCell(guard.GuardPosition)) == room) count++;
             return count;
         }
         private bool RoomIsFull(DungeonSection room, MinionController excluding) => room != null && RoomGuardCount(room, excluding) >= RoomCapacity(room);
@@ -283,7 +286,7 @@ namespace DarkLord.Player
             placementStartedFrame = Time.frameCount; worldCamera = Camera.main;
             relocationZoom = PlacementCameraZoom.Acquire(worldCamera, this);
             relocationPan = PlacementCameraPan.Acquire(worldCamera, this, dungeon);
-            message = "원하는 방에 놓으면 빈 자리로 순간이동합니다. WASD: 화면 이동 · 우클릭 / Esc: 취소"; return true;
+            message = "원하는 방·복도에 놓으면 빈 자리로 순간이동합니다. WASD: 화면 이동 · 우클릭 / Esc: 취소"; return true;
         }
         public bool RemoveGuard(MinionController guard)
         {

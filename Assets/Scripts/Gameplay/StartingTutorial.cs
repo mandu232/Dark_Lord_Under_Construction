@@ -147,7 +147,7 @@ namespace DarkLord.Gameplay
                 {
                     // Only the survivor and non-minion story actors are rescued during combat.
                     actor.ScriptedHealthFloor = actor.GetComponent<MinionController>() == null || actor == survivor?.Health ? 1 : 0;
-                    actor.Damaged += Protect; protectedActors.Add(actor);
+                    actor.Damaged += Protect; actor.Died += CheckOpeningBattleEnd; protectedActors.Add(actor);
                 }
         }
         // Keep the scripted battle playable; the collapse resolves the opening army's losses.
@@ -156,7 +156,13 @@ namespace DarkLord.Gameplay
             foreach (var actor in protectedActors)
                 if (actor != null && actor.ScriptedHealthFloor > 0 && actor.IsAlive && actor.CurrentHealth < actor.MaximumHealth / 2)
                     actor.Heal(actor.MaximumHealth / 2 - actor.CurrentHealth);
-            if (waves.Core.CurrentHealth <= waves.Core.MaximumHealth / 2 && Elapsed < BattleEnds)
+            CheckOpeningBattleEnd();
+        }
+        private void CheckOpeningBattleEnd()
+        {
+            if (!Active || waves.IsFinished || collapsed || Elapsed >= BattleEnds) return;
+            bool lastDefender = dungeon.Guards.Count(m => m != null && m.IsAlive && m.Health.Faction == Faction.Dungeon) <= 1;
+            if (waves.Core.CurrentHealth <= waves.Core.MaximumHealth / 2 || lastDefender)
             { Elapsed = BattleEnds; dialoguePage = 2; dialogueLine = 0; DialogueOpen = true; SynchronizeDialoguePause(); }
         }
         private void Update()
@@ -169,6 +175,8 @@ namespace DarkLord.Gameplay
                 if (TrainingStep == TutorialTrainingStep.Corridor || TrainingStep == TutorialTrainingStep.Entrance) UpdateExpansionTraining();
                 return;
             }
+            CheckOpeningBattleEnd();
+            if (DialogueOpen) return;
             UpdateRetreat();
             float boundary = Elapsed < BattleEnds ? BattleEnds : Elapsed < CollapseAt + 4 ? CollapseAt + 4 : FinishAt;
             Advance(Mathf.Min(Time.deltaTime, boundary - Elapsed));
@@ -298,7 +306,7 @@ namespace DarkLord.Gameplay
             SynchronizeDialoguePause();
         }
         private void ReleaseProtection()
-        { foreach (var actor in protectedActors) if (actor != null) { actor.Damaged -= Protect; actor.ScriptedHealthFloor = 0; } protectedActors.Clear(); }
+        { foreach (var actor in protectedActors) if (actor != null) { actor.Damaged -= Protect; actor.Died -= CheckOpeningBattleEnd; actor.ScriptedHealthFloor = 0; } protectedActors.Clear(); }
         private void Clear()
         {
             ReleasePlayerExpression();
