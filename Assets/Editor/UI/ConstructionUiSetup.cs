@@ -49,7 +49,7 @@ namespace DarkLord.Editor
             spike.available = true; EditorUtility.SetDirty(spike);
             var definitions = new[] {
                 Item("Room", "파수꾼의 방", BuildCategory.Rooms, ConstructionKind.Room,
-                    "5 × 5칸 · 복도와 연결\n\n타일이 순차적으로 부서진 뒤 사전 정의된 방 디자인이 생성됩니다. 방 안의 파수꾼을 모두 처치해야 용사가 다음 방으로 이동합니다.", Design("RoomDesign", 5, 5), 0),
+                    "7 × 7칸 · 복도와 연결\n\n타일이 순차적으로 부서진 뒤 사전 정의된 방 디자인이 생성됩니다. 방 안의 파수꾼을 모두 처치해야 용사가 다음 방으로 이동합니다.", Design("RoomDesign", 5, 5), 0),
                 largeRoom,
                 Item("Corridor", "복도", BuildCategory.Corridors, ConstructionKind.Corridor,
                     "폭 3칸 · 연결 필수\n\n방이나 복도와 상하좌우로 이어지는 위치에만 설치할 수 있습니다.\n\n기존 방이나 복도에서 좌클릭을 누르고 끝점까지 드래그하세요. 같은 축에서는 직선, 위치가 어긋나면 ㄱ자로 연결합니다. 놓으면 타일이 순차적으로 열립니다. 빈 곳까지 확장한 뒤 방을 붙일 수도 있습니다.\n\n우클릭: 취소", Design("CorridorTileDesign", 1, 1), 1),

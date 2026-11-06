@@ -7,6 +7,7 @@ using DarkLord.Gameplay;
 using DarkLord.Minions;
 using DarkLord.Persistence;
 using DarkLord.Player;
+using DarkLord.UI;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -63,8 +64,29 @@ namespace DarkLord.Tests
             Assert.IsEmpty(waves.Harvest.Corpses);
 
             var worker = Find<CorpseWorker>();
+            var approach = room.Cells.First(cell =>
+            {
+                var offset = cell - station.Cell;
+                return Mathf.Abs(offset.x) + Mathf.Abs(offset.y) == 1 && cell != grid.CoreCell &&
+                    grid.BuildingAt(cell) == null && grid.Construction.IsWalkable(cell);
+            });
+            var approachCenter = grid.CellCenter(approach);
+            var farEdge = approachCenter + (approachCenter - station.transform.position).normalized * .75f;
+            Assert.AreEqual(approach, grid.WorldToCell(farEdge));
+            Assert.Greater(Vector2.Distance(farEdge, station.transform.position), CorpseHarvest.AbsorptionDistance);
+            worker.GetComponent<Rigidbody2D>().position = farEdge;
+            worker.transform.position = farEdge;
+            waves.Harvest.Restore(new[] { new CorpseSaveData { position = farEdge } });
+            deadline = Time.unscaledTime + 5;
+            while (station.SummonStacks < 2 && Time.unscaledTime < deadline) yield return null;
+            Assert.AreEqual(2, station.SummonStacks, "Entering the approach cell outside absorption range must not stop the worker.");
             Assert.IsFalse(worker.GetComponent<MinionController>().enabled);
             worker.Health.TakeDamage(7);
+            var inspection = Find<MinionInspectionPanel>();
+            inspection.Show(worker.GetComponent<MinionController>());
+            Assert.IsTrue(inspection.IsOpen);
+            Assert.That(inspection.StatsText, Does.Contain("28 / 35"));
+            inspection.Close();
             var snapshot = session.Capture();
             snapshot.workers[0].position = grid.CellCenter(corridorCell);
             session.Restore(snapshot);

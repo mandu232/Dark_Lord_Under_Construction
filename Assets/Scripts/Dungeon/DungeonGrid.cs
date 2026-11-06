@@ -255,6 +255,15 @@ namespace DarkLord.Dungeon
                     else
                     {
                         var design = Instantiate(prefab, CellCenter(section.Center), transform.rotation, generated.transform);
+                        if (DungeonConstruction.IsRoom(section.Kind))
+                        {
+                            // The fallback meshes were authored for the original 5×5 and 7×7 footprints.
+                            float authoredSize = section.Kind == ConstructionKind.LargeRoom ? 7f : 5f;
+                            var bounds = section.Bounds;
+                            design.transform.position = (CellCenter(bounds.min) + CellCenter(bounds.max - Vector2Int.one)) * .5f;
+                            design.transform.localScale = Vector3.Scale(design.transform.localScale,
+                                new Vector3(bounds.width / authoredSize, bounds.height / authoredSize, 1));
+                        }
                         design.name = prefab.name + " " + section.Center;
                     }
                 }
@@ -398,6 +407,22 @@ namespace DarkLord.Dungeon
             areaHighlight.Clear();
         }
 
+        internal bool BlocksNpcMovement(Vector2Int cell)
+        {
+            var building = BuildingAt(cell);
+            return cell == CoreCell || IsAlchemyStationCell(cell) ||
+                (building != null && building.isActiveAndEnabled && !building.IsRuined);
+        }
+
+        internal bool FindNpcPath(Vector2Int start, Vector2Int destination,
+            System.Collections.Generic.List<Vector2Int> path, DungeonSection room = null)
+        {
+            if (!Construction.FindPath(start, destination, path, room, BlocksNpcMovement)) return false;
+            if (path.Count > 0 && BlocksNpcMovement(destination))
+                path.RemoveAt(path.Count - 1);
+            return true;
+        }
+
         public System.Collections.Generic.IReadOnlyList<DarkLord.Minions.MinionController> Guards => guards;
 
         public void RegisterGuard(DarkLord.Minions.MinionController guard)
@@ -527,6 +552,9 @@ namespace DarkLord.Dungeon
             if (ceilingSprite != null) Destroy(ceilingSprite);
             if (compactFacePieces != null)
                 foreach (var pieces in compactFacePieces) DestroyWallPieces(pieces);
+            if (storageWallFaces != null)
+                foreach (var faces in storageWallFaces)
+                    foreach (var pieces in faces) DestroyWallPieces(pieces);
             DestroyWallPieces(roomWallPieces);
             DestroyWallPieces(bannerWallPieces);
             DestroyWallPieces(verticalWallPieces);

@@ -57,6 +57,7 @@ namespace DarkLord.UI
             {
                 var ray = worldCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
                 var building = new Plane(dungeon.transform.forward, dungeon.transform.position).Raycast(ray, out float distance) ? FindAt(ray.GetPoint(distance)) : null;
+                if (building != null && minionInspection != null && minionInspection.FindAt(ray.GetPoint(distance)) != null) return;
                 if (building != null) Show(building); else Close();
             }
             if (IsOpen && Time.unscaledTime >= nextRefresh) { Refresh(); nextRefresh = Time.unscaledTime + 0.1f; }

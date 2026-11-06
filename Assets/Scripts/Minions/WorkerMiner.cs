@@ -137,7 +137,7 @@ namespace DarkLord.Minions
                 for (int i = 0; i < jobs.Count; i++)
                 {
                     if (dungeon.Layout.GetCell(jobs[i]) != DungeonCell.Rock) { CancelMining(jobs[i--]); continue; }
-                    if (!FindApproach(dungeon.Layout, dungeon.WorldToCell(transform.position), jobs[i], path)) continue;
+                    if (!FindApproach(dungeon.Layout, dungeon.WorldToCell(transform.position), jobs[i], path, dungeon.BlocksNpcMovement)) continue;
                     activeJob = jobs[i];
                     waypoint = 0;
                     lastPosition = transform.position;
@@ -146,6 +146,8 @@ namespace DarkLord.Minions
                 if (!activeJob.HasValue) return;
             }
 
+            if (waypoint < path.Count && dungeon.BlocksNpcMovement(path[waypoint]) && path[waypoint] != dungeon.WorldToCell(transform.position))
+            { ReleasePath(); return; }
             if (waypoint < path.Count)
             {
                 Vector2 delta = dungeon.CellCenter(path[waypoint]) - transform.position;
@@ -176,7 +178,7 @@ namespace DarkLord.Minions
         }
 
         // Cardinal BFS follows floor centers: no corner cutting or walking through rock.
-        public static bool FindApproach(DungeonLayout layout, Vector2Int start, Vector2Int target, List<Vector2Int> result)
+        public static bool FindApproach(DungeonLayout layout, Vector2Int start, Vector2Int target, List<Vector2Int> result, System.Predicate<Vector2Int> blocked = null)
         {
             result.Clear();
             if (!layout.IsFloor(start) || layout.GetCell(target) != DungeonCell.Rock || !layout.Contains(target)) return false;
@@ -186,7 +188,7 @@ namespace DarkLord.Minions
             while (frontier.Count > 0)
             {
                 var cell = frontier.Dequeue();
-                if (Mathf.Abs(cell.x - target.x) + Mathf.Abs(cell.y - target.y) == 1)
+                if (Mathf.Abs(cell.x - target.x) + Mathf.Abs(cell.y - target.y) == 1 && blocked?.Invoke(cell) != true)
                 {
                     result.Add(cell);
                     while (cell != start) { cell = parents[cell]; result.Add(cell); }
@@ -196,7 +198,7 @@ namespace DarkLord.Minions
                 foreach (var direction in Directions)
                 {
                     var next = cell + direction;
-                    if (!layout.IsFloor(next) || parents.ContainsKey(next)) continue;
+                    if (!layout.IsFloor(next) || blocked?.Invoke(next) == true || parents.ContainsKey(next)) continue;
                     parents.Add(next, cell);
                     frontier.Enqueue(next);
                 }

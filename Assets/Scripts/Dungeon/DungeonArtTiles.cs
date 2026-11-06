@@ -7,6 +7,7 @@ namespace DarkLord.Dungeon
         [Header("Dungeon artwork")]
         [SerializeField] private TileBase roomFloorTile, corridorCarpetTile, repeatingWallTile;
         [SerializeField] private TileBase[] stonePieces, carpetPieces, wallPieces;
+        [SerializeField] private Texture2D storageWallTexture;
         [SerializeField] private Sprite windowLightSprite;
         [SerializeField] private Material windowLightMaterial;
         [SerializeField] private GameObject wallTorchPrefab;
@@ -18,6 +19,7 @@ namespace DarkLord.Dungeon
         private Sprite ceilingSprite;
         private Tile[] roomWallPieces, bannerWallPieces, verticalWallPieces, southWallPieces;
         private Tile[][] compactWallPieces, compactFacePieces;
+        private Tile[][][] storageWallFaces;
         private Tile[] floorVariants, carpetCorners;
         private Tile[] carpetInnerCorners;
         private Tile wallShadow, pillarShadow, pillarShadowEnd, windowGlow;
@@ -89,21 +91,7 @@ namespace DarkLord.Dungeon
                     else DestroyImmediate(southWallPieces[column].sprite);
                     southWallPieces[column].sprite = Sprite.Create(texture, new Rect(240 + column * 16, 152, 16, 8), new Vector2(.5f, 0), 16);
                 }
-                compactFacePieces = new Tile[5][];
-                for (int height = 1; height < 5; height++)
-                {
-                    compactFacePieces[height] = new Tile[height * 5];
-                    float slice = 80f / height;
-                    for (int row = 0; row < height; row++)
-                        for (int column = 0; column < 5; column++)
-                        {
-                            var tile = ScriptableObject.CreateInstance<Tile>();
-                            tile.sprite = Sprite.Create(texture, new Rect(192 + column * 16, 176 + (height - row - 1) * slice, 16, slice), new Vector2(.5f, .5f), 16);
-                            tile.transform = Matrix4x4.Scale(new Vector3(1, height / 5f, 1));
-                            tile.colliderType = Tile.ColliderType.None;
-                            compactFacePieces[height][row * 5 + column] = tile;
-                        }
-                }
+                compactFacePieces = MakeCompactFaces(texture, 192, 176);
                 compactWallPieces = new Tile[5][];
                 for (int height = 1; height < 5; height++)
                 {
@@ -121,6 +109,17 @@ namespace DarkLord.Dungeon
                 floorVariants = MakeFloorVariants(texture);
                 carpetCorners = MakePieces(texture, 112, 48, 2, 2);
                 carpetInnerCorners = MakePieces(texture, 64, 48, 2, 2);
+            }
+            if (storageWallTexture != null)
+            {
+                storageWallFaces = new Tile[3][][];
+                for (int style = 0; style < storageWallFaces.Length; style++)
+                {
+                    int startX = 16 + style * 96;
+                    var faces = MakeCompactFaces(storageWallTexture, startX, 0);
+                    faces[5] = MakeWallPieces(storageWallTexture, startX, 64);
+                    storageWallFaces[style] = faces;
+                }
             }
             // The new carpet has borders on both halves, but no separate plain center tile.
             // Stretch one solid-red pixel to fill interior cells without repeating its borders.
@@ -188,14 +187,33 @@ namespace DarkLord.Dungeon
         // in the wall foot reveal floor rather than the empty background.
         private bool BackedFloor(Vector2Int p) => ArtFloor(p) || ArtFloor(p + Vector2Int.down) || ArtFloor(p + Vector2Int.down * 2);
         private static TileBase Piece(TileBase[] pieces, int index, TileBase fallback) => pieces != null && index < pieces.Length && pieces[index] != null ? pieces[index] : fallback;
-        private static Tile[] MakeWallPieces(Texture2D texture, int startX)
+        private static Tile[][] MakeCompactFaces(Texture2D texture, int startX, int bottomY)
+        {
+            var faces = new Tile[6][];
+            for (int height = 1; height < 5; height++)
+            {
+                faces[height] = new Tile[height * 5];
+                float slice = 80f / height;
+                for (int row = 0; row < height; row++)
+                    for (int column = 0; column < 5; column++)
+                    {
+                        var tile = ScriptableObject.CreateInstance<Tile>();
+                        tile.sprite = Sprite.Create(texture, new Rect(startX + column * 16, bottomY + (height - row - 1) * slice, 16, slice), new Vector2(.5f, .5f), 16);
+                        tile.transform = Matrix4x4.Scale(new Vector3(1, height / 5f, 1));
+                        tile.colliderType = Tile.ColliderType.None;
+                        faces[height][row * 5 + column] = tile;
+                    }
+            }
+            return faces;
+        }
+        private static Tile[] MakeWallPieces(Texture2D texture, int startX, int topY = 240)
         {
             var pieces = new Tile[25];
             for (int row = 0; row < 5; row++)
                 for (int column = 0; column < 5; column++)
                 {
                     var tile = ScriptableObject.CreateInstance<Tile>();
-                    tile.sprite = Sprite.Create(texture, new Rect(startX + column * 16, 240 - row * 16, 16, 16), new Vector2(.5f, .5f), 16);
+                    tile.sprite = Sprite.Create(texture, new Rect(startX + column * 16, topY - row * 16, 16, 16), new Vector2(.5f, .5f), 16);
                     tile.colliderType = Tile.ColliderType.None;
                     pieces[row * 5 + column] = tile;
                 }
@@ -488,6 +506,12 @@ namespace DarkLord.Dungeon
                     int wallColumn = WallColumn(foot, out int segmentStart, out bool shortenedInterior);
                     int index = (5 - depth) * 5 + wallColumn;
                     var owner = Construction.At(new Vector2Int(foot.x / 2, foot.y / 2));
+                    if (owner?.Kind == ConstructionKind.StorageRoom && storageWallFaces != null)
+                    {
+                        uint style = ArtHash(segmentStart, foot.y) % (uint)storageWallFaces.Length;
+                        wall = storageWallFaces[style][faceHeight][(faceHeight - depth) * 5 + wallColumn];
+                        break;
+                    }
                     bool corridor = owner != null && !DungeonConstruction.IsRoom(owner.Kind);
                     if (faceHeight < 5 && compactFacePieces != null)
                     {

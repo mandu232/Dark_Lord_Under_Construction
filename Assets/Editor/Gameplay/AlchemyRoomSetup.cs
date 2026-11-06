@@ -81,7 +81,7 @@ namespace DarkLord.Editor
             item.category = BuildCategory.Rooms;
             item.constructionKind = ConstructionKind.AlchemyRoom;
             item.displayName = "연금술실";
-            item.description = $"5 × 5칸 · 복도와 연결\n\n중앙에 고정된 연성 장치가 설치됩니다. 장치 가까이에서 F키로 상호작용하세요.\n혈액 {AlchemyExchange.BloodCost} → 금화 {AlchemyExchange.BloodGold} · {AlchemyExchange.BloodDuration:0}초\n혈석 {AlchemyExchange.CrystalCost} → 금화 {AlchemyExchange.CrystalGold} · {AlchemyExchange.CrystalDuration:0}초\n\n준비 단계에 재료를 투입합니다. 시설당 한 작업만 진행하며, 창을 닫거나 자리를 떠나도 연성은 계속됩니다. 완성된 금화는 장치에 보관됩니다. 다시 상호작용한 뒤 금화 수령 버튼으로 직접 받으세요. 수령 전에는 새 작업을 시작할 수 없습니다. 일시정지 중에는 진행하지 않습니다.\n\n방 사이에는 최소 1칸의 간격이 필요합니다.";
+            item.description = $"7 × 7칸 · 복도와 연결\n\n중앙에 고정된 연성 장치가 설치됩니다. 장치 가까이에서 F키로 상호작용하세요.\n혈액 {AlchemyExchange.BloodCost} → 금화 {AlchemyExchange.BloodGold} · {AlchemyExchange.BloodDuration:0}초\n혈석 {AlchemyExchange.CrystalCost} → 금화 {AlchemyExchange.CrystalGold} · {AlchemyExchange.CrystalDuration:0}초\n\n준비 단계에 재료를 투입합니다. 시설당 한 작업만 진행하며, 창을 닫거나 자리를 떠나도 연성은 계속됩니다. 완성된 금화는 장치에 보관됩니다. 다시 상호작용한 뒤 금화 수령 버튼으로 직접 받으세요. 수령 전에는 새 작업을 시작할 수 없습니다. 일시정지 중에는 진행하지 않습니다.\n\n방 사이에는 최소 1칸의 간격이 필요합니다.";
             item.icon = AssetDatabase.LoadAssetAtPath<BuildItemDefinition>("Assets/Data/Construction/Room.asset").icon;
             item.prefab = AssetDatabase.LoadAssetAtPath<GameObject>(designPath);
             item.available = true;

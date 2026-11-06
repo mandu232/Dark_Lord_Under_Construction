@@ -37,7 +37,7 @@ namespace DarkLord.Editor
             item.category = BuildCategory.Rooms;
             item.constructionKind = ConstructionKind.StorageRoom;
             item.displayName = "창고";
-            item.description = $"5 × 5칸 · 복도와 연결\n\n완공 시 자원 최대 보유량 증가\n금화 +{CurrencyWallet.StorageGoldBonus:N0}\n혈액 +{CurrencyWallet.StorageSoulsBonus:N0}\n혈석 +{CurrencyWallet.StorageCrystalsBonus:N0}\n\n여러 창고의 효과는 합산됩니다. 건설 중에는 적용되지 않습니다. 보유 한도를 넘는 획득분은 저장되지 않습니다.\n\n방 사이에는 최소 1칸의 간격이 필요합니다.";
+            item.description = $"7 × 7칸 · 복도와 연결\n\n완공 시 자원 최대 보유량 증가\n금화 +{CurrencyWallet.StorageGoldBonus:N0}\n혈액 +{CurrencyWallet.StorageSoulsBonus:N0}\n혈석 +{CurrencyWallet.StorageCrystalsBonus:N0}\n\n여러 창고의 효과는 합산됩니다. 건설 중에는 적용되지 않습니다. 보유 한도를 넘는 획득분은 저장되지 않습니다.\n\n방 사이에는 최소 1칸의 간격이 필요합니다.";
             item.icon = AssetDatabase.LoadAssetAtPath<BuildItemDefinition>("Assets/Data/Construction/Room.asset").icon;
             item.prefab = AssetDatabase.LoadAssetAtPath<GameObject>(designPath);
             item.available = true;

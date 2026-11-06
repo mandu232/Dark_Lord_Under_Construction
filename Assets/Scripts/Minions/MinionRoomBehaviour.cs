@@ -27,9 +27,8 @@ namespace DarkLord.Minions
         private bool RoomWalkable(Vector2Int cell)
         {
             var room = AssignedRoom;
-            if (room == null || defenceDungeon.Construction.GarrisonAt(cell) != room || !defenceDungeon.Construction.IsWalkable(cell) || defenceDungeon.IsAlchemyStationCell(cell)) return false;
-            var building = defenceDungeon.BuildingAt(cell);
-            return cell != defenceDungeon.CoreCell && (building == null || building.IsRuined);
+            return room != null && defenceDungeon.Construction.GarrisonAt(cell) == room &&
+                defenceDungeon.Construction.IsWalkable(cell) && !defenceDungeon.BlocksNpcMovement(cell);
         }
         private void WanderInRoom()
         {

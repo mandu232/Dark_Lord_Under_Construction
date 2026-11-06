@@ -111,16 +111,16 @@ namespace DarkLord.Player
         }
         public bool TryDeliver(InvaderCorpse corpse, ResourceBuilding facility)
         {
-            return CanUse && corpse != null && corpse.AssignedWorker == null && Deliver(corpse, facility);
+            return CanUse && corpse != null && corpse.AssignedWorker == null && Deliver(corpse, facility, corpse.transform.position);
         }
         internal bool TryDeliverFromWorker(InvaderCorpse corpse, ResourceBuilding facility, CorpseWorker worker)
         {
-            return WorkersCanCollect && corpse != null && corpse.AssignedWorker == worker && Deliver(corpse, facility);
+            return WorkersCanCollect && corpse != null && corpse.AssignedWorker == worker && Deliver(corpse, facility, worker.transform.position);
         }
-        private bool Deliver(InvaderCorpse corpse, ResourceBuilding facility)
+        private bool Deliver(InvaderCorpse corpse, ResourceBuilding facility, Vector3 deliveryPosition)
         {
             if (corpse.Consumed || !corpses.Contains(corpse) || facility == null || !facility.CanReceiveCorpse ||
-                Vector2.Distance(corpse.transform.position, facility.transform.position) > AbsorptionDistance || dungeon.BuildingAt(facility.Cell) != facility) return false;
+                Vector2.Distance(deliveryPosition, facility.transform.position) > AbsorptionDistance || dungeon.BuildingAt(facility.Cell) != facility) return false;
             if (!facility.TryAddSummonStack()) return false;
             bool wasCarried = Carried == corpse;
             corpses.Remove(corpse); if (wasCarried) { Carried = null; dragVelocity = Vector3.zero; }

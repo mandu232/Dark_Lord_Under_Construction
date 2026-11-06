@@ -31,6 +31,7 @@ namespace DarkLord.Dungeon
     // A planned footprint reserves its cells; DungeonGrid opens the queued rock.
     public sealed partial class DungeonConstruction
     {
+        public const int RoomSize = 7;
         public const int CorridorWidth = 3;
         public const int StartingCorridorLength = 8;
         private readonly DungeonLayout layout;
@@ -59,7 +60,7 @@ namespace DarkLord.Dungeon
 
         public static RectInt Footprint(ConstructionKind kind, Vector2Int center)
         {
-            var size = kind == ConstructionKind.LargeRoom ? new Vector2Int(7, 7) : IsRoom(kind) ? new Vector2Int(5, 5) :
+            var size = IsRoom(kind) ? new Vector2Int(RoomSize, RoomSize) :
                 kind == ConstructionKind.HorizontalCorridor ? new Vector2Int(5, CorridorWidth) : new Vector2Int(CorridorWidth, 5);
             return new RectInt(center - size / 2, size);
         }
@@ -200,7 +201,7 @@ namespace DarkLord.Dungeon
         }
 
         // Cardinal paths preserve room doors and cannot cut diagonally across walls.
-        public bool FindPath(Vector2Int start, Vector2Int destination, List<Vector2Int> result, DungeonSection confinedRoom = null)
+        public bool FindPath(Vector2Int start, Vector2Int destination, List<Vector2Int> result, DungeonSection confinedRoom = null, System.Predicate<Vector2Int> blocked = null)
         {
             result.Clear();
             if (!IsWalkable(start) || !IsWalkable(destination)) return false;
@@ -220,7 +221,7 @@ namespace DarkLord.Dungeon
                 foreach (var direction in Directions)
                 {
                     var next = cell + direction;
-                    if (!IsWalkable(next) || parents.ContainsKey(next) || (confinedRoom != null && !confinedRoom.Bounds.Contains(next))) continue;
+                    if (!IsWalkable(next) || (next != destination && blocked?.Invoke(next) == true) || parents.ContainsKey(next) || (confinedRoom != null && !confinedRoom.Bounds.Contains(next))) continue;
                     parents[next] = cell;
                     queue.Enqueue(next);
                 }

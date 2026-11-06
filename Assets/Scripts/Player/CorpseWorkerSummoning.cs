@@ -12,6 +12,8 @@ namespace DarkLord.Player
     {
         private readonly List<CorpseWorker> workers = new List<CorpseWorker>();
 
+        internal IReadOnlyList<CorpseWorker> Workers => workers;
+
         public int WorkerCount => workers.Count(worker => worker != null && worker.IsAlive);
         public int WorkerCapacity => dungeon?.Construction == null ? 0 :
             dungeon.Construction.Sections.Count(room => room.IsComplete && DungeonConstruction.IsRoom(room.Kind));

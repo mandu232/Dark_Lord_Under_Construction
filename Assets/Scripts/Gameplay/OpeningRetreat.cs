@@ -23,7 +23,7 @@ namespace DarkLord.Gameplay
             GetComponent<MinionController>().enabled = false;
             var tactics = GetComponent<InvaderTactics>(); if (tactics != null) tactics.enabled = false;
             health.Died += OnDied;
-            dungeon.Construction.FindPath(dungeon.WorldToCell(transform.position), dungeon.Layout.Entrance, path);
+            dungeon.FindNpcPath(dungeon.WorldToCell(transform.position), dungeon.Layout.Entrance, path);
             motor.SpeedMultiplier = 4;
             motor.IgnoreActorBlocking = true;
         }

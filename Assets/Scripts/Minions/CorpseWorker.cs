@@ -20,6 +20,8 @@ namespace DarkLord.Minions
     {
         public const int MaximumHealth = 35;
         private const float SearchInterval = .45f;
+        private const float WorkerSpeedMultiplier = .65f;
+        private const float CarrySpeedMultiplier = .85f;
         private readonly List<Vector2Int> path = new List<Vector2Int>();
         private readonly List<Vector2Int> candidatePath = new List<Vector2Int>();
         private MinionSummoning summoning;
@@ -41,6 +43,7 @@ namespace DarkLord.Minions
             summoning = owner;
             harvest = source;
             dungeon = owner.Dungeon;
+            motor.SpeedMultiplier = WorkerSpeedMultiplier;
             Health.Configure(Faction.Dungeon, MaximumHealth);
             Health.RestoreHealth(MaximumHealth, health);
         }
@@ -101,12 +104,15 @@ namespace DarkLord.Minions
             }
             if (!carrying)
             {
-                if (Vector2.Distance(transform.position, corpse.transform.position) > .48f)
+                var corpseCell = dungeon.WorldToCell(corpse.transform.position);
+                float pickupRange = dungeon.BlocksNpcMovement(corpseCell) ? CorpseHarvest.PickupDistance : .48f;
+                if (Vector2.Distance(transform.position, corpse.transform.position) > pickupRange)
                 {
-                    MoveAlongPath(dungeon.WorldToCell(corpse.transform.position), corpse.transform.position, .35f);
+                    MoveAlongPath(corpseCell, corpse.transform.position, .35f);
                     return;
                 }
                 carrying = true;
+                motor.SpeedMultiplier = WorkerSpeedMultiplier * CarrySpeedMultiplier;
                 corpse.SetHeld(true);
                 goal = null;
             }
@@ -116,7 +122,31 @@ namespace DarkLord.Minions
                 Stop();
                 return;
             }
-            MoveAlongPath(station.Cell, station.transform.position, .8f);
+            // Keep steering to the approach center after entering its cell.
+            // A route to the blocked station itself can end at the far edge of this cell.
+            if (goal != null && !dungeon.BlocksNpcMovement(goal.Value) &&
+                MoveToStationApproach(goal.Value)) return;
+            var start = dungeon.WorldToCell(transform.position);
+            if (!dungeon.FindNpcPath(start, station.Cell, candidatePath))
+            {
+                ReleaseCorpse();
+                Stop();
+                return;
+            }
+            var approach = candidatePath.Count > 0 ? candidatePath[candidatePath.Count - 1] : start;
+            if (!MoveToStationApproach(approach))
+            {
+                ReleaseCorpse();
+                Stop();
+            }
+        }
+
+        private bool MoveToStationApproach(Vector2Int cell)
+        {
+            var offset = cell - station.Cell;
+            if (Mathf.Abs(offset.x) + Mathf.Abs(offset.y) != 1) return false;
+            MoveAlongPath(cell, dungeon.CellCenter(cell), .08f);
+            return true;
         }
 
         private void LateUpdate()
@@ -136,7 +166,7 @@ namespace DarkLord.Minions
             Vector2Int start = dungeon.WorldToCell(transform.position);
             foreach (var facility in dungeon.RecruitmentFacilities)
             {
-                if (!facility.CanReceiveCorpse || !dungeon.Construction.FindPath(start, facility.Cell, candidatePath)) continue;
+                if (!facility.CanReceiveCorpse || !dungeon.FindNpcPath(start, facility.Cell, candidatePath)) continue;
                 station = facility;
                 break;
             }
@@ -146,7 +176,7 @@ namespace DarkLord.Minions
             {
                 if (available == null || available.Consumed || available.AssignedWorker != null || available == harvest.Carried) continue;
                 float distance = ((Vector2)(available.transform.position - transform.position)).sqrMagnitude;
-                if (distance >= nearest || !dungeon.Construction.FindPath(start, dungeon.WorldToCell(available.transform.position), candidatePath)) continue;
+                if (distance >= nearest || !dungeon.FindNpcPath(start, dungeon.WorldToCell(available.transform.position), candidatePath)) continue;
                 corpse = available;
                 nearest = distance;
             }
@@ -171,19 +201,21 @@ namespace DarkLord.Minions
             }
             corpse = null;
             carrying = false;
+            motor.SpeedMultiplier = WorkerSpeedMultiplier;
             goal = null;
         }
 
         private void MoveAlongPath(Vector2Int cell, Vector3 destination, float arrival)
         {
             Vector2Int current = dungeon.WorldToCell(transform.position);
-            if (goal != cell || revision != dungeon.Construction.Revision || Time.time >= nextSearch)
+            if (goal != cell || revision != dungeon.Construction.Revision || Time.time >= nextSearch ||
+                (waypoint < path.Count && dungeon.BlocksNpcMovement(path[waypoint])))
             {
                 goal = cell;
                 revision = dungeon.Construction.Revision;
                 nextSearch = Time.time + SearchInterval;
                 waypoint = 0;
-                if (!dungeon.Construction.FindPath(current, cell, path))
+                if (!dungeon.FindNpcPath(current, cell, path))
                 {
                     if (!fleeing) ReleaseCorpse();
                     Stop();
@@ -191,11 +223,11 @@ namespace DarkLord.Minions
                 }
             }
             while (waypoint < path.Count && Vector2.Distance(transform.position, dungeon.CellCenter(path[waypoint])) < .18f) waypoint++;
-            if (current != cell && waypoint >= path.Count) { Stop(); return; }
+            if (waypoint >= path.Count && (current != cell || dungeon.BlocksNpcMovement(cell))) { Stop(); return; }
             Vector2 point = waypoint < path.Count ? dungeon.CellCenter(path[waypoint]) : destination;
             Vector2 delta = point - (Vector2)transform.position;
             if (waypoint >= path.Count && delta.magnitude <= arrival) { Stop(); return; }
-            motor.Move(delta.normalized * Mathf.Min(1f, delta.magnitude / Mathf.Max(.01f, motor.MoveSpeed * Time.fixedDeltaTime)));
+            motor.Move(delta.normalized * Mathf.Min(1f, delta.magnitude / Mathf.Max(.01f, motor.EffectiveMoveSpeed * Time.fixedDeltaTime)));
             animation.Present(ActorState.Run, motor.Facing);
         }
 

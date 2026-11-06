@@ -96,7 +96,9 @@ namespace DarkLord.UI
         }
         private bool CanInspect => (summoning == null || summoning.GetComponent<RunEconomy>()?.BlocksGameplayInput != true) && (summoning == null || summoning.GetComponent<CorpseHarvest>()?.BlocksGameplayInput != true) && Time.timeScale > 0 && dungeon != null && dungeon.isActiveAndEnabled &&
             (construction == null || !construction.BlocksGameplayInput) && (summoning == null || !summoning.BlocksGameplayInput);
-        private static bool Alive(MinionController minion) => minion != null && minion.isActiveAndEnabled && minion.IsAlive && minion.Health.Faction == Faction.Dungeon;
+        private static bool Alive(MinionController minion) => minion != null && minion.gameObject.activeInHierarchy && (minion.TryGetComponent<CorpseWorker>(out var worker)
+            ? worker.isActiveAndEnabled && worker.IsAlive
+            : minion.isActiveAndEnabled && minion.IsAlive && minion.Health.Faction == Faction.Dungeon);
 
         private void LateUpdate()
         {
@@ -131,23 +133,27 @@ namespace DarkLord.UI
 
         public void RelocateSelected()
         {
-            if (CanInspect && Alive(Selected) && summoning != null && summoning.BeginRelocation(Selected)) Close();
+            if (CanInspect && Alive(Selected) && Selected.isActiveAndEnabled && summoning != null && summoning.BeginRelocation(Selected)) Close();
         }
 
         public MinionController FindAt(Vector3 point)
         {
             MinionController found = null;
             int bestOrder = int.MinValue;
-            foreach (var guard in dungeon.Guards)
+            void Consider(MinionController guard)
             {
-                if (!Alive(guard)) continue;
+                if (!Alive(guard)) return;
                 var renderer = guard.GetComponentInChildren<SpriteRenderer>();
-                if (renderer == null || !renderer.enabled || renderer.sprite == null || renderer.sortingOrder < bestOrder) continue;
+                if (renderer == null || !renderer.enabled || renderer.sprite == null || renderer.sortingOrder < bestOrder) return;
                 var bounds = renderer.bounds;
-                if (point.x < bounds.min.x || point.x > bounds.max.x || point.y < bounds.min.y || point.y > bounds.max.y) continue;
-                if (!ContainsSprite(renderer, point)) continue;
+                if (point.x < bounds.min.x || point.x > bounds.max.x || point.y < bounds.min.y || point.y > bounds.max.y) return;
+                if (!ContainsSprite(renderer, point)) return;
                 found = guard; bestOrder = renderer.sortingOrder;
             }
+            foreach (var guard in dungeon.Guards) Consider(guard);
+            if (summoning != null)
+                foreach (var worker in summoning.Workers)
+                    if (worker != null) Consider(worker.GetComponent<MinionController>());
             return found;
         }
 
@@ -240,6 +246,15 @@ namespace DarkLord.UI
         private void Refresh()
         {
             if (!Alive(Selected)) { Close(); return; }
+            if (Selected.TryGetComponent<CorpseWorker>(out var worker))
+            {
+                var workerHealth = worker.Health;
+                healthBar?.SetHealth(workerHealth.CurrentHealth, workerHealth.MaximumHealth);
+                titleText.text = "일꾼 슬라임";
+                statsText.text = (healthBar == null ? $"체력  {workerHealth.CurrentHealth} / {workerHealth.MaximumHealth}\n\n" : "") +
+                    "역할  시체 수거 및 소환소 운반";
+                return;
+            }
             if (healthBar != null) healthBar.SetHealth(Selected.Health.CurrentHealth, Selected.Health.MaximumHealth);
             titleText.text = $"{Selected.DisplayName} · Lv.{Selected.Health.Level}";
             string state = Selected.State == ActorState.Attack ? "공격 중" : Selected.State == ActorState.Hit ? "피격 중" : Selected.State == ActorState.Run ? "이동 중" : "대기 중";

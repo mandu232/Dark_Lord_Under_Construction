@@ -157,7 +157,7 @@ namespace DarkLord.Tests
             Assert.AreEqual(50, wallet.GetCapacity(CurrencyType.DarkCrystals));
             var item = AssetDatabase.LoadAssetAtPath<BuildItemDefinition>("Assets/Data/Construction/StorageRoom.asset");
             Assert.IsNotNull(item);
-            Assert.AreEqual(new Vector2Int(5, 5), DungeonConstruction.Footprint(item.constructionKind, Vector2Int.zero).size);
+            Assert.AreEqual(new Vector2Int(7, 7), DungeonConstruction.Footprint(item.constructionKind, Vector2Int.zero).size);
             dungeon.Inventory.Grant(item); dungeon.Inventory.Grant(item);
             expansion.SetExpansionMode(true); view.ShowCategory(BuildCategory.Rooms);
             Assert.IsTrue(view.GetComponentsInChildren<BuildItemButton>().Any(c => c.Item == item));
@@ -169,7 +169,7 @@ namespace DarkLord.Tests
                 Assert.AreEqual(ConstructionResult.Success, dungeon.Construction.TryPlanCorridor(start, end, out var branch));
                 Finish(dungeon, branch);
             }
-            var firstCell = new Vector2Int(28, 22);
+            var firstCell = new Vector2Int(28, 23);
             Assert.AreEqual(ConstructionResult.Success, expansion.TryBuild(firstCell));
             var first = dungeon.Construction.At(firstCell);
             Assert.AreEqual(1000, wallet.GetCapacity(CurrencyType.Gold), "Queued rooms provide no capacity.");
@@ -180,7 +180,7 @@ namespace DarkLord.Tests
             Assert.AreEqual(100, wallet.GetCapacity(CurrencyType.DarkCrystals));
             Assert.AreSame(first, dungeon.Construction.RoomAt(firstCell));
             Assert.AreEqual(2, summoning.RoomCapacity(first), "Storage remains a small room for placement.");
-            var secondCell = firstCell + Vector2Int.right * 6;
+            var secondCell = firstCell + Vector2Int.right * 8;
             Assert.AreEqual(ConstructionResult.Success, expansion.TryBuild(secondCell));
             var pendingSave = JsonUtility.FromJson<GameSaveData>(JsonUtility.ToJson(session.Capture()));
             SaveSlotStore.Validate(pendingSave); session.Restore(pendingSave); Time.timeScale = 1;
