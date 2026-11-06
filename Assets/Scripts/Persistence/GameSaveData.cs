@@ -21,6 +21,7 @@ namespace DarkLord.Persistence
         public bool sharedCoreHealth;
         public DungeonSaveData dungeon;
         public MinionSaveData[] guards = new MinionSaveData[0];
+        public CorpseWorkerSaveData[] workers;
         public WaveSaveData wave;
         public TutorialSaveData tutorial;
         public CorpseSaveData[] corpses;
@@ -114,6 +115,7 @@ namespace DarkLord.Persistence
 
     [Serializable] public sealed class WaveScheduleSaveData
     {
+        public bool openingInvasionScheduled;
         public float remaining;
         public int rewardWave;
         public int[] pendingWaves, completedWaves, rewardQueue;
@@ -310,6 +312,10 @@ namespace DarkLord.Persistence
                     throw new InvalidDataException("코어 위치가 올바르지 않습니다.");
             }
             foreach (var actor in data.guards) CheckActor(actor);
+            if (data.workers != null)
+                foreach (var worker in data.workers)
+                    if (worker == null || !Finite(worker.position) || worker.health < 1 || worker.health > CorpseWorker.MaximumHealth)
+                        throw new InvalidDataException("Invalid corpse worker.");
             foreach (var actor in data.wave.enemies) CheckActor(actor);
             if (data.tutorial != null && data.tutorial.active)
             {

@@ -153,6 +153,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Dungeon.SpikeTrap
   damage: 0
-  cooldown: 1
-  slowMultiplier: 0.5
-  slowDuration: 1.5
+  cooldown: 2
+  slowMultiplier: 0.75
+  slowDuration: 0.8

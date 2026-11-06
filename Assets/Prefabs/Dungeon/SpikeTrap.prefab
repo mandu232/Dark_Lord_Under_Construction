@@ -152,8 +152,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b1a9d71f76fcd743a68a39ec3c2cfae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Dungeon.SpikeTrap
-  damage: 12
-  cooldown: 1
+  damage: 8
+  cooldown: 2
   slowMultiplier: 1
   slowDuration: 0
   idleSprite: {fileID: -2043158116506350236, guid: d5ef7642ec058814e894b89e6a5df837, type: 3}

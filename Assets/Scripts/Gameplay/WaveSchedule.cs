@@ -17,6 +17,8 @@ namespace DarkLord.Gameplay
     public sealed partial class WaveDirector
     {
         private float nextWaveRemaining = -1;
+        private bool openingInvasionScheduled;
+        public bool UsesWaveCountdown => AutomaticWaves || CurrentWave == 0 && openingInvasionScheduled;
         private float readyPreparationSeconds;
         private float placementCheckRemaining;
         private bool hasPlaceablePreparationItem;
@@ -34,7 +36,7 @@ namespace DarkLord.Gameplay
         private void Update()
         {
             UpdatePreparationHealing(Time.deltaTime);
-            if (!AutomaticWaves || Tutorial != null && Tutorial.Active) { readyPreparationSeconds = 0; return; }
+            if (!UsesWaveCountdown || Tutorial != null && Tutorial.Active) { readyPreparationSeconds = 0; return; }
             if (State == WaveState.Active && dungeonLord != null && dungeonLord.IsAlive && dungeonCore != null && dungeonCore.IsAlive)
                 CheckAutomaticWaveClears();
             if (!CanLaunchWave) { readyPreparationSeconds = 0; return; }
@@ -68,6 +70,7 @@ namespace DarkLord.Gameplay
         {
             if (!CanLaunchWave || !HasEntrance || invaderPrefab == null) return;
             readyPreparationSeconds = 0;
+            openingInvasionScheduled = false;
             CurrentWave++;
             Economy?.OnRoundStarted(CurrentWave);
             State = WaveState.Active;
@@ -103,7 +106,7 @@ namespace DarkLord.Gameplay
         }
         private int MemberWave(ActorHealth actor) => actor.GetComponent<WaveMember>()?.Number ?? CurrentWave;
         private WaveScheduleSaveData CaptureSchedule() => new WaveScheduleSaveData {
-            remaining = nextWaveRemaining < 0 ? 120 : nextWaveRemaining, rewardWave = rewardWave,
+            openingInvasionScheduled = openingInvasionScheduled, remaining = nextWaveRemaining < 0 ? 120 : nextWaveRemaining, rewardWave = rewardWave,
             pendingWaves = pendingWaves.ToArray(), completedWaves = SavedCompletedWaves(), rewardQueue = waveRewardQueue.ToArray()
         };
         private int[] SavedCompletedWaves()
@@ -114,6 +117,7 @@ namespace DarkLord.Gameplay
         }
         private void RestoreSchedule(WaveScheduleSaveData data)
         {
+            openingInvasionScheduled = CurrentWave == 0 && data != null && data.openingInvasionScheduled;
             readyPreparationSeconds = 0;
             placementCheckRemaining = 0;
             completedWaves.Clear(); waveRewardQueue.Clear();

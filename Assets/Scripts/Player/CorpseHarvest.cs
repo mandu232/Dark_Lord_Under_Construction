@@ -36,6 +36,9 @@ namespace DarkLord.Player
         internal InvaderCorpse LeaveCollapseVictim(Vector3 position) => Create(position, InvaderRole.Warrior, corpseTemplate);
         public IReadOnlyList<InvaderCorpse> Corpses => corpses;
         public DungeonGrid Dungeon => dungeon;
+        internal bool WorkersFlee => waves != null && waves.InCombat;
+        internal bool WorkersCanCollect => isActiveAndEnabled && waves != null && !waves.IsFinished &&
+            !waves.InCombat && (waves.Tutorial == null || !waves.Tutorial.Active);
         public bool IsDragging => false;
         public bool BlocksGameplayInput => consumedFrame == Time.frameCount;
         public string Message { get; private set; } = "";
@@ -62,7 +65,7 @@ namespace DarkLord.Player
         public InvaderCorpse LeaveCorpse(ActorHealth enemy)
         {
             if (enemy == null || enemy.IsAlive || enemy.Faction != Faction.Invader) return null;
-            DeathLoot.Scatter(enemy.transform.position, transform, remains != null ? remains : waves.transform);
+            DeathLoot.Scatter(enemy.transform.position, transform, remains != null ? remains : waves.transform, waves);
             var source = enemy.GetComponentInChildren<SpriteRenderer>(); if (source == null) return null;
             var role = enemy.GetComponent<InvaderTactics>()?.Role ?? InvaderRole.Warrior;
             var corpse = Create(enemy.transform.position, role, source);
@@ -81,7 +84,7 @@ namespace DarkLord.Player
                 InvaderCorpse best = null; float distance = PickupDistance;
                 foreach (var corpse in corpses)
                 {
-                    if (corpse == null || corpse.Consumed || corpse == Carried) continue;
+                    if (corpse == null || corpse.Consumed || corpse == Carried || corpse.AssignedWorker != null) continue;
                     float next = Vector2.Distance(transform.position, corpse.transform.position);
                     if (next <= distance) { distance = next; best = corpse; }
                 }
@@ -90,7 +93,7 @@ namespace DarkLord.Player
         }
         public bool TryPickup(InvaderCorpse corpse)
         {
-            if (!CanUse || Carried != null || corpse == null || corpse.Consumed || !corpses.Contains(corpse) || Vector2.Distance(transform.position, corpse.transform.position) > PickupDistance) return false;
+            if (!CanUse || Carried != null || corpse == null || corpse.Consumed || corpse.AssignedWorker != null || !corpses.Contains(corpse) || Vector2.Distance(transform.position, corpse.transform.position) > PickupDistance) return false;
             Carried = corpse; corpse.SetHeld(true); consumedFrame = Time.frameCount;
             BeginDrag();
             Message = "시체 운반 중 · 소환소 가까이 가져가면 흡수 · F: 내려놓기"; CorpsePickedUp?.Invoke(corpse); return true;
@@ -108,12 +111,23 @@ namespace DarkLord.Player
         }
         public bool TryDeliver(InvaderCorpse corpse, ResourceBuilding facility)
         {
-            if (!CanUse || corpse == null || corpse.Consumed || !corpses.Contains(corpse) || facility == null || !facility.CanReceiveCorpse ||
+            return CanUse && corpse != null && corpse.AssignedWorker == null && Deliver(corpse, facility);
+        }
+        internal bool TryDeliverFromWorker(InvaderCorpse corpse, ResourceBuilding facility, CorpseWorker worker)
+        {
+            return WorkersCanCollect && corpse != null && corpse.AssignedWorker == worker && Deliver(corpse, facility);
+        }
+        private bool Deliver(InvaderCorpse corpse, ResourceBuilding facility)
+        {
+            if (corpse.Consumed || !corpses.Contains(corpse) || facility == null || !facility.CanReceiveCorpse ||
                 Vector2.Distance(corpse.transform.position, facility.transform.position) > AbsorptionDistance || dungeon.BuildingAt(facility.Cell) != facility) return false;
             if (!facility.TryAddSummonStack()) return false;
             bool wasCarried = Carried == corpse;
             corpses.Remove(corpse); if (wasCarried) { Carried = null; dragVelocity = Vector3.zero; }
-            corpse.Absorb(facility); consumedFrame = Time.frameCount; Message = $"시체를 흡수했습니다. 소환 스택 {facility.SummonStacks}개";
+            if (corpse.AssignedWorker == null) consumedFrame = Time.frameCount;
+            corpse.AssignedWorker = null;
+            corpse.Absorb(facility);
+            Message = $"시체를 흡수했습니다. 소환 스택 {facility.SummonStacks}개";
             CorpseDelivered?.Invoke(corpse, facility, wasCarried); return true;
         }
         private void BeginDrag()

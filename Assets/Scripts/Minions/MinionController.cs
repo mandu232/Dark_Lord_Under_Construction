@@ -111,9 +111,10 @@ namespace DarkLord.Minions
             guardPosition = transform.position;
         }
 
-        private void OnEnable() { health.Damaged += OnDamaged; health.Died += OnDied; }
+        private void OnEnable() { health.Damaged += OnDamaged; health.Died += OnDied; encirclementId = nextEncirclementId++; encirclingActors.Add(this); }
         private void OnDisable()
         {
+            encirclingActors.Remove(this);
             consecutiveHits = 0; lastPoiseHit = staggerImmuneUntil = stunnedUntil = 0;
             health.Damaged -= OnDamaged;
             health.Died -= OnDied;
@@ -160,10 +161,12 @@ namespace DarkLord.Minions
             target = objective;
         }
 
-        public void Assault(ActorHealth objective, DarkLord.Dungeon.DungeonGrid dungeon)
+        public void Assault(ActorHealth objective, DarkLord.Dungeon.DungeonGrid dungeon, ActorHealth player = null)
         {
             Assault(objective);
-            if (assaultMode && dungeon != null) dungeonRoute = new InvaderDungeonRoute(dungeon, objective);
+            if (assaultMode && dungeon != null)
+                dungeonRoute = new InvaderDungeonRoute(dungeon, objective,
+                    (Vector2)(transform.position - dungeon.CellCenter(dungeon.WorldToCell(transform.position))), player);
         }
 
         public void ReturnToPost()
@@ -263,6 +266,7 @@ namespace DarkLord.Minions
             }
             Vector2 delta = (Vector2)target.transform.position - (Vector2)transform.position;
             if (tactics != null && tactics.TryAct(target)) { damagePending = false; return; }
+            if (TryEncirclePlayer()) return;
             motor.Face(delta);
             if (InAttackRange(target) && HasLineOfSight(target))
             {

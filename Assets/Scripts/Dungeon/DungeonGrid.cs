@@ -260,7 +260,8 @@ namespace DarkLord.Dungeon
                 }
             }
             RefreshArtTile(cell);
-            if (section != null && section.IsComplete) foreach (var part in section.Cells) RefreshArtTile(part);
+            // Artwork follows excavated cells and section kind, not completion state.
+            // RefreshArtTile already updates the affected wall rows and columns.
             var collider = blockers[cell.x, cell.y];
             if (collider == null && !Layout.IsFloor(cell))
             {

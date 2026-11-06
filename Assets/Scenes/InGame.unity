@@ -1053,9 +1053,9 @@ MonoBehaviour:
   dungeonCore: {fileID: 768845847}
   wallet: {fileID: 254482902}
   invaderPrefab: {fileID: 4223288643587698073, guid: 2b95235e3d8708247b3bd1d7eada5c1c, type: 3}
-  spawnInterval: 0.7
-  baseEnemyCount: 3
-  enemyGrowthPerWave: 2
+  spawnInterval: 0.5
+  baseEnemyCount: 6
+  enemyGrowthPerWave: 5
   baseEnemyHealth: 55
   enemyHealthGrowth: 10
   baseSoulReward: 12

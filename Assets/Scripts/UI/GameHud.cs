@@ -1,4 +1,7 @@
+using System.Collections;
+using System.Collections.Generic;
 using DarkLord.Actors;
+using DarkLord.Gameplay;
 using DarkLord.Player;
 using TMPro;
 using UnityEngine;
@@ -25,6 +28,9 @@ namespace DarkLord.UI
         private int lastExperience = -1, lastLevel = -1;
         private TMP_Text experienceText;
         private UnityEngine.UI.Image experienceFill;
+        private RectTransform orbFlights;
+        private readonly Dictionary<RectTransform, (Vector3 scale, float started)> orbPulses =
+            new Dictionary<RectTransform, (Vector3, float)>();
         private int lastMaximumHealth = -1;
         private int lastGuardCount = -1;
         private int lastGoldCapacity = -1, lastSoulsCapacity = -1, lastCrystalsCapacity = -1;
@@ -74,11 +80,188 @@ namespace DarkLord.UI
 
         private void OnEnable()
         {
+            DeathLoot.OrbCollected += OnOrbCollected;
             Subscribe();
             RefreshAll();
         }
 
-        private void OnDisable() => Unsubscribe();
+        private void OnDisable()
+        {
+            DeathLoot.OrbCollected -= OnOrbCollected;
+            StopAllCoroutines();
+            foreach (var pulse in orbPulses)
+                if (pulse.Key != null) pulse.Key.localScale = pulse.Value.scale;
+            orbPulses.Clear();
+            if (orbFlights != null)
+            {
+                orbFlights.gameObject.SetActive(false);
+                Destroy(orbFlights.gameObject);
+                orbFlights = null;
+            }
+            Unsubscribe();
+        }
+
+        private void OnOrbCollected(ActorHealth collector, DeathLoot.Kind kind, Vector3 worldPosition, Sprite sprite)
+        {
+            if (collector != playerHealth || sprite == null) return;
+            RectTransform destination = kind switch
+            {
+                DeathLoot.Kind.Gold => goldText != null ? goldText.rectTransform : null,
+                DeathLoot.Kind.Blood => soulsText != null ? soulsText.rectTransform : null,
+                DeathLoot.Kind.Crystal => crystalsText != null ? crystalsText.rectTransform : null,
+                DeathLoot.Kind.Experience => experienceFill != null ? (RectTransform)experienceFill.transform.parent : null,
+                _ => null
+            };
+            if (destination == null || !destination.gameObject.activeInHierarchy) return;
+            var worldCamera = Camera.main;
+            var canvas = GetComponentInParent<Canvas>();
+            if (worldCamera == null || canvas == null) return;
+            Vector3 screen = worldCamera.WorldToScreenPoint(worldPosition);
+            if (screen.z <= 0) return;
+            var uiCamera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+            var parent = (RectTransform)canvas.transform;
+            if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(parent, screen, uiCamera, out var start)) return;
+            if (orbFlights == null)
+            {
+                orbFlights = new GameObject("Orb flights", typeof(RectTransform)).GetComponent<RectTransform>();
+                orbFlights.SetParent(parent, false);
+                orbFlights.anchorMin = orbFlights.anchorMax = parent.pivot;
+                orbFlights.anchoredPosition = Vector2.zero;
+            }
+            var flight = new GameObject("Loot orb flight", typeof(RectTransform)).GetComponent<RectTransform>();
+            flight.SetParent(orbFlights, false);
+            var orb = new GameObject("Flying loot orb", typeof(RectTransform), typeof(UnityEngine.UI.Image));
+            orb.transform.SetParent(flight, false);
+            var image = orb.GetComponent<UnityEngine.UI.Image>();
+            image.sprite = sprite;
+            image.raycastTarget = false;
+            image.rectTransform.sizeDelta = Vector2.one * 22;
+            Color tint = kind switch
+            {
+                DeathLoot.Kind.Gold => new Color(1f, .82f, .24f),
+                DeathLoot.Kind.Blood => new Color(1f, .22f, .32f),
+                DeathLoot.Kind.Crystal => new Color(1f, .35f, .77f),
+                _ => new Color(.28f, 1f, .8f)
+            };
+            var pulseTarget = kind == DeathLoot.Kind.Experience ? (RectTransform)destination.parent : destination;
+            StartCoroutine(FlyOrb(flight, image.rectTransform, start, destination, pulseTarget, tint));
+        }
+
+        private IEnumerator FlyOrb(RectTransform flight, RectTransform orb, Vector2 start, RectTransform destination, RectTransform pulseTarget, Color tint)
+        {
+            const float duration = .55f;
+            const int segments = 8;
+            var halo = new UnityEngine.UI.Image[segments];
+            var core = new UnityEngine.UI.Image[segments];
+            for (int i = 0; i < segments; i++) halo[i] = CreateTrailSegment(flight);
+            for (int i = 0; i < segments; i++) core[i] = CreateTrailSegment(flight);
+            orb.SetAsLastSibling();
+            orb.localPosition = start;
+            for (float elapsed = 0; elapsed < duration; elapsed += Time.unscaledDeltaTime)
+            {
+                yield return null;
+                if (orb == null || destination == null) break;
+                float t = Mathf.Clamp01((elapsed + Time.unscaledDeltaTime) / duration);
+                var end = (Vector2)flight.InverseTransformPoint(destination.TransformPoint(destination.rect.center));
+                float travel = t * t;
+                orb.localPosition = OrbFlightPoint(start, end, t);
+                orb.localScale = Vector3.one * Mathf.Lerp(1, .45f, travel);
+                Vector2 head = orb.localPosition;
+                for (int i = 0; i < segments; i++)
+                {
+                    float fraction = (i + 1f) / segments;
+                    Vector2 tail = OrbFlightPoint(start, end, Mathf.Max(0, t - .26f * fraction));
+                    float strength = 1 - i / (float)segments;
+                    SetTrailSegment(halo[i], head, tail, tint, 13 * strength, .36f * strength);
+                    SetTrailSegment(core[i], head, tail, Color.Lerp(tint, Color.white, .7f), 5 * strength, strength);
+                    head = tail;
+                }
+            }
+            if (orb != null && destination != null && destination.gameObject.activeInHierarchy)
+            {
+                PulseOrbDestination(pulseTarget);
+                orb.gameObject.SetActive(false);
+                for (int i = 0; i < segments; i++) halo[i].enabled = core[i].enabled = false;
+                const float sparkleDuration = .18f;
+                for (float elapsed = 0; elapsed < sparkleDuration; elapsed += Time.unscaledDeltaTime)
+                {
+                    if (destination == null || !destination.gameObject.activeInHierarchy) break;
+                    Vector2 center = flight.InverseTransformPoint(destination.TransformPoint(destination.rect.center));
+                    float progress = elapsed / sparkleDuration;
+                    float radius = Mathf.Lerp(5, 16, progress);
+                    float opacity = (1 - progress) * (1 - progress);
+                    for (int i = 0; i < 4; i++)
+                    {
+                        float angle = (i + .5f) * Mathf.PI * .5f;
+                        Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+                        Vector2 tip = center + direction * radius;
+                        Vector2 inner = center + direction * (progress * 7);
+                        SetTrailSegment(halo[i], tip, inner, tint, 6, .45f * opacity);
+                        SetTrailSegment(core[i], tip, inner, Color.Lerp(tint, Color.white, .8f), 2, opacity);
+                    }
+                    yield return null;
+                }
+            }
+            if (flight != null) Destroy(flight.gameObject);
+        }
+
+        private void PulseOrbDestination(RectTransform target)
+        {
+            if (target == null) return;
+            if (orbPulses.TryGetValue(target, out var pulse))
+            {
+                orbPulses[target] = (pulse.scale, Time.unscaledTime);
+                return;
+            }
+            orbPulses.Add(target, (target.localScale, Time.unscaledTime));
+            StartCoroutine(AnimateOrbPulse(target));
+        }
+
+        private IEnumerator AnimateOrbPulse(RectTransform target)
+        {
+            while (target != null && orbPulses.TryGetValue(target, out var pulse))
+            {
+                float progress = (Time.unscaledTime - pulse.started) / .22f;
+                if (progress >= 1)
+                {
+                    target.localScale = pulse.scale;
+                    break;
+                }
+                float swell = Mathf.Sin(Mathf.PI * Mathf.Pow(progress, .65f));
+                target.localScale = pulse.scale * (1 + .1f * swell);
+                yield return null;
+            }
+            orbPulses.Remove(target);
+        }
+
+        private static Vector2 OrbFlightPoint(Vector2 start, Vector2 end, float time)
+        {
+            float travel = time * time;
+            return Vector2.Lerp(start, end, travel) + Vector2.up * (Mathf.Sin(travel * Mathf.PI) * 70);
+        }
+
+        private static UnityEngine.UI.Image CreateTrailSegment(RectTransform parent)
+        {
+            var segment = new GameObject("Orb trail segment", typeof(RectTransform), typeof(UnityEngine.UI.Image));
+            segment.transform.SetParent(parent, false);
+            var image = segment.GetComponent<UnityEngine.UI.Image>();
+            image.raycastTarget = false;
+            image.enabled = false;
+            return image;
+        }
+
+        private static void SetTrailSegment(UnityEngine.UI.Image image, Vector2 head, Vector2 tail, Color tint, float width, float opacity)
+        {
+            Vector2 delta = head - tail;
+            image.enabled = delta.sqrMagnitude > .01f;
+            if (!image.enabled) return;
+            var rect = image.rectTransform;
+            rect.localPosition = (head + tail) * .5f;
+            rect.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
+            rect.sizeDelta = new Vector2(delta.magnitude + 1, width);
+            tint.a = opacity;
+            image.color = tint;
+        }
 
         private void LateUpdate()
         {

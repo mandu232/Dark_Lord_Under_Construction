@@ -42,7 +42,7 @@ namespace DarkLord.Player
         {
             if(!CanAct||IsDodging||Time.time<nextNova||waves?.Economy?.Has(TechId.FrostNova)!=true||!SpendMana(30))return false;
             meleeAttack=false;nextNova=Time.time+6;attackUntil=Time.time+.3f;
-            DamageArea(6,35+waves.Economy.MagicBonus+waves.Augments.BeginNovaCast(),Vector2.zero,-1,DamageType.Magic,true,PlayerHitStop.ImpactKind.Spell,shockwave:true);
+            DamageArea(6,24+waves.Economy.MagicBonus+waves.Augments.BeginNovaCast(),Vector2.zero,-1,DamageType.Magic,true,PlayerHitStop.ImpactKind.Spell,shockwave:true);
             PresentNovaImpact();
             GameplayEffects.Show(transform,GameplayEffectKind.FrostNova,transform.position);Message="서리 혈파 · 넉백 / 기절 1.5초 / 둔화 3초";return true;
         }
@@ -66,7 +66,7 @@ namespace DarkLord.Player
                     var target=hit.collider.GetComponentInParent<ActorHealth>();
                     if(target!=null&&(!target.IsAlive||target.Faction==health.Faction))continue;
                     end=hit.point;
-                    if(target!=null&&DealDamage(target,30+waves.Economy.MagicBonus,DamageType.Magic,PlayerHitStop.ImpactKind.Projectile))
+                    if(target!=null&&DealDamage(target,20+waves.Economy.MagicBonus,DamageType.Magic,PlayerHitStop.ImpactKind.Projectile))
                     {int stolen=0;TechnologyHit(target,true,ref stolen);}
                     break;
                 }

@@ -143,7 +143,8 @@ namespace DarkLord.Persistence
             waves.RestoreSave(loaded.wave);
             waves.Combat?.RestoreSave(loaded.combat);
             waves.Harvest?.Restore(loaded.corpses);
-            DeathLoot.Restore(loaded.loot, player.transform, waves.transform);
+            summoning.RestoreWorkers(loaded.workers);
+            DeathLoot.Restore(loaded.loot, player.transform, waves.transform, waves);
             waves.Economy?.Restore(loaded.economy);
             waves.RestoreTutorial(loaded.tutorial);
             playedSeconds = loaded.playedSeconds;
@@ -169,6 +170,7 @@ namespace DarkLord.Persistence
         public GameSaveData Capture() => new GameSaveData
         {
             tutorial = waves.Tutorial?.Capture(),
+            workers = summoning.CaptureWorkers(),
             options = options.Copy(), playedSeconds = playedSeconds, playerPosition = player.transform.position, combat = waves.Combat?.CaptureSave(),
             playerHealth = player.CurrentHealth, playerMaximumHealth = player.MaximumHealth,
             playerLevel = player.Level, playerExperience = player.Experience, loot = DeathLoot.Capture(player.transform),

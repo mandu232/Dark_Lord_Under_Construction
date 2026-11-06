@@ -160,7 +160,7 @@ namespace DarkLord.Player
         }
         public bool TrySummon(bool summonWorker)
         {
-            if (summonWorker) { message = "일꾼 소환은 제거되었습니다. 건설창에서 바로 확장하세요."; return false; }
+            if (summonWorker) return TrySummonWorker();
             return TrySummon(MinionRole.BloodSlime);
         }
         public bool TrySummon(MinionRole role) => TrySummonInternal(role, false);

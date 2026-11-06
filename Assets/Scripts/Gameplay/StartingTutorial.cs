@@ -46,7 +46,13 @@ namespace DarkLord.Gameplay
             Tutorial.Restore(data);
             Changed?.Invoke();
         }
-        internal void FinishTutorial() { ScheduleNextWave(); Changed?.Invoke(); }
+        internal void FinishTutorial()
+        {
+            openingInvasionScheduled = CurrentWave == 0;
+            if (openingInvasionScheduled) nextWaveRemaining = 10f;
+            else ScheduleNextWave();
+            Changed?.Invoke();
+        }
     }
 
     [DefaultExecutionOrder(-1000)]

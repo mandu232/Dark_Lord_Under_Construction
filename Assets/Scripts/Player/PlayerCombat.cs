@@ -189,7 +189,7 @@ namespace DarkLord.Player
             nextNova = Time.time + 6;
             meleeAttack = false;
             attackUntil = Time.time + 0.3f;
-            DamageArea(6f, 45 + (waves?.Economy?.MagicBonus ?? 0) + (waves?.Augments.BeginNovaCast() ?? 0), Vector2.zero, -1, DamageType.Magic, impact: PlayerHitStop.ImpactKind.Spell, shockwave: true);
+            DamageArea(6f, 30 + (waves?.Economy?.MagicBonus ?? 0) + (waves?.Augments.BeginNovaCast() ?? 0), Vector2.zero, -1, DamageType.Magic, impact: PlayerHitStop.ImpactKind.Spell, shockwave: true);
             GameplayEffects.Show(transform, GameplayEffectKind.BloodNova, transform.position);
             PresentNovaImpact();
             Message = "혈파 · 광역 충격 / 넉백 / 기절 1.5초";

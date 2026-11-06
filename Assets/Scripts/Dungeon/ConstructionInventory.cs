@@ -32,11 +32,13 @@ namespace DarkLord.Dungeon
         {
             if (RequiresItem(item) && Count(item) < int.MaxValue) counts[item.name] = Count(item) + 1;
         }
-        public bool HasCategory(BuildCategory category) => catalog.Any(i => i.category == category);
+        public static bool CanReward(BuildItemDefinition item) => item != null &&
+            (item.prefab == null || item.prefab.GetComponent<ResourceBuilding>()?.IsRecruitmentFacility != true);
+        public bool HasCategory(BuildCategory category) => catalog.Any(i => i.category == category && CanReward(i));
         public BuildItemDefinition Find(string id) => catalog.FirstOrDefault(i => i.name == id);
         public BuildItemDefinition RandomItem(BuildCategory category)
         {
-            var choices = catalog.Where(i => i.category == category).ToArray();
+            var choices = catalog.Where(i => i.category == category && CanReward(i)).ToArray();
             return choices.Length == 0 ? null : choices[UnityEngine.Random.Range(0, choices.Length)];
         }
         // Use the same placement rules as the construction preview, without reserving any cells.
@@ -62,9 +64,9 @@ namespace DarkLord.Dungeon
         public int Total(BuildCategory category) => catalog.Where(i => i.category == category).Sum(Count);
         public BuildItemDefinition GrantRandom(BuildCategory category)
         {
-            var choices = catalog.Where(i => i.category == category).ToArray();
-            if (choices.Length == 0) return null;
-            var item = choices[UnityEngine.Random.Range(0, choices.Length)]; Grant(item); return item;
+            var item = RandomItem(category);
+            if (item != null) Grant(item);
+            return item;
         }
         public ConstructionItemStack[] Capture() => counts.Where(p => p.Value > 0).OrderBy(p => p.Key, StringComparer.Ordinal)
             .Select(p => new ConstructionItemStack { id = p.Key, count = p.Value }).ToArray();
@@ -103,7 +105,7 @@ namespace DarkLord.Dungeon
         public bool TryPlaceBuildingItem(Vector2Int cell, BuildItemDefinition item)
         {
             if (Time.timeScale <= 0 || !isActiveAndEnabled || item == null || !item.available || item.category != BuildCategory.Buildings ||
-                item.prefab == null || item.prefab.GetComponent<ResourceBuilding>() == null || !Inventory.CanUse(item) || !CanPlaceBuilding(cell)) return false;
+                item.prefab == null || item.prefab.GetComponent<ResourceBuilding>() == null || !CanAddBuilding(item.prefab) || !Inventory.CanUse(item) || !CanPlaceBuilding(cell)) return false;
             SpawnBuilding(cell, item.prefab).PlayPlacementEffect();
             Inventory.Consume(item);
             return true;

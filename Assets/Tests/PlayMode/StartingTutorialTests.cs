@@ -212,7 +212,7 @@ namespace DarkLord.Tests
             Assert.AreEqual(elapsed, waves.Tutorial.Elapsed); Assert.AreEqual(timer, waves.NextWaveRemaining);
             Time.timeScale = 1; yield return null; yield return null;
             Assert.AreEqual(timer, waves.NextWaveRemaining);
-            yield return TutorialTestActions.Complete(waves); Assert.GreaterOrEqual(waves.NextWaveRemaining, 120); Assert.LessOrEqual(waves.NextWaveRemaining, 300);
+            yield return TutorialTestActions.Complete(waves); Assert.That(waves.NextWaveRemaining, Is.InRange(9.5f, 10f));
         }
         [UnityTest] public IEnumerator OpeningProtectsDefendersFromFatalDamageAndReleasesProtection()
         {

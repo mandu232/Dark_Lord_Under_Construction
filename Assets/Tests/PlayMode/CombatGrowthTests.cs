@@ -18,7 +18,7 @@ namespace DarkLord.Tests
                 health.AddExperience(85);
                 Assert.AreEqual(3, health.Level); Assert.AreEqual(5, health.Experience);
                 Assert.AreEqual(120, health.MaximumHealth); Assert.AreEqual(120, health.CurrentHealth);
-                Assert.AreEqual(4, health.GrowthAttackBonus);
+                Assert.AreEqual(8, health.GrowthAttackBonus);
                 health.RestoreExperience(3, 5);
                 Assert.AreEqual(120, health.MaximumHealth, "Restoring XP must not apply health growth twice");
             }

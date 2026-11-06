@@ -11,6 +11,8 @@ namespace DarkLord.Minions
     {
         private readonly DungeonGrid dungeon;
         private readonly ActorHealth objective;
+        private readonly DarkLord.Player.MinionSummoning playerSummoning;
+        public ActorHealth Player { get; }
         private readonly List<Vector2Int> path = new List<Vector2Int>();
         private readonly List<Vector2Int> candidatePath = new List<Vector2Int>();
         private readonly List<ActorHealth> defenders = new List<ActorHealth>();
@@ -18,17 +20,22 @@ namespace DarkLord.Minions
         private DungeonSection destinationRoom;
         private int waypoint, revision = -1;
         private float nextSearch;
+        private readonly Vector3 travelOffset;
         internal DungeonGrid Dungeon => dungeon;
         public DungeonSection LockedRoom { get; private set; }
         public ActorHealth Target { get; private set; }
         public bool HasWaypoint => waypoint < path.Count;
-        public Vector3 NextWaypoint => dungeon.CellCenter(path[waypoint]);
+        public Vector3 NextWaypoint => dungeon.CellCenter(path[waypoint]) + travelOffset;
         public bool CanApproachTargetDirectly => Target != null && (!HasWaypoint || waypoint == path.Count - 1);
         public bool ContainsInLockedRoom(Vector3 position) => LockedRoom != null && LockedRoom.Bounds.Contains(dungeon.WorldToCell(position));
 
-        public InvaderDungeonRoute(DungeonGrid dungeon, ActorHealth objective)
+        public InvaderDungeonRoute(DungeonGrid dungeon, ActorHealth objective, Vector2 travelOffset = default, ActorHealth player = null)
         {
             this.dungeon = dungeon; this.objective = objective;
+            Player = player;
+            playerSummoning = player != null ? player.GetComponent<DarkLord.Player.MinionSummoning>() : null;
+            // Stay within the waypoint cell, including corners and one-cell doors.
+            this.travelOffset = new Vector3(Mathf.Clamp(travelOffset.x, -.55f, .55f), Mathf.Clamp(travelOffset.y, -.55f, .55f), 0);
             dungeon.Initialize();
         }
 
@@ -62,7 +69,7 @@ namespace DarkLord.Minions
                             }
                     return;
                 }
-                dungeon.GetRoomDefenders(LockedRoom, defenders);
+                GetDefenders(LockedRoom);
                 if (defenders.Count > 0)
                 {
                     float best = float.PositiveInfinity;
@@ -70,7 +77,7 @@ namespace DarkLord.Minions
                     foreach (var defender in defenders)
                     {
                         if (!dungeon.Construction.FindPath(cell, dungeon.WorldToCell(defender.transform.position), candidatePath, LockedRoom)) continue;
-                        float score = defender == preferred ? -1 : candidatePath.Count * DungeonGrid.CellSize + Vector2.Distance(position, defender.transform.position);
+                        float score = defender == Player ? -2 : defender == preferred ? -1 : candidatePath.Count * DungeonGrid.CellSize + Vector2.Distance(position, defender.transform.position);
                         if (score >= best) continue;
                         best = score;
                         Target = defender;
@@ -117,13 +124,21 @@ namespace DarkLord.Minions
             {
                 var room = dungeon.Construction.RoomAt(path[i]);
                 if (room == null) continue;
-                dungeon.GetRoomDefenders(room, defenders);
+                GetDefenders(room);
                 var building = dungeon.BuildingInRoom(room, true);
                 if (defenders.Count == 0 && (building == null || building.IsRuined)) continue;
                 if (i + 1 < path.Count) path.RemoveRange(i + 1, path.Count - i - 1);
                 Target = null;
                 break;
             }
+        }
+        private void GetDefenders(DungeonSection room)
+        {
+            dungeon.GetRoomDefenders(room, defenders);
+            if (playerSummoning != null) playerSummoning.GetRoomWorkers(room, defenders);
+            if (Player != null && Player.isActiveAndEnabled && Player.IsAlive &&
+                dungeon.Construction.RoomAt(dungeon.WorldToCell(Player.transform.position)) == room && !defenders.Contains(Player))
+                defenders.Add(Player);
         }
     }
 }

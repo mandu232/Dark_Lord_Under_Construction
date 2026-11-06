@@ -114,15 +114,15 @@ namespace DarkLord.Tests
         {
             waves.ConfigureRun(new NewGameOptions { difficulty = GameDifficulty.Normal });
             yield return TutorialTestActions.Complete(waves);
-            Assert.AreEqual(2, summoning.GuardCount); Assert.AreEqual(2, waves.NextEnemyCount); Assert.AreEqual(36, waves.NextEnemyHealth);
-            Assert.That(waves.NextWaveRemaining, Is.InRange(165.6f, 194.5f));
+            Assert.AreEqual(2, summoning.GuardCount); Assert.AreEqual(5, waves.NextEnemyCount); Assert.AreEqual(36, waves.NextEnemyHealth);
+            Assert.That(waves.NextWaveRemaining, Is.InRange(9.5f, 10f));
             var grid = summoning.Dungeon; var guards = grid.Guards.ToArray();
             for (int i = 0; i < guards.Length; i++)
                 guards[i].Relocate(grid.CellCenter(grid.Layout.Core + new Vector2Int(-2, i == 0 ? -1 : 1)));
             TutorialTestActions.MoveLord(waves, grid.CellCenter(grid.Layout.Core + Vector2Int.left * 2));
             var next = waves.CaptureSave(); next.schedule.remaining = .01f; waves.RestoreSave(next);
             yield return new WaitForSeconds(.1f);
-            Assert.AreEqual(1, waves.CurrentWave); Assert.AreEqual(2, waves.RemainingEnemies);
+            Assert.AreEqual(1, waves.CurrentWave); Assert.AreEqual(5, waves.RemainingEnemies);
             Assert.AreEqual(36, scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<WaveMember>()).First().GetComponent<ActorHealth>().MaximumHealth);
             float deadline = Time.unscaledTime + 20;
             while (waves.State == WaveState.Active && Time.unscaledTime < deadline)
@@ -163,12 +163,13 @@ namespace DarkLord.Tests
             Assert.AreEqual(2, summoning.GuardCount); Assert.AreEqual(0, facility.SummonStacks);
             yield return TutorialTestActions.CompleteExpansion(waves);
             Assert.AreEqual(TutorialTrainingStep.Complete, waves.Tutorial.TrainingStep); Assert.IsTrue(waves.Tutorial.Active);
-            TutorialTestActions.DismissDialogue(waves); Assert.IsFalse(waves.Tutorial.Active); Assert.IsTrue(waves.CanStartWave);
-            Assert.AreEqual(2, waves.NextEnemyCount);
+            TutorialTestActions.DismissDialogue(waves); Assert.IsFalse(waves.Tutorial.Active); Assert.IsTrue(waves.UsesWaveCountdown);
+            Assert.AreEqual(4, waves.NextEnemyCount);
             Assert.AreEqual(29, waves.NextEnemyHealth);
             Assert.IsTrue(waves.NextFormation.All(role => role == InvaderRole.Warrior));
             var entrance = waves.EntrancePosition;
-            waves.BeginNextWave(); yield return null; yield return null;
+            var firstWave = waves.CaptureSave(); firstWave.schedule.remaining = .01f; waves.RestoreSave(firstWave);
+            yield return new WaitForSeconds(.1f);
             var invader = Object.FindObjectsByType<WaveMember>(FindObjectsSortMode.None).First(m => m.Number == 1);
             Assert.AreEqual(29, invader.GetComponent<ActorHealth>().MaximumHealth);
             Assert.Less(Vector2.Distance(entrance, invader.transform.position), 1.5f);

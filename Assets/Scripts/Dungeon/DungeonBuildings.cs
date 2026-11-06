@@ -114,12 +114,14 @@ namespace DarkLord.Dungeon
         }
         public bool TryPlaceBuilding(Vector2Int cell, GameObject prefab, CurrencyWallet wallet)
         {
-            if (Time.timeScale <= 0 || !isActiveAndEnabled || prefab == null || wallet == null || !CanPlaceBuilding(cell)) return false;
+            if (Time.timeScale <= 0 || !isActiveAndEnabled || prefab == null || wallet == null || !CanAddBuilding(prefab) || !CanPlaceBuilding(cell)) return false;
             var definition = prefab.GetComponent<ResourceBuilding>();
             if (definition == null || !wallet.TrySpend(CurrencyType.Gold, definition.ConstructionCost)) return false;
             SpawnBuilding(cell, prefab).PlayPlacementEffect();
             return true;
         }
+        private bool CanAddBuilding(GameObject prefab) => prefab.GetComponent<ResourceBuilding>()?.IsRecruitmentFacility != true ||
+            !RecruitmentFacilities.Any();
         private ResourceBuilding SpawnBuilding(Vector2Int cell, GameObject prefab)
         {
             var instance = Instantiate(prefab, CellCenter(cell), transform.rotation, generated.transform).GetComponent<ResourceBuilding>();

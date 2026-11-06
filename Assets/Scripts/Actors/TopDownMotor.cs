@@ -10,6 +10,8 @@ namespace DarkLord.Actors
         private Rigidbody2D body;
         private Vector2 desiredDirection;
         private static readonly HashSet<TopDownMotor> ActiveMotors = new HashSet<TopDownMotor>();
+        private static int nextSpacingId;
+        private int spacingId;
         private Collider2D[] actorColliders;
         private ActorHealth health;
         private Transform approachTarget;
@@ -72,7 +74,7 @@ namespace DarkLord.Actors
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetActors() => ActiveMotors.Clear();
+        private static void ResetActors() { ActiveMotors.Clear(); nextSpacingId = 0; }
 
         private void OnEnable() => RegisterCollisions();
         // Runtime-built actors may add their collider after adding the motor.
@@ -84,12 +86,15 @@ namespace DarkLord.Actors
             health = GetComponent<ActorHealth>();
             foreach (var other in ActiveMotors)
                 if (other != null && other != this) SetActorCollision(other, true);
-            ActiveMotors.Add(this);
+            if (ActiveMotors.Add(this)) spacingId = nextSpacingId++;
         }
 
         private void SetActorCollision(TopDownMotor other, bool ignore)
         {
             if (actorColliders == null || other.actorColliders == null) return;
+            // Invaders retain solid bodies against each other as a final overlap safeguard.
+            if (health != null && other.health != null && health.Faction == Faction.Invader && other.health.Faction == Faction.Invader)
+                ignore = false;
             foreach (var own in actorColliders)
                 foreach (var theirs in other.actorColliders)
                     if (own != null && theirs != null) Physics2D.IgnoreCollision(own, theirs, ignore);
@@ -175,6 +180,9 @@ namespace DarkLord.Actors
             if (Time.time < knockbackUntil)
                 velocity = knockbackDirection * knockbackSpeed * (easeKnockback ? Mathf.Clamp01((knockbackUntil - Time.time) / knockbackDuration) : 1);
             if (health != null && !health.IsAlive) velocity = Vector2.zero;
+            if (health != null && health.IsAlive && health.Faction == Faction.Invader && !IgnoreActorBlocking &&
+                Time.time >= knockbackUntil && Time.time >= attackMoveUntil)
+                velocity = SpaceInvaders(velocity, speed);
             float step = velocity.magnitude * Time.fixedDeltaTime;
             if (step > 0 && health != null && health.IsAlive && !IgnoreActorBlocking)
             {
@@ -182,13 +190,15 @@ namespace DarkLord.Actors
                 foreach (var other in ActiveMotors)
                 {
                     if (other == null || other == this || other.health == null || !other.health.isActiveAndEnabled ||
-                        !other.health.IsAlive || other.health.Faction == health.Faction || !other.HasSolidBody()) continue;
+                        !other.health.IsAlive || !other.HasSolidBody()) continue;
+                    bool fellowInvader = health.Faction == Faction.Invader && other.health.Faction == Faction.Invader;
+                    if (other.health.Faction == health.Faction && !fellowInvader) continue;
                     if (IgnoreMinionBlocking && other.health.Faction == Faction.Dungeon && other.GetComponent<DarkLord.Minions.MinionController>() != null) continue;
                     // Sweep the actor footprint before physics, preventing passage without imparting impulses.
                     Vector2 delta = other.body.position - body.position;
                     float along = Vector2.Dot(delta, direction);
                     if (along <= 0) continue; // Always permit retreat from contact.
-                    float radius = BodyRadius() + other.BodyRadius() + 0.04f;
+                    float radius = fellowInvader ? InvaderSpacing(other) : BodyRadius() + other.BodyRadius() + 0.04f;
                     float sideSquared = Mathf.Max(0, delta.sqrMagnitude - along * along);
                     if (sideSquared >= radius * radius) continue;
                     float clearance = Mathf.Max(0, along - Mathf.Sqrt(radius * radius - sideSquared));
@@ -204,6 +214,26 @@ namespace DarkLord.Actors
                 velocity = direction * (step / Time.fixedDeltaTime);
             }
             body.linearVelocity = velocity;
+        }
+
+        private float InvaderSpacing(TopDownMotor other) => Mathf.Max(.72f, BodyRadius() + other.BodyRadius() + .18f);
+
+        private Vector2 SpaceInvaders(Vector2 velocity, float speed)
+        {
+            Vector2 separation = Vector2.zero;
+            foreach (var other in ActiveMotors)
+            {
+                if (other == null || other == this || other.health == null || !other.health.isActiveAndEnabled ||
+                    !other.health.IsAlive || other.health.Faction != Faction.Invader || !other.HasSolidBody()) continue;
+                Vector2 away = body.position - other.body.position;
+                float distance = away.magnitude;
+                float spacing = InvaderSpacing(other);
+                if (distance >= spacing + .12f || velocity.sqrMagnitude < .001f && distance >= spacing) continue;
+                if (distance < .001f) away = spacingId < other.spacingId ? Vector2.up : Vector2.down;
+                else away /= distance;
+                separation += away * Mathf.Clamp01((spacing + .12f - distance) / .12f);
+            }
+            return Vector2.ClampMagnitude(velocity + separation * speed, speed);
         }
 
         private bool HasSolidBody()

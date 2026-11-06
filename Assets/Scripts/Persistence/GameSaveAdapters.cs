@@ -196,7 +196,7 @@ namespace DarkLord.Gameplay
             {
                 var enemy=Instantiate(invaderPrefab,saved.position,Quaternion.identity,transform);enemy.name=$"Wave {CurrentWave} Invader";
                 enemy.gameObject.AddComponent<WaveMember>().Number = saved.invasionWave > 0 ? saved.invasionWave : CurrentWave;
-                var health=enemy.Health;health.RestoreHealth(saved.maximumHealth,saved.health);enemy.Assault(dungeonCore,dungeon);
+                var health=enemy.Health;health.RestoreHealth(saved.maximumHealth,saved.health);enemy.Assault(dungeonCore,dungeon,dungeonLord);
                 enemy.RestorePoise(saved.poise);
                 ConfigureInvader(enemy, saved.tactics != null ? saved.tactics.role : InvaderRole.Warrior).RestoreSave(saved.tactics);
                 enemy.GetComponent<TopDownMotor>().RestoreSlows(saved.slows);

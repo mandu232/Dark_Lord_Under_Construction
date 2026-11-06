@@ -56,7 +56,7 @@ namespace DarkLord.Gameplay
         {
             bool wasAutomatic = AutomaticWaves;
             options = (value ?? new NewGameOptions()).Copy();
-            if (AutomaticWaves && (nextWaveRemaining < 0 || !wasAutomatic)) ScheduleNextWave();
+            if (AutomaticWaves && !openingInvasionScheduled && (nextWaveRemaining < 0 || !wasAutomatic)) ScheduleNextWave();
             Changed?.Invoke();
         }
 
@@ -76,7 +76,7 @@ namespace DarkLord.Gameplay
         public RunEconomy Economy { get; private set; }
         public bool HasEntrance => dungeon != null && dungeon.Layout != null && dungeon.Layout.HasEntrance;
         public int RemainingEnemies => aliveInvaders.Count + pendingSpawns;
-        public bool CanStartWave => !(Tutorial != null && Tutorial.Active) && !AutomaticWaves && isActiveAndEnabled && State == WaveState.Preparing && CurrentWave < finalWave &&
+        public bool CanStartWave => !(Tutorial != null && Tutorial.Active) && !UsesWaveCountdown && isActiveAndEnabled && State == WaveState.Preparing && CurrentWave < finalWave &&
             dungeonLord != null && dungeonLord.IsAlive && dungeonCore != null && dungeonCore.IsAlive && Time.timeScale > 0 && HasEntrance;
         public WaveState State { get; private set; } = WaveState.Preparing;
         public event Action Changed;
@@ -130,7 +130,8 @@ namespace DarkLord.Gameplay
         private void SpawnInvader(int sequence)
         {
             Vector3 spawn = dungeon.CellCenter(dungeon.Layout.Entrance);
-            spawn.y += ((sequence % 3) - 1) * 0.22f;
+            spawn.x += UnityEngine.Random.Range(-.55f, .55f);
+            spawn.y += ((sequence % 3) - 1) * .55f;
             var invader = Instantiate(invaderPrefab, spawn, Quaternion.identity, transform);
             invader.name = $"Wave {CurrentWave} Invader";
             int wave = pendingWaves.Count > 0 ? pendingWaves.Dequeue() : CurrentWave;
@@ -139,7 +140,7 @@ namespace DarkLord.Gameplay
             health.Configure(Faction.Invader, EnemyHealthForWave(wave));
             var role = pendingRoles.Count > 0 ? pendingRoles.Dequeue() : InvaderRole.Warrior;
             ConfigureInvader(invader, role);
-            invader.Assault(dungeonCore, dungeon);
+            invader.Assault(dungeonCore, dungeon, dungeonLord);
             Action handler = () => OnInvaderDied(health);
             deathHandlers.Add(health, handler);
             health.Died += handler;
@@ -244,7 +245,7 @@ namespace DarkLord.Gameplay
             {
                 case WaveRewardCatalog.TrapItem: if (item != null) dungeon.Inventory.Grant(item); else dungeon.Inventory.GrantRandom(BuildCategory.Traps); break;
                 case WaveRewardCatalog.RoomItem: if (item != null) dungeon.Inventory.Grant(item); else dungeon.Inventory.GrantRandom(BuildCategory.Rooms); break;
-                case WaveRewardCatalog.FacilityItem: if (item != null) dungeon.Inventory.Grant(item); else dungeon.Inventory.GrantRandom(BuildCategory.Buildings); break;
+                case WaveRewardCatalog.FacilityItem: if (item != null && ConstructionInventory.CanReward(item)) dungeon.Inventory.Grant(item); else dungeon.Inventory.GrantRandom(BuildCategory.Buildings); break;
                 case 0: wallet?.Add(CurrencyType.Gold, 75); break;
                 case 1: wallet?.Add(CurrencyType.Souls, 35); break;
                 case 2: wallet?.Add(CurrencyType.DarkCrystals, 2); break;

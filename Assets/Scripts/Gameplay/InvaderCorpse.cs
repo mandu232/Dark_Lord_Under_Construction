@@ -15,6 +15,7 @@ namespace DarkLord.Gameplay
         private const int CorpseSortingOrder = -30001;
         public InvaderRole Role { get; private set; }
         public bool Consumed { get; private set; }
+        internal DarkLord.Minions.CorpseWorker AssignedWorker { get; set; }
         public SpriteRenderer Visual { get; private set; }
         private Color baseColor;
         private Sprite contactSprite;

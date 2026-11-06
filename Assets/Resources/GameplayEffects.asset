@@ -13,6 +13,11 @@ MonoBehaviour:
   m_Name: GameplayEffects
   m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Gameplay.GameplayEffectLibrary
   material: {fileID: 2100000, guid: 7100d7a6c62575d4ba9b74703fbaee67, type: 2}
+  lootSprites:
+  - {fileID: -9194622466561485395, guid: 068b3f300ab71a74a97ccb88272d1329, type: 3}
+  - {fileID: 2214683806062304926, guid: 068b3f300ab71a74a97ccb88272d1329, type: 3}
+  - {fileID: -5852871479784174140, guid: 068b3f300ab71a74a97ccb88272d1329, type: 3}
+  - {fileID: -4523042780537565472, guid: 068b3f300ab71a74a97ccb88272d1329, type: 3}
   clips:
   - kind: 0
     frames:

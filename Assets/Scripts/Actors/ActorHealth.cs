@@ -42,7 +42,7 @@ namespace DarkLord.Actors
         public int Experience { get; private set; }
         public int Level { get; private set; } = 1;
         public int ExperienceToNextLevel => 30 + (Level - 1) * 20;
-        public int GrowthAttackBonus => (Level - 1) * 2;
+        public int GrowthAttackBonus => (Level - 1) * 4;
         public void RestoreExperience(int level, int experience)
         {
             Level = Mathf.Clamp(level, 1, 100);

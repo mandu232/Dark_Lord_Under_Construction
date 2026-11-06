@@ -25,6 +25,8 @@ namespace DarkLord.Gameplay
             public float fadeOut = .08f;
         }
         public Material material;
+        // Indexed by DeathLoot.Kind: blood, crystal, gold, experience.
+        public Sprite[] lootSprites;
         public Clip[] clips;
         public Clip Find(GameplayEffectKind kind)
         {
