@@ -54,7 +54,7 @@ namespace DarkLord.UI
             preparationHint.rectTransform.anchorMin = preparationHint.rectTransform.anchorMax = preparationHint.rectTransform.pivot = Vector2.one;
             preparationHint.rectTransform.anchoredPosition = new Vector2(-28, -140);
             preparationHint.rectTransform.sizeDelta = new Vector2(470, 140);
-            preparationHint.text = "<b>[B] 던전 건설 · 코어 근처 [F] 강화</b>\n방: 병력 분산 배치 · 숙소: 수용 인원 증가\n함정: 길목 방어 · 시설: 생산·전투 강화";
+            preparationHint.text = "<b>[B] 던전 건설 · 코어 근처 [F] 강화 · [I] 캐릭터</b>\n방: 병력 분산 배치 · 숙소: 수용 인원 증가\n함정: 길목 방어 · 시설: 생산·전투 강화";
             waves.Changed += RefreshAugments;
             RefreshAugments();
         }

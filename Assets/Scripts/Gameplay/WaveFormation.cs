@@ -35,11 +35,14 @@ namespace DarkLord.Gameplay
                 else if (healers-- > 0) result.Add(InvaderRole.Healer);
                 else result.Add(InvaderRole.Warrior);
             }
+            // Rowen enters last in the final wave as a charger, so the advertised formation ends with him.
+            int rowen = wave >= 5 ? result.IndexOf(InvaderRole.Charger) : -1;
+            if (rowen >= 0) { result.RemoveAt(rowen); result.Add(InvaderRole.Charger); }
             return result.ToArray();
         }
 
-        public static string Name(int wave) => wave <= 1 ? "첫 침입" : wave == 2 ? "돌격대" : wave == 3 ? "치유 부대" : wave == 4 ? "방패 진형" : "혼성 정예대";
-        public static string Advice(int wave) => wave <= 1 ? "하수인으로 저지하고 함정과 함께 공격하세요." : wave == 2 ? "붉은 돌진 예고를 피하세요. 끈끈이 함정으로 돌진을 늦출 수 있습니다." : wave == 3 ? "초록 십자가는 치유사입니다. 회복 시전을 공격해 끊으세요." : wave == 4 ? "방패병의 측후방 또는 마법으로 공격하고 치유사를 먼저 제거하세요." : "방패는 우회·마법, 치유는 시전 차단, 돌격은 둔화·회피로 대응하세요.";
+        public static string Name(int wave) => wave <= 1 ? "첫 침입" : wave == 2 ? "돌격대" : wave == 3 ? "치유 부대" : wave == 4 ? "방패 진형" : "로웬의 귀환";
+        public static string Advice(int wave) => wave <= 1 ? "하수인으로 저지하고 함정과 함께 공격하세요." : wave == 2 ? "붉은 돌진 예고를 피하세요. 방 하나는 수비 인원의 1.5배까지만 적을 붙잡고, 나머지는 안쪽으로 돌파합니다." : wave == 3 ? "초록 십자가는 치유사입니다. 회복 시전을 공격해 끊으세요." : wave == 4 ? "방패병의 측후방 또는 마법으로 공격하고 치유사를 먼저 제거하세요." : "마지막에 용사 로웬이 들어옵니다. 바닥 표식을 피하고, 큰 공격이 끝난 직후 몰아치세요.";
         public static string Summary(IReadOnlyList<InvaderRole> formation)
         {
             var counts = new int[4];

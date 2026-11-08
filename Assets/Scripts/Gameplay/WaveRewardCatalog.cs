@@ -5,13 +5,13 @@ namespace DarkLord.Gameplay
     {
         public const int BloodNova = 5, LordsHunt = 6, BindingBrood = 7, TrapBrand = 8, BloodPact = 9, Tribute = 10;
         public const int RoomItem = 11, FacilityItem = 12, TrapItem = 13;
-        public const int ThornCrown = 14, BloodExecution = 15, BattlefieldFeast = 16, FrostPrison = 17;
+        public const int ThornCrown = 14, BloodExecution = 15, BattlefieldFeast = 16, FrostPrison = 17, LanceVolley = 18;
         public static System.Collections.Generic.IEnumerable<int> AugmentIds
         {
-            get { for(int id=BloodNova;id<=Tribute;id++) yield return id; for(int id=ThornCrown;id<=FrostPrison;id++) yield return id; }
+            get { for(int id=BloodNova;id<=Tribute;id++) yield return id; for(int id=ThornCrown;id<=LanceVolley;id++) yield return id; }
         }
-        public static bool IsAugment(int id) => id >= BloodNova && id <= Tribute || id >= ThornCrown && id <= FrostPrison;
-        public static bool IsValid(int id) => id >= 0 && id <= FrostPrison;
+        public static bool IsAugment(int id) => id >= BloodNova && id <= Tribute || id >= ThornCrown && id <= LanceVolley;
+        public static bool IsValid(int id) => id >= 0 && id <= LanceVolley;
         public static string Name(int id)
         {
             switch (id)
@@ -28,6 +28,7 @@ namespace DarkLord.Gameplay
                 case BloodExecution: return "핏빛 도륙";
                 case BattlefieldFeast: return "전장의 수혈";
                 case FrostPrison: return "서리 감옥";
+                case LanceVolley: return "혈창 쇄도";
                 case BloodNova: return "혈폭 연쇄";
                 case LordsHunt: return "군주의 사형선고";
                 case BindingBrood: return "혈족의 포위망";
@@ -39,7 +40,7 @@ namespace DarkLord.Gameplay
         }
         public static string Pair(int id) => id == BloodNova ? "둔화 · 연쇄 폭발" : id == LordsHunt ? "표식 · 권속 처형" : id == BindingBrood ? "협공 · 군중 제어" :
             id == TrapBrand ? "함정 · 광역 기폭" : id == BloodPact ? "보호 마법 · 군단 강화" : id == Tribute ? "권속 처치 · 주문 충전" : id == ThornCrown ? "피격 · 광역 반격" : id == BloodExecution ? "마무리 · 생명력 수확" :
-            id == BattlefieldFeast ? "권속 처치 · 집단 회복" : id == FrostPrison ? "함정 · 빙결 제어" : "전리품";
+            id == BattlefieldFeast ? "권속 처치 · 집단 회복" : id == FrostPrison ? "함정 · 빙결 제어" : id == LanceVolley ? "혈창 · 연속 발사" : "전리품";
         public static string Description(int id)
         {
             switch (id)
@@ -51,6 +52,7 @@ namespace DarkLord.Gameplay
                 case BloodExecution: return "체력 30% 이하인 적에게 마왕의 근접 공격 피해 2배.\n마왕이 적을 처치할 때마다 공유 체력을 8 회복합니다.";
                 case BattlefieldFeast: return "하수인이 적을 처치하면 처치한 하수인 주변 2칸의 권속 체력을 각각 8 회복.\n자신 포함 · 벽 너머 제외 · 혈액 소모 없음.";
                 case FrostPrison: return "함정에 맞은 적을 0.6초 기절시키고 2.5초간 75% 둔화.\n가시·끈끈이 함정 모두 적용. 강인함이 활성화된 적은 기절에 저항합니다.";
+                case LanceVolley: return "혈창 공격 간격이 0.75초에서 1.2초로 느려지는 대신,\n좌우 2발씩 총 4발을 번갈아 연속 발사합니다. 발당 피해는 50%입니다.";
                 case BloodNova: return "혈파가 둔화된 적에게 추가 마법 피해 35.\n최대 3명이 폭발해 반경 1칸의 다른 적에게 마법 피해 20. 적중당 마나 5 회복(최대 15).";
                 case LordsHunt: return "마왕의 근접 공격이 6초간 사형 표식을 남깁니다.\n하수인의 다음 공격이 표식을 소모해 적 최대 체력의 20%만큼 추가 피해(20~120), 하수인 체력 10 회복.";
                 case BindingBrood: return "같은 적에게 4초 안에 하수인 공격이 3회 적중하면\n추가 피해 15 · 1초 기절 · 3초간 65% 둔화. 여러 하수인의 공격이 함께 누적됩니다.";

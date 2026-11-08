@@ -34,6 +34,7 @@ namespace DarkLord.UI
             window.gameObject.SetActive(false);
             if (upkeep != null) upkeep.gameObject.SetActive(false);
             technology = gameObject.AddComponent<CoreTechPanel>(); technology.Configure(director, font);
+            gameObject.AddComponent<CharacterPanel>().Configure(director, font);
         }
         private void WorldHint(TMP_Text label, Vector3 position, bool visible)
         {

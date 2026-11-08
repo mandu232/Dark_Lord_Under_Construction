@@ -119,7 +119,7 @@ namespace DarkLord.UI
                     break;
                 case WaveState.Victorious:
                     waveText.text = "방어 성공";
-                    statusText.text = "모든 침입자를 격퇴했습니다";
+                    statusText.text = "흑관성이 새 땅으로 옮겨 갑니다";
                     break;
                 case WaveState.RewardSelection:
                     statusText.text = "보상을 하나 선택하세요";

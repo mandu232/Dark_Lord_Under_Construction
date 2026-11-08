@@ -132,9 +132,9 @@ namespace DarkLord.UI
             var tutorial = waves != null ? waves.Tutorial : null;
             bool active = tutorial != null && tutorial.Active;
             if (panel == null) return;
-            var bossActor = active ? tutorial.Rowen : null;
+            var bossActor = active ? tutorial.Rowen : waves != null ? waves.ActiveBoss : null;
             bool showBoss = bossActor != null && bossActor.IsAlive && bossActor.gameObject.activeInHierarchy &&
-                !tutorial.DialogueOpen && tutorial.Elapsed < StartingTutorial.BattleEnds;
+                (!active || !tutorial.DialogueOpen && tutorial.Elapsed < StartingTutorial.BattleEnds);
             bossBar.gameObject.SetActive(showBoss);
             if (showBoss)
             {

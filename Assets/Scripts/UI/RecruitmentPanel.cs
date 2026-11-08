@@ -50,7 +50,8 @@ namespace DarkLord.UI
             if (IsVisible)
             {
                 int stacks = summoning.RecruitmentStation != null ? summoning.RecruitmentStation.SummonStacks : 0;
-                string label = summoning.GuaranteesBloodSlime ? "혈 슬라임 소환" : "무작위 소환";
+                int cost = summoning.SummonStackCost;
+                string label = summoning.GuaranteesBloodSlime ? "혈 슬라임 소환" : $"무작위 소환 (스택 {cost})";
                 if (randomLabel != null && randomLabel.text != label) randomLabel.text = label;
                 status.text = $"보유 스택 {stacks}개\n" + summoning.Message;
                 bool workersAvailable = summoning.WorkerRecruitmentAvailable;
@@ -61,7 +62,7 @@ namespace DarkLord.UI
                     workerButton.interactable = stacks > 0 && workers < capacity;
                     status.text = $"보유 스택 {stacks}개 · 일꾼 {workers}/{capacity}\n일꾼 확정 소환 · 스택 1개";
                 }
-                randomButton.interactable = stacks > 0 && (summoning.GetComponent<PlayerCombat>() == null || summoning.GetComponent<PlayerCombat>().CanSpendSummonStack);
+                randomButton.interactable = stacks >= cost && (summoning.GetComponent<PlayerCombat>() == null || summoning.GetComponent<PlayerCombat>().CanSpendSummonStack);
             }
             var harvest = summoning.GetComponent<CorpseHarvest>();
             bool nearby = summoning.CanInteractRecruitment && (harvest == null || harvest.Carried == null && harvest.NearbyCorpse == null && !harvest.IsDragging);

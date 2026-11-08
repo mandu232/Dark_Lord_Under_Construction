@@ -1,0 +1,778 @@
+fileFormatVersion: 2
+guid: a6ceeea3b96da6245bb041dd43355381
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 3436777261399482041
+    second: blood-burst_0
+  - first:
+      213: 8383249057969694711
+    second: blood-burst_1
+  - first:
+      213: -1560675517785656519
+    second: blood-burst_2
+  - first:
+      213: 7737359442510717435
+    second: blood-burst_3
+  - first:
+      213: -8881874587659752971
+    second: blood-burst_4
+  - first:
+      213: -3095090475035299878
+    second: blood-burst_5
+  - first:
+      213: 1471003258001633681
+    second: blood-burst_6
+  - first:
+      213: -4444021661524130035
+    second: blood-burst_7
+  - first:
+      213: -7010253752161072131
+    second: blood-burst_8
+  - first:
+      213: -8234527791919677398
+    second: blood-burst_9
+  - first:
+      213: -8855512302511064495
+    second: blood-burst_10
+  - first:
+      213: 5734534148034752968
+    second: blood-burst_11
+  - first:
+      213: -9070350510545110661
+    second: blood-burst_12
+  - first:
+      213: 3079732763314988921
+    second: blood-burst_13
+  - first:
+      213: -6465579654153649454
+    second: blood-burst_14
+  - first:
+      213: -8271571807023295355
+    second: blood-burst_15
+  - first:
+      213: -8164798980178704550
+    second: blood-burst_16
+  - first:
+      213: -1065077479158722726
+    second: blood-burst_17
+  - first:
+      213: 7062583273401943368
+    second: blood-burst_18
+  - first:
+      213: 1272429427549879258
+    second: blood-burst_19
+  - first:
+      213: -8497571516507128709
+    second: blood-burst_20
+  - first:
+      213: 4374121916207000388
+    second: blood-burst_21
+  - first:
+      213: -6183317002363921701
+    second: blood-burst_22
+  - first:
+      213: -7367447785556235082
+    second: blood-burst_23
+  - first:
+      213: -5090163051298752418
+    second: blood-burst_24
+  - first:
+      213: -5714304901160612290
+    second: blood-burst_25
+  - first:
+      213: 2052696612535612527
+    second: blood-burst_26
+  - first:
+      213: 1089724790491127792
+    second: blood-burst_27
+  - first:
+      213: 8065067828324082310
+    second: blood-burst_28
+  - first:
+      213: -6726343417655620602
+    second: blood-burst_29
+  - first:
+      213: -3759437755016532563
+    second: blood-burst_30
+  - first:
+      213: 1132669639716897489
+    second: blood-burst_31
+  - first:
+      213: 6790408758612362428
+    second: blood-burst_32
+  - first:
+      213: -4069715675471909682
+    second: blood-burst_33
+  - first:
+      213: -1389331152087848708
+    second: blood-burst_34
+  - first:
+      213: -8847165137239036303
+    second: blood-burst_35
+  - first:
+      213: -6290803481035754140
+    second: blood-burst_36
+  - first:
+      213: -8221942332487792701
+    second: blood-burst_37
+  - first:
+      213: 6805917380059735855
+    second: blood-burst_38
+  - first:
+      213: -7275188953521141510
+    second: blood-burst_39
+  - first:
+      213: 8359899751728069637
+    second: blood-burst_40
+  - first:
+      213: 3234601930287460588
+    second: blood-burst_41
+  - first:
+      213: 842151997126900286
+    second: blood-burst_42
+  - first:
+      213: 755916759208469821
+    second: blood-burst_43
+  - first:
+      213: 2994358487282698253
+    second: blood-burst_44
+  - first:
+      213: -8717707961531605872
+    second: blood-burst_45
+  - first:
+      213: 1153365485298377193
+    second: blood-burst_46
+  - first:
+      213: 5520616434312170807
+    second: blood-burst_47
+  - first:
+      213: 6457104785383298428
+    second: blood-burst_48
+  - first:
+      213: 6240786679460378496
+    second: blood-burst_49
+  - first:
+      213: 1760384916721591710
+    second: blood-burst_50
+  - first:
+      213: 9089594171044498837
+    second: blood-burst_51
+  - first:
+      213: 8383456896886724838
+    second: blood-burst_52
+  - first:
+      213: -1175421435350911501
+    second: blood-burst_53
+  - first:
+      213: 2786364122259780715
+    second: blood-burst_54
+  - first:
+      213: -4753454639228644207
+    second: blood-burst_55
+  - first:
+      213: -5204595194999607730
+    second: blood-burst_56
+  - first:
+      213: -6440053006098766016
+    second: blood-burst_57
+  - first:
+      213: 5097805405572477830
+    second: blood-burst_58
+  - first:
+      213: 3565030017200761630
+    second: blood-burst_59
+  - first:
+      213: -3602939581248498000
+    second: blood-burst_60
+  - first:
+      213: 1058354267159074698
+    second: blood-burst_61
+  - first:
+      213: -3742332682051292135
+    second: blood-burst_62
+  - first:
+      213: -994276779234598158
+    second: blood-burst_63
+  - first:
+      213: 3660842112138496105
+    second: blood-burst_64
+  - first:
+      213: -3907298097195125047
+    second: blood-burst_65
+  - first:
+      213: -2380794199850294237
+    second: blood-burst_66
+  - first:
+      213: -1163397600703181994
+    second: blood-burst_67
+  - first:
+      213: 2408582463532735587
+    second: blood-burst_68
+  - first:
+      213: 7085389073074810715
+    second: blood-burst_69
+  - first:
+      213: -3954187593868366743
+    second: blood-burst_70
+  - first:
+      213: -736090371241084485
+    second: blood-burst_71
+  - first:
+      213: 6537738001071413268
+    second: blood-burst_72
+  - first:
+      213: -7130846577962626916
+    second: blood-burst_73
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: blood-burst_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 240
+        width: 80
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a8feb3dc6a82cd64197c2896602ca5b6
+      internalID: 3436777261399482041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-burst_1
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 240
+        width: 80
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 28e3bdda09b8d164591b99bea2509434
+      internalID: 8383249057969694711
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-burst_2
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 240
+        width: 80
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa404484b3ec5ed4a8a0325f9e4adcb9
+      internalID: -1560675517785656519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-burst_3
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 240
+        width: 80
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c48f10a3203ff740b9a3167158c2641
+      internalID: 7737359442510717435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-burst_4
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 240
+        width: 80
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8e81973677547084bb0b1618c40c1aae
+      internalID: -8881874587659752971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-burst_5
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 160
+        width: 80
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ea8906e4a701730418f90b68f29f6ed3
+      internalID: -3095090475035299878
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-burst_6
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 160
+        width: 80
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 88ea46c089fc1324aa97c091a61b1c34
+      internalID: 1471003258001633681
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-burst_7
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 160
+        width: 80
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2048c78d234d9404d8c5631c8b9ae925
+      internalID: -4444021661524130035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-burst_8
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 160
+        width: 80
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c9900708a55a1be4d8d7ceb8b787afaa
+      internalID: -7010253752161072131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-burst_9
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 160
+        width: 80
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 08d39c5dc6dd1d6488af412448b461c4
+      internalID: -8234527791919677398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-burst_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 80
+        width: 80
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 67c15d741d4d4204d9a7906df245a557
+      internalID: -8855512302511064495
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-burst_11
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 80
+        width: 80
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 057c11297f79cf54d8821c0d2bfb9e83
+      internalID: 5734534148034752968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-burst_12
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 80
+        width: 80
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 74892a4870335ac4e9360ac9c5250be0
+      internalID: -9070350510545110661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-burst_13
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 80
+        width: 80
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8c5731c42db4c0f47b86ba9ead990311
+      internalID: 3079732763314988921
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-burst_14
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 80
+        width: 80
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2b41d9527c0b9874bbef56f3a09d4c24
+      internalID: -6465579654153649454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-burst_15
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 80
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b524131420c80dc41a49e24bfd0fbc5f
+      internalID: -8271571807023295355
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-burst_16
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 0
+        width: 80
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dbbfd53a527bcb845bee34006fa4862a
+      internalID: -8164798980178704550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-burst_17
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 0
+        width: 80
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3dbe3b3e8848fb24f8266196ff2969a3
+      internalID: -1065077479158722726
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-burst_18
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 0
+        width: 80
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7222b893561ecee41a320f9032a07e9a
+      internalID: 7062583273401943368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 958d4a83c1277744daefdf5922612e8b
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      blood-burst_0: 3436777261399482041
+      blood-burst_1: 8383249057969694711
+      blood-burst_10: -8855512302511064495
+      blood-burst_11: 5734534148034752968
+      blood-burst_12: -9070350510545110661
+      blood-burst_13: 3079732763314988921
+      blood-burst_14: -6465579654153649454
+      blood-burst_15: -8271571807023295355
+      blood-burst_16: -8164798980178704550
+      blood-burst_17: -1065077479158722726
+      blood-burst_18: 7062583273401943368
+      blood-burst_2: -1560675517785656519
+      blood-burst_3: 7737359442510717435
+      blood-burst_4: -8881874587659752971
+      blood-burst_5: -3095090475035299878
+      blood-burst_6: 1471003258001633681
+      blood-burst_7: -4444021661524130035
+      blood-burst_8: -7010253752161072131
+      blood-burst_9: -8234527791919677398
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -262,7 +262,7 @@ namespace DarkLord.Tests
             var session = Find<GameSaveSession>(); var saved = session.Capture();
             session.Restore(saved); yield return null;
             Assert.IsTrue(waves.Tutorial.DialogueOpen); Assert.IsFalse(waves.Tutorial.RowenInConversation);
-            StringAssert.Contains("…남은 건 너 하나구나", waves.Tutorial.Instruction);
+            StringAssert.Contains("루브, 너만 남았구나", waves.Tutorial.Instruction);
         }
         [UnityTest] public IEnumerator CombatBlocksFacilitiesConstructionAndMinionRelocation()
         {

@@ -36,6 +36,7 @@ namespace DarkLord.Player
         private const float DodgeDashDuration = .1f;
         private const float DodgeInvulnerabilityDuration = .28f;
         private const float DodgeRecovery = 1f;
+        public float DodgeRecoveryTime => Mathf.Max(.6f, DodgeRecovery - .1f * (waves?.Economy?.Rank(TechId.QuickStep) ?? 0));
         // Burst first, then settle into the final roll frames instead of sliding at full speed.
         public float DodgeSpeedMultiplier => IsDodging
             ? Mathf.Lerp(6.5f, 1.2f, Mathf.SmoothStep(0, 1, 1 - (dodgeUntil - Time.time) / DodgeDuration)) : 1;
@@ -214,7 +215,7 @@ namespace DarkLord.Player
         public bool TryDodge(Vector2 direction)
         {
             if (!CanAct || IsDodging || Time.time < nextDodge || !float.IsFinite(direction.x) || !float.IsFinite(direction.y) || direction.sqrMagnitude < 0.001f) return false;
-            nextDodge = Time.time + Mathf.Max(.6f, DodgeRecovery - .1f * (waves?.Economy?.Rank(TechId.QuickStep) ?? 0));
+            nextDodge = Time.time + DodgeRecoveryTime;
             dodgeUntil = Time.time + DodgeDuration;
             dodgeDirection = direction.normalized;
             attackUntil = weaponActionUntil = 0;

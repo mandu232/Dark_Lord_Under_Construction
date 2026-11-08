@@ -106,6 +106,10 @@ namespace DarkLord.Player
                 EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>() == null)) TryRecruit();
             if (!IsOpen) { UpdateHold(); return; }
             if (!IsPlacing) return;
+            var mergeTarget = PointerWorld(out var pointer) ? GuardAt(pointer, relocatingGuard) : null;
+            if (mergeTarget != null && !relocatingGuard.CanMergeWith(mergeTarget)) mergeTarget = null;
+            if (mergeTarget != null && Time.frameCount > placementStartedFrame && (dragPlacement ? place.WasReleasedThisFrame() : place.WasPressedThisFrame()))
+            { TryMerge(relocatingGuard, mergeTarget); return; }
             if (!IsRelocating || !relocatingGuard.IsAlive || cancelPlacement.WasPressedThisFrame()) { SetOpen(false); return; }
             if (!dragPlacement || place.IsPressed())
                 relocationPan?.Pan(Mouse.current != null ? Mouse.current.position.ReadValue() : (Vector2?)null,
@@ -113,6 +117,7 @@ namespace DarkLord.Player
             if (!PointerCell(out var cell))
             { ClearPreview(); if (dragPlacement && place.WasReleasedThisFrame()) SetOpen(false); return; }
             bool allowed = CanPlace(cell, out message);
+            if (mergeTarget != null) { allowed = true; message = $"놓으면 합성 · {mergeTarget.DisplayName} {mergeTarget.Tier + 1}성으로 승급"; }
             if (highlightedCell != cell || highlightedAllowed != allowed)
             {
                 var room = dungeon.Construction.GarrisonAt(cell);
@@ -132,26 +137,46 @@ namespace DarkLord.Player
             if (!new Plane(dungeon.transform.forward, dungeon.transform.position).Raycast(ray, out float distance)) return false;
             cell = dungeon.WorldToCell(ray.GetPoint(distance)); return true;
         }
+        private bool PointerWorld(out Vector3 point)
+        {
+            point = default;
+            if (!PointerCell(out _)) return false;
+            var ray = worldCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
+            new Plane(dungeon.transform.forward, dungeon.transform.position).Raycast(ray, out float distance);
+            point = ray.GetPoint(distance); return true;
+        }
+        private MinionController GuardAt(Vector3 point, MinionController excluding)
+        {
+            MinionController found = null; float best = float.PositiveInfinity;
+            foreach (var guard in dungeon.Guards)
+            {
+                if (guard == null || guard == excluding || !guard.isActiveAndEnabled || !guard.IsAlive) continue;
+                var sprite = guard.GetComponentInChildren<SpriteRenderer>();
+                if (sprite == null || !sprite.enabled) continue;
+                var bounds = sprite.bounds; bounds.Expand(.35f);
+                if (point.x < bounds.min.x || point.x > bounds.max.x || point.y < bounds.min.y || point.y > bounds.max.y) continue;
+                float delta = ((Vector2)point - (Vector2)guard.transform.position).sqrMagnitude;
+                if (delta < best) { best = delta; found = guard; }
+            }
+            return found;
+        }
+        public bool TryMerge(MinionController source, MinionController target)
+        {
+            if (!CanHandleMinions || source == null || !source.CanMergeWith(target) || !guards.Contains(source) || !guards.Contains(target)) return false;
+            target.Promote(source);
+            RemoveGuard(source);
+            SetOpen(false);
+            GameplayEffects.Show(target.transform, GameplayEffectKind.BloodEmpower, target.transform.position, duration: .9f);
+            message = $"{target.DisplayName}이(가) {target.TierName}으로 승급했습니다.";
+            return true;
+        }
         private void UpdateHold()
         {
             if (!place.IsPressed()) { if (pressedGuard != null) consumedFrame = Time.frameCount; pressedGuard = null; return; }
-            if (place.WasPressedThisFrame() && PointerCell(out _))
+            if (place.WasPressedThisFrame() && PointerWorld(out var point))
             {
-                var ray = worldCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
-                new Plane(dungeon.transform.forward, dungeon.transform.position).Raycast(ray, out float distance);
-                Vector3 point = ray.GetPoint(distance);
-                float best = float.PositiveInfinity;
-                foreach (var guard in dungeon.Guards)
-                {
-                    if (guard == null || !guard.isActiveAndEnabled || !guard.IsAlive) continue;
-                    var sprite = guard.GetComponentInChildren<SpriteRenderer>();
-                    if (sprite == null || !sprite.enabled) continue;
-                    var bounds = sprite.bounds; bounds.Expand(.35f);
-                    if (point.x < bounds.min.x || point.x > bounds.max.x || point.y < bounds.min.y || point.y > bounds.max.y) continue;
-                    float delta = ((Vector2)point - (Vector2)guard.transform.position).sqrMagnitude;
-                    if (delta < best) { best = delta; pressedGuard = guard; pressedAt = Time.unscaledTime; }
-                }
-                if (pressedGuard != null) consumedFrame = Time.frameCount;
+                pressedGuard = GuardAt(point, null);
+                if (pressedGuard != null) { pressedAt = Time.unscaledTime; consumedFrame = Time.frameCount; }
             }
             if (pressedGuard == null) return;
             if (!pressedGuard.IsAlive) { pressedGuard = null; return; }
@@ -166,8 +191,8 @@ namespace DarkLord.Player
         public bool TrySummon(MinionRole role) => TrySummonInternal(role, false);
         public bool TrySummonRandom()
         {
-            if (!IsRecruiting || recruitmentStation == null || recruitmentStation.SummonStacks < 1)
-            { message = "시체를 소환소에 넣어 스택을 모으세요. 소환에는 스택 1개가 필요합니다."; return false; }
+            if (!IsRecruiting || recruitmentStation == null || recruitmentStation.SummonStacks < SummonStackCost)
+            { message = $"시체를 소환소에 넣어 스택을 모으세요. 소환에는 스택 {SummonStackCost}개가 필요합니다. 합성으로 수를 줄이면 내려갑니다."; return false; }
             if (GuaranteesBloodSlime) return TrySummonInternal(MinionRole.BloodSlime, true);
             var available = new List<MinionRole>();
             for (int i = 0; i < 3; i++) if (RecruitDefinitionFor((MinionRole)i) != null) available.Add((MinionRole)i);
@@ -189,7 +214,7 @@ namespace DarkLord.Player
             if (!FindSpawnNear(origin, room, out var spawn)) { message = "소환소 옆에 빈 공간이 없습니다."; return false; }
             if (useStack)
             {
-                if (station == null || !station.TrySpendSummonStack()) { message = "소환 스택이 부족합니다."; return false; }
+                if (station == null || !station.TrySpendSummonStack(SummonStackCost)) { message = "소환 스택이 부족합니다."; return false; }
             }
             else if (combat != null && !combat.PaySummonCost()) return false;
             var guard = CreateGuard(definition, spawn);
@@ -216,7 +241,58 @@ namespace DarkLord.Player
             UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(guard.gameObject, gameObject.scene);
             GameplayEffects.Show(guard.transform, GameplayEffectKind.Summon, guard.transform.position);
             guard.name = guard.DisplayName; guard.Defend(guard.transform.position);
-            guards.Add(guard); dungeon.RegisterGuard(guard); commands?.Register(guard); return guard;
+            TrackGuard(guard); return guard;
+        }
+        private void TrackGuard(MinionController guard)
+        {
+            guards.Add(guard); dungeon.RegisterGuard(guard); commands?.Register(guard);
+            guard.Health.Died += () => OnGuardFell(guard);
+        }
+        // Summons get dearer as the army grows, so merging is what brings the price back down.
+        private const int FreeArmySize = 5;
+        public int ArmySize => GuardCount + fallen.Count;
+        public int SummonStackCost => GuaranteesBloodSlime ? 1 : 1 + (Mathf.Max(0, ArmySize - FreeArmySize) + 1) / 2;
+
+        // A minion that falls is not lost: it returns to its post once the fighting is over.
+        private readonly List<DarkLord.Persistence.MinionSaveData> fallen = new List<DarkLord.Persistence.MinionSaveData>();
+        private float nextReturn;
+        public int FallenCount => fallen.Count;
+        private void OnGuardFell(MinionController guard)
+        {
+            if (!guards.Remove(guard) || !guard.gameObject.scene.isLoaded) return;
+            var data = DarkLord.Persistence.SaveSnapshots.Actor(guard);
+            data.health = Mathf.Max(1, data.maximumHealth / 2); data.order = MinionOrder.Defend;
+            data.slows = null; data.support = null; data.augmentStatus = null; data.attackCooldown = 0;
+            fallen.Add(data);
+        }
+        private void LateUpdate()
+        {
+            if (fallen.Count == 0 || Time.timeScale <= 0 || Time.time < nextReturn || !gameObject.scene.isLoaded) return;
+            var harvest = GetComponent<CorpseHarvest>();
+            if (harvest == null || !harvest.WorkersCanCollect) return;
+            nextReturn = Time.time + 1;
+            for (int i = fallen.Count - 1; i >= 0; i--)
+            {
+                if (!FindReturnCell(dungeon.WorldToCell(fallen[i].post), out var cell)) continue;
+                var data = fallen[i]; fallen.RemoveAt(i);
+                data.position = dungeon.CellCenter(cell); data.post = data.position;
+                var guard = RebuildGuard(data);
+                GameplayEffects.Show(guard.transform, GameplayEffectKind.Summon, guard.transform.position);
+            }
+        }
+        private bool FindReturnCell(Vector2Int post, out Vector2Int cell)
+        {
+            Physics2D.SyncTransforms(); cell = default;
+            var home = dungeon.Construction.GarrisonAt(post);
+            if (home != null && !RoomIsFull(home, null) && FirstEmpty(home, out cell)) return true;
+            foreach (var room in dungeon.Construction.Sections)
+                if (room.IsComplete && DungeonConstruction.IsRoom(room.Kind) && !RoomIsFull(room, null) && FirstEmpty(room, out cell)) return true;
+            return false;
+        }
+        private bool FirstEmpty(DungeonSection room, out Vector2Int cell)
+        {
+            foreach (var candidate in room.Cells) if (EmptyLanding(candidate, null)) { cell = candidate; return true; }
+            cell = default; return false;
         }
         public void GrantStartingSlime()
         {
@@ -286,7 +362,7 @@ namespace DarkLord.Player
             placementStartedFrame = Time.frameCount; worldCamera = Camera.main;
             relocationZoom = PlacementCameraZoom.Acquire(worldCamera, this);
             relocationPan = PlacementCameraPan.Acquire(worldCamera, this, dungeon);
-            message = "원하는 방·복도에 놓으면 빈 자리로 순간이동합니다. WASD: 화면 이동 · 우클릭 / Esc: 취소"; return true;
+            message = "방·복도에 놓으면 이동, 같은 하수인 위에 놓으면 합성합니다. WASD: 화면 이동 · 우클릭 / Esc: 취소"; return true;
         }
         public bool RemoveGuard(MinionController guard)
         {

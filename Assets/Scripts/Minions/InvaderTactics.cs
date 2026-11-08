@@ -5,7 +5,7 @@ using UnityEngine;
 namespace DarkLord.Minions
 {
     public enum InvaderRole { Warrior = 0, Shieldbearer = 1, Healer = 2, Charger = 3 }
-    public enum InvaderAction { Ready, Healing, WindingUp, Charging, Recovering, HeroCleave }
+    public enum InvaderAction { Ready, Healing, WindingUp, Charging, Recovering, HeroCleave, ShieldBash, Judging, Roaring }
 
     [Serializable]
     public sealed class InvaderTacticsSaveData
@@ -14,10 +14,12 @@ namespace DarkLord.Minions
         public InvaderAction action;
         public float remaining, cooldown;
         public Vector2 direction, healPosition;
+        public bool hero, phaseTwo;
+        public Vector2[] marks;
     }
 
     [DisallowMultipleComponent, RequireComponent(typeof(MinionController))]
-    public sealed class InvaderTactics : MonoBehaviour
+    public sealed partial class InvaderTactics : MonoBehaviour
     {
         private MinionController controller;
         private ActorHealth health;
@@ -94,7 +96,7 @@ namespace DarkLord.Minions
             Action = InvaderAction.Ready; healTarget = null;
             if (motor != null) motor.IgnoreMinionBlocking = false;
             if (heroWarning != null) heroWarning.enabled = false;
-            if (motor != null) { motor.SpeedMultiplier = 1; motor.Stop(); }
+            if (motor != null) { motor.SpeedMultiplier = HeroPace; motor.Stop(); }
             if (cue != null) cue.gameObject.SetActive(false);
         }
         public bool TryAct(ActorHealth target)
@@ -125,9 +127,13 @@ namespace DarkLord.Minions
                         if (delta.sqrMagnitude > .0001f && Vector2.Dot(direction, delta.normalized) >= 0f)
                             if (victim.TakeDamage(25, health, DamageType.Physical)) ApplyHeroKnockback(victim, delta);
                     }
-                    Begin(InvaderAction.Recovering, .5f);
+                    // In phase two he carries the swing through to the half circle behind him.
+                    if (hero && phaseTwo && !cleaveReturned) { cleaveReturned = true; direction = -direction; motor.Face(direction); Begin(InvaderAction.HeroCleave, .3f); }
+                    else Begin(InvaderAction.Recovering, phaseTwo ? .8f : .5f);
                     return true;
                 }
+                if (hero && FinishHeroAction(target)) return true;
+                if (Action == InvaderAction.ShieldBash) { ShieldBash(target); Begin(InvaderAction.Recovering, .4f); return true; }
                 if (Action == InvaderAction.Healing)
                 {
                     if (healTarget == null) healTarget = FindHealTarget(true);
@@ -148,24 +154,23 @@ namespace DarkLord.Minions
                 motor.Stop();
                 return true;
             }
-            if (hero && target != null && target.IsAlive && controller.HasTerrainLineOfSight(target))
+            if (hero && TryHeroPattern(target)) return true;
+            if (Role == InvaderRole.Shieldbearer && target != null && target.IsAlive && controller.HasTerrainLineOfSight(target))
             {
                 Vector2 delta = target.transform.position - transform.position;
-                if (delta.sqrMagnitude > .001f && delta.magnitude <= HeroCleaveRadius)
-                {
-                    direction = delta.normalized; motor.Face(direction); motor.Stop();
-                    nextAbility = Time.time + 3f;
-                    Begin(InvaderAction.HeroCleave, .6f);
-                    return true;
-                }
+                if (delta.sqrMagnitude < .001f || delta.magnitude > 1.5f) return false;
+                direction = delta.normalized; motor.Face(direction); motor.Stop();
+                nextAbility = Time.time + 5;
+                Begin(InvaderAction.ShieldBash, .45f);
+                return true;
             }
             if (Role == InvaderRole.Charger && target != null && target.IsAlive && controller.HasTerrainLineOfSight(target))
             {
                 Vector2 delta = target.transform.position - transform.position;
                 if (delta.magnitude < 1.3f || delta.magnitude > 6) return false;
                 direction = delta.normalized; motor.Face(direction); motor.Stop();
-                nextAbility = Time.time + 6;
-                Begin(InvaderAction.WindingUp, .75f);
+                nextAbility = Time.time + (hero ? (phaseTwo ? 3.5f : 4.5f) : 6);
+                Begin(InvaderAction.WindingUp, hero && phaseTwo ? .55f : .75f);
                 return true;
             }
             return false;
@@ -173,17 +178,18 @@ namespace DarkLord.Minions
         private void Begin(InvaderAction action, float duration)
         {
             Action = action; endsAt = Time.time + duration;
-            motor.SpeedMultiplier = 1;
+            motor.SpeedMultiplier = HeroPace;
             if (action != InvaderAction.Charging) motor.IgnoreMinionBlocking = false;
             if (action == InvaderAction.Charging)
             {
                 chargeHits.Clear();
                 if (hero) { presentation.Present(ActorState.Run, direction); ShowHeroEffect(true); }
             }
-            cue.gameObject.SetActive(action == InvaderAction.WindingUp || action == InvaderAction.Healing || action == InvaderAction.HeroCleave);
+            bool bash = action == InvaderAction.ShieldBash;
+            cue.gameObject.SetActive(action == InvaderAction.WindingUp || action == InvaderAction.Healing || action == InvaderAction.HeroCleave || bash);
             cue.color = action == InvaderAction.Healing ? new Color(.2f, 1, .4f, .75f) : new Color(1, .15f, .1f, .7f);
-            cue.transform.localPosition = action == InvaderAction.Healing ? new Vector3(0, 1.3f) : (Vector3)(direction * 2.5f);
-            cue.transform.localScale = action == InvaderAction.Healing ? new Vector3(.65f, .15f, 1) : new Vector3(5, .18f, 1);
+            cue.transform.localPosition = action == InvaderAction.Healing ? new Vector3(0, 1.3f) : (Vector3)(direction * (bash ? .9f : 2.5f));
+            cue.transform.localScale = action == InvaderAction.Healing ? new Vector3(.65f, .15f, 1) : bash ? new Vector3(1.8f, .18f, 1) : new Vector3(5, .18f, 1);
             cue.transform.localRotation = action == InvaderAction.Healing ? Quaternion.identity : Quaternion.Euler(0, 0, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
             RefreshHeroWarning();
         }
@@ -232,7 +238,7 @@ namespace DarkLord.Minions
         private void RefreshHeroWarning()
         {
             bool active = hero && isActiveAndEnabled && health != null && health.IsAlive &&
-                (Action == InvaderAction.HeroCleave || Action == InvaderAction.WindingUp);
+                (Action == InvaderAction.HeroCleave || Action == InvaderAction.WindingUp || Action == InvaderAction.Roaring);
             if (!active) { if (heroWarning != null) heroWarning.enabled = false; return; }
             if (cue != null) cue.gameObject.SetActive(false);
             if (heroWarning == null)
@@ -256,7 +262,13 @@ namespace DarkLord.Minions
                     float nx = (x + .5f) / 128f * 2f - 1f, ny = (y + .5f) / 64f * 2f - 1f;
                     bool inside;
                     float edge;
-                    if (Action == InvaderAction.HeroCleave)
+                    if (Action == InvaderAction.Roaring)
+                    {
+                        float radius = Mathf.Sqrt(nx * nx + ny * ny);
+                        inside = radius <= 1;
+                        edge = 1 - radius;
+                    }
+                    else if (Action == InvaderAction.HeroCleave)
                     {
                         float radius = Mathf.Sqrt(nx * nx + ny * ny);
                         inside = nx >= 0 && radius <= 1;
@@ -285,7 +297,7 @@ namespace DarkLord.Minions
             heroWarning.transform.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
             Vector3 scale = transform.lossyScale;
             float xScale = Mathf.Max(.001f, Mathf.Abs(scale.x)), yScale = Mathf.Max(.001f, Mathf.Abs(scale.y));
-            bool cleave = Action == InvaderAction.HeroCleave;
+            bool cleave = Action == InvaderAction.HeroCleave || Action == InvaderAction.Roaring;
             float width = cleave ? HeroCleaveRadius * 2 : distance + ChargeHitRadius * 2;
             float height = cleave ? HeroCleaveRadius * 2 : ChargeHitRadius * 2;
             // Sprite bounds are 2 by 1 units. Compensate for Rowen's enlarged model.
@@ -297,7 +309,7 @@ namespace DarkLord.Minions
         {
             DarkLord.Gameplay.GameplayEffects.Show(transform,
                 charge ? DarkLord.Gameplay.GameplayEffectKind.HolyCharge : DarkLord.Gameplay.GameplayEffectKind.HolySlash,
-                transform.position + (Vector3)direction * .7f, direction, charge);
+                transform.position, direction, true);
         }
         private SpriteRenderer Marker(string title, Vector3 position, Vector3 size)
         {
@@ -325,13 +337,16 @@ namespace DarkLord.Minions
         }
         public InvaderTacticsSaveData CaptureSave() => new InvaderTacticsSaveData { role = Role, action = Action,
             remaining = IsPerforming ? Mathf.Max(0, endsAt - Time.time) : 0, cooldown = Mathf.Max(0, nextAbility - Time.time), direction = direction,
-            healPosition = healTarget != null ? (Vector2)healTarget.transform.position : savedHealPosition };
+            healPosition = healTarget != null ? (Vector2)healTarget.transform.position : savedHealPosition,
+            hero = hero, phaseTwo = phaseTwo, marks = marks };
         public void RestoreSave(InvaderTacticsSaveData data)
         {
             Configure(data != null ? data.role : InvaderRole.Warrior);
             if (data == null) return;
             direction = data.direction.normalized; savedHealPosition = data.healPosition;
             nextAbility = Time.time + data.cooldown;
+            if (data.hero) hero = true;
+            phaseTwo = data.phaseTwo; marks = data.marks ?? System.Array.Empty<Vector2>();
             if (data.action != InvaderAction.Ready) Begin(data.action, data.remaining);
         }
         private void OnDestroy() { if (iconSprite != null) Destroy(iconSprite); if (warningSprite != null) Destroy(warningSprite); if (warningTexture != null) Destroy(warningTexture); }

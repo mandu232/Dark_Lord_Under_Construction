@@ -256,7 +256,7 @@ namespace DarkLord.UI
                 return;
             }
             if (healthBar != null) healthBar.SetHealth(Selected.Health.CurrentHealth, Selected.Health.MaximumHealth);
-            titleText.text = $"{Selected.DisplayName} · Lv.{Selected.Health.Level}";
+            titleText.text = $"{Selected.DisplayName} · {Selected.TierName} · Lv.{Selected.Health.Level}";
             string state = Selected.State == ActorState.Attack ? "공격 중" : Selected.State == ActorState.Hit ? "피격 중" : Selected.State == ActorState.Run ? "이동 중" : "대기 중";
             Selected.GetRoomBonuses(out int attackPercent, out _, out _, activeBuffs);
             int attack = Selected.AttackDamage, basicAttack = Selected.BaseAttackDamage;

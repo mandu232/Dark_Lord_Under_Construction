@@ -15,6 +15,7 @@ namespace DarkLord.Gameplay
             public bool follows;
             public Vector3 offset;
             public float elapsed, duration;
+            public DarkLord.Actors.TopDownMotor motor;
         }
         private static readonly Dictionary<UnityEngine.SceneManagement.SceneHandle, GameplayEffects> scenes = new Dictionary<UnityEngine.SceneManagement.SceneHandle, GameplayEffects>();
         private static GameplayEffectLibrary library;
@@ -25,7 +26,7 @@ namespace DarkLord.Gameplay
         private static void ResetStatics() { scenes.Clear(); library = null; }
 
         public static void Show(Transform owner, GameplayEffectKind kind, Vector3 position,
-            Vector2 direction = default, bool follow = false, float duration = 0)
+            Vector2 direction = default, bool follow = false, float duration = 0, float scale = 1, float stretch = 1)
         {
             if (!Application.isPlaying || owner == null || !owner.gameObject.scene.IsValid()) return;
             if (library == null) library = Resources.Load<GameplayEffectLibrary>("GameplayEffects");
@@ -39,14 +40,21 @@ namespace DarkLord.Gameplay
                 effects = root.AddComponent<GameplayEffects>(); effects.sceneHandle = handle;
                 scenes[handle] = effects;
             }
-            effects.Play(owner, clip, position, direction, follow, duration);
+            effects.Play(owner, clip, position, direction, follow, duration, scale, stretch);
         }
 
-        private void Play(Transform owner, GameplayEffectLibrary.Clip clip, Vector3 position, Vector2 direction, bool follow, float duration)
+        // A right-facing shot or stream whose art spans `reach` world units, fitted between two points.
+        public static void ShowBetween(Transform owner, GameplayEffectKind kind, Vector3 from, Vector3 to, float reach)
+        {
+            Vector2 delta = to - from;
+            Show(owner, kind, from, delta.normalized, stretch: Mathf.Max(.1f, delta.magnitude / reach));
+        }
+
+        private void Play(Transform owner, GameplayEffectLibrary.Clip clip, Vector3 position, Vector2 direction, bool follow, float duration, float scale, float stretch)
         {
             // Keep repeated healing/marks readable instead of layering identical effects on one actor.
             Playback entry = null;
-            if (clip.kind == GameplayEffectKind.Heal || clip.kind == GameplayEffectKind.Curse)
+            if (clip.kind == GameplayEffectKind.Heal || clip.kind == GameplayEffectKind.HolyHeal || clip.kind == GameplayEffectKind.Curse)
                 foreach (var item in pool)
                     if (item.renderer.enabled && item.follow == owner && item.clip == clip) return;
             foreach (var item in pool) if (!item.renderer.enabled) { entry = item; break; }
@@ -63,13 +71,17 @@ namespace DarkLord.Gameplay
             var renderer = entry.renderer;
             if (library.material != null) renderer.sharedMaterial = library.material;
             renderer.name = clip.kind.ToString(); renderer.sprite = clip.frames[0]; renderer.color = clip.tint;
+            entry.motor = clip.facesMovement ? owner.GetComponent<DarkLord.Actors.TopDownMotor>() : null;
             renderer.transform.position = position;
-            renderer.transform.rotation = Quaternion.Euler(0, 0, direction.sqrMagnitude > .001f ? Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg : 0);
-            float scale = clip.width / Mathf.Max(.001f, clip.frames[0].bounds.size.x);
-            renderer.transform.localScale = new Vector3(scale, scale * clip.heightScale, 1);
+            renderer.transform.rotation = entry.motor != null ? FacingRotation(entry.motor) : Quaternion.Euler(0, 0, direction.sqrMagnitude > .001f ? Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg : 0);
+            float size = scale * clip.width / Mathf.Max(.001f, clip.frames[0].bounds.size.x);
+            renderer.transform.localScale = new Vector3(size * stretch, size * clip.heightScale, 1);
             renderer.sortingOrder = Mathf.Clamp(-Mathf.RoundToInt(owner.position.y * 16) + clip.sortingOffset, -30000, 30000);
             renderer.enabled = true;
         }
+
+        private static Quaternion FacingRotation(DarkLord.Actors.TopDownMotor motor) =>
+            Quaternion.Euler(0, 0, Mathf.Atan2(motor.Facing.y, motor.Facing.x) * Mathf.Rad2Deg);
 
         private void Update()
         {
@@ -82,6 +94,7 @@ namespace DarkLord.Gameplay
                 if (entry.follows)
                 {
                     entry.renderer.transform.position = entry.follow.position + entry.offset;
+                    if (entry.motor != null) entry.renderer.transform.rotation = FacingRotation(entry.motor);
                     entry.renderer.sortingOrder = Mathf.Clamp(-Mathf.RoundToInt(entry.follow.position.y * 16) + entry.clip.sortingOffset, -30000, 30000);
                 }
                 float progress = entry.clip.loop ? Mathf.Repeat(entry.elapsed / entry.clip.duration, 1) : entry.elapsed / entry.duration;

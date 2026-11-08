@@ -130,7 +130,8 @@ namespace DarkLord.Gameplay
         {
             blastVisited.Clear();
             int count=Physics2D.OverlapCircle(center.transform.position,radius,new ContactFilter2D { useTriggers=false },blastOverlaps);
-            GameplayEffects.Show(center.transform,GameplayEffectKind.BloodNova,center.transform.position);
+            // The pulse art reaches 2.5 units; sized to the real blast so its ring shows what it hits.
+            GameplayEffects.Show(center.transform,GameplayEffectKind.BloodPulse,center.transform.position,scale:radius/2.5f);
             for(int i=0;i<count;i++)
             {
                 var enemy=blastOverlaps[i].GetComponentInParent<ActorHealth>();

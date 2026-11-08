@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DarkLord.Gameplay
 {
-    public enum GameplayEffectKind { Slash, WideSlash, BloodNova, BloodWard, Summon, Curse, Heal, HolySlash, HolyCharge, FrostNova, Aegis, Haste }
+    public enum GameplayEffectKind { Slash, WideSlash, BloodNova, BloodWard, Summon, Curse, Heal, HolySlash, HolyCharge, FrostNova, Aegis, Haste, BloodPulse, BloodLance, BloodBite, BloodBolt, BloodNeedle, BloodThread, HolyHeal, BloodEmpower, BloodAura, BloodHit, HolyHit, BloodBurst, HolyMark, HolyPulse }
 
     public sealed class GameplayEffectLibrary : ScriptableObject
     {
@@ -19,6 +19,8 @@ namespace DarkLord.Gameplay
             public Vector2 offset;
             public float heightScale = 1;
             public int sortingOffset = 8;
+            // Right-facing status art turns to trail behind the followed actor's movement.
+            public bool facesMovement;
             // Hold a readable shield between its short appearance and disappearance.
             public int sustainFrame = -1;
             public float transitionDuration = .18f;

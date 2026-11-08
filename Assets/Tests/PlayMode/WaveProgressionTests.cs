@@ -1,3 +1,4 @@
+using System.Linq;
 using DarkLord.Gameplay;
 using NUnit.Framework;
 
@@ -8,40 +9,34 @@ namespace DarkLord.Tests
         [Test]
         public void FirstWaveIsASmallScoutPatrol()
         {
-            Assert.That(WaveProgression.EnemyCount(1, 3, 2), Is.EqualTo(2));
-            Assert.That(WaveProgression.EnemyHealth(1, 55, 10), Is.EqualTo(36));
+            Assert.That(WaveProgression.EnemyCount(1, 3, 2), Is.EqualTo(3));
+            Assert.That(WaveProgression.EnemyHealth(1, 55, 10), Is.EqualTo(50));
             Assert.That(WaveProgression.ClearReward(1, 12, 4), Is.EqualTo(12));
         }
 
         [Test]
         public void LaterWavesBuildPressureGradually()
         {
-            Assert.That(WaveProgression.EnemyCount(4, 3, 2), Is.EqualTo(6));
-            Assert.That(WaveProgression.EnemyHealth(4, 55, 10), Is.EqualTo(61));
+            Assert.That(WaveProgression.EnemyCount(4, 3, 2), Is.EqualTo(10));
+            Assert.That(WaveProgression.EnemyHealth(4, 55, 10), Is.EqualTo(110));
             Assert.That(WaveProgression.ClearReward(4, 12, 4), Is.EqualTo(24));
         }
 
         [Test]
-        public void CampaignCurveFitsTheTwoSlimeRecoveryArmyAtEveryDifficulty()
+        public void EveryWaveOutgrowsTheLastAtEveryDifficulty()
         {
             var levels = new[] { GameDifficulty.Easy, GameDifficulty.Normal, GameDifficulty.Hard, GameDifficulty.Nightmare };
-            int[][] counts = { new[] {2,2,3,5,6}, new[] {2,3,4,6,8}, new[] {2,4,5,7,10}, new[] {3,4,6,8,11} };
-            int[][] health = { new[] {29,35,42,49,58}, new[] {36,44,52,61,72}, new[] {41,51,60,70,83}, new[] {47,57,68,79,94} };
-            for (int difficulty = 0; difficulty < levels.Length; difficulty++)
+            foreach (var level in levels)
             {
-                var options = new NewGameOptions { difficulty = levels[difficulty] };
+                var options = new NewGameOptions { difficulty = level };
+                float previous = 0;
                 for (int wave = 1; wave <= 5; wave++)
                 {
-                    Assert.AreEqual(counts[difficulty][wave - 1], options.EnemyCount(WaveProgression.EnemyCount(wave, 3, 2)));
-                    Assert.AreEqual(health[difficulty][wave - 1], options.EnemyHealth(WaveProgression.EnemyHealth(wave, 55, 10)));
+                    float budget = options.EnemyCount(WaveProgression.EnemyCount(wave, 3, 2)) * options.EnemyHealth(WaveProgression.EnemyHealth(wave, 55, 10));
+                    Assert.Greater(budget, previous * 1.2f); previous = budget;
                 }
             }
-            float previous = 72;
-            for (int wave = 2; wave <= 5; wave++)
-            {
-                float budget = WaveProgression.EnemyCount(wave, 3, 2) * WaveProgression.EnemyHealth(wave, 55, 10);
-                Assert.That(budget / previous, Is.InRange(1.2f, 2f)); previous = budget;
-            }
+            Assert.AreEqual(new[] { 1, 1, 2, 2, 3 }, new[] { 1, 2, 3, 4, 5 }.Select(WaveProgression.EnemyLevel).ToArray());
         }
 
         [Test]

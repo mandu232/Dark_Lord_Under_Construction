@@ -139,6 +139,7 @@ namespace DarkLord.Persistence
             player.RestoreHealth(sharedMaximum, sharedHealth);
             wallet.RestoreAmounts(loaded.gold, loaded.souls, loaded.crystals);
             summoning.RestoreGuards(loaded.guards);
+            summoning.RestoreFallen(loaded.fallenGuards);
             dungeon.MoveStartingRecruitmentToCore();
             waves.RestoreSave(loaded.wave);
             waves.Combat?.RestoreSave(loaded.combat);
@@ -177,7 +178,7 @@ namespace DarkLord.Persistence
             coreHealth = core.CurrentHealth, coreMaximumHealth = core.MaximumHealth,
             sharedCoreHealth = true,
             gold = wallet.Gold, souls = wallet.Souls, crystals = wallet.DarkCrystals,
-            dungeon = dungeon.CaptureSave(Identify), guards = summoning.CaptureGuards(), wave = waves.CaptureSave(), corpses = waves.Harvest?.Capture(), economy = waves.Economy?.Capture()
+            dungeon = dungeon.CaptureSave(Identify), guards = summoning.CaptureGuards(), fallenGuards = summoning.CaptureFallen(), wave = waves.CaptureSave(), corpses = waves.Harvest?.Capture(), economy = waves.Economy?.Capture()
         };
         public bool Save(int slot, SaveSlotStore store = null)
         {

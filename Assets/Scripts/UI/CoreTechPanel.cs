@@ -27,7 +27,7 @@ namespace DarkLord.UI
         private TechId? hovered;
         private static readonly Color TextColor = new Color32(247, 231, 210, 255), Accent = new Color32(193, 84, 100, 255),
             Locked = new Color32(105, 87, 92, 255), Insufficient = new Color32(143, 64, 78, 255), Complete = new Color32(216, 182, 129, 255),
-            Surface = new Color32(24, 15, 22, 255), Fill = new Color32(36, 21, 29, 255);
+            Surface = new Color32(24, 15, 22, 255), Fill = new Color32(36, 21, 29, 255), TreeBackground = new Color(.075f, .04f, .055f);
         public bool IsVisible => root != null && root.gameObject.activeInHierarchy;
         public TechId Selected => selected;
         public UnityEngine.UI.ScrollRect TreeScroll => scroll;
@@ -78,20 +78,16 @@ namespace DarkLord.UI
             walletLabel = Label("Bloodstone balance", root, "", 23, new Vector2(300, 414), new Vector2(350, 50));
             Button("Close technology tree", root, new Vector2(600, 414), new Vector2(150, 50), "닫기 · Esc", () => waves.Economy.Close(), out _);
             progress = Label("Technology completion", root, "", 18, new Vector2(-495, 360), new Vector2(310, 30));
-            summary = Label("Technology overview", root, "마우스를 누른 채 좌우로 드래그하여 다음 연구를 확인하세요", 18, new Vector2(155, 360), new Vector2(950, 30));
+            summary = Label("Technology overview", root, "연구에 마우스를 올리면 효과와 선행 조건을 볼 수 있습니다", 18, new Vector2(155, 360), new Vector2(950, 30));
             BuildScrollView();
-            // One common origin makes the six existing research paths read as a single tree.
-            var core = DiagramRect("Technology origin", content, new Vector2(120, 14), new Vector2(96, 96));
+            // The six research paths fan out from one core so every node fits without scrolling.
+            var core = DiagramRect("Technology origin", content, Pivot, new Vector2(96, 96));
             var coreFrame = core.gameObject.AddComponent<TechNodeGraphic>(); coreFrame.raycastTarget = false; coreFrame.SetPalette(Accent, Fill);
             var coreIcon = Rect("Core emblem", core, new Vector2(0, 4), new Vector2(48, 48)).gameObject.AddComponent<TechIconGraphic>();
             coreIcon.Configure(TechId.CoreVitality); coreIcon.color = TextColor;
-            Label("Tree origin name", core, "던전 코어", 20, new Vector2(0, -70), new Vector2(200, 30));
-            Segment("Tree origin connector", content, new Vector2(168, 14), new Vector2(250, 14));
-            Segment("Tree branching trunk", content, new Vector2(250, -184), new Vector2(250, 300));
-            Segment("Tree upper continuation", content, new Vector2(250, 300), new Vector2(1360, 300));
-            Segment("Tree second trunk", content, new Vector2(1360, -184), new Vector2(1360, 300));
+            Label("Tree origin name", core, "던전 코어", 20, new Vector2(0, -64), new Vector2(200, 30));
             foreach (var node in TechCatalog.All)
-                if (!node.Parent.HasValue) Segment("Tree branch " + node.Id, content, new Vector2(node.Row < 3 ? 250 : 1360, Position(node).y), Position(node) - Vector2.right * 32);
+                if (!node.Parent.HasValue) { var d = (Position(node) - Pivot).normalized; Segment("Tree branch " + node.Id, content, Pivot + d * 48, Position(node) - d * 32); }
             BuildResearchConnections();
             foreach (var node in TechCatalog.All)
             {
@@ -104,7 +100,10 @@ namespace DarkLord.UI
                 var id = node.Id; button.onClick.AddListener(() => Select(id)); nodes.Add(id, button);
                 var icon = Rect("Technology icon", rect, new Vector2(0, 4), new Vector2(36, 36)).gameObject.AddComponent<TechIconGraphic>(); icon.Configure(id); icons.Add(id, icon);
                 ranks.Add(id, Label("Research rank", rect, "", 12, new Vector2(0, -20), new Vector2(60, 20)));
-                Label("Technology name", rect, node.Name, 17, new Vector2(0, -44), new Vector2(200, 20));
+                var nameLabel = Label("Technology name", rect, node.Name, 17, new Vector2(0, -44), new Vector2(200, 20));
+                // Fan spokes run under the labels; a plate in the tree's background color keeps names readable.
+                var plate = Rect("Technology name plate", rect, nameLabel.rectTransform.anchoredPosition, new Vector2(nameLabel.GetPreferredValues(node.Name).x + 10, 22));
+                Image(plate, TreeBackground); plate.SetSiblingIndex(nameLabel.transform.GetSiblingIndex());
                 rect.gameObject.AddComponent<TechNodePointer>().Configure(this, id);
             }
             var information = Rect("Technology details", root, new Vector2(0, -387), new Vector2(1320, 140));
@@ -123,20 +122,15 @@ namespace DarkLord.UI
         private void BuildScrollView()
         {
             var view = Rect("Technology scroll view", root, new Vector2(0, 15), new Vector2(1320, 640));
-            Image(view, new Color(.075f, .04f, .055f)).raycastTarget = true;
+            Image(view, TreeBackground).raycastTarget = true;
             scroll = view.gameObject.AddComponent<UnityEngine.UI.ScrollRect>(); scroll.horizontal = true; scroll.vertical = false;
             scroll.movementType = UnityEngine.UI.ScrollRect.MovementType.Clamped; scroll.inertia = true; scroll.decelerationRate = .12f; scroll.scrollSensitivity = 45;
             var viewport = Rect("Viewport", view, Vector2.zero, Vector2.zero);
             viewport.anchorMin = Vector2.zero; viewport.anchorMax = Vector2.one; viewport.offsetMin = new Vector2(0, 28); viewport.offsetMax = Vector2.zero;
             Image(viewport, Color.white).raycastTarget = true; viewport.gameObject.AddComponent<UnityEngine.UI.Mask>().showMaskGraphic = false;
             // This is a fixed diagram canvas, not a dynamically sized list: layout fitters would overwrite its authored bounds.
-            content = Rect("Content", viewport, Vector2.zero, new Vector2(2300, 612)); content.anchorMin = content.anchorMax = new Vector2(0, .5f); content.pivot = new Vector2(0, .5f);
+            content = Rect("Content", viewport, Vector2.zero, new Vector2(1320, 612)); content.anchorMin = content.anchorMax = new Vector2(0, .5f); content.pivot = new Vector2(0, .5f);
             scroll.viewport = viewport; scroll.content = content;
-            var barRect = Rect("Horizontal scrollbar", view, new Vector2(0, -308), new Vector2(1240, 12)); Image(barRect, new Color(.17f, .08f, .11f));
-            var bar = barRect.gameObject.AddComponent<UnityEngine.UI.Scrollbar>(); bar.direction = UnityEngine.UI.Scrollbar.Direction.LeftToRight;
-            var sliding = Rect("Sliding Area", barRect, Vector2.zero, Vector2.zero); sliding.anchorMin = Vector2.zero; sliding.anchorMax = Vector2.one; sliding.offsetMin = sliding.offsetMax = Vector2.zero;
-            var handle = Rect("Handle", sliding, Vector2.zero, Vector2.zero); handle.anchorMin = Vector2.zero; handle.anchorMax = Vector2.one; handle.offsetMin = handle.offsetMax = Vector2.zero;
-            bar.handleRect = handle; bar.targetGraphic = Image(handle, Accent); scroll.horizontalScrollbar = bar;
             scroll.onValueChanged.AddListener(_ => ClearHover());
         }
         private void DescriptionBox(RectTransform rect)
@@ -156,34 +150,37 @@ namespace DarkLord.UI
             foreach (var middle in TechCatalog.All)
             {
                 if (middle.Column != 1) continue;
-                Vector2 from = Position(TechCatalog.Get(middle.Parent.Value)) + Vector2.right * 32;
-                Vector2 center = Position(middle), to = center - Vector2.right * 32;
+                Vector2 center = Position(middle), outward = (center - Pivot).normalized;
+                links[middle.Id] = Link(middle.Id, Position(TechCatalog.Get(middle.Parent.Value)), center);
                 // The shared stem belongs to the middle node and is drawn once, not once per child.
-                links[middle.Id] = new List<UnityEngine.UI.Image> {
-                    Segment("Prerequisite " + middle.Id, content, from, to),
-                    Segment("Prerequisite arrow upper " + middle.Id, content, to + new Vector2(-8, 5), to),
-                    Segment("Prerequisite arrow lower " + middle.Id, content, to + new Vector2(-8, -5), to),
-                    Segment("Research fork stem " + middle.Id, content, center + Vector2.right * 32, center + Vector2.right * 140) };
+                links[middle.Id].Add(Segment("Research fork stem " + middle.Id, content, center + outward * 32, center + outward * ForkStem));
             }
             foreach (var leaf in TechCatalog.All)
             {
                 if (leaf.Column < 2) continue;
-                Vector2 parent = Position(TechCatalog.Get(leaf.Parent.Value));
-                Vector2 fork = parent + Vector2.right * 140, to = Position(leaf) - Vector2.right * 32;
-                Vector2 bend = new Vector2(fork.x, to.y);
-                links[leaf.Id] = new List<UnityEngine.UI.Image> {
-                    Segment("Prerequisite fork " + leaf.Id, content, fork, bend),
-                    Segment("Prerequisite " + leaf.Id, content, bend, to),
-                    Segment("Prerequisite arrow upper " + leaf.Id, content, to + new Vector2(-8, 5), to),
-                    Segment("Prerequisite arrow lower " + leaf.Id, content, to + new Vector2(-8, -5), to) };
+                var parent = Position(TechCatalog.Get(leaf.Parent.Value));
+                links[leaf.Id] = Link(leaf.Id, parent + (parent - Pivot).normalized * ForkStem, Position(leaf), 0);
             }
         }
+        // A line between two node centers, trimmed to the node edges, with an arrowhead at the child.
+        private List<UnityEngine.UI.Image> Link(TechId id, Vector2 from, Vector2 to, float trimFrom = 32)
+        {
+            var d = (to - from).normalized; var n = new Vector2(-d.y, d.x); from += d * trimFrom; to -= d * 32;
+            return new List<UnityEngine.UI.Image> {
+                Segment("Prerequisite " + id, content, from, to),
+                Segment("Prerequisite arrow upper " + id, content, to - d * 8 + n * 5, to),
+                Segment("Prerequisite arrow lower " + id, content, to - d * 8 - n * 5, to) };
+        }
+        // Rows spread 30° apart across the upper half circle; leaves split 7° to either side of their path.
+        private static readonly Vector2 Pivot = new Vector2(660, -240);
+        private const float ForkStem = 90;
         private static Vector2 Position(TechDefinition node)
         {
-            float group = node.Row < 3 ? 0 : 1100;
-            float y = 212 - (node.Row % 3) * 198;
-            return new Vector2(group + (node.Column == 0 ? 400 : node.Column == 1 ? 680 : 960),
-                y + (node.Column == 2 ? 50 : node.Column == 3 ? -50 : 0));
+            // Blood Nova has no path of its own: it sits straight above the core, between the two middle paths.
+            if (node.Row == 6) return Pivot + Vector2.up * 270;
+            float angle = (165 - 30 * node.Row + (node.Column == 2 ? 7 : node.Column == 3 ? -7 : 0)) * Mathf.Deg2Rad;
+            float radius = node.Column == 0 ? 200 : node.Column == 1 ? 350 : 495;
+            return Pivot + radius * new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
         }
         private Vector2 RootPosition(TechId id) => root.InverseTransformPoint(NodeRect(id).position);
         private UnityEngine.UI.Image Segment(string name, Transform parent, Vector2 from, Vector2 to)

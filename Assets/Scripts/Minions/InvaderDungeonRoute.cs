@@ -9,6 +9,13 @@ namespace DarkLord.Minions
     // confines its route until every defender there is dead or has left the room.
     public sealed class InvaderDungeonRoute
     {
+        // A room can only hold so many attackers per defender; the surplus pushes past towards the core.
+        public static int HoldLimit(int defenders) => Mathf.Max(2, Mathf.CeilToInt(defenders * 1.5f));
+        private static int nextLockOrder;
+        private readonly HashSet<DungeonSection> bypassed = new HashSet<DungeonSection>();
+        // Null for tests and tools that drive a route without an invader.
+        private readonly MinionController owner;
+        public int LockOrder { get; private set; }
         private readonly DungeonGrid dungeon;
         private readonly ActorHealth objective;
         private readonly DarkLord.Player.MinionSummoning playerSummoning;
@@ -29,9 +36,9 @@ namespace DarkLord.Minions
         public bool CanApproachTargetDirectly => Target != null && !HasWaypoint;
         public bool ContainsInLockedRoom(Vector3 position) => LockedRoom != null && LockedRoom.Bounds.Contains(dungeon.WorldToCell(position));
 
-        public InvaderDungeonRoute(DungeonGrid dungeon, ActorHealth objective, Vector2 travelOffset = default, ActorHealth player = null)
+        public InvaderDungeonRoute(DungeonGrid dungeon, ActorHealth objective, Vector2 travelOffset = default, ActorHealth player = null, MinionController owner = null)
         {
-            this.dungeon = dungeon; this.objective = objective;
+            this.dungeon = dungeon; this.objective = objective; this.owner = owner;
             Player = player;
             playerSummoning = player != null ? player.GetComponent<DarkLord.Player.MinionSummoning>() : null;
             // Stay within the waypoint cell, including corners and one-cell doors.
@@ -45,7 +52,7 @@ namespace DarkLord.Minions
             while (HasWaypoint && Vector2.Distance(position, NextWaypoint) <= 0.18f) waypoint++;
             var cell = dungeon.WorldToCell(position);
             var currentRoom = dungeon.Construction.RoomAt(cell);
-            bool entered = currentRoom != null && currentRoom != LockedRoom && currentRoom != destinationRoom;
+            bool entered = currentRoom != null && currentRoom != LockedRoom && currentRoom != destinationRoom && !bypassed.Contains(currentRoom);
             if (Time.time < nextSearch && revision == dungeon.Construction.Revision && !entered && (!HasWaypoint || !dungeon.BlocksNpcMovement(path[waypoint])) &&
                 (Target == null || Target.isActiveAndEnabled && Target.IsAlive)) return;
             nextSearch = Time.time + 0.2f;
@@ -53,7 +60,15 @@ namespace DarkLord.Minions
             var previousTarget = Target;
             path.Clear(); waypoint = 0; Target = null;
 
-            if (LockedRoom == null) LockedRoom = currentRoom;
+            if (LockedRoom == null && currentRoom != null && !bypassed.Contains(currentRoom)) { LockedRoom = currentRoom; LockOrder = nextLockOrder++; }
+            if (LockedRoom != null && LockedRoom != dungeon.CoreRoom && owner != null)
+            {
+                GetDefenders(LockedRoom);
+                if (defenders.Count > 0 && owner.AttackersHeldAhead(this) >= HoldLimit(defenders.Count))
+                {
+                    bypassed.Add(LockedRoom); visited.Add(LockedRoom); LockedRoom = null;
+                }
+            }
             if (LockedRoom != null)
             {
                 // Knockback can cross a doorway without clearing the room. A confined
@@ -123,7 +138,7 @@ namespace DarkLord.Minions
             for (int i = 0; i < path.Count; i++)
             {
                 var room = dungeon.Construction.RoomAt(path[i]);
-                if (room == null) continue;
+                if (room == null || bypassed.Contains(room)) continue;
                 GetDefenders(room);
                 var building = dungeon.BuildingInRoom(room, true);
                 if (defenders.Count == 0 && (building == null || building.IsRuined)) continue;

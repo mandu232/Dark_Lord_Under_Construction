@@ -45,6 +45,35 @@ namespace DarkLord.Tests
             tactics.RestoreSave(new InvaderTacticsSaveData { role = role });
             return tactics;
         }
+        [Test] public void RowenRoarsOnceAtHalfHealthThenStrikesFarTargetsWithJudgement()
+        {
+            var hero = Enemy(InvaderRole.Charger); hero.SetHero(true);
+            var far = Actor(Vector3.right * 9, Faction.Dungeon);
+            Physics2D.SyncTransforms();
+            hero.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Charger, cooldown = 0 });
+            Assert.IsTrue(hero.TryAct(far));
+            Assert.AreEqual(InvaderAction.Judging, hero.Action, "A target beyond charge range is struck from afar");
+            var health = hero.GetComponent<ActorHealth>(); health.RestoreHealth(100, 50);
+            hero.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Charger, cooldown = 0 });
+            Assert.IsTrue(hero.TryAct(far));
+            Assert.AreEqual(InvaderAction.Roaring, hero.Action); Assert.IsTrue(hero.PhaseTwo); Assert.IsTrue(hero.HeroArmored);
+            hero.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Charger, action = InvaderAction.Judging, phaseTwo = true, marks = new Vector2[] { far.transform.position } });
+            Assert.IsTrue(hero.TryAct(far));
+            Assert.AreEqual(75, far.CurrentHealth);
+            Assert.AreEqual(InvaderAction.Recovering, hero.Action); Assert.IsFalse(hero.HeroArmored, "The recovery is the opening to punish him");
+        }
+        [Test] public void ShieldbearerBashesAdjacentTargetAfterTelegraph()
+        {
+            var shield = Enemy(InvaderRole.Shieldbearer);
+            var near = Actor(Vector3.right, Faction.Dungeon);
+            Physics2D.SyncTransforms();
+            shield.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Shieldbearer, cooldown = 0 });
+            Assert.IsTrue(shield.TryAct(near));
+            Assert.AreEqual(InvaderAction.ShieldBash, shield.Action); Assert.AreEqual(100, near.CurrentHealth);
+            shield.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Shieldbearer, action = InvaderAction.ShieldBash, direction = Vector2.right });
+            Assert.IsTrue(shield.TryAct(near));
+            Assert.AreEqual(90, near.CurrentHealth);
+        }
         [Test] public void RowenCleaveHitsAllEnemiesInFrontAndKeepsChargeAtRange()
         {
             var hero = Enemy(InvaderRole.Charger); hero.SetHero(true);
@@ -300,10 +329,13 @@ namespace DarkLord.Tests
             var data = new UnityEditor.SerializedObject(waves); data.FindProperty("spawnInterval").floatValue = .05f; data.ApplyModifiedPropertiesWithoutUndo();
             waves.BeginNextWave(); var midway = JsonUtility.FromJson<WaveSaveData>(JsonUtility.ToJson(waves.CaptureSave()));
             waves.RestoreSave(midway);
-            yield return new WaitForSeconds(.7f);
-            var saved = Find<GameSaveSession>().Capture();
+            var session = Find<GameSaveSession>();
+            for (float end = Time.time + 5; session.Capture().wave.pending > 0 && Time.time < end;) yield return null;
+            var saved = session.Capture();
             Assert.AreEqual(0, saved.wave.pending);
             CollectionAssert.AreEqual(expected, saved.wave.enemies.Select(e => e.tactics.role).ToArray());
+            Assert.AreEqual(1, saved.wave.enemies.Count(e => e.tactics.hero), "Rowen arrives exactly once, last");
+            Assert.IsTrue(saved.wave.enemies[saved.wave.enemies.Length - 1].tactics.hero);
             SaveSlotStore.Validate(saved);
             saved.wave.enemies[0].tactics.role = (InvaderRole)99;
             Assert.Throws<System.IO.InvalidDataException>(() => SaveSlotStore.Validate(saved));

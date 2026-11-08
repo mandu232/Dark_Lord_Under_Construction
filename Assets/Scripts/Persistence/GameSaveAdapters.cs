@@ -14,7 +14,7 @@ namespace DarkLord.Persistence
         {
             position = actor.transform.position, post = actor.GuardPosition, order = actor.Order, behaviour = actor.Behaviour,
             health = actor.Health.CurrentHealth, maximumHealth = actor.Health.MaximumHealth,
-            level = actor.Health.Level, experience = actor.Health.Experience,
+            level = actor.Health.Level, experience = actor.Health.Experience, tier = actor.Tier,
             slows = actor.GetComponent<TopDownMotor>().CaptureSlows(),
             tactics = actor.GetComponent<InvaderTactics>()?.CaptureSave(),
             role = actor.Role, attackCooldown = actor.AttackCooldownRemaining, support = actor.GetComponent<MinionSupport>()?.CaptureSave(),
@@ -134,23 +134,28 @@ namespace DarkLord.Player
     {
         public MinionSaveData[] CaptureGuards() => guards.Where(g=>g!=null && g.IsAlive).Select(SaveSnapshots.Actor).ToArray();
         public void ClearSavedGuards()
-        { foreach(var guard in guards.ToArray()) if(guard!=null)RemoveGuard(guard); }
+        { fallen.Clear(); foreach(var guard in guards.ToArray()) if(guard!=null)RemoveGuard(guard); }
+        public MinionSaveData[] CaptureFallen() => fallen.ToArray();
+        public void RestoreFallen(MinionSaveData[] saved) { fallen.Clear(); if(saved!=null)fallen.AddRange(saved); }
         public void RestoreGuards(MinionSaveData[] saved)
         {
-            foreach(var data in saved)
-            {
-                var definition = RecruitDefinitionFor(data.role);
-                if (definition == null) throw new InvalidOperationException("저장된 하수인 병과를 찾을 수 없습니다.");
-                var guard=Instantiate(definition,data.position,Quaternion.identity);guard.name=guard.DisplayName;
-                UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(guard.gameObject, gameObject.scene);
-                guard.Health.RestoreExperience(data.level,data.experience);guard.Health.RestoreHealth(data.maximumHealth,data.health);guard.Defend(data.post);guard.SetBehaviour(data.behaviour);
-                guard.RestoreAttackCooldown(data.attackCooldown);
-                guard.GetComponent<MinionSupport>()?.RestoreSave(data.support);
-                guard.GetComponent<TopDownMotor>().RestoreSlows(data.slows);
-                if (data.augmentStatus != null) AugmentStatus.Get(guard.Health).RestoreSave(data.augmentStatus);
-                if(data.order==MinionOrder.Return)guard.ReturnToPost();
-                guards.Add(guard);dungeon.RegisterGuard(guard);commands?.Register(guard);
-            }
+            foreach(var data in saved) RebuildGuard(data);
+        }
+        private MinionController RebuildGuard(MinionSaveData data)
+        {
+            var definition = RecruitDefinitionFor(data.role);
+            if (definition == null) throw new InvalidOperationException("저장된 하수인 병과를 찾을 수 없습니다.");
+            var guard=Instantiate(definition,data.position,Quaternion.identity);guard.name=guard.DisplayName;
+            UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(guard.gameObject, gameObject.scene);
+            guard.Health.RestoreExperience(data.level,data.experience);guard.Health.RestoreHealth(data.maximumHealth,data.health);guard.Defend(data.post);guard.SetBehaviour(data.behaviour);
+            guard.SetTier(data.tier);
+            guard.RestoreAttackCooldown(data.attackCooldown);
+            guard.GetComponent<MinionSupport>()?.RestoreSave(data.support);
+            guard.GetComponent<TopDownMotor>().RestoreSlows(data.slows);
+            if (data.augmentStatus != null) AugmentStatus.Get(guard.Health).RestoreSave(data.augmentStatus);
+            if(data.order==MinionOrder.Return)guard.ReturnToPost();
+            TrackGuard(guard);
+            return guard;
         }
     }
 }
@@ -196,9 +201,10 @@ namespace DarkLord.Gameplay
             {
                 var enemy=Instantiate(invaderPrefab,saved.position,Quaternion.identity,transform);enemy.name=$"Wave {CurrentWave} Invader";
                 enemy.gameObject.AddComponent<WaveMember>().Number = saved.invasionWave > 0 ? saved.invasionWave : CurrentWave;
-                var health=enemy.Health;health.RestoreHealth(saved.maximumHealth,saved.health);enemy.Assault(dungeonCore,dungeon,dungeonLord);
+                var health=enemy.Health;health.RestoreExperience(saved.level,0);health.RestoreHealth(saved.maximumHealth,saved.health);enemy.Assault(dungeonCore,dungeon,dungeonLord);
                 enemy.RestorePoise(saved.poise);
-                ConfigureInvader(enemy, saved.tactics != null ? saved.tactics.role : InvaderRole.Warrior).RestoreSave(saved.tactics);
+                var enemyTactics=ConfigureInvader(enemy, saved.tactics != null ? saved.tactics.role : InvaderRole.Warrior);enemyTactics.RestoreSave(saved.tactics);
+                if(enemyTactics.IsHero)MakeBoss(enemy,enemyTactics);
                 enemy.GetComponent<TopDownMotor>().RestoreSlows(saved.slows);
                 if (saved.augmentStatus != null) AugmentStatus.Get(health).RestoreSave(saved.augmentStatus);
                 Action handler=()=>OnInvaderDied(health);deathHandlers.Add(health,handler);health.Died+=handler;aliveInvaders.Add(health);

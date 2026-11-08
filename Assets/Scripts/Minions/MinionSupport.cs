@@ -24,7 +24,7 @@ namespace DarkLord.Minions
         public float Cooldown => Mathf.Max(0, nextHeal - Time.time);
         public int HealAmount
         {
-            get { controller.GetRoomBonuses(out int attack, out _, out _); return Mathf.RoundToInt(14 * (1 + attack / 100f)); }
+            get { controller.GetRoomBonuses(out int attack, out _, out _); return Mathf.RoundToInt(14 * controller.TierAttackScale * (1 + attack / 100f)); }
         }
         private void Awake() { controller = GetComponent<MinionController>(); health = GetComponent<ActorHealth>(); motor = GetComponent<TopDownMotor>(); }
         private void OnEnable() { health.Damaged += Interrupt; health.Died += Cancel; }
@@ -64,7 +64,7 @@ namespace DarkLord.Minions
                 if (Eligible(target))
                 {
                     target.Heal(HealAmount); controller.DefenceDungeon?.Augments?.SupportHeal(target);
-                    MinionShot.Show(transform, target.transform.position, new Color(.4f, 1, .7f));
+                    DarkLord.Gameplay.GameplayEffects.ShowBetween(transform, DarkLord.Gameplay.GameplayEffectKind.BloodThread, transform.position, target.transform.position, 5.5f);
                 }
                 Cancel(); return true;
             }

@@ -23,7 +23,7 @@ namespace DarkLord.Tests
                 for (int i = 0; i < 10; i++) GameplayEffects.Show(owner.transform, GameplayEffectKind.Heal, Vector3.zero, follow: true);
                 var pool = scene.GetRootGameObjects().Single(g => g.GetComponent<GameplayEffects>() != null);
                 Assert.AreEqual(1, pool.GetComponentsInChildren<SpriteRenderer>().Count(r => r.enabled));
-                yield return new WaitForSeconds(.7f);
+                yield return new WaitForSeconds(.9f);
                 Assert.IsFalse(pool.GetComponentsInChildren<SpriteRenderer>().Any(r => r.enabled));
                 GameplayEffects.Show(owner.transform, GameplayEffectKind.Heal, Vector3.zero, follow: true);
                 Assert.AreEqual(1, pool.GetComponentsInChildren<SpriteRenderer>().Count(r => r.enabled));
@@ -46,12 +46,10 @@ namespace DarkLord.Tests
                 GameplayEffects.Show(owner.transform, GameplayEffectKind.Aegis, Vector3.zero, follow: true, duration: .8f);
                 yield return new WaitForSeconds(.25f);
                 var renderer = scene.GetRootGameObjects().Single(g => g.GetComponent<GameplayEffects>() != null).GetComponentInChildren<SpriteRenderer>();
-                var fullShield = Resources.Load<GameplayEffectLibrary>("GameplayEffects").Find(GameplayEffectKind.Aegis).frames[5];
+                // The sigil loops for as long as the shield lasts, then disappears.
                 Assert.IsTrue(renderer.enabled);
-                Assert.AreSame(fullShield, renderer.sprite);
                 yield return new WaitForSeconds(.25f);
                 Assert.IsTrue(renderer.enabled);
-                Assert.AreSame(fullShield, renderer.sprite);
                 yield return new WaitForSeconds(.4f);
                 Assert.IsFalse(renderer.enabled);
             }
@@ -81,7 +79,7 @@ namespace DarkLord.Tests
                 GameplayEffects.Show(owner.transform, GameplayEffectKind.Heal, Vector3.zero, follow: true);
                 owner.transform.position = new Vector3(3, 4);
                 yield return null;
-                Assert.AreEqual(new Vector3(3, 3.9f), pool.GetComponentsInChildren<SpriteRenderer>().Single(r => r.enabled).transform.position);
+                Assert.AreEqual(new Vector3(3, 4), pool.GetComponentsInChildren<SpriteRenderer>().Single(r => r.enabled).transform.position);
                 Assert.AreEqual(48, pool.GetComponentsInChildren<SpriteRenderer>().Length);
                 owner.SetActive(false);
                 yield return null;
@@ -90,6 +88,21 @@ namespace DarkLord.Tests
             finally { Time.timeScale = previousScale; }
             yield return SceneManager.UnloadSceneAsync(scene);
             Assert.IsFalse(Object.FindObjectsByType<GameplayEffects>(FindObjectsSortMode.None).Any(p => p.gameObject.scene == scene));
+        }
+
+        [Test]
+        public void EnemyHealingUsesHolyEffectAndAlliedHealingUsesBlood()
+        {
+            var scene = SceneManager.CreateScene("Heal faction validation");
+            foreach (var (faction, expected) in new[] { (DarkLord.Actors.Faction.Invader, "HolyHeal"), (DarkLord.Actors.Faction.Dungeon, "Heal") })
+            {
+                var actor = new GameObject("Healed actor", typeof(DarkLord.Actors.ActorHealth)); SceneManager.MoveGameObjectToScene(actor, scene);
+                var health = actor.GetComponent<DarkLord.Actors.ActorHealth>(); health.Configure(faction, 100); health.RestoreHealth(100, 50);
+                health.Heal(10);
+                var pool = scene.GetRootGameObjects().Single(g => g.GetComponent<GameplayEffects>() != null);
+                Assert.IsTrue(pool.GetComponentsInChildren<SpriteRenderer>().Any(r => r.enabled && r.name == expected), expected);
+            }
+            SceneManager.UnloadSceneAsync(scene);
         }
 
         [Test]

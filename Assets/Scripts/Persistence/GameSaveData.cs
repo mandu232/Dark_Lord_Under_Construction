@@ -21,6 +21,8 @@ namespace DarkLord.Persistence
         public bool sharedCoreHealth;
         public DungeonSaveData dungeon;
         public MinionSaveData[] guards = new MinionSaveData[0];
+        // Missing in older saves. Minions waiting to return after the current fight.
+        public MinionSaveData[] fallenGuards;
         public CorpseWorkerSaveData[] workers;
         public WaveSaveData wave;
         public TutorialSaveData tutorial;
@@ -86,6 +88,7 @@ namespace DarkLord.Persistence
         public Vector2 post;
         public int health, maximumHealth;
         public int level = 1, experience;
+        public int tier = 1;
         public MinionOrder order;
         public MinionBehaviour behaviour;
         public MovementSlowSaveData[] slows;
@@ -312,6 +315,7 @@ namespace DarkLord.Persistence
                     throw new InvalidDataException("코어 위치가 올바르지 않습니다.");
             }
             foreach (var actor in data.guards) CheckActor(actor);
+            if (data.fallenGuards != null) foreach (var actor in data.fallenGuards) CheckActor(actor);
             if (data.workers != null)
                 foreach (var worker in data.workers)
                     if (worker == null || !Finite(worker.position) || worker.health < 1 || worker.health > CorpseWorker.MaximumHealth)

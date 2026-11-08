@@ -1,0 +1,442 @@
+fileFormatVersion: 2
+guid: 6ff26b9572fbe2041a39f39144ebaf1a
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 582256013602811885
+    second: blood-thread_0
+  - first:
+      213: 3647935144010024886
+    second: blood-thread_1
+  - first:
+      213: -3939966550990271571
+    second: blood-thread_2
+  - first:
+      213: 2431324239342268604
+    second: blood-thread_3
+  - first:
+      213: 8994498778784863099
+    second: blood-thread_4
+  - first:
+      213: -7441845338727094638
+    second: blood-thread_5
+  - first:
+      213: -7640637607440570729
+    second: blood-thread_6
+  - first:
+      213: -4475162710477546497
+    second: blood-thread_7
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: blood-thread_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 120
+        width: 104
+        height: 20
+      alignment: 9
+      pivot: {x: 0.057692308, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3215bbf97e1bfd64684c9e7ca12052fd
+      internalID: 582256013602811885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-thread_1
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 120
+        width: 104
+        height: 20
+      alignment: 9
+      pivot: {x: 0.057692308, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f6cf342079a343409e863e8d7bf9cf8
+      internalID: 3647935144010024886
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-thread_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 100
+        width: 104
+        height: 20
+      alignment: 9
+      pivot: {x: 0.057692308, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 576f9ce3200a15946b8a438e48f12022
+      internalID: -3939966550990271571
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-thread_3
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 100
+        width: 104
+        height: 20
+      alignment: 9
+      pivot: {x: 0.057692308, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6cb3159fb8b5c3949a40607feea77339
+      internalID: 2431324239342268604
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-thread_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 80
+        width: 104
+        height: 20
+      alignment: 9
+      pivot: {x: 0.057692308, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 67707e215de937746b57e5ebdca02380
+      internalID: 8994498778784863099
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-thread_5
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 80
+        width: 104
+        height: 20
+      alignment: 9
+      pivot: {x: 0.057692308, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 621b2218d01a0aa47b1e53d0a8e87602
+      internalID: -7441845338727094638
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-thread_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 60
+        width: 104
+        height: 20
+      alignment: 9
+      pivot: {x: 0.057692308, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 370c6b1d290500c408b351bbe6c338ea
+      internalID: -7640637607440570729
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-thread_7
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 60
+        width: 104
+        height: 20
+      alignment: 9
+      pivot: {x: 0.057692308, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b2c157deda7a9c647a47842f80ed8364
+      internalID: -4475162710477546497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-thread_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 40
+        width: 104
+        height: 20
+      alignment: 9
+      pivot: {x: 0.057692308, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 723646e0831300240b742260627ac9b3
+      internalID: 222941325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-thread_9
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 40
+        width: 104
+        height: 20
+      alignment: 9
+      pivot: {x: 0.057692308, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 629b00637b281174e80e822136702b1c
+      internalID: 1646900359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-thread_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 20
+        width: 104
+        height: 20
+      alignment: 9
+      pivot: {x: 0.057692308, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f8f1a51bba36cd41a6d936025a57575
+      internalID: -614242548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-thread_11
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 20
+        width: 104
+        height: 20
+      alignment: 9
+      pivot: {x: 0.057692308, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 41d3c5186c3aa1e42b2abfecedb1a65d
+      internalID: -1932884456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-thread_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 104
+        height: 20
+      alignment: 9
+      pivot: {x: 0.057692308, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fca382fffce370d4c8d76ce6b7f18d23
+      internalID: -1611769486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 020c07d9e38462046b17689776169994
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      blood-thread_0: 582256013602811885
+      blood-thread_1: 3647935144010024886
+      blood-thread_10: -614242548
+      blood-thread_11: -1932884456
+      blood-thread_12: -1611769486
+      blood-thread_2: -3939966550990271571
+      blood-thread_3: 2431324239342268604
+      blood-thread_4: 8994498778784863099
+      blood-thread_5: -7441845338727094638
+      blood-thread_6: -7640637607440570729
+      blood-thread_7: -4475162710477546497
+      blood-thread_8: 222941325
+      blood-thread_9: 1646900359
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

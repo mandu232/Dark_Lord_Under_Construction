@@ -1,0 +1,399 @@
+fileFormatVersion: 2
+guid: fb60e80519a3d93408d4f02426923803
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2508049853363664201
+    second: blood-lance_0
+  - first:
+      213: -1039269569008446851
+    second: blood-lance_1
+  - first:
+      213: -8223471471236702774
+    second: blood-lance_2
+  - first:
+      213: -4103045754790792598
+    second: blood-lance_3
+  - first:
+      213: -4585302638330069930
+    second: blood-lance_4
+  - first:
+      213: -8724025106405136705
+    second: blood-lance_5
+  - first:
+      213: -5077234466744702536
+    second: blood-lance_6
+  - first:
+      213: -2760028369182169389
+    second: blood-lance_7
+  - first:
+      213: 6488298997469849088
+    second: blood-lance_8
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: blood-lance_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 200
+        width: 136
+        height: 40
+      alignment: 9
+      pivot: {x: 0.1764706, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 46dbba9a39742354bafdf61bef3089fc
+      internalID: -2508049853363664201
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-lance_1
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 200
+        width: 136
+        height: 40
+      alignment: 9
+      pivot: {x: 0.1764706, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 22d04e76b2766f448bef933e5ef3df7d
+      internalID: -1039269569008446851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-lance_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 160
+        width: 136
+        height: 40
+      alignment: 9
+      pivot: {x: 0.1764706, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5a8e0138e9c8f3a4a88c04d85b224b6f
+      internalID: -8223471471236702774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-lance_3
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 160
+        width: 136
+        height: 40
+      alignment: 9
+      pivot: {x: 0.1764706, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b257c2b954799b84ab453722dd404f12
+      internalID: -4103045754790792598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-lance_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 120
+        width: 136
+        height: 40
+      alignment: 9
+      pivot: {x: 0.1764706, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 53a05abac89d07b43ae7bc2469a5a713
+      internalID: -4585302638330069930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-lance_5
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 120
+        width: 136
+        height: 40
+      alignment: 9
+      pivot: {x: 0.1764706, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 18aadebced4f27246b93701a91c859d6
+      internalID: -8724025106405136705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-lance_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 80
+        width: 136
+        height: 40
+      alignment: 9
+      pivot: {x: 0.1764706, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7d173256640b45c47920dc8f0572c6cd
+      internalID: -5077234466744702536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-lance_7
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 80
+        width: 136
+        height: 40
+      alignment: 9
+      pivot: {x: 0.1764706, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 688c3821be9be4341b1463b34d58ec40
+      internalID: -2760028369182169389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-lance_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 40
+        width: 136
+        height: 40
+      alignment: 9
+      pivot: {x: 0.1764706, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e88ee507660b5a042835f7f27700da0c
+      internalID: 6488298997469849088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-lance_9
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 40
+        width: 136
+        height: 40
+      alignment: 9
+      pivot: {x: 0.1764706, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2c25d942694b8c4468261dfd3b378ebe
+      internalID: 355189862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-lance_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 136
+        height: 40
+      alignment: 9
+      pivot: {x: 0.1764706, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2e57c2bb6a03cbb4c9ec03830a9e088d
+      internalID: 445872934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 141e11e29fe387146b0feef95f7ddcda
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      blood-lance_0: -2508049853363664201
+      blood-lance_1: -1039269569008446851
+      blood-lance_10: 445872934
+      blood-lance_2: -8223471471236702774
+      blood-lance_3: -4103045754790792598
+      blood-lance_4: -4585302638330069930
+      blood-lance_5: -8724025106405136705
+      blood-lance_6: -5077234466744702536
+      blood-lance_7: -2760028369182169389
+      blood-lance_8: 6488298997469849088
+      blood-lance_9: 355189862
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

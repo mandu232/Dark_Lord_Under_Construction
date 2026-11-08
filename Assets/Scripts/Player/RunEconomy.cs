@@ -32,7 +32,7 @@ namespace DarkLord.Player
         private MinionSummoning summoning;
         private DungeonExpansion construction;
         private AlchemyExchange alchemy;
-        private InputAction interact, close;
+        private InputAction interact, close, character;
         private EconomySaveData data = new EconomySaveData();
         private BuildItemDefinition[] offers = Array.Empty<BuildItemDefinition>();
         private GoblinMerchantVisual merchant;
@@ -40,7 +40,9 @@ namespace DarkLord.Player
         public bool IsCoreOpen { get; private set; }
         public bool IsMerchantOpen { get; private set; }
         public bool IsOpen => IsCoreOpen || IsMerchantOpen;
-        public bool BlocksGameplayInput => IsOpen || consumedFrame == Time.frameCount;
+        // In combat the character window is read-only and must not freeze the player.
+        public bool IsCharacterOpen { get; private set; }
+        public bool BlocksGameplayInput => IsOpen || IsCharacterOpen && waves != null && !waves.InCombat || consumedFrame == Time.frameCount;
         public string Message { get; private set; } = "";
         public event Action<TechId> ResearchCompleted;
         public int BloodDebt => data.bloodDebt;
@@ -62,6 +64,7 @@ namespace DarkLord.Player
         public bool NearMerchant => MerchantPresent && Vector2.Distance(transform.position, MerchantPosition) <= 2.5f;
         public bool CanManageCore => CanUse && IsCoreOpen && NearCore;
         public bool CanManageMerchant => CanUse && IsMerchantOpen && NearMerchant;
+        public bool CanChangeLoadout => isActiveAndEnabled && health != null && health.IsAlive && Time.timeScale > 0 && waves != null && waves.CanUseFacilities;
         public int Level(LordUpgrade upgrade) => upgrade == LordUpgrade.Vitality ? data.vitality : upgrade == LordUpgrade.Power ? data.power : data.speed;
         public int UpgradeCost(LordUpgrade upgrade) => 3 * (Level(upgrade) + 1);
         public static string UpgradeName(LordUpgrade upgrade) => upgrade == LordUpgrade.Vitality ? "생명력" : upgrade == LordUpgrade.Power ? "혈기의 힘" : "기민함";
@@ -70,10 +73,11 @@ namespace DarkLord.Player
         {
             interact = new InputAction("Use core or goblin merchant", InputActionType.Button, "<Keyboard>/f");
             close = new InputAction("Close core or merchant", InputActionType.Button, "<Keyboard>/escape");
+            character = new InputAction("Toggle character window", InputActionType.Button, "<Keyboard>/i");
         }
-        private void OnEnable() { interact.Enable(); close.Enable(); }
-        private void OnDisable() { interact.Disable(); close.Disable(); Close(); }
-        private void OnDestroy() { interact.Dispose(); close.Dispose(); if (merchant != null) Destroy(merchant.gameObject); }
+        private void OnEnable() { interact.Enable(); close.Enable(); character.Enable(); }
+        private void OnDisable() { interact.Disable(); close.Disable(); character.Disable(); Close(); IsCharacterOpen = false; }
+        private void OnDestroy() { interact.Dispose(); close.Dispose(); character.Dispose(); if (merchant != null) Destroy(merchant.gameObject); }
         public void Configure(WaveDirector director, DungeonGrid grid, CurrencyWallet resources)
         {
             waves = director; dungeon = grid; wallet = resources; health = GetComponent<ActorHealth>();
@@ -98,6 +102,13 @@ namespace DarkLord.Player
             return IsOpen;
         }
         public void Close() { if (IsOpen) consumedFrame = Time.frameCount; IsCoreOpen = IsMerchantOpen = false; }
+        public void CloseCharacter() { if (IsCharacterOpen) consumedFrame = Time.frameCount; IsCharacterOpen = false; }
+        public void ToggleCharacter()
+        {
+            if (IsCharacterOpen) { CloseCharacter(); return; }
+            if (IsOpen || Time.timeScale <= 0 || !health.IsAlive || waves.IsFinished || harvest.BlocksGameplayInput || construction.BlocksGameplayInput || summoning.BlocksGameplayInput || alchemy.BlocksGameplayInput) return;
+            IsCharacterOpen = true; consumedFrame = Time.frameCount;
+        }
         private void Update()
         {
             UpdateTechnology();
@@ -107,8 +118,11 @@ namespace DarkLord.Player
                 if (!MerchantPresent) { if (IsMerchantOpen) Close(); if (merchant != null) { Destroy(merchant.gameObject); merchant = null; } }
             }
             if (IsOpen && (!CanUse || IsCoreOpen && !NearCore || IsMerchantOpen && !NearMerchant)) Close();
+            if (character.WasPressedThisFrame()) ToggleCharacter();
+            if (IsCharacterOpen && (!health.IsAlive || waves.IsFinished)) CloseCharacter();
+            if (close.WasPressedThisFrame() && IsCharacterOpen) { CloseCharacter(); return; }
             if (close.WasPressedThisFrame() && IsOpen) { Close(); return; }
-            if (!IsOpen && interact.WasPressedThisFrame() && (EventSystem.current == null || EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>() == null)) TryInteract();
+            if (!IsOpen && !IsCharacterOpen && interact.WasPressedThisFrame() && (EventSystem.current == null || EventSystem.current.currentSelectedGameObject == null || EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>() == null)) TryInteract();
         }
         public void OnRoundStarted(int number)
         {
@@ -147,12 +161,14 @@ namespace DarkLord.Player
         public void Restore(EconomySaveData saved)
         {
             TechCatalog.Validate(saved?.technology);
-            Close(); if (merchant != null) { merchant.gameObject.SetActive(false); Destroy(merchant.gameObject); merchant = null; }
+            Close(); IsCharacterOpen = false; if (merchant != null) { merchant.gameObject.SetActive(false); Destroy(merchant.gameObject); merchant = null; }
             data = saved != null ? JsonUtility.FromJson<EconomySaveData>(JsonUtility.ToJson(saved)) : new EconomySaveData { lastUpkeepWave = waves.CurrentWave, nextMerchantWave = waves.CurrentWave + 2 };
             // Unity serializes null inline classes as default objects; preserve the legacy migration signal.
             if (saved == null || saved.technology == null) data.technology = null;
             ClearMerchantState();
             RestoreTechnology();
+            // A save from before the tree had Blood Nova for free and on Q.
+            if (saved != null && saved.technology == null) { data.technology.ranks[(int)TechId.BloodNova] = 1; data.technology.offensive = AttackSpell.BloodNova; }
             Message = "";
         }
     }

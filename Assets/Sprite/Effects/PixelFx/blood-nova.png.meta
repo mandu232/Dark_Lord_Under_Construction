@@ -1,0 +1,1381 @@
+fileFormatVersion: 2
+guid: e9c3ad9d2590fd54c9cff954cbaecd95
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8044528143498800048
+    second: blood-nova_0
+  - first:
+      213: -6548943950176712423
+    second: blood-nova_1
+  - first:
+      213: -6498834737868351738
+    second: blood-nova_2
+  - first:
+      213: 4412789678548695173
+    second: blood-nova_3
+  - first:
+      213: 7505382850967488609
+    second: blood-nova_4
+  - first:
+      213: 3584691735842287365
+    second: blood-nova_5
+  - first:
+      213: 7995496028655229396
+    second: blood-nova_6
+  - first:
+      213: 8014656829950116219
+    second: blood-nova_7
+  - first:
+      213: 8045585342143218288
+    second: blood-nova_8
+  - first:
+      213: -3367394981682802227
+    second: blood-nova_9
+  - first:
+      213: -7982618121643707864
+    second: blood-nova_10
+  - first:
+      213: 302114995581242314
+    second: blood-nova_11
+  - first:
+      213: 7600692213748054472
+    second: blood-nova_12
+  - first:
+      213: 1120278364951565232
+    second: blood-nova_13
+  - first:
+      213: -4661766657874276107
+    second: blood-nova_14
+  - first:
+      213: 805574088682142864
+    second: blood-nova_15
+  - first:
+      213: -2654340185481097971
+    second: blood-nova_16
+  - first:
+      213: -1285410063662469390
+    second: blood-nova_17
+  - first:
+      213: 3651241126121945035
+    second: blood-nova_18
+  - first:
+      213: 854664134570333159
+    second: blood-nova_19
+  - first:
+      213: -8424985074273684090
+    second: blood-nova_20
+  - first:
+      213: 7617834894153002366
+    second: blood-nova_21
+  - first:
+      213: -4126643976171099414
+    second: blood-nova_22
+  - first:
+      213: 6775365543278167790
+    second: blood-nova_23
+  - first:
+      213: 3095522336276123468
+    second: blood-nova_24
+  - first:
+      213: 3143781702385362329
+    second: blood-nova_25
+  - first:
+      213: 6727614431951022609
+    second: blood-nova_26
+  - first:
+      213: -3286832836276975887
+    second: blood-nova_27
+  - first:
+      213: -8964241131571980639
+    second: blood-nova_28
+  - first:
+      213: -4447955615229134691
+    second: blood-nova_29
+  - first:
+      213: -6068303786907057183
+    second: blood-nova_30
+  - first:
+      213: -1597319597863682497
+    second: blood-nova_31
+  - first:
+      213: 2918402271655546139
+    second: blood-nova_32
+  - first:
+      213: -8955017057781122926
+    second: blood-nova_33
+  - first:
+      213: 2259570891727150755
+    second: blood-nova_34
+  - first:
+      213: -879709583584331290
+    second: blood-nova_35
+  - first:
+      213: 29319085794750721
+    second: blood-nova_36
+  - first:
+      213: -209573213005853879
+    second: blood-nova_37
+  - first:
+      213: -8117565571240769661
+    second: blood-nova_38
+  - first:
+      213: -2295601701905724497
+    second: blood-nova_39
+  - first:
+      213: -472678182655812934
+    second: blood-nova_40
+  - first:
+      213: 7811076364800247167
+    second: blood-nova_41
+  - first:
+      213: -4339121062911479868
+    second: blood-nova_42
+  - first:
+      213: 8010523821573857896
+    second: blood-nova_43
+  - first:
+      213: -8331500679844711656
+    second: blood-nova_44
+  - first:
+      213: -5063185287002833475
+    second: blood-nova_45
+  - first:
+      213: 3383093328264541976
+    second: blood-nova_46
+  - first:
+      213: 5137603961380347309
+    second: blood-nova_47
+  - first:
+      213: 4714836057043218171
+    second: blood-nova_48
+  - first:
+      213: 5841703049090961876
+    second: blood-nova_49
+  - first:
+      213: 6145235983709418907
+    second: blood-nova_50
+  - first:
+      213: -2207874567971416861
+    second: blood-nova_51
+  - first:
+      213: 3253225165691988747
+    second: blood-nova_52
+  - first:
+      213: -3474882144725862978
+    second: blood-nova_53
+  - first:
+      213: -7005844592194536227
+    second: blood-nova_54
+  - first:
+      213: 7320575331109510181
+    second: blood-nova_55
+  - first:
+      213: 1983076325927424574
+    second: blood-nova_56
+  - first:
+      213: 3430751887339110602
+    second: blood-nova_57
+  - first:
+      213: -2676877004655752927
+    second: blood-nova_58
+  - first:
+      213: -6837758906289765069
+    second: blood-nova_59
+  - first:
+      213: 2391202434237298337
+    second: blood-nova_60
+  - first:
+      213: -670743462963818500
+    second: blood-nova_61
+  - first:
+      213: 3929281837600144860
+    second: blood-nova_62
+  - first:
+      213: -3843429878981387270
+    second: blood-nova_63
+  - first:
+      213: -7529727985308001227
+    second: blood-nova_64
+  - first:
+      213: 5792837865258946530
+    second: blood-nova_65
+  - first:
+      213: 6201061329618162014
+    second: blood-nova_66
+  - first:
+      213: 7105188749858979342
+    second: blood-nova_67
+  - first:
+      213: 1832265032903041333
+    second: blood-nova_68
+  - first:
+      213: -5097742834395167863
+    second: blood-nova_69
+  - first:
+      213: -9021176407976949726
+    second: blood-nova_70
+  - first:
+      213: 2180031363467813901
+    second: blood-nova_71
+  - first:
+      213: 8548709486400463467
+    second: blood-nova_72
+  - first:
+      213: -5861814221841748171
+    second: blood-nova_73
+  - first:
+      213: -5984222591039432749
+    second: blood-nova_74
+  - first:
+      213: -7926093424918661790
+    second: blood-nova_75
+  - first:
+      213: 3558348711016682398
+    second: blood-nova_76
+  - first:
+      213: -358538583425266853
+    second: blood-nova_77
+  - first:
+      213: -4892475792792789883
+    second: blood-nova_78
+  - first:
+      213: 6108991726243476065
+    second: blood-nova_79
+  - first:
+      213: -1060939718713768066
+    second: blood-nova_80
+  - first:
+      213: -8107071659043725289
+    second: blood-nova_81
+  - first:
+      213: -385904890157305672
+    second: blood-nova_82
+  - first:
+      213: -6402180643570862726
+    second: blood-nova_83
+  - first:
+      213: 6157699765468435952
+    second: blood-nova_84
+  - first:
+      213: 816323282559583149
+    second: blood-nova_85
+  - first:
+      213: -9080496879610725431
+    second: blood-nova_86
+  - first:
+      213: -1334064008724821633
+    second: blood-nova_87
+  - first:
+      213: -9210339817455840141
+    second: blood-nova_88
+  - first:
+      213: -3970534838662806901
+    second: blood-nova_89
+  - first:
+      213: 3660284486263574761
+    second: blood-nova_90
+  - first:
+      213: 1380047623202811008
+    second: blood-nova_91
+  - first:
+      213: 6449087190001624001
+    second: blood-nova_92
+  - first:
+      213: -6442397853879730976
+    second: blood-nova_93
+  - first:
+      213: -6309007513697484006
+    second: blood-nova_94
+  - first:
+      213: -2825570981885370134
+    second: blood-nova_95
+  - first:
+      213: 6257220835034217173
+    second: blood-nova_96
+  - first:
+      213: 2448757277692583808
+    second: blood-nova_97
+  - first:
+      213: 1540051679402745395
+    second: blood-nova_98
+  - first:
+      213: -45830913334103810
+    second: blood-nova_99
+  - first:
+      213: 356229591405269721
+    second: blood-nova_100
+  - first:
+      213: -5668037126018757736
+    second: blood-nova_101
+  - first:
+      213: 196308593173378864
+    second: blood-nova_102
+  - first:
+      213: 3987359773315455185
+    second: blood-nova_103
+  - first:
+      213: -3746961780086884215
+    second: blood-nova_104
+  - first:
+      213: 7737134220343301118
+    second: blood-nova_105
+  - first:
+      213: 3828404490521515485
+    second: blood-nova_106
+  - first:
+      213: 733045407345989093
+    second: blood-nova_107
+  - first:
+      213: 3616814161512796915
+    second: blood-nova_108
+  - first:
+      213: -8857596185692858021
+    second: blood-nova_109
+  - first:
+      213: -1745824935849763683
+    second: blood-nova_110
+  - first:
+      213: 5706549800086278546
+    second: blood-nova_111
+  - first:
+      213: 7966089175335946850
+    second: blood-nova_112
+  - first:
+      213: 1342585316762179369
+    second: blood-nova_113
+  - first:
+      213: -111420767992105386
+    second: blood-nova_114
+  - first:
+      213: -7741729058671855286
+    second: blood-nova_115
+  - first:
+      213: 7247025152293893524
+    second: blood-nova_116
+  - first:
+      213: 1486778617201811341
+    second: blood-nova_117
+  - first:
+      213: 3767568366791294637
+    second: blood-nova_118
+  - first:
+      213: 7901116314245424361
+    second: blood-nova_119
+  - first:
+      213: -483940591541372916
+    second: blood-nova_120
+  - first:
+      213: -7478910124911980078
+    second: blood-nova_121
+  - first:
+      213: -8576725783236194925
+    second: blood-nova_122
+  - first:
+      213: 1493530838214139414
+    second: blood-nova_123
+  - first:
+      213: 5417992311516440248
+    second: blood-nova_124
+  - first:
+      213: 7156377753910877663
+    second: blood-nova_125
+  - first:
+      213: -5152546364170480775
+    second: blood-nova_126
+  - first:
+      213: 3611500098610815715
+    second: blood-nova_127
+  - first:
+      213: -7486559807317145190
+    second: blood-nova_128
+  - first:
+      213: -2638332849326561143
+    second: blood-nova_129
+  - first:
+      213: -8141965817410214060
+    second: blood-nova_130
+  - first:
+      213: -2777177202986308478
+    second: blood-nova_131
+  - first:
+      213: -7756105400051897770
+    second: blood-nova_132
+  - first:
+      213: -3560896232137333922
+    second: blood-nova_133
+  - first:
+      213: -1156114494902300357
+    second: blood-nova_134
+  - first:
+      213: 593235498692150033
+    second: blood-nova_135
+  - first:
+      213: 8366167095820613642
+    second: blood-nova_136
+  - first:
+      213: 1675549162653492208
+    second: blood-nova_137
+  - first:
+      213: -4579246555638549923
+    second: blood-nova_138
+  - first:
+      213: 6458340876781246100
+    second: blood-nova_139
+  - first:
+      213: -5802534307465718793
+    second: blood-nova_140
+  - first:
+      213: -2656931265862739064
+    second: blood-nova_141
+  - first:
+      213: 360605569019176852
+    second: blood-nova_142
+  - first:
+      213: 603830162527635152
+    second: blood-nova_143
+  - first:
+      213: -8428157885746001737
+    second: blood-nova_144
+  - first:
+      213: 1993338589843809807
+    second: blood-nova_145
+  - first:
+      213: 4908024786759097123
+    second: blood-nova_146
+  - first:
+      213: -7037017337467766975
+    second: blood-nova_147
+  - first:
+      213: -1860691166518494273
+    second: blood-nova_148
+  - first:
+      213: 4621574558694414801
+    second: blood-nova_149
+  - first:
+      213: 3256897231367035144
+    second: blood-nova_150
+  - first:
+      213: 1862478736785343458
+    second: blood-nova_151
+  - first:
+      213: -3772732472168395786
+    second: blood-nova_152
+  - first:
+      213: 446814889138823041
+    second: blood-nova_153
+  - first:
+      213: 6285797752108030280
+    second: blood-nova_154
+  - first:
+      213: -4070621547260240618
+    second: blood-nova_155
+  - first:
+      213: 5834509500029627152
+    second: blood-nova_156
+  - first:
+      213: -6821271090431798658
+    second: blood-nova_157
+  - first:
+      213: 1105533469268876588
+    second: blood-nova_158
+  - first:
+      213: 7730170691445235995
+    second: blood-nova_159
+  - first:
+      213: -1343298902713490913
+    second: blood-nova_160
+  - first:
+      213: -9221191713859463490
+    second: blood-nova_161
+  - first:
+      213: -4930160841063479564
+    second: blood-nova_162
+  - first:
+      213: -2345833531345456518
+    second: blood-nova_163
+  - first:
+      213: -7316304453002041170
+    second: blood-nova_164
+  - first:
+      213: -404788723098202463
+    second: blood-nova_165
+  - first:
+      213: -8912889622515749255
+    second: blood-nova_166
+  - first:
+      213: -8044058468342888970
+    second: blood-nova_167
+  - first:
+      213: 8632491770952956027
+    second: blood-nova_168
+  - first:
+      213: -4009555091043818393
+    second: blood-nova_169
+  - first:
+      213: -1943899845792295344
+    second: blood-nova_170
+  - first:
+      213: -8288676817239376742
+    second: blood-nova_171
+  - first:
+      213: 7921567882509475827
+    second: blood-nova_172
+  - first:
+      213: -6992817135005478848
+    second: blood-nova_173
+  - first:
+      213: 2971950646265727340
+    second: blood-nova_174
+  - first:
+      213: 8880484972668362607
+    second: blood-nova_175
+  - first:
+      213: -2584774067073417008
+    second: blood-nova_176
+  - first:
+      213: 7065053845066201288
+    second: blood-nova_177
+  - first:
+      213: -6763957352925813598
+    second: blood-nova_178
+  - first:
+      213: 6921225032216676988
+    second: blood-nova_179
+  - first:
+      213: 2537357105244530891
+    second: blood-nova_180
+  - first:
+      213: 7541383699620826019
+    second: blood-nova_181
+  - first:
+      213: 2114735876247706727
+    second: blood-nova_182
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: blood-nova_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1080
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 57581c60b14c9fa45879ebd184dbe1d5
+      internalID: -8044528143498800048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_1
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 1080
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7fe25b4a59947844fa71af55d3d90324
+      internalID: -6548943950176712423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_2
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 1080
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d72c1da2d10136d4597586ff7c65a5d8
+      internalID: -6498834737868351738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_3
+      rect:
+        serializedVersion: 2
+        x: 648
+        y: 1080
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a31997abb1299334d933123867ac62d3
+      internalID: 4412789678548695173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_4
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 1080
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f74a2a286be231c4d8371c7e479d4858
+      internalID: 7505382850967488609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_5
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 1080
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 51f3ddacc9d1a8d4b80c50511affd0c5
+      internalID: 3584691735842287365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 864
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f260e8d777066884daab70b763af179f
+      internalID: 7995496028655229396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_7
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 864
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7468d686626fd6c42993880192c9a718
+      internalID: 8014656829950116219
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_8
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 864
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4fdf04623fc0ac46968c2bb751f7200
+      internalID: 8045585342143218288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_9
+      rect:
+        serializedVersion: 2
+        x: 648
+        y: 864
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: afc7303f00ef0af4fab20bc77060b991
+      internalID: -3367394981682802227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_10
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 864
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4eed3c17a5c0bd4f80d0a71def3b870
+      internalID: -7982618121643707864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_11
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 864
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d0efa1a943ef2d24c8683ce87a12a070
+      internalID: 302114995581242314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 648
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c077bab69bb6227498d3d382f3efed37
+      internalID: 7600692213748054472
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_13
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 648
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dbabd6ae067e27c42a500109dbc9365b
+      internalID: 1120278364951565232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_14
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 648
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d077239115048a1478d87f7065d0a1a6
+      internalID: -4661766657874276107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_15
+      rect:
+        serializedVersion: 2
+        x: 648
+        y: 648
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e7c3667d76c41d94b9b04aecef17128e
+      internalID: 805574088682142864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_16
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 648
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c66bc3c442f29684095a1ec9adecf1f4
+      internalID: -2654340185481097971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_17
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 648
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b798d027378622748a4075754d35b6c7
+      internalID: -1285410063662469390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 432
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d314163fe70bb1a40afebac73c2e637b
+      internalID: 3651241126121945035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_19
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 432
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8e9e5c8be54edc94895fd483b1e294f5
+      internalID: 854664134570333159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_20
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 432
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8d1fea4cfce3f864fb1dfb013abe069b
+      internalID: -8424985074273684090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_21
+      rect:
+        serializedVersion: 2
+        x: 648
+        y: 432
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7d8a71800b29058499b5778586947880
+      internalID: 7617834894153002366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_22
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 432
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b96e412ab76d0e84cae5aa9106b4bdbd
+      internalID: -4126643976171099414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_23
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 432
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef4077130ea9e9e4d99568d44968cecb
+      internalID: 6775365543278167790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 216
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 032026f6ab1799a4dbbe22fbc3a6c3f5
+      internalID: 3095522336276123468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_25
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 216
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3651126d0d1f6cf45b08866bc32b0369
+      internalID: 3143781702385362329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_26
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 216
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd609737b08b5904d864b54f9140c2d5
+      internalID: 6727614431951022609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_27
+      rect:
+        serializedVersion: 2
+        x: 648
+        y: 216
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d7593ff1d5c560d47ae18cd31994f063
+      internalID: -3286832836276975887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_28
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 216
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a0b37f40fa5b1c548af0d47d2d46532e
+      internalID: -8964241131571980639
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_29
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 216
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc89b76a1e4d64847adc503cf98e6b7d
+      internalID: -4447955615229134691
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blood-nova_30
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 216
+        height: 216
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c4dc82edb8fb8ce4bb9d7f69cda3114d
+      internalID: -6068303786907057183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 774eca1e984991c49bee3cbfd131ef04
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      blood-nova_0: -8044528143498800048
+      blood-nova_1: -6548943950176712423
+      blood-nova_10: -7982618121643707864
+      blood-nova_11: 302114995581242314
+      blood-nova_12: 7600692213748054472
+      blood-nova_13: 1120278364951565232
+      blood-nova_14: -4661766657874276107
+      blood-nova_15: 805574088682142864
+      blood-nova_16: -2654340185481097971
+      blood-nova_17: -1285410063662469390
+      blood-nova_18: 3651241126121945035
+      blood-nova_19: 854664134570333159
+      blood-nova_2: -6498834737868351738
+      blood-nova_20: -8424985074273684090
+      blood-nova_21: 7617834894153002366
+      blood-nova_22: -4126643976171099414
+      blood-nova_23: 6775365543278167790
+      blood-nova_24: 3095522336276123468
+      blood-nova_25: 3143781702385362329
+      blood-nova_26: 6727614431951022609
+      blood-nova_27: -3286832836276975887
+      blood-nova_28: -8964241131571980639
+      blood-nova_29: -4447955615229134691
+      blood-nova_3: 4412789678548695173
+      blood-nova_30: -6068303786907057183
+      blood-nova_4: 7505382850967488609
+      blood-nova_5: 3584691735842287365
+      blood-nova_6: 7995496028655229396
+      blood-nova_7: 8014656829950116219
+      blood-nova_8: 8045585342143218288
+      blood-nova_9: -3367394981682802227
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

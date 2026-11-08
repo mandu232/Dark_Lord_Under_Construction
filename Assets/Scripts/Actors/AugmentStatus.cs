@@ -51,7 +51,7 @@ namespace DarkLord.Actors
         public void BrandTrap() => trapUntil = Time.time + 8;
         public void Empower()
         {
-            if (!Empowered) DarkLord.Gameplay.GameplayEffects.Show(transform,DarkLord.Gameplay.GameplayEffectKind.Aegis,transform.position,follow:true,duration:5);
+            if (!Empowered) DarkLord.Gameplay.GameplayEffects.Show(transform,DarkLord.Gameplay.GameplayEffectKind.BloodEmpower,transform.position,follow:true,duration:5,scale:.7f);
             empoweredUntil = Time.time + 5;
         }
         public bool RegisterBroodHit()

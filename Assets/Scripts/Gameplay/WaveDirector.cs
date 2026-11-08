@@ -138,13 +138,28 @@ namespace DarkLord.Gameplay
             invader.gameObject.AddComponent<WaveMember>().Number = wave;
             var health = invader.GetComponent<ActorHealth>();
             health.Configure(Faction.Invader, EnemyHealthForWave(wave));
+            health.RestoreExperience(WaveProgression.EnemyLevel(wave), 0);
             var role = pendingRoles.Count > 0 ? pendingRoles.Dequeue() : InvaderRole.Warrior;
-            ConfigureInvader(invader, role);
+            // Rowen comes back as he promised, last through the rift of the final invasion.
+            bool boss = wave >= finalWave && sequence == 1;
+            if (boss) { role = InvaderRole.Charger; health.Configure(Faction.Invader, EnemyHealthForWave(wave) * BossHealthMultiplier); }
+            var tactics = ConfigureInvader(invader, role);
+            if (boss) MakeBoss(invader, tactics);
             invader.Assault(dungeonCore, dungeon, dungeonLord);
             Action handler = () => OnInvaderDied(health);
             deathHandlers.Add(health, handler);
             health.Died += handler;
             aliveInvaders.Add(health);
+        }
+
+        private const int BossHealthMultiplier = 8;
+        public ActorHealth ActiveBoss { get; private set; }
+        private void MakeBoss(MinionController invader, InvaderTactics tactics)
+        {
+            tactics.SetHero(true);
+            invader.name = "서풍의 용사 로웬";
+            invader.transform.localScale *= 1.4f;
+            ActiveBoss = invader.Health;
         }
 
         private static InvaderTactics ConfigureInvader(MinionController invader, InvaderRole role)
@@ -186,13 +201,22 @@ namespace DarkLord.Gameplay
             OfferRewards();
         }
 
+        // Traits that need a skill stay out of the pool until that skill is researched.
+        private bool TraitUsable(int id)
+        {
+            if(Economy==null)return id!=WaveRewardCatalog.LanceVolley;
+            if(id==WaveRewardCatalog.LanceVolley)return Economy.Has(TechId.BloodLance);
+            if(id==WaveRewardCatalog.BloodNova||id==WaveRewardCatalog.Tribute)return Economy.Has(TechId.BloodNova)||Economy.Has(TechId.FrostNova);
+            return true;
+        }
+
         private void OfferRewards()
         {
             var offers = new List<int>();
             var designs = new List<BuildItemDefinition>();
             var available = new List<int>();
             foreach(int id in WaveRewardCatalog.AugmentIds)
-                if(!Augments.Has(id)) available.Add(id);
+                if(!Augments.Has(id)&&TraitUsable(id)) available.Add(id);
             while(offers.Count<2 && available.Count>0)
             {
                 int index=UnityEngine.Random.Range(0,available.Count);

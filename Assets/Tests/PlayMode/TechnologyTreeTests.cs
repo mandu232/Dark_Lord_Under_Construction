@@ -57,9 +57,9 @@ namespace DarkLord.Tests
         }
         [Test]public void SixPathsBranchFromTheirMiddleResearch()
         {
-            Assert.AreEqual(24,TechCatalog.All.Length);
-            Assert.AreEqual(6,TechCatalog.All.Select(n=>n.Row).Distinct().Count());
-            foreach(var row in TechCatalog.All.GroupBy(n=>n.Row))
+            Assert.AreEqual(25,TechCatalog.All.Length);
+            Assert.AreEqual(6,TechCatalog.All.Where(n=>n.Row<6).Select(n=>n.Row).Distinct().Count());
+            foreach(var row in TechCatalog.All.Where(n=>n.Row<6).GroupBy(n=>n.Row))
             {
                 Assert.AreEqual(4,row.Count());
                 var ordered=row.OrderBy(n=>n.Column).ToArray();
@@ -73,17 +73,20 @@ namespace DarkLord.Tests
         {
             yield return null;yield return null;
             var panel=Find<DarkLord.UI.CoreTechPanel>();var tree=panel.transform.Find("Core technology tree");
-            foreach(var group in TechCatalog.All.GroupBy(n=>n.Row))
+            foreach(var group in TechCatalog.All.Where(n=>n.Row<6).GroupBy(n=>n.Row))
             {
                 var middle=group.Single(n=>n.Column==1);var upper=group.Single(n=>n.Column==2);var lower=group.Single(n=>n.Column==3);
                 var m=panel.NodeRect(middle.Id).anchoredPosition;var a=panel.NodeRect(upper.Id).anchoredPosition;var b=panel.NodeRect(lower.Id).anchoredPosition;
-                Assert.AreEqual(a.x,b.x);Assert.Greater(a.y,m.y);Assert.Less(b.y,m.y);Assert.Greater(a.y-b.y,90);
+                var o=TreePart(panel,"Technology origin").GetComponent<RectTransform>().anchoredPosition;var spoke=(m-o).normalized;
+                // Leaves sit farther out than their middle node, one on each side of its spoke.
+                Assert.Greater((a-o).magnitude,(m-o).magnitude+90);Assert.Greater((b-o).magnitude,(m-o).magnitude+90);
+                Assert.Less((spoke.x*(a-m).y-spoke.y*(a-m).x)*(spoke.x*(b-m).y-spoke.y*(b-m).x),0);Assert.Greater((a-b).magnitude,90);
                 Assert.AreEqual(1,tree.GetComponentsInChildren<Transform>(true).Count(t=>t.name=="Research fork stem "+middle.Id));
             }
         }
         [Test]public void MiddleResearchUnlocksBothLeavesWithoutBuyingTheOtherLeaf()
         {
-            foreach(var group in TechCatalog.All.GroupBy(n=>n.Row))
+            foreach(var group in TechCatalog.All.Where(n=>n.Row<6).GroupBy(n=>n.Row))
             {
                 var middle=group.Single(n=>n.Column==1);var upper=group.Single(n=>n.Column==2);var lower=group.Single(n=>n.Column==3);
                 Research(middle.Id);
@@ -105,18 +108,10 @@ namespace DarkLord.Tests
                 Vector2 db=(Vector2)(b.localRotation*Vector3.right)*b.sizeDelta.x*.5f;
                 var a0=a.anchoredPosition-da;var a1=a.anchoredPosition+da;
                 var b0=b.anchoredPosition-db;var b1=b.anchoredPosition+db;
-                bool ah=Mathf.Abs(da.y)<.1f,bh=Mathf.Abs(db.y)<.1f;
-                string pair=wires[i].name+" / "+wires[j].name;
-                if(ah&&bh&&Mathf.Abs(a0.y-b0.y)<.1f)
-                    Assert.LessOrEqual(Mathf.Min(Mathf.Max(a0.x,a1.x),Mathf.Max(b0.x,b1.x))-Mathf.Max(Mathf.Min(a0.x,a1.x),Mathf.Min(b0.x,b1.x)),.1f,pair);
-                else if(!ah&&!bh&&Mathf.Abs(a0.x-b0.x)<.1f)
-                    Assert.LessOrEqual(Mathf.Min(Mathf.Max(a0.y,a1.y),Mathf.Max(b0.y,b1.y))-Mathf.Max(Mathf.Min(a0.y,a1.y),Mathf.Min(b0.y,b1.y)),.1f,pair);
-                else if(ah!=bh)
-                {
-                    var h0=ah?a0:b0;var h1=ah?a1:b1;var v0=ah?b0:a0;var v1=ah?b1:a1;
-                    bool crossing=v0.x>Mathf.Min(h0.x,h1.x)+.1f&&v0.x<Mathf.Max(h0.x,h1.x)-.1f&&h0.y>Mathf.Min(v0.y,v1.y)+.1f&&h0.y<Mathf.Max(v0.y,v1.y)-.1f;
-                    Assert.IsFalse(crossing,pair);
-                }
+                // Wires run at any angle in the fan; touching at a shared endpoint is fine, a strict crossing is not.
+                System.Func<Vector2,Vector2,Vector2,float> side=(p,q,r)=>(q.x-p.x)*(r.y-p.y)-(q.y-p.y)*(r.x-p.x);
+                bool crossing=side(a0,a1,b0)*side(a0,a1,b1)<-1f&&side(b0,b1,a0)*side(b0,b1,a1)<-1f;
+                Assert.IsFalse(crossing,wires[i].name+" / "+wires[j].name);
             }
         }
         [Test]public void LegacySeventeenNodeSaveKeepsRanksAndUnlocksWithoutCharging()
@@ -132,9 +127,9 @@ namespace DarkLord.Tests
             var before=(int[])legacy.ranks.Clone();var saved=economy.Capture();saved.technology=legacy;
             int funds=economy.Wallet.DarkCrystals;
             economy.Restore(saved);var migrated=economy.Capture().technology;
-            Assert.AreEqual(24,migrated.ranks.Length);
+            Assert.AreEqual(25,migrated.ranks.Length);Assert.AreEqual(1,migrated.ranks[(int)TechId.BloodNova]);
             CollectionAssert.AreEqual(before,migrated.ranks.Take(17));
-            Assert.IsTrue(migrated.ranks.Skip(17).All(rank=>rank==0));
+            Assert.IsTrue(migrated.ranks.Skip(17).Take(TechCatalog.PreviousCount-17).All(rank=>rank==0));
             Assert.AreEqual(funds,economy.Wallet.DarkCrystals);
             Assert.IsTrue(economy.AttackUnlocked(AttackStyle.BloodLance));
             TechCatalog.Validate(migrated);economy.Restore(economy.Capture());
@@ -190,7 +185,53 @@ namespace DarkLord.Tests
             Assert.IsFalse(economy.EquipAttack(AttackStyle.BloodLance));Assert.IsFalse(economy.EquipSupport(SupportSpell.Mend));
             Research(TechId.Power);Research(TechId.WideSlash);
             Assert.AreEqual(AttackStyle.Slash,economy.EquippedAttack);Assert.IsTrue(economy.EquipAttack(AttackStyle.WideSlash));
-            economy.Close();Assert.IsFalse(economy.EquipAttack(AttackStyle.Slash));
+            economy.Close();Assert.IsTrue(economy.EquipAttack(AttackStyle.Slash));
+        }
+        [UnityTest]public IEnumerator BloodNovaNeedsResearchAndFillsTheEmptySlot()
+        {
+            economy.Close();yield return null;
+            Assert.AreEqual(AttackSpell.None,economy.EquippedOffensive);Assert.IsFalse(waves.Combat.TryOffensiveSpell());
+            Assert.IsFalse(economy.EquipOffensive(AttackSpell.BloodNova));
+            Assert.IsTrue(economy.TryInteract());Research(TechId.BloodNova);economy.Close();yield return null;
+            Assert.AreEqual(AttackSpell.BloodNova,economy.EquippedOffensive);Assert.IsTrue(waves.Combat.TryOffensiveSpell());
+        }
+        [Test]public void SaveFromBeforeBloodNovaResearchKeepsItEquipped()
+        {
+            var saved=economy.Capture();saved.technology=new TechTreeSaveData{ranks=new int[TechCatalog.PreviousCount],offensive=AttackSpell.BloodNova};
+            economy.Restore(saved);
+            Assert.IsTrue(economy.Has(TechId.BloodNova));Assert.AreEqual(AttackSpell.BloodNova,economy.EquippedOffensive);
+            saved=economy.Capture();saved.technology.ranks[(int)TechId.BloodNova]=0;
+            Assert.Throws<InvalidDataException>(()=>economy.Restore(saved));
+        }
+        [UnityTest]public IEnumerator LanceVolleyFiresFourHalfDamageShotsAndSlowsTheNextAttack()
+        {
+            Research(TechId.Power,2);Research(TechId.BloodLance);Assert.IsTrue(economy.EquipAttack(AttackStyle.BloodLance));
+            waves.Augments.Restore(new[]{WaveRewardCatalog.LanceVolley});
+            int shot=(20+economy.MagicBonus)/2;
+            var near=Enemy(waves.Lord.transform.position+Vector3.down*1.5f);
+            economy.Close();yield return null;
+            Assert.IsTrue(waves.Combat.TryAttack(Vector2.down));
+            yield return new WaitForSeconds(.4f);
+            // The target is only as wide as the inner pair of lanes: two of the four shots reach it.
+            Assert.AreEqual(500-shot*2,near.CurrentHealth);
+            yield return new WaitForSeconds(.5f);Assert.IsFalse(waves.Combat.TryAttack(Vector2.down));
+            yield return new WaitForSeconds(.4f);Assert.IsTrue(waves.Combat.TryAttack(Vector2.down));
+        }
+        [UnityTest]public IEnumerator CharacterWindowShowsStatsAndEquipsOnlyUnlockedSkillsOutOfCombat()
+        {
+            Research(TechId.Power);Research(TechId.WideSlash);economy.Close();
+            economy.ToggleCharacter();Assert.IsTrue(economy.IsCharacterOpen);
+            yield return null;yield return null;
+            var panel=Find<DarkLord.UI.CharacterPanel>();var window=panel.transform.Find("Character window");
+            Assert.IsTrue(panel.IsVisible);Assert.IsTrue(economy.BlocksGameplayInput);
+            StringAssert.Contains($"기본 공격 피해  {15+economy.AttackBonus}",window.Find("Character stats left").GetComponent<TMPro.TMP_Text>().text);
+            var wide=window.Find("Equip attack WideSlash").GetComponent<UnityEngine.UI.Button>();
+            Assert.IsTrue(wide.interactable);Assert.IsFalse(window.Find("Equip attack BloodLance").GetComponent<UnityEngine.UI.Button>().interactable);
+            wide.onClick.Invoke();Assert.AreEqual(AttackStyle.WideSlash,economy.EquippedAttack);
+            // Combat: the window stays readable, does not freeze the player and refuses changes.
+            waves.BeginTutorial();Time.timeScale=1;yield return null;
+            Assert.IsTrue(waves.InCombat);Assert.IsFalse(economy.BlocksGameplayInput);Assert.IsFalse(economy.EquipAttack(AttackStyle.Slash));
+            economy.ToggleCharacter();Assert.IsFalse(economy.IsCharacterOpen);
         }
         [UnityTest]public IEnumerator WideSlashHitsMultipleTargetsOutsideOriginalReach()
         {
@@ -343,11 +384,15 @@ namespace DarkLord.Tests
             var pointer=rect0.GetComponent<DarkLord.UI.TechNodePointer>();pointer.OnInitializePotentialDrag(data);pointer.OnBeginDrag(data);
             data.position+=Vector2.left*350;pointer.OnDrag(data);pointer.OnEndDrag(data);
             yield return null;
-            Assert.Less(panel.TreeScroll.content.anchoredPosition.x,start-100);Assert.AreEqual(selected,panel.Selected);Assert.IsFalse(data.eligibleForClick);
+            // The fan fits the viewport, so a drag neither scrolls nor selects.
+            Assert.AreEqual(start,panel.TreeScroll.content.anchoredPosition.x,.5f);Assert.AreEqual(selected,panel.Selected);Assert.IsFalse(data.eligibleForClick);
+            var viewport=panel.TreeScroll.viewport;
+            foreach(var node in TechCatalog.All)
+                Assert.IsTrue(viewport.rect.Contains((Vector2)viewport.InverseTransformPoint(panel.NodeRect(node.Id).position)),node.Id+" must be visible without scrolling");
             Assert.IsFalse(tree.GetComponentsInChildren<UnityEngine.UI.Button>(true).Any(b=>b.name.StartsWith("Technology tab ")));
             Assert.IsTrue(panel.NodeRect(TechId.Scavenger).gameObject.activeInHierarchy);
             Assert.IsTrue(panel.NodeRect(TechId.Vitality).gameObject.activeInHierarchy);
-            Assert.IsNotNull(TreePart(panel,"Tree branching trunk"));
+            Assert.IsNotNull(TreePart(panel,"Tree branch Vitality"));
             var details=tree.Find("Technology details").GetComponent<UnityEngine.UI.Image>();
             Assert.AreEqual("TextBox_0",details.sprite.name);
         }

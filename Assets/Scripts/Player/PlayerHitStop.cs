@@ -17,8 +17,8 @@ namespace DarkLord.Player
             // Outgoing hits are requested explicitly by the attack, excluding passive core pulses.
             if (player == null || !target.IsAlive) return;
             var tactics = source != null ? source.GetComponent<DarkLord.Minions.InvaderTactics>() : null;
-            bool heavy = tactics != null && (tactics.Action == DarkLord.Minions.InvaderAction.HeroCleave || tactics.Action == DarkLord.Minions.InvaderAction.Charging);
-            Request(player, heavy ? .055f : .045f);
+            bool heavy = tactics != null && tactics.IsPerforming;
+            Request(player, heavy ? .07f : .045f, heavy ? .17f : .1f);
         }
 
         public static void OnHit(PlayerCombat player, ActorHealth target, ImpactKind kind)
@@ -32,21 +32,23 @@ namespace DarkLord.Player
                 ImpactKind.Projectile => .025f,
                 _ => .035f
             };
-            if (!target.IsAlive) duration = Mathf.Min(.07f, duration + .015f);
-            Request(player, duration);
+            // A kill lands noticeably harder than any ordinary hit.
+            if (!target.IsAlive) duration = Mathf.Min(.09f, duration + .035f);
+            float shake = !target.IsAlive ? .14f : kind == ImpactKind.Heavy ? .1f : kind == ImpactKind.Projectile ? .05f : .075f;
+            Request(player, duration, shake);
         }
 
-        private static void Request(PlayerCombat player, float duration)
+        private static void Request(PlayerCombat player, float duration, float shake)
         {
             if (!Application.isPlaying || !player.isActiveAndEnabled || !player.GetComponent<ActorHealth>().IsAlive ||
                 player.IsFinished || player.BlocksTutorialInput || Time.timeScale <= 0) return;
             var effect = player.GetComponent<PlayerHitStop>();
             if (effect == null) effect = player.gameObject.AddComponent<PlayerHitStop>();
             if (!effect.isActiveAndEnabled) return;
-            effect.Impact(duration);
+            effect.Impact(duration, shake);
         }
 
-        private void Impact(float duration)
+        private void Impact(float duration, float shake)
         {
             if (active != null)
             {
@@ -66,7 +68,7 @@ namespace DarkLord.Player
             Time.timeScale = slowScale;
             var camera = Camera.main;
             if (camera != null && camera.gameObject.scene == gameObject.scene)
-                camera.GetComponent<CameraFollow>()?.Shake();
+                camera.GetComponent<CameraFollow>()?.Shake(shake);
         }
 
         private void Update()

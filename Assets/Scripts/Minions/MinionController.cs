@@ -87,13 +87,13 @@ namespace DarkLord.Minions
         public Vector2 GuardPosition => guardPosition;
         public ActorHealth Target => target;
         public bool IsAlive => health != null && health.IsAlive;
-        public bool IsStaggerImmune => health != null && health.Faction == Faction.Invader && Time.time < staggerImmuneUntil;
+        public bool IsStaggerImmune => health != null && health.Faction == Faction.Invader && (Time.time < staggerImmuneUntil || tactics != null && tactics.HeroArmored);
         public ActorHealth Health => health;
         public int AttackDamage
         {
-            get { GetRoomBonuses(out int attack, out _, out _); return Mathf.RoundToInt((attackDamage + health.GrowthAttackBonus) * (1 + attack / 100f)); }
+            get { GetRoomBonuses(out int attack, out _, out _); return Mathf.RoundToInt(BaseAttackDamage * (1 + attack / 100f)); }
         }
-        public int BaseAttackDamage => attackDamage + (health != null ? health.GrowthAttackBonus : 0);
+        public int BaseAttackDamage => Mathf.RoundToInt((attackDamage + (health != null ? health.GrowthAttackBonus : 0)) * TierAttackScale);
         public float AttackInterval => Mathf.Max(attackCooldown, attackDuration, attackWindup);
         public float AttackRange => attackRange;
         public float DetectionRange => detectionRange;
@@ -166,7 +166,18 @@ namespace DarkLord.Minions
             Assault(objective);
             if (assaultMode && dungeon != null)
                 dungeonRoute = new InvaderDungeonRoute(dungeon, objective,
-                    (Vector2)(transform.position - dungeon.CellCenter(dungeon.WorldToCell(transform.position))), player);
+                    (Vector2)(transform.position - dungeon.CellCenter(dungeon.WorldToCell(transform.position))), player, this);
+        }
+
+        // Invaders that reached this route's room first. Rowen always stands and fights.
+        internal int AttackersHeldAhead(InvaderDungeonRoute route)
+        {
+            if (tactics == null) tactics = GetComponent<InvaderTactics>();
+            if (tactics != null && tactics.IsHero) return 0;
+            int ahead = 0;
+            foreach (var actor in encirclingActors)
+                if (actor != this && actor.IsAlive && actor.dungeonRoute != null && actor.dungeonRoute.LockedRoom == route.LockedRoom && actor.dungeonRoute.LockOrder < route.LockOrder) ahead++;
+            return ahead;
         }
 
         public void ReturnToPost()
@@ -208,8 +219,7 @@ namespace DarkLord.Minions
                     damagePending = false;
                     if (ValidTarget(target) && InAttackRange(target) && HasLineOfSight(target))
                     {
-                        if (role != MinionRole.BloodSlime && health.Faction == Faction.Dungeon)
-                            MinionShot.Show(transform, target.transform.position, role == MinionRole.BloodArcher ? new Color(.5f, .8f, 1) : new Color(.4f, 1, .7f));
+                        if (health.Faction == Faction.Dungeon) ShowAttackEffect(target.transform.position);
                         var augments = defenceDungeon != null ? defenceDungeon.Augments : null;
                         bool canTrigger = augments != null && augments.CanTrigger;
                         int damage = augments != null ? augments.MinionDamage(this, target, AttackDamage) : AttackDamage;
@@ -253,10 +263,12 @@ namespace DarkLord.Minions
             if (!ValidTarget(target)) target = null;
             if (dungeonRoute == null && assaultMode && target == null)
                 target = ValidTarget(assaultObjective) ? assaultObjective : null;
-            if (!assaultMode && target == null && Time.time >= nextScan)
+            // Defenders still walking to a target look again, so they never run past a closer enemy.
+            if (!assaultMode && Time.time >= nextScan && (target == null || !InAttackRange(target)))
             {
                 nextScan = Time.time + scanInterval;
-                target = FindTarget();
+                var found = FindTarget();
+                if (found != null || target == null) target = found;
             }
             if (target == null)
             {
@@ -281,7 +293,7 @@ namespace DarkLord.Minions
                         motor.AttackStep(delta, .26f, .14f, Mathf.Max(0, attackWindup - .10f));
                     SetState(ActorState.Attack);
                 }
-                else SetState(ActorState.Idle);
+                else if (!TryReposition(delta)) SetState(ActorState.Idle);
             }
             else if (dungeonRoute != null)
             {
@@ -339,10 +351,46 @@ namespace DarkLord.Minions
             {
                 var candidate = nearby[i].GetComponentInParent<ActorHealth>();
                 if (!ValidTarget(candidate) || !HasLineOfSight(candidate)) continue;
-                float distance = ((Vector2)candidate.transform.position - (Vector2)transform.position).sqrMagnitude;
+                float distance = TargetScore(candidate);
                 if (distance < bestDistance) { closest = candidate; bestDistance = distance; }
             }
             return closest;
+        }
+
+        // Lower is better: near and wounded first; shooters reach past shields for the healers behind them.
+        private float TargetScore(ActorHealth candidate)
+        {
+            float score = ((Vector2)candidate.transform.position - (Vector2)transform.position).sqrMagnitude;
+            score *= .7f + .3f * candidate.CurrentHealth / Mathf.Max(1, candidate.MaximumHealth);
+            if (role == MinionRole.BloodSlime) return score;
+            var enemy = candidate.GetComponent<InvaderTactics>();
+            return enemy == null ? score : enemy.Role == InvaderRole.Healer ? score * .35f : enemy.Role == InvaderRole.Shieldbearer ? score * 1.6f : score;
+        }
+
+        // Between attacks: shooters and healers back away from anything close, melee invaders circle their target.
+        private bool TryReposition(Vector2 delta)
+        {
+            if (delta.sqrMagnitude < .0001f || target.GetComponent<TopDownMotor>() == null) return false;
+            bool skirmisher = health.Faction == Faction.Dungeon ? role != MinionRole.BloodSlime : tactics != null && tactics.Role == InvaderRole.Healer;
+            Vector2 direction; float pace;
+            if (skirmisher)
+            {
+                if (delta.sqrMagnitude > 4) return false;
+                direction = -delta.normalized; pace = .8f;
+            }
+            else if (health.Faction == Faction.Invader && tactics != null && tactics.Role != InvaderRole.Shieldbearer)
+            {
+                direction = new Vector2(-delta.y, delta.x).normalized * (encirclementId % 2 == 0 ? 1 : -1); pace = .45f;
+            }
+            else return false;
+            Vector2 position = transform.position;
+            if (Physics2D.CircleCast(position, .22f, direction, .45f, obstacleLayers)) return false;
+            var room = AssignedRoom;
+            if (room != null && !assaultMode && defenceDungeon.Construction.GarrisonAt(defenceDungeon.WorldToCell(position + direction * .5f)) != room) return false;
+            motor.Move(direction * pace);
+            motor.Face(delta);
+            SetState(ActorState.Run);
+            return true;
         }
 
         private bool InAttackRange(ActorHealth candidate) =>
@@ -378,6 +426,12 @@ namespace DarkLord.Minions
             return false;
         }
 
+        private void ShowAttackEffect(Vector3 point)
+        {
+            if (role == MinionRole.BloodSlime) DarkLord.Gameplay.GameplayEffects.Show(transform, DarkLord.Gameplay.GameplayEffectKind.BloodBite, point);
+            else if (role == MinionRole.BloodArcher) DarkLord.Gameplay.GameplayEffects.ShowBetween(transform, DarkLord.Gameplay.GameplayEffectKind.BloodNeedle, transform.position, point, 6);
+            else DarkLord.Gameplay.GameplayEffects.ShowBetween(transform, DarkLord.Gameplay.GameplayEffectKind.BloodBolt, transform.position, point, 4.5f);
+        }
         public void ApplyStun(float duration)
         {
             if (!isActiveAndEnabled || !health.IsAlive || IsStaggerImmune || !float.IsFinite(duration) || duration <= 0) return;
@@ -397,6 +451,8 @@ namespace DarkLord.Minions
                 if (State == ActorState.Hit) { stateEnds = 0; SetState(ActorState.Idle); }
                 return;
             }
+            // Defenders finish a committed strike; otherwise a surrounded minion could never hit back.
+            if (health.Faction == Faction.Dungeon && damagePending && State == ActorState.Attack) return;
             damagePending = false;
             motor.Stop();
             stateEnds = Time.time + hitDuration;

@@ -9,22 +9,26 @@ namespace DarkLord.Actors
         private SpriteRenderer source, overlay;
         private float flashUntil;
 
-        public static void Show(ActorHealth target, ActorHealth attacker)
+        public static void Show(ActorHealth target, ActorHealth attacker, int amount)
         {
             var motor = target.GetComponent<TopDownMotor>();
             if (motor == null) return; // Buildings and the dungeon core are not characters.
             var minion = target.GetComponent<DarkLord.Minions.MinionController>();
+            Vector2 direction = attacker != null ? target.transform.position - attacker.transform.position : Vector3.zero;
+            if (attacker != null && direction.sqrMagnitude < .0001f)
+                direction = attacker.GetComponent<TopDownMotor>()?.Facing ?? Vector2.down;
             if (attacker != null && target.IsAlive && (minion == null || !minion.IsStaggerImmune))
-            {
                 // Keep ordinary hits readable without displacing actors as far as hero abilities.
-                Vector2 direction = target.transform.position - attacker.transform.position;
-                if (direction.sqrMagnitude < .0001f)
-                    direction = attacker.GetComponent<TopDownMotor>()?.Facing ?? Vector2.down;
                 motor.ApplyKnockback(direction, 4.2f, .18f, true);
-            }
             var effect = target.GetComponent<ActorHitFeedback>();
             if (effect == null) effect = target.gameObject.AddComponent<ActorHitFeedback>();
             effect.Flash();
+
+            bool defenderHurt = target.Faction == Faction.Dungeon;
+            var point = target.transform.position + Vector3.up * .35f;
+            DarkLord.Gameplay.GameplayEffects.Show(target.transform, defenderHurt ? DarkLord.Gameplay.GameplayEffectKind.HolyHit : DarkLord.Gameplay.GameplayEffectKind.BloodHit, point, direction);
+            if (!target.IsAlive) DarkLord.Gameplay.GameplayEffects.Show(target.transform, DarkLord.Gameplay.GameplayEffectKind.BloodBurst, target.transform.position);
+            DamageNumber.Show(target, amount, defenderHurt ? new Color(1, .32f, .36f) : new Color(1, .95f, .78f), amount >= 30 || !target.IsAlive ? 4.2f : 3.2f);
         }
 
         private void Flash()

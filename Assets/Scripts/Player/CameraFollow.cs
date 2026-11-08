@@ -16,10 +16,10 @@ namespace DarkLord.Player
         private Camera view;
         private float impactStarted, originalSize;
         private bool impactActive, restorePixels;
-        public void Shake()
+        public void Shake(float strength = .065f)
         {
             if (impactActive) return;
-            shakeDuration = .14f; shakeStrength = .065f;
+            shakeDuration = .14f; shakeStrength = strength;
             shakeStarted = Time.unscaledTime;
             shakeUntil = shakeStarted + .14f;
         }

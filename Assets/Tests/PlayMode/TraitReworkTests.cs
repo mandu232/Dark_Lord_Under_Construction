@@ -77,7 +77,7 @@ namespace DarkLord.Tests
         }
         [Test] public void ExtendedTraitPoolSkipsConstructionIdsAndOffersNewTraits()
         {
-            Assert.AreEqual(10,WaveRewardCatalog.AugmentIds.Distinct().Count());
+            Assert.AreEqual(11,WaveRewardCatalog.AugmentIds.Distinct().Count());
             Assert.IsFalse(WaveRewardCatalog.IsAugment(11));Assert.IsFalse(WaveRewardCatalog.IsAugment(12));Assert.IsFalse(WaveRewardCatalog.IsAugment(13));
             waves.Augments.Restore(new[]{5,6,7,8,9,10});typeof(WaveDirector).GetMethod("OfferRewards",Flags).Invoke(waves,null);
             Assert.AreEqual(2,waves.RewardChoices.Count(id=>id>=14&&id<=17));

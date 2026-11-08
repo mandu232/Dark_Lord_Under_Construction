@@ -117,7 +117,7 @@ namespace DarkLord.Actors
             if (owner.currentHealth < before)
             {
                 GetComponent<DarkLord.Minions.MinionController>()?.RegisterPoiseHit();
-                ActorHitFeedback.Show(this, source);
+                ActorHitFeedback.Show(this, source, before - owner.currentHealth);
             }
             if (before > 0 && owner.currentHealth == 0 && faction == Faction.Invader && source != null &&
                 source.Faction == Faction.Dungeon && source.GetComponent<DarkLord.Minions.MinionController>() != null)
@@ -142,7 +142,7 @@ namespace DarkLord.Actors
             var owner = HealthOwner;
             int recovered = Mathf.Min(amount, owner.maximumHealth - owner.currentHealth);
             owner.currentHealth += recovered;
-            if (recovered > 0) DarkLord.Gameplay.GameplayEffects.Show(transform, DarkLord.Gameplay.GameplayEffectKind.Heal, transform.position, follow: true);
+            if (recovered > 0) DarkLord.Gameplay.GameplayEffects.Show(transform, faction == Faction.Invader ? DarkLord.Gameplay.GameplayEffectKind.HolyHeal : DarkLord.Gameplay.GameplayEffectKind.Heal, transform.position, follow: true);
             return recovered;
         }
 

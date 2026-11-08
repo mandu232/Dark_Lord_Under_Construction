@@ -7,11 +7,12 @@ namespace DarkLord.Minions
     public sealed class MinionBuffIndicator : MonoBehaviour
     {
         private MinionController controller;
-        private LineRenderer ring, chevron;
+        private SpriteRenderer aura;
+        private DarkLord.Gameplay.GameplayEffectLibrary.Clip auraClip;
         private readonly SpriteRenderer[] icons = new SpriteRenderer[3];
         private readonly List<ResourceBuilding> buffs = new List<ResourceBuilding>();
         private float nextRefresh;
-        public bool IsVisible => ring != null && ring.enabled;
+        public bool IsVisible => aura != null && aura.enabled;
         public int ActiveBuffCount { get; private set; }
         private void Awake() => controller = GetComponentInParent<MinionController>();
         private void LateUpdate()
@@ -19,6 +20,8 @@ namespace DarkLord.Minions
             if (controller == null || !controller.isActiveAndEnabled || !controller.IsAlive || controller.IsHeld)
             { Hide(); return; }
             if (Time.time >= nextRefresh) { Refresh(); nextRefresh = Time.time + .1f; }
+            if (IsVisible && auraClip != null)
+                aura.sprite = auraClip.frames[Mathf.Min(auraClip.frames.Length - 1, (int)(Mathf.Repeat(Time.time / auraClip.duration, 1) * auraClip.frames.Length))];
         }
         public void Refresh()
         {
@@ -27,10 +30,14 @@ namespace DarkLord.Minions
             controller.GetRoomBonuses(out _,out _,out _,buffs);
             ActiveBuffCount = buffs.Count;
             if (buffs.Count == 0) { Hide(); return; }
-            if (ring == null)
+            if (aura == null)
             {
-                ring = Line("Facility buff ground ring",24,true);
-                chevron = Line("Facility buff up arrow",3,false);
+                var library = Resources.Load<DarkLord.Gameplay.GameplayEffectLibrary>("GameplayEffects");
+                auraClip = library != null ? library.Find(DarkLord.Gameplay.GameplayEffectKind.BloodAura) : null;
+                var auraNode = new GameObject("Facility buff aura"); auraNode.transform.SetParent(transform,false);
+                aura = auraNode.AddComponent<SpriteRenderer>();
+                if (library != null && library.material != null) aura.sharedMaterial = library.material;
+                if (auraClip != null && auraClip.frames.Length > 0) aura.sprite = auraClip.frames[0];
                 for (int i = 0; i < icons.Length; i++)
                 {
                     var node = new GameObject("Facility buff icon " + i); node.transform.SetParent(transform,false);
@@ -38,13 +45,7 @@ namespace DarkLord.Minions
                 }
             }
             int order = Mathf.Clamp(-Mathf.RoundToInt(transform.position.y * 16) + 35,-30000,30000);
-            ring.enabled = chevron.enabled = true; ring.sortingOrder = chevron.sortingOrder = order;
-            for (int i = 0; i < 24; i++)
-            {
-                float angle = i * Mathf.PI / 12;
-                ring.SetPosition(i,new Vector3(Mathf.Cos(angle)*.46f,Mathf.Sin(angle)*.22f,0));
-            }
-            chevron.SetPosition(0,new Vector3(-.13f,.9f,0)); chevron.SetPosition(1,new Vector3(0,1.05f,0)); chevron.SetPosition(2,new Vector3(.13f,.9f,0));
+            aura.enabled = true; aura.sortingOrder = order;
             int shown = Mathf.Min(icons.Length,buffs.Count);
             for (int i = 0; i < icons.Length; i++)
             {
@@ -56,18 +57,11 @@ namespace DarkLord.Minions
                 icon.transform.localScale = Vector3.one * scale;
             }
         }
-        private LineRenderer Line(string name,int count,bool loop)
-        {
-            var node=new GameObject(name); node.transform.SetParent(transform,false);
-            var line=node.AddComponent<LineRenderer>(); line.useWorldSpace=false; line.positionCount=count; line.loop=loop;
-            line.sharedMaterial=Resources.Load<Material>("GameplayTraceOriginalColor"); line.startWidth=line.endWidth=.045f;
-            line.startColor=line.endColor=new Color(.3f,.9f,1,.85f); return line;
-        }
         private void Hide()
         {
             ActiveBuffCount=0;
-            if (ring == null) return;
-            ring.enabled=chevron.enabled=false;
+            if (aura == null) return;
+            aura.enabled=false;
             foreach(var icon in icons) if(icon != null)icon.enabled=false;
         }
         private void OnDisable() => Hide();
