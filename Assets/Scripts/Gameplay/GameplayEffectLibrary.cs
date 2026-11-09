@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DarkLord.Gameplay
 {
-    public enum GameplayEffectKind { Slash, WideSlash, BloodNova, BloodWard, Summon, Curse, Heal, HolySlash, HolyCharge, FrostNova, Aegis, Haste, BloodPulse, BloodLance, BloodBite, BloodBolt, BloodNeedle, BloodThread, HolyHeal, BloodEmpower, BloodAura, BloodHit, HolyHit, BloodBurst, HolyMark, HolyPulse }
+    public enum GameplayEffectKind { Slash, WideSlash, BloodNova, BloodWard, Summon, Curse, Heal, HolySlash, HolyCharge, FrostNova, Aegis, Haste, BloodPulse, BloodLance, BloodBite, BloodBolt, BloodNeedle, BloodThread, HolyHeal, BloodEmpower, BloodAura, BloodHit, HolyHit, BloodBurst, HolyMark, HolyPulse, DebuffFrost, DebuffBrood, DebuffBrand, DebuffHunt, DebuffExecute, LootBlood, LootCrystal, LootGold, LootExperience }
 
     public sealed class GameplayEffectLibrary : ScriptableObject
     {
@@ -27,8 +27,6 @@ namespace DarkLord.Gameplay
             public float fadeOut = .08f;
         }
         public Material material;
-        // Indexed by DeathLoot.Kind: blood, crystal, gold, experience.
-        public Sprite[] lootSprites;
         public Clip[] clips;
         public Clip Find(GameplayEffectKind kind)
         {

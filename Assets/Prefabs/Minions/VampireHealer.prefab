@@ -19,9 +19,10 @@ GameObject:
   - component: {fileID: 4155510833042006107}
   - component: {fileID: 1782063178111732759}
   - component: {fileID: 1863278567334432893}
-  - component: {fileID: 7563660061341743575}
+  - component: {fileID: 3146351932366895150}
+  - component: {fileID: 6352688834144073126}
   m_Layer: 0
-  m_Name: BloodArcher
+  m_Name: VampireHealer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -92,7 +93,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: -4186178531630634954, guid: 0e2b9562a2ee7f144b63cf54b678df31, type: 3}
-  m_Color: {r: 0.78, g: 0.88, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -200,7 +201,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Actors.ActorHealth
   faction: 0
-  maximumHealth: 60
+  maximumHealth: 70
   physicalResistance: 0
   magicResistance: 0
 --- !u!114 &7163071772286336191
@@ -246,13 +247,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 531af384ea567834aa31e6e85ec28ab1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Minions.MinionController
-  displayName: "\uD608\uCE68 \uC2AC\uB77C\uC784"
-  role: 1
+  displayName: "\uBC40\uD30C\uC774\uC5B4 \uCE58\uC720\uC0AC"
+  role: 13
   traits: 1
   attackType: 1
-  detectionRange: 7
+  detectionRange: 5
   chaseRange: 5
-  attackRange: 6
+  attackRange: 3.5
   arrivalDistance: 0.15
   targetLayers:
     serializedVersion: 2
@@ -260,10 +261,10 @@ MonoBehaviour:
   obstacleLayers:
     serializedVersion: 2
     m_Bits: 256
-  attackDamage: 14
-  attackWindup: 0.3
+  attackDamage: 4
+  attackWindup: 0.25
   attackDuration: 0.5
-  attackCooldown: 1.25
+  attackCooldown: 1.6
   hitDuration: 0.2
   scanInterval: 0.2
   behaviour: 0
@@ -293,7 +294,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Actors.ActorDepthSorting
   groundOffsetY: 0
---- !u!114 &7563660061341743575
+--- !u!114 &3146351932366895150
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -302,6 +303,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 1180478417460894632}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9d39fd38a2908b46b9b953328e6f253, type: 3}
+  m_Script: {fileID: 11500000, guid: ccf5eb154c336c042a3de3ee0c5486c2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Minions.MinionRoleMarker
+  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Minions.MinionSkin
+  skin: {fileID: 11400000, guid: d62ccb7aaabb3fe45baf984320adcdfe, type: 2}
+--- !u!114 &6352688834144073126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1180478417460894632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 455c5d552db63fe41b192f8d25a136c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Minions.MinionSupport

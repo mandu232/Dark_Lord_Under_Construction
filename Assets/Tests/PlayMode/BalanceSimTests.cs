@@ -39,7 +39,7 @@ namespace DarkLord.Tests
             waves.RestoreSave(new WaveSaveData { number = wave - 1, state = WaveState.Preparing, enemies = new MinionSaveData[0] });
             summon.ClearSavedGuards();
             waves.Lord.RestoreHealth(5000, 5000);
-            var roles = new[] { MinionRole.BloodSlime, MinionRole.BloodSlime, MinionRole.BloodArcher, MinionRole.BloodSupport };
+            var roles = new[] { MinionRole.BloodSlime, MinionRole.BloodSlime, MinionRole.BloodWraith, MinionRole.BoneSlime };
             var units = new List<MinionSaveData>();
             foreach (var (cell, i) in Spots(grid, grid.CoreRoom).Take(4).Select((c, i) => (c, i))) units.Add(Unit(roles[i], tier, grid.CellCenter(cell)));
             DungeonSection outer = null;

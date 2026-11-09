@@ -80,6 +80,17 @@ namespace DarkLord.Tests
             deadline = Time.unscaledTime + 5;
             while (station.SummonStacks < 2 && Time.unscaledTime < deadline) yield return null;
             Assert.AreEqual(2, station.SummonStacks, "Entering the approach cell outside absorption range must not stop the worker.");
+
+            var inward = ((Vector2)(station.transform.position - approachCenter)).normalized;
+            Vector3 farSide = station.transform.position + (Vector3)((inward + new Vector2(inward.y, -inward.x)) * .95f);
+            Assert.AreEqual(station.Cell, grid.WorldToCell(farSide));
+            Assert.Greater(Vector2.Distance(approachCenter, farSide), CorpseHarvest.PickupDistance);
+            worker.GetComponent<Rigidbody2D>().position = approachCenter;
+            worker.transform.position = approachCenter;
+            waves.Harvest.Restore(new[] { new CorpseSaveData { position = farSide } });
+            deadline = Time.unscaledTime + 5;
+            while (station.SummonStacks < 3 && Time.unscaledTime < deadline) yield return null;
+            Assert.AreEqual(3, station.SummonStacks, "A corpse on the far side of a facility cell must not strand the worker beside it.");
             Assert.IsFalse(worker.GetComponent<MinionController>().enabled);
             worker.Health.TakeDamage(7);
             var inspection = Find<MinionInspectionPanel>();

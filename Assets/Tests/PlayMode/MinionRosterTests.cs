@@ -63,36 +63,36 @@ namespace DarkLord.Tests
             var node = new GameObject("Roster enemy"); objects.Add(node); SceneManager.MoveGameObjectToScene(node, scene); node.transform.position = Center + offset;
             var health = node.AddComponent<ActorHealth>(); health.Configure(Faction.Invader, hp); node.AddComponent<CircleCollider2D>().radius = .2f; node.AddComponent<TopDownMotor>(); return health;
         }
-        [UnityTest] public IEnumerator ArcherShootsFromBehindFrontlineAndCannotShootThroughWalls()
+        [UnityTest] public IEnumerator WraithShootsFromBehindFrontlineAndCannotShootThroughWalls()
         {
-            Active(); var tank = Minion(MinionRole.BloodSlime, Vector3.left * 2); var archer = Minion(MinionRole.BloodArcher, Vector3.zero);
+            Active(); var tank = Minion(MinionRole.BloodSlime, Vector3.left * 2); var wraith = Minion(MinionRole.BloodWraith, Vector3.zero);
             var enemy = Enemy(Vector3.right * 4); Physics2D.SyncTransforms();
-            Assert.AreEqual(100, tank.Health.MaximumHealth); Assert.AreEqual(60, archer.Health.MaximumHealth);
-            Assert.AreEqual(6, archer.AttackRange); Assert.AreEqual(DamageType.Magic, archer.AttackType);
+            Assert.AreEqual(100, tank.Health.MaximumHealth); Assert.AreEqual(45, wraith.Health.MaximumHealth);
+            Assert.AreEqual(5.5f, wraith.AttackRange); Assert.AreEqual(DamageType.Magic, wraith.AttackType);
             yield return new WaitForSeconds(.45f);
-            Assert.AreEqual(186, enemy.CurrentHealth); Assert.That(Vector3.Distance(archer.transform.position, Center), Is.LessThan(.1f));
+            Assert.AreEqual(182, enemy.CurrentHealth); Assert.That(Vector3.Distance(wraith.transform.position, Center), Is.LessThan(.1f));
             Assert.IsNull(tank.Target, "The short-range frontline cannot acquire this distant enemy.");
             var wall = new GameObject("Ranged wall"); objects.Add(wall); SceneManager.MoveGameObjectToScene(wall, scene);
             wall.layer = 8; wall.transform.position = Center + Vector3.right * 2; wall.AddComponent<BoxCollider2D>().size = new Vector2(.2f, 4);
             Physics2D.SyncTransforms(); yield return new WaitForSeconds(1.6f);
-            Assert.AreEqual(186, enemy.CurrentHealth, "Terrain blocks additional shots.");
+            Assert.AreEqual(182, enemy.CurrentHealth, "Terrain blocks additional shots.");
         }
-        [UnityTest] public IEnumerator ArcherConsumesLordMarkAppliesBroodSlowAndPaysTributeOnKill()
+        [UnityTest] public IEnumerator WraithConsumesLordMarkAppliesBroodSlowAndPaysTributeOnKill()
         {
             Active(6,7,10); waves.Lord.transform.position = Center; waves.Lord.GetComponent<Rigidbody2D>().position = Center;
-            var archer = Minion(MinionRole.BloodArcher, Vector3.left * 3); var enemy = Enemy(Vector3.right);
+            Minion(MinionRole.BloodWraith, Vector3.left * 3); var enemy = Enemy(Vector3.right);
             Physics2D.SyncTransforms(); Assert.IsTrue(waves.Combat.TryAttack(Vector2.right));
             yield return new WaitForSeconds(.45f);
-            Assert.AreEqual(143, enemy.CurrentHealth); Assert.IsFalse(enemy.GetComponent<AugmentStatus>().LordMarked);
+            Assert.AreEqual(139, enemy.CurrentHealth); Assert.IsFalse(enemy.GetComponent<AugmentStatus>().LordMarked);
             Assert.AreEqual(.65f, enemy.GetComponent<TopDownMotor>().SlowMultiplier);
             enemy.RestoreHealth(200, 5); waves.Combat.RestoreSave(new CombatSaveData {mana = 30, novaCooldown = 4});
-            yield return new WaitForSeconds(1.3f);
+            yield return new WaitForSeconds(1.5f);
             Assert.IsFalse(enemy.IsAlive); Assert.GreaterOrEqual(waves.Combat.Mana, 38); Assert.Less(waves.Combat.NovaCooldown, 3);
         }
         [UnityTest] public IEnumerator SupportPrioritizesWoundedFrontlineAndPactEmpowersItsNextAttack()
         {
             Active(9); var tank = Minion(MinionRole.BloodSlime, Vector3.zero); tank.Health.TakeDamage(50);
-            var support = Minion(MinionRole.BloodSupport, Vector3.right * 2); support.Health.TakeDamage(20);
+            var support = Minion(MinionRole.VampireHealer, Vector3.right * 2); support.Health.TakeDamage(20);
             yield return new WaitForSeconds(.95f);
             Assert.AreEqual(64, tank.Health.CurrentHealth); Assert.AreEqual(50, support.Health.CurrentHealth, "Support never heals itself.");
             Assert.IsTrue(tank.GetComponent<AugmentStatus>().Empowered);
@@ -103,7 +103,7 @@ namespace DarkLord.Tests
         [UnityTest] public IEnumerator SupportRespectsWallsPauseAndDamageInterruptsHealing()
         {
             Active(); var tank = Minion(MinionRole.BloodSlime, Vector3.zero); tank.Health.TakeDamage(40);
-            var support = Minion(MinionRole.BloodSupport, Vector3.right * 2); var ability = support.GetComponent<MinionSupport>();
+            var support = Minion(MinionRole.VampireHealer, Vector3.right * 2); var ability = support.GetComponent<MinionSupport>();
             var wall = new GameObject("Healing wall"); objects.Add(wall); SceneManager.MoveGameObjectToScene(wall, scene);
             wall.layer = 8; wall.transform.position = Center + Vector3.right; wall.AddComponent<BoxCollider2D>().size = new Vector2(.2f, 4);
             Physics2D.SyncTransforms(); yield return new WaitForSeconds(.8f); Assert.AreEqual(60, tank.Health.CurrentHealth);
@@ -113,59 +113,62 @@ namespace DarkLord.Tests
             Time.timeScale = 1; support.Health.TakeDamage(1); Assert.IsFalse(ability.IsCasting);
             yield return new WaitForSeconds(.65f); Assert.AreEqual(60, tank.Health.CurrentHealth);
         }
-        [Test] public void NewRolesUseOnlyMatchingFacilityTraitsAndSupportHealingScales()
+        [UnityTest] public IEnumerator WebSpiderSlowsWhatItHits()
+        {
+            Active(); Minion(MinionRole.WebSpider, Vector3.zero); var enemy = Enemy(Vector3.right * 2); Physics2D.SyncTransforms();
+            yield return new WaitForSeconds(.6f);
+            Assert.Less(enemy.CurrentHealth, 200); Assert.AreEqual(.55f, enemy.GetComponent<TopDownMotor>().SlowMultiplier);
+        }
+        [Test] public void WraithUsesOnlyMatchingFacilityTraits()
         {
             Active(); var room = dungeon.Construction.Sections.Single(s => s.Kind == ConstructionKind.Room);
             var wallet = Find<CurrencyWallet>(); wallet.SetStartingAmounts(1000, 0, 0);
             string[] facilities = {"ArcaneFocus", "AcidVat", "MeleeTotem"}; var offsets = new[] {Vector2Int.up, Vector2Int.down, Vector2Int.left};
             for (int i = 0; i < 3; i++) Assert.IsTrue(dungeon.TryPlaceBuilding(room.Center + offsets[i], AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Dungeon/" + facilities[i] + ".prefab"), wallet));
-            foreach (var role in new[] {MinionRole.BloodArcher, MinionRole.BloodSupport})
+            foreach (var role in new[] {MinionRole.BloodWraith, MinionRole.VampireHealer})
             {
                 var actor = Minion(role, Vector3.zero); actor.Relocate(dungeon.CellCenter(room.Center));
                 actor.GetRoomBonuses(out int attack, out _, out _); Assert.AreEqual(30, attack); Assert.AreEqual(MinionTrait.Magic, actor.Traits);
-                if (role == MinionRole.BloodSupport) Assert.AreEqual(18, actor.GetComponent<MinionSupport>().HealAmount);
+                if (role == MinionRole.VampireHealer) Assert.AreEqual(18, actor.GetComponent<MinionSupport>().HealAmount);
             }
         }
-        [UnityTest] public IEnumerator MainRoomRecruitmentOffersAllRolesChargesOnPlacementAndRestoresMixedParty()
+        [Test] public void RetiredRolesLoadAsReplacementsAndUnknownRolesAreRejected()
         {
-            var core = dungeon.Layout.Core; var station = dungeon.GetComponentsInChildren<ResourceBuilding>().Single(b => b.IsRecruitmentFacility);
-            Assert.IsTrue(dungeon.Construction.RoomAt(station.Cell).IsCore); Assert.AreNotEqual(core, station.Cell);
-            Assert.AreEqual(250, Find<CurrencyWallet>().Gold);
-            var offsets = new[] {Vector2Int.left, Vector2Int.down, Vector2Int.right};
-            float mana = waves.Combat.Mana;
-            for (int i = 0; i < 3; i++)
-            {
-                Assert.IsTrue(summoning.TryRecruit()); yield return null;
-                var panel = Find<RecruitmentPanel>(); Assert.IsTrue(panel.IsVisible);
-                var root = panel.transform.Find("Recruitment selection");
-                Assert.AreEqual(3, root.GetComponentsInChildren<UnityEngine.UI.Button>().Count(b => b.name.StartsWith("Recruit")));
-                foreach (var text in root.GetComponentsInChildren<TMP_Text>()) { text.ForceMeshUpdate(); Assert.IsFalse(text.isTextOverflowing, text.name + ": " + text.text); }
-                float before = waves.Combat.Mana;
-                panel.SelectMinion((MinionRole)i); Assert.AreEqual(before, waves.Combat.Mana);
-                Assert.IsTrue(summoning.TryPlace(core + offsets[i]), summoning.Message); Assert.AreEqual(before - 20, waves.Combat.Mana);
-            }
-            Assert.AreEqual(3, summoning.GuardCount);
             var session = Find<GameSaveSession>(); var saved = JsonUtility.FromJson<GameSaveData>(JsonUtility.ToJson(session.Capture()));
-            CollectionAssert.AreEquivalent(new[] {MinionRole.BloodSlime, MinionRole.BloodArcher, MinionRole.BloodSupport}, saved.guards.Select(g => g.role));
-            var tank = saved.guards.Single(g => g.role == MinionRole.BloodSlime); tank.health = 50;
-            var healer = saved.guards.Single(g => g.role == MinionRole.BloodSupport);
-            healer.support = new MinionSupportSaveData {casting = true, remaining = .2f, cooldown = 2, targetPosition = tank.position};
-            saved.wave.state = WaveState.Active; saved.wave.number = 1; saved.wave.augments = new[] {9};
+            var first = dungeon.Layout.Core + new Vector2Int(1, 1); var second = dungeon.Layout.Core + new Vector2Int(-1, 1);
+            saved.guards = new[] {
+                new MinionSaveData {position = dungeon.CellCenter(first), post = dungeon.CellCenter(first), health = 40, maximumHealth = 60, role = MinionRole.BloodSupport,
+                    support = new MinionSupportSaveData {casting = true, remaining = .2f, cooldown = 2, targetPosition = dungeon.CellCenter(second)}},
+                new MinionSaveData {position = dungeon.CellCenter(second), post = dungeon.CellCenter(second), health = 50, maximumHealth = 65, role = MinionRole.BladeSlime} };
             SaveSlotStore.Validate(saved); session.Restore(saved); Time.timeScale = 1;
-            var again = session.Capture(); CollectionAssert.AreEquivalent(saved.guards.Select(g => g.role), again.guards.Select(g => g.role));
-            Assert.IsTrue(again.guards.Single(g => g.role == MinionRole.BloodSupport).support.casting);
-            yield return new WaitForSeconds(.4f);
-            var liveTank = dungeon.Guards.Single(g => g.Role == MinionRole.BloodSlime);
-            Assert.AreEqual(64, liveTank.Health.CurrentHealth); Assert.IsTrue(liveTank.GetComponent<AugmentStatus>().Empowered);
-            again = session.Capture(); again.guards[0].role = (MinionRole)99;
+            CollectionAssert.AreEquivalent(new[] {MinionRole.VampireHealer, MinionRole.VampireBat}, dungeon.Guards.Select(g => g.Role));
+            var healer = dungeon.Guards.Single(g => g.Role == MinionRole.VampireHealer); Assert.AreEqual(40, healer.Health.CurrentHealth); Assert.IsTrue(healer.GetComponent<MinionSupport>().IsCasting);
+            var again = session.Capture(); again.guards[0].role = (MinionRole)99;
             Assert.Throws<System.IO.InvalidDataException>(() => SaveSlotStore.Validate(again));
             var legacy = JsonUtility.FromJson<MinionSaveData>("{\"health\":100,\"maximumHealth\":100}");
-            Assert.AreEqual(MinionRole.BloodSlime, legacy.role); Assert.IsTrue(legacy.support == null || !legacy.support.casting && legacy.support.cooldown == 0);
+            Assert.AreEqual(MinionRole.BloodSlime, legacy.role);
+        }
+        [UnityTest] public IEnumerator VampireBatHealsOnEveryHit()
+        {
+            Active(); var bat = Minion(MinionRole.VampireBat, Vector3.zero); bat.Health.TakeDamage(20);
+            var enemy = Enemy(Vector3.right * .5f); Physics2D.SyncTransforms(); int wounded = bat.Health.CurrentHealth;
+            yield return new WaitForSeconds(.5f);
+            Assert.Less(enemy.CurrentHealth, 200); Assert.Greater(bat.Health.CurrentHealth, wounded);
+        }
+        [Test] public void EveryRoleHasItsOwnDefinitionAndLook()
+        {
+            foreach (var role in MinionRoster.Summonable)
+            {
+                var definition = summoning.RecruitDefinitionFor(role); Assert.IsNotNull(definition, role.ToString());
+                Assert.AreEqual(role, definition.Role);
+                if (role != MinionRole.BloodSlime) Assert.IsNotNull(definition.GetComponentInChildren<MinionSkin>(), role.ToString());
+            }
+            Assert.IsNull(summoning.RecruitDefinitionFor(MinionRole.BloodArcher), "Retired roles can no longer be summoned.");
         }
         [Test] public void SelectionCancelCostsNothingAndInvalidRoleCannotEnterPlacement()
         {
             Assert.IsTrue(summoning.TryRecruit()); Assert.IsFalse(summoning.TrySummon((MinionRole)99));
-            float mana = waves.Combat.Mana; Assert.IsTrue(summoning.TrySummon(MinionRole.BloodArcher));
+            float mana = waves.Combat.Mana; Assert.IsTrue(summoning.TrySummon(MinionRole.BloodWraith));
             summoning.SetOpen(false); Assert.AreEqual(mana, waves.Combat.Mana); Assert.IsFalse(summoning.IsPlacing); Assert.AreEqual(0, summoning.GuardCount);
         }
         [Test] public void OldStartingFacilityMovesWithoutLosingDamageOrOverwritingPostsAndOtherFacilities()

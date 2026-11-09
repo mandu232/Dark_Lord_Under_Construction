@@ -73,7 +73,7 @@ namespace DarkLord.Tests
             Assert.IsTrue(summoning.TryRecruit()); Assert.IsTrue(summoning.TrySummon(role), summoning.Message);
             return grid.Guards.Last();
         }
-        [TestCase(MinionRole.BloodSlime)] [TestCase(MinionRole.BloodArcher)] [TestCase(MinionRole.BloodSupport)]
+        [TestCase(MinionRole.BloodSlime)] [TestCase(MinionRole.BloodWraith)] [TestCase(MinionRole.VampireBat)] [TestCase(MinionRole.VampireHealer)]
         public void RecruitmentInstantlyCreatesMinionNextToStationAndChargesOnce(MinionRole role)
         {
             float before = waves.Combat.Mana;
@@ -90,6 +90,41 @@ namespace DarkLord.Tests
             Summon(); Summon(); float before = waves.Combat.Mana;
             Assert.IsTrue(summoning.TryRecruit()); Assert.IsFalse(summoning.TrySummon(MinionRole.BloodSlime));
             Assert.AreEqual(before, waves.Combat.Mana); Assert.AreEqual(2, summoning.GuardCount);
+        }
+        [UnityTest] public IEnumerator MergeImmediatelyClearsHeldPreviewAndPreservesBodySize()
+        {
+            var consumed = Summon();
+            var survivor = Summon();
+            var body = survivor.GetComponent<CircleCollider2D>();
+            float radius = body.bounds.extents.x;
+            Assert.IsTrue(summoning.BeginRelocation(consumed, true));
+            var visuals = summoning.GetComponent<MinionRelocationVisuals>();
+            yield return null;
+            var preview = visuals.CarriedSprite;
+            Assert.IsNotNull(preview);
+
+            Assert.IsTrue(summoning.TryMerge(consumed, survivor));
+            Assert.IsFalse(preview.gameObject.activeSelf);
+            Assert.IsNull(visuals.CarriedSprite);
+            Assert.IsNull(visuals.GroundShadow);
+            Assert.IsFalse(summoning.IsRelocating);
+            Assert.AreEqual(1, summoning.GuardCount);
+            Assert.AreEqual(2, survivor.Tier);
+            Physics2D.SyncTransforms();
+            Assert.That(body.bounds.extents.x, Is.EqualTo(radius).Within(.001f));
+        }
+        [UnityTest] public IEnumerator GuardRestoredInsideFacilityReturnsToItsClearPost()
+        {
+            var guard = Summon();
+            var post = guard.GuardPosition;
+            guard.Relocate(grid.CellCenter(station.Cell));
+            guard.Defend(post);
+            yield return null;
+            yield return null;
+
+            Assert.AreEqual(grid.WorldToCell(post), grid.WorldToCell(guard.transform.position));
+            Assert.AreEqual(post, guard.GuardPosition);
+            Assert.AreSame(grid.Construction.RoomAt(station.Cell), guard.AssignedRoom);
         }
         [Test] public void DropAnywhereInDisconnectedRoomFindsEmptySpotAndTeleportsWithoutCost()
         {

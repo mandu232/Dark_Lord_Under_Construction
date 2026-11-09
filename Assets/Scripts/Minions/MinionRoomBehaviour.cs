@@ -30,6 +30,35 @@ namespace DarkLord.Minions
             return room != null && defenceDungeon.Construction.GarrisonAt(cell) == room &&
                 defenceDungeon.Construction.IsWalkable(cell) && !defenceDungeon.BlocksNpcMovement(cell);
         }
+        private bool RecoverFromBlockedRoomCell()
+        {
+            var room = AssignedRoom;
+            if (room == null || assaultMode) return false;
+            var current = defenceDungeon.WorldToCell(transform.position);
+            if (defenceDungeon.Construction.GarrisonAt(current) != room || !defenceDungeon.BlocksNpcMovement(current)) return false;
+
+            // A repair, knockback, or saved position can leave a guard inside a reserved facility tile.
+            var post = defenceDungeon.WorldToCell(guardPosition);
+            if (ClearRoomLanding(post, guardPosition)) { Relocate(guardPosition); return true; }
+            foreach (var cell in room.Cells)
+            {
+                var point = defenceDungeon.CellCenter(cell);
+                if (!ClearRoomLanding(cell, point)) continue;
+                Relocate(point);
+                return true;
+            }
+            return false;
+        }
+        private bool ClearRoomLanding(Vector2Int cell, Vector2 point)
+        {
+            if (!RoomWalkable(cell)) return false;
+            var filter = new ContactFilter2D { useTriggers = false };
+            int count = Physics2D.OverlapCircle(point, .4f, filter, nearby);
+            if (count == nearby.Length) return false;
+            for (int i = 0; i < count; i++)
+                if (!nearby[i].transform.IsChildOf(transform)) return false;
+            return true;
+        }
         private void WanderInRoom()
         {
             var room = AssignedRoom;
@@ -60,8 +89,12 @@ namespace DarkLord.Minions
             var goal = defenceDungeon.WorldToCell(destination);
             if (defenceDungeon.Construction.GarrisonAt(start) != room) { Relocate(guardPosition); return false; }
             if (defenceDungeon.Construction.GarrisonAt(goal) != room) { motor.Stop(); return false; }
-            if (start == goal) return SteerTo(destination, combatTarget, movementScale);
-            if (pathGoal != goal || Time.time >= nextRoomPath)
+            if (start == goal && RoomWalkable(goal)) return SteerTo(destination, combatTarget, movementScale);
+            bool lostWaypoint = roomPath.Count > 0 && (!RoomWalkable(roomPath[0]) ||
+                Mathf.Abs(roomPath[0].x - start.x) + Mathf.Abs(roomPath[0].y - start.y) > 1);
+            // Keep steering to the current cell center after crossing its boundary.
+            // Rebuilding a valid path from that cell too early cuts the next corner.
+            if (pathGoal != goal || lostWaypoint || roomPath.Count == 0 && Time.time >= nextRoomPath)
             {
                 pathGoal = goal; nextRoomPath = Time.time + .4f;
                 roomPath.Clear(); roomSearch.Clear(); roomParents.Clear();
@@ -72,7 +105,9 @@ namespace DarkLord.Minions
                     if (cell == goal)
                     {
                         while (cell != start) { roomPath.Add(cell); cell = roomParents[cell]; }
-                        roomPath.Reverse(); break;
+                        roomPath.Reverse();
+                        if (roomPath.Count > 0 && !RoomWalkable(goal)) roomPath.RemoveAt(roomPath.Count - 1);
+                        break;
                     }
                     foreach (var direction in RoomDirections)
                     {

@@ -89,7 +89,11 @@ namespace DarkLord.Tests
             Assert.IsTrue(enemy.GetComponentInChildren<TraitProcFeedback>().IsPlaying);
             for(int i=0;i<20;i++)TraitProcFeedback.Show(enemy.transform,17);
             Assert.AreEqual(1,enemy.GetComponentsInChildren<TraitProcFeedback>().Length);
-            Assert.AreEqual(10,enemy.GetComponentsInChildren<LineRenderer>().Length);
+            Assert.AreEqual(0,enemy.GetComponentsInChildren<LineRenderer>().Length);
+            Assert.AreEqual(2,enemy.GetComponentsInChildren<SpriteRenderer>().Length);
+            Assert.IsNotNull(enemy.transform.Find("Trait activation pulse/Debuff art").GetComponent<SpriteRenderer>().sprite);
+            var friend=Actor(Vector3.up,true);TraitProcFeedback.Show(friend.transform,15);
+            Assert.AreEqual(10,friend.GetComponentsInChildren<LineRenderer>().Length);
             var other=Actor(Vector3.left);Time.timeScale=0;waves.Augments.TrapHit(other);Assert.IsNull(other.GetComponentInChildren<TraitProcFeedback>());
         }
         [Test] public void ExecutionConsumesMarkOnceUsesPercentCapAndHealsAttacker()

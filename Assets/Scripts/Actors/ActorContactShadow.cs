@@ -63,7 +63,7 @@ namespace DarkLord.Actors
                 Vector3 localDirection = transform.parent.InverseTransformVector(lightProjection);
                 float angle = Mathf.Atan2(localDirection.y, localDirection.x) * Mathf.Rad2Deg;
                 transform.localRotation = strength > .001f ? Quaternion.Euler(0, 0, angle) : restingRotation;
-                bool thickShadow = minion.Health.Faction == Faction.Invader || minion.Role == MinionRole.BloodSlime;
+                bool thickShadow = minion.Health.Faction == Faction.Invader || minion.IsMelee;
                 float thickness = thickShadow ? 2.4f : 1;
                 transform.localScale = new Vector3(restingScale.x * shadowLength, restingScale.y * thickness, restingScale.z);
                 if (shadow.sprite != null && strength > .001f)

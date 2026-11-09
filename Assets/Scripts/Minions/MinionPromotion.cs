@@ -29,7 +29,14 @@ namespace DarkLord.Minions
         public void SetTier(int tier)
         {
             tier = Mathf.Clamp(tier, 1, MaxTier);
-            transform.localScale *= TierSize[tier - 1] / TierSize[Tier - 1];
+            float scale = TierSize[tier - 1] / TierSize[Tier - 1];
+            transform.localScale *= scale;
+            // The guard prefabs put the sprite and the circular body on the same object.
+            if (TryGetComponent<CircleCollider2D>(out var body))
+            {
+                body.radius /= scale;
+                body.offset /= scale;
+            }
             Tier = tier;
             (GetComponent<MinionTierMarker>() ?? gameObject.AddComponent<MinionTierMarker>()).Show(tier);
         }

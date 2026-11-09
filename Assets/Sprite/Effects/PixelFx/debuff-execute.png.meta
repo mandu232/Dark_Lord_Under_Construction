@@ -1,0 +1,688 @@
+fileFormatVersion: 2
+guid: 1e5cdacb4d2a0074ebc16130867ed166
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5932118757731356285
+    second: debuff-execute_0
+  - first:
+      213: -921341017772979291
+    second: debuff-execute_1
+  - first:
+      213: 5698700970261862567
+    second: debuff-execute_2
+  - first:
+      213: -1861746358757929526
+    second: debuff-execute_3
+  - first:
+      213: 2055857104021358433
+    second: debuff-execute_4
+  - first:
+      213: -7133181827338297903
+    second: debuff-execute_5
+  - first:
+      213: -4957660693933827302
+    second: debuff-execute_6
+  - first:
+      213: 1323835139955537097
+    second: debuff-execute_7
+  - first:
+      213: 4094339776922071738
+    second: debuff-execute_8
+  - first:
+      213: -725035809770929765
+    second: debuff-execute_9
+  - first:
+      213: -7509027948853956744
+    second: debuff-execute_10
+  - first:
+      213: -8586235994383042019
+    second: debuff-execute_11
+  - first:
+      213: 6044225058690500531
+    second: debuff-execute_12
+  - first:
+      213: -871133681108429718
+    second: debuff-execute_13
+  - first:
+      213: 6640955321970244210
+    second: debuff-execute_14
+  - first:
+      213: 9194589863868999510
+    second: debuff-execute_15
+  - first:
+      213: 4960182589736683719
+    second: debuff-execute_16
+  - first:
+      213: -7436904764168928935
+    second: debuff-execute_17
+  - first:
+      213: -5010697461086015887
+    second: debuff-execute_18
+  - first:
+      213: -4051242001048592144
+    second: debuff-execute_19
+  - first:
+      213: 923845895828273585
+    second: debuff-execute_20
+  - first:
+      213: 4895668018904524643
+    second: debuff-execute_21
+  - first:
+      213: 3361227916160618058
+    second: debuff-execute_22
+  - first:
+      213: 2761199027702581855
+    second: debuff-execute_23
+  - first:
+      213: -6776799182304800780
+    second: debuff-execute_24
+  - first:
+      213: -1514945531956213050
+    second: debuff-execute_25
+  - first:
+      213: 978595529540887667
+    second: debuff-execute_26
+  - first:
+      213: 7826983351611175046
+    second: debuff-execute_27
+  - first:
+      213: 8021517927109031711
+    second: debuff-execute_28
+  - first:
+      213: -2954318790625585437
+    second: debuff-execute_29
+  - first:
+      213: -5358496349207151178
+    second: debuff-execute_30
+  - first:
+      213: 2944930851423757293
+    second: debuff-execute_31
+  - first:
+      213: -392347991854854925
+    second: debuff-execute_32
+  - first:
+      213: 48125619244008548
+    second: debuff-execute_33
+  - first:
+      213: -5941316159852792667
+    second: debuff-execute_34
+  - first:
+      213: -8259677869641003791
+    second: debuff-execute_35
+  - first:
+      213: 2314297727102854147
+    second: debuff-execute_36
+  - first:
+      213: -4403755792529876816
+    second: debuff-execute_37
+  - first:
+      213: 1617061654133247338
+    second: debuff-execute_38
+  - first:
+      213: -8006162912267092067
+    second: debuff-execute_39
+  - first:
+      213: 8130283524050674773
+    second: debuff-execute_40
+  - first:
+      213: 4032804740495637601
+    second: debuff-execute_41
+  - first:
+      213: -1750021167843249919
+    second: debuff-execute_42
+  - first:
+      213: -8152955415172411045
+    second: debuff-execute_43
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: debuff-execute_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 216
+        width: 72
+        height: 72
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d2a9c7f74e4cd234f8ad448e3cacd61c
+      internalID: -5932118757731356285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: debuff-execute_1
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 216
+        width: 72
+        height: 72
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 55e3d927de50b2b4dbcfbe2cdc2f2c4b
+      internalID: -921341017772979291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: debuff-execute_2
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 216
+        width: 72
+        height: 72
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3b775bacda5d29f4786277ff5670df38
+      internalID: 5698700970261862567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: debuff-execute_3
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 216
+        width: 72
+        height: 72
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 30a05d29b98a37747a552e800cd771bc
+      internalID: -1861746358757929526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: debuff-execute_4
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 216
+        width: 72
+        height: 72
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8a9f92728ae85b44fb63cfb59433bc15
+      internalID: 2055857104021358433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: debuff-execute_5
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 144
+        width: 72
+        height: 72
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6876e7fda9a62e74f9acf4f8c4445ba8
+      internalID: -7133181827338297903
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: debuff-execute_6
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 144
+        width: 72
+        height: 72
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 79d9dcdded4210d40ac551bab29a372a
+      internalID: -4957660693933827302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: debuff-execute_7
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 144
+        width: 72
+        height: 72
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d604d34e77e711245b806465b2ee6756
+      internalID: 1323835139955537097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: debuff-execute_8
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 144
+        width: 72
+        height: 72
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9a7aa0b414210524a9b195016a1b15d8
+      internalID: 4094339776922071738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: debuff-execute_9
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 144
+        width: 72
+        height: 72
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 904a4386be91c1b40a8eb46ef3f1a3c7
+      internalID: -725035809770929765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: debuff-execute_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 72
+        width: 72
+        height: 72
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 290363fff1fd9034bab31347cab7595a
+      internalID: -7509027948853956744
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: debuff-execute_11
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 72
+        width: 72
+        height: 72
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e02985a0f5e63c64983bc4e29bd2d4e1
+      internalID: -8586235994383042019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: debuff-execute_12
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 72
+        width: 72
+        height: 72
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1be8198aeeaa606458648f7a3274a28e
+      internalID: 6044225058690500531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: debuff-execute_13
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 72
+        width: 72
+        height: 72
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7baeca474125088489eadba9137d83bf
+      internalID: -871133681108429718
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: debuff-execute_14
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 72
+        width: 72
+        height: 72
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 730e761411d7e944e807f23276ff82d5
+      internalID: 6640955321970244210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: debuff-execute_15
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 72
+        height: 72
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1986010eb002cbd4389af4c9ce8d3def
+      internalID: 9194589863868999510
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: debuff-execute_16
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 0
+        width: 72
+        height: 72
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1aaba0609e9af6a45821368947caf12e
+      internalID: 4960182589736683719
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: debuff-execute_17
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 0
+        width: 72
+        height: 72
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dbf99f2269431bc46b158fb1b20f413b
+      internalID: -7436904764168928935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: debuff-execute_18
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 0
+        width: 72
+        height: 72
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7c11464b31937b94cae3a8a21e73572b
+      internalID: -5010697461086015887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 61031ca23a6fac946a3f68ae031f63a2
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      debuff-execute_0: -5932118757731356285
+      debuff-execute_1: -921341017772979291
+      debuff-execute_10: -7509027948853956744
+      debuff-execute_11: -8586235994383042019
+      debuff-execute_12: 6044225058690500531
+      debuff-execute_13: -871133681108429718
+      debuff-execute_14: 6640955321970244210
+      debuff-execute_15: 9194589863868999510
+      debuff-execute_16: 4960182589736683719
+      debuff-execute_17: -7436904764168928935
+      debuff-execute_18: -5010697461086015887
+      debuff-execute_2: 5698700970261862567
+      debuff-execute_3: -1861746358757929526
+      debuff-execute_4: 2055857104021358433
+      debuff-execute_5: -7133181827338297903
+      debuff-execute_6: -4957660693933827302
+      debuff-execute_7: 1323835139955537097
+      debuff-execute_8: 4094339776922071738
+      debuff-execute_9: -725035809770929765
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

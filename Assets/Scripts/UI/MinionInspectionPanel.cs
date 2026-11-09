@@ -250,7 +250,7 @@ namespace DarkLord.UI
             {
                 var workerHealth = worker.Health;
                 healthBar?.SetHealth(workerHealth.CurrentHealth, workerHealth.MaximumHealth);
-                titleText.text = "일꾼 슬라임";
+                titleText.text = "일꾼 혈조";
                 statsText.text = (healthBar == null ? $"체력  {workerHealth.CurrentHealth} / {workerHealth.MaximumHealth}\n\n" : "") +
                     "역할  시체 수거 및 소환소 운반";
                 return;

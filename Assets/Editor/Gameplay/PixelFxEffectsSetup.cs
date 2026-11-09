@@ -45,6 +45,15 @@ namespace DarkLord.EditorTools
             new Sheet { kind = GameplayEffectKind.HolyMark, file = "holy-mark", width = 64, height = 64, columns = 5, frames = 22, pivotX = 32, pivotY = 32, duration = .7f, fadeOut = .03f },
             new Sheet { kind = GameplayEffectKind.HolyPulse, file = "holy-pulse", width = 96, height = 96, columns = 4, frames = 14, pivotX = 48, pivotY = 48, duration = .42f, fadeOut = .05f },
             new Sheet { kind = GameplayEffectKind.HolyCharge, file = "holy-charge", width = 112, height = 72, columns = 3, frames = 12, pivotX = 72, pivotY = 36, duration = .36f, fadeOut = .05f },
+            new Sheet { kind = GameplayEffectKind.DebuffFrost, file = "debuff-frost", width = 72, height = 72, columns = 5, frames = 24, pivotX = 36, pivotY = 36, duration = .75f, fadeOut = 0 },
+            new Sheet { kind = GameplayEffectKind.DebuffBrood, file = "debuff-brood", width = 72, height = 72, columns = 5, frames = 24, pivotX = 36, pivotY = 36, duration = .75f, fadeOut = 0 },
+            new Sheet { kind = GameplayEffectKind.DebuffBrand, file = "debuff-brand", width = 64, height = 64, columns = 5, frames = 22, pivotX = 32, pivotY = 32, duration = .7f, fadeOut = 0 },
+            new Sheet { kind = GameplayEffectKind.DebuffHunt, file = "debuff-hunt", width = 72, height = 72, columns = 5, frames = 24, pivotX = 36, pivotY = 36, duration = .75f, fadeOut = 0 },
+            new Sheet { kind = GameplayEffectKind.DebuffExecute, file = "debuff-execute", width = 72, height = 72, columns = 5, frames = 19, pivotX = 36, pivotY = 36, duration = .6f, fadeOut = 0 },
+            new Sheet { kind = GameplayEffectKind.LootBlood, file = "loot-blood", width = 20, height = 20, columns = 5, frames = 18, pivotX = 10, pivotY = 10, duration = 1.2f, fadeOut = 0, loop = true },
+            new Sheet { kind = GameplayEffectKind.LootCrystal, file = "loot-crystal", width = 20, height = 20, columns = 5, frames = 18, pivotX = 10, pivotY = 10, duration = 1.2f, fadeOut = 0, loop = true },
+            new Sheet { kind = GameplayEffectKind.LootGold, file = "loot-gold", width = 20, height = 20, columns = 5, frames = 18, pivotX = 10, pivotY = 10, duration = 1.2f, fadeOut = 0, loop = true },
+            new Sheet { kind = GameplayEffectKind.LootExperience, file = "loot-experience", width = 20, height = 20, columns = 5, frames = 18, pivotX = 10, pivotY = 10, duration = 1.2f, fadeOut = 0, loop = true },
         };
 
         [MenuItem("Tools/Dark Lord/Apply PixelFx Skill Effects")]
@@ -55,7 +64,8 @@ namespace DarkLord.EditorTools
             foreach (var sheet in Sheets)
             {
                 var path = Folder + sheet.file + ".png";
-                Slice(path, sheet);
+                // Reslicing issues new sprite IDs, so leave sheets that are already cut alone.
+                if (AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().Count() != sheet.frames) Slice(path, sheet);
                 var sprites = AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>()
                     .OrderBy(s => int.Parse(s.name.Substring(s.name.LastIndexOf('_') + 1))).ToArray();
                 if (sprites.Length != sheet.frames) { Debug.LogError($"{path}: expected {sheet.frames} frames, found {sprites.Length}."); return; }

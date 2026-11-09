@@ -54,7 +54,7 @@ namespace DarkLord.Minions
         }
         public bool TryAct()
         {
-            if (!isActiveAndEnabled || !controller.enabled || !health.IsAlive || health.Faction != Faction.Dungeon || controller.Role != MinionRole.BloodSupport ||
+            if (!isActiveAndEnabled || !controller.enabled || !health.IsAlive || health.Faction != Faction.Dungeon || controller.Role != MinionRole.VampireHealer ||
                 Time.timeScale <= 0 || controller.DefenceDungeon?.Augments != null && !controller.DefenceDungeon.Augments.CanTrigger) return false;
             if (IsCasting)
             {

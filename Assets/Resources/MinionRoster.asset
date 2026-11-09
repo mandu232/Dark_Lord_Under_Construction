@@ -12,5 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1d17caac4d38724e92909b595f8cbaa, type: 3}
   m_Name: MinionRoster
   m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Minions.MinionRoster
-  archer: {fileID: 4155510833042006107, guid: 69afa97d303bc0a48a69adbe9d27ae27, type: 3}
-  support: {fileID: 4155510833042006107, guid: 20bef89a9d52f5d498c7f75d97ca9f67, type: 3}
+  bone: {fileID: 4155510833042006107, guid: 80411b4c07f9e9844bcfe80a7812f9e1, type: 3}
+  bat: {fileID: 4155510833042006107, guid: f91d288a8c10084479d49e7821343a6a, type: 3}
+  golem: {fileID: 4155510833042006107, guid: 67968ac961b37f544a956be3e785f529, type: 3}
+  ghoul: {fileID: 4155510833042006107, guid: 45214c68bac243e46b6026387d9662f5, type: 3}
+  wraith: {fileID: 4155510833042006107, guid: 8cb6a86a1658d7d4b8ebd8bd5ea9dd07, type: 3}
+  scorpion: {fileID: 4155510833042006107, guid: e7cced985c4a4644fb946071f593c2ea, type: 3}
+  spider: {fileID: 4155510833042006107, guid: 13d5812c96cf3b84bb340ca50b2226ab, type: 3}
+  knight: {fileID: 4155510833042006107, guid: f770feb2322a97b4a8fceb62b760887f, type: 3}
+  healer: {fileID: 4155510833042006107, guid: 1c043352535db684299c0cf2f0997c41, type: 3}
+  workerSkin: {fileID: 11400000, guid: 8bcceb3b2511ef9449371ab0bd20c457, type: 2}

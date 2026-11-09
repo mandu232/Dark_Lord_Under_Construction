@@ -12,7 +12,10 @@ namespace DarkLord.Minions
         [SerializeField] private string displayName = "하수인";
         [SerializeField] private MinionRole role;
         public MinionRole Role => role;
-        public string RoleName => role == MinionRole.BloodArcher ? "원거리" : role == MinionRole.BloodSupport ? "지원" : "전열";
+        public bool IsMelee => role != MinionRole.BloodWraith && role != MinionRole.RedScorpion && role != MinionRole.WebSpider && role != MinionRole.VampireHealer;
+        private const int BatLifesteal = 3;
+        private const float WebSlow = .55f, WebSlowDuration = 2.5f;
+        public string RoleName => IsMelee ? "전열" : role == MinionRole.VampireHealer ? "지원" : "원거리";
         [SerializeField] private MinionTrait traits;
         [SerializeField] private DamageType attackType;
         public MinionTrait Traits => traits;
@@ -146,6 +149,7 @@ namespace DarkLord.Minions
         {
             if (!IsAlive) return;
             motor.Stop();
+            motor.ClearKnockback();
             GetComponent<Rigidbody2D>().position = position;
             transform.position = new Vector3(position.x, position.y, transform.position.z);
             Defend(position);
@@ -206,6 +210,7 @@ namespace DarkLord.Minions
         {
             if (!health.IsAlive) { motor.Stop(); return; }
             if (Time.timeScale == 0 || IsHeld) { motor.Stop(); return; }
+            if (RecoverFromBlockedRoomCell()) return;
             if (IsStunned) return;
             if (State == ActorState.Hit && Time.time < stateEnds) return;
             if (Order != MinionOrder.Return && support != null && support.TryAct())
@@ -224,6 +229,12 @@ namespace DarkLord.Minions
                         bool canTrigger = augments != null && augments.CanTrigger;
                         int damage = augments != null ? augments.MinionDamage(this, target, AttackDamage) : AttackDamage;
                         bool applied = target.TakeDamage(damage, health, attackType);
+                        if (applied && role == MinionRole.VampireBat) health.Heal(BatLifesteal);
+                        if (applied && role == MinionRole.WebSpider && target.IsAlive)
+                        {
+                            target.GetComponent<TopDownMotor>()?.ApplySlow(WebSlow, WebSlowDuration);
+                            DarkLord.Gameplay.GameplayEffects.Show(target.transform, DarkLord.Gameplay.GameplayEffectKind.DebuffBrood, target.transform.position, follow: true, scale: DarkLord.Gameplay.TraitProcFeedback.DebuffArtScale);
+                        }
                         if (canTrigger && applied && !target.IsAlive) augments.MinionKill(this);
                     }
                 }
@@ -289,7 +300,7 @@ namespace DarkLord.Minions
                     stateEnds = Time.time + Mathf.Max(attackDuration, attackWindup);
                     nextAttack = Time.time + Mathf.Max(attackCooldown, attackDuration, attackWindup);
                     damagePending = true;
-                    if (health.Faction == Faction.Invader || role == MinionRole.BloodSlime)
+                    if (health.Faction == Faction.Invader || IsMelee)
                         motor.AttackStep(delta, .26f, .14f, Mathf.Max(0, attackWindup - .10f));
                     SetState(ActorState.Attack);
                 }
@@ -362,7 +373,7 @@ namespace DarkLord.Minions
         {
             float score = ((Vector2)candidate.transform.position - (Vector2)transform.position).sqrMagnitude;
             score *= .7f + .3f * candidate.CurrentHealth / Mathf.Max(1, candidate.MaximumHealth);
-            if (role == MinionRole.BloodSlime) return score;
+            if (IsMelee) return score;
             var enemy = candidate.GetComponent<InvaderTactics>();
             return enemy == null ? score : enemy.Role == InvaderRole.Healer ? score * .35f : enemy.Role == InvaderRole.Shieldbearer ? score * 1.6f : score;
         }
@@ -371,7 +382,7 @@ namespace DarkLord.Minions
         private bool TryReposition(Vector2 delta)
         {
             if (delta.sqrMagnitude < .0001f || target.GetComponent<TopDownMotor>() == null) return false;
-            bool skirmisher = health.Faction == Faction.Dungeon ? role != MinionRole.BloodSlime : tactics != null && tactics.Role == InvaderRole.Healer;
+            bool skirmisher = health.Faction == Faction.Dungeon ? !IsMelee : tactics != null && tactics.Role == InvaderRole.Healer;
             Vector2 direction; float pace;
             if (skirmisher)
             {
@@ -386,7 +397,7 @@ namespace DarkLord.Minions
             Vector2 position = transform.position;
             if (Physics2D.CircleCast(position, .22f, direction, .45f, obstacleLayers)) return false;
             var room = AssignedRoom;
-            if (room != null && !assaultMode && defenceDungeon.Construction.GarrisonAt(defenceDungeon.WorldToCell(position + direction * .5f)) != room) return false;
+            if (room != null && !assaultMode && !RoomWalkable(defenceDungeon.WorldToCell(position + direction * .5f))) return false;
             motor.Move(direction * pace);
             motor.Face(delta);
             SetState(ActorState.Run);
@@ -428,8 +439,9 @@ namespace DarkLord.Minions
 
         private void ShowAttackEffect(Vector3 point)
         {
-            if (role == MinionRole.BloodSlime) DarkLord.Gameplay.GameplayEffects.Show(transform, DarkLord.Gameplay.GameplayEffectKind.BloodBite, point);
-            else if (role == MinionRole.BloodArcher) DarkLord.Gameplay.GameplayEffects.ShowBetween(transform, DarkLord.Gameplay.GameplayEffectKind.BloodNeedle, transform.position, point, 6);
+            if (IsMelee) DarkLord.Gameplay.GameplayEffects.Show(transform, DarkLord.Gameplay.GameplayEffectKind.BloodBite, point);
+            else if (role == MinionRole.RedScorpion) DarkLord.Gameplay.GameplayEffects.ShowBetween(transform, DarkLord.Gameplay.GameplayEffectKind.BloodNeedle, transform.position, point, 6);
+            else if (role == MinionRole.WebSpider) DarkLord.Gameplay.GameplayEffects.ShowBetween(transform, DarkLord.Gameplay.GameplayEffectKind.BloodThread, transform.position, point, 5.5f);
             else DarkLord.Gameplay.GameplayEffects.ShowBetween(transform, DarkLord.Gameplay.GameplayEffectKind.BloodBolt, transform.position, point, 4.5f);
         }
         public void ApplyStun(float duration)

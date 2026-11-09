@@ -385,7 +385,7 @@ namespace DarkLord.Persistence
                 !InRange(poise.immunityRemaining, 1.5f) || poise.hits > 0 && poise.immunityRemaining > 0))
                 throw new InvalidDataException("적 강인도 기록이 올바르지 않습니다.");
             var support = actor.support;
-            if (support != null && ((actor.role != MinionRole.BloodSupport && (support.casting || support.remaining > 0 || support.cooldown > 0 || support.targetPosition != Vector2.zero)) || !InRange(support.remaining, .55f) || !InRange(support.cooldown, 3.5f) ||
+            if (support != null && ((actor.role != MinionRole.BloodSupport && actor.role != MinionRole.VampireHealer && (support.casting || support.remaining > 0 || support.cooldown > 0 || support.targetPosition != Vector2.zero)) || !InRange(support.remaining, .55f) || !InRange(support.cooldown, 3.5f) ||
                 !Finite(support.targetPosition) || !support.casting && support.remaining > 0))
                 throw new InvalidDataException("하수인 치유 기록이 올바르지 않습니다.");
             var status = actor.augmentStatus;

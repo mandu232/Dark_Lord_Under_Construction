@@ -81,7 +81,6 @@ namespace DarkLord.Gameplay
                 damage += 15;
                 target.GetComponent<TopDownMotor>()?.ApplySlow(.35f,3);
                 target.GetComponent<MinionController>()?.ApplyStun(1);
-                GameplayEffects.Show(target.transform,GameplayEffectKind.Curse,target.transform.position,follow:true);
                 Trigger(WaveRewardCatalog.BindingBrood,target.transform);
             }
             return damage;

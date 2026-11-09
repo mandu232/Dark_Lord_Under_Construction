@@ -22,7 +22,12 @@ namespace DarkLord.Player
         private void LateUpdate()
         {
             var guard = summoning != null ? summoning.RelocatingGuard : null;
-            if (held != guard) { Clear(); if (guard != null) Create(guard); }
+            if (guard == null || !guard.isActiveAndEnabled || !guard.IsAlive)
+            {
+                if (!ReferenceEquals(held, null)) Clear();
+                return;
+            }
+            if (held != guard) { Clear(); Create(guard); }
             if (guard == null || carried == null) return;
             var camera = Camera.main;
             var mouse = Mouse.current;
@@ -69,7 +74,7 @@ namespace DarkLord.Player
             shadow.transform.SetParent(transform, true); shadow.sprite = shadowSprite;
             shadow.sortingLayerID = source.sortingLayerID; shadow.sortingOrder = 32749;
         }
-        private void Clear()
+        internal void Clear()
         {
             if (source != null) source.color = originalColor;
             if (carried != null) { carried.gameObject.SetActive(false); Destroy(carried.gameObject); }

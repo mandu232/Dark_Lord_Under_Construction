@@ -143,7 +143,7 @@ namespace DarkLord.Player
         }
         private MinionController RebuildGuard(MinionSaveData data)
         {
-            var definition = RecruitDefinitionFor(data.role);
+            var definition = RecruitDefinitionFor(MinionRoster.Replacement(data.role));
             if (definition == null) throw new InvalidOperationException("저장된 하수인 병과를 찾을 수 없습니다.");
             var guard=Instantiate(definition,data.position,Quaternion.identity);guard.name=guard.DisplayName;
             UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(guard.gameObject, gameObject.scene);

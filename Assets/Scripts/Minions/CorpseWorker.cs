@@ -105,10 +105,12 @@ namespace DarkLord.Minions
             if (!carrying)
             {
                 var corpseCell = dungeon.WorldToCell(corpse.transform.position);
-                float pickupRange = dungeon.BlocksNpcMovement(corpseCell) ? CorpseHarvest.PickupDistance : .48f;
+                bool insideFacilityCell = dungeon.BlocksNpcMovement(corpseCell);
+                float pickupRange = insideFacilityCell ? CorpseHarvest.PickupDistance : .48f;
                 if (Vector2.Distance(transform.position, corpse.transform.position) > pickupRange)
                 {
-                    MoveAlongPath(corpseCell, corpse.transform.position, .35f);
+                    // Routes end beside a facility cell, which can still be out of pickup range of a corpse on its far side.
+                    MoveAlongPath(corpseCell, corpse.transform.position, .35f, insideFacilityCell);
                     return;
                 }
                 carrying = true;
@@ -205,7 +207,7 @@ namespace DarkLord.Minions
             goal = null;
         }
 
-        private void MoveAlongPath(Vector2Int cell, Vector3 destination, float arrival)
+        private void MoveAlongPath(Vector2Int cell, Vector3 destination, float arrival, bool closeInOnBlockedCell = false)
         {
             Vector2Int current = dungeon.WorldToCell(transform.position);
             if (goal != cell || revision != dungeon.Construction.Revision || Time.time >= nextSearch ||
@@ -223,7 +225,7 @@ namespace DarkLord.Minions
                 }
             }
             while (waypoint < path.Count && Vector2.Distance(transform.position, dungeon.CellCenter(path[waypoint])) < .18f) waypoint++;
-            if (waypoint >= path.Count && (current != cell || dungeon.BlocksNpcMovement(cell))) { Stop(); return; }
+            if (!closeInOnBlockedCell && waypoint >= path.Count && (current != cell || dungeon.BlocksNpcMovement(cell))) { Stop(); return; }
             Vector2 point = waypoint < path.Count ? dungeon.CellCenter(path[waypoint]) : destination;
             Vector2 delta = point - (Vector2)transform.position;
             if (waypoint >= path.Count && delta.magnitude <= arrival) { Stop(); return; }

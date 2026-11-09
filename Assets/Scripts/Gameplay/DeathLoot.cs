@@ -16,6 +16,7 @@ namespace DarkLord.Gameplay
     public sealed class DeathLoot : MonoBehaviour
     {
         public enum Kind { Blood, Crystal, Gold, Experience }
+        private const float VisualScale = 1.5f;
         private Transform collector;
         private WaveDirector waves;
         private ActorHealth health;
@@ -28,8 +29,10 @@ namespace DarkLord.Gameplay
         private TrailRenderer absorptionTrail;
         private Color color;
         private static GameplayEffectLibrary effectLibrary;
-        private static Sprite glowSprite;
         private Sprite orbSprite;
+        private SpriteRenderer visualRenderer;
+        private GameplayEffectLibrary.Clip visualClip;
+        private float animationOffset;
         internal static event Action<ActorHealth, Kind, Vector3, Sprite> OrbCollected;
         public bool Collected { get; private set; }
 
@@ -92,53 +95,28 @@ namespace DarkLord.Gameplay
             if (effectLibrary == null) effectLibrary = Resources.Load<GameplayEffectLibrary>("GameplayEffects");
             var visual = new GameObject("Orb sprite"); visual.transform.SetParent(node.transform, false);
             var renderer = visual.AddComponent<SpriteRenderer>();
-            renderer.sprite = effectLibrary != null && effectLibrary.lootSprites != null && (int)type < effectLibrary.lootSprites.Length
-                ? effectLibrary.lootSprites[(int)type] : null;
+            // The art bakes in its glow, so no separate halo is drawn.
+            var clip = effectLibrary != null ? effectLibrary.Find(GameplayEffectKind.LootBlood + (int)type) : null;
+            if (clip != null && clip.frames != null && clip.frames.Length > 0)
+            {
+                renderer.sprite = clip.frames[0];
+                visual.transform.localScale = Vector3.one * VisualScale;
+                drop.visualClip = clip; drop.visualRenderer = renderer;
+                drop.animationOffset = UnityEngine.Random.value * clip.duration;
+            }
             renderer.sortingOrder = 45;
             drop.orbSprite = renderer.sprite;
             if (effectLibrary != null && effectLibrary.material != null) renderer.sharedMaterial = effectLibrary.material;
-            if (renderer.sprite != null)
-            {
-                visual.transform.localScale = Vector3.one * (.27f / Mathf.Max(renderer.sprite.bounds.size.x, renderer.sprite.bounds.size.y));
-                var glow = new GameObject("Orb glow");
-                glow.transform.SetParent(node.transform, false);
-                glow.transform.localScale = Vector3.one * .85f;
-                var halo = glow.AddComponent<SpriteRenderer>();
-                halo.sprite = GetGlowSprite();
-                halo.sharedMaterial = renderer.sharedMaterial;
-                halo.sortingOrder = renderer.sortingOrder - 1;
-                halo.color = new Color(color.r, color.g, color.b, .65f);
-            }
             return drop;
         }
 
-        private static Sprite GetGlowSprite()
-        {
-            if (glowSprite != null) return glowSprite;
-            const int size = 32;
-            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
-            {
-                name = "Orb halo",
-                filterMode = FilterMode.Bilinear,
-                wrapMode = TextureWrapMode.Clamp,
-                hideFlags = HideFlags.DontSave
-            };
-            var pixels = new Color32[size * size];
-            for (int y = 0; y < size; y++)
-                for (int x = 0; x < size; x++)
-                {
-                    var point = new Vector2(x + .5f, y + .5f) / (size * .5f) - Vector2.one;
-                    float falloff = Mathf.Clamp01(1 - point.magnitude);
-                    pixels[y * size + x] = new Color32(255, 255, 255, (byte)(255 * falloff * falloff));
-                }
-            texture.SetPixels32(pixels);
-            texture.Apply(false, true);
-            glowSprite = Sprite.Create(texture, new Rect(0, 0, size, size), Vector2.one * .5f, size, 0, SpriteMeshType.FullRect);
-            glowSprite.hideFlags = HideFlags.DontSave;
-            return glowSprite;
-        }
         private void Update()
         {
+            if (visualClip != null)
+            {
+                float loop = Mathf.Repeat((Time.time + animationOffset) / visualClip.duration, 1);
+                visualRenderer.sprite = visualClip.frames[Mathf.Min(visualClip.frames.Length - 1, (int)(loop * visualClip.frames.Length))];
+            }
             absorptionTrail.emitting = false;
             if (Time.timeScale <= 0 || collector == null || health == null || !health.IsAlive) return;
             age += Time.deltaTime;

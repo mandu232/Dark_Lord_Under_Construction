@@ -1,0 +1,1677 @@
+fileFormatVersion: 2
+guid: cd4d0862e51c6934ebf16cca02c6a7bc
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 8646246853681652769
+    second: VampireHealerSheet_0
+  - first:
+      213: -4561727844527031193
+    second: VampireHealerSheet_1
+  - first:
+      213: -4946154301403839985
+    second: VampireHealerSheet_2
+  - first:
+      213: 3597881501272089324
+    second: VampireHealerSheet_3
+  - first:
+      213: 8511229011342756736
+    second: VampireHealerSheet_4
+  - first:
+      213: 2982903831210791273
+    second: VampireHealerSheet_5
+  - first:
+      213: -4175875319950640945
+    second: VampireHealerSheet_6
+  - first:
+      213: -2405818675630929869
+    second: VampireHealerSheet_7
+  - first:
+      213: 2922345776867829703
+    second: VampireHealerSheet_8
+  - first:
+      213: 3122917826127894960
+    second: VampireHealerSheet_9
+  - first:
+      213: 2415920690380369842
+    second: VampireHealerSheet_10
+  - first:
+      213: -331691957346382920
+    second: VampireHealerSheet_11
+  - first:
+      213: -1215678243254089314
+    second: VampireHealerSheet_12
+  - first:
+      213: 3552771522006850092
+    second: VampireHealerSheet_13
+  - first:
+      213: 3605577656426565925
+    second: VampireHealerSheet_14
+  - first:
+      213: -4616938123361628169
+    second: VampireHealerSheet_15
+  - first:
+      213: -2743088201515179235
+    second: VampireHealerSheet_16
+  - first:
+      213: -4615734886484318699
+    second: VampireHealerSheet_17
+  - first:
+      213: -8408416651123873506
+    second: VampireHealerSheet_18
+  - first:
+      213: -6617804052224687224
+    second: VampireHealerSheet_19
+  - first:
+      213: 3049284703695686365
+    second: VampireHealerSheet_20
+  - first:
+      213: -2169684379726692318
+    second: VampireHealerSheet_21
+  - first:
+      213: -2917549432789153622
+    second: VampireHealerSheet_22
+  - first:
+      213: -163744452708475858
+    second: VampireHealerSheet_23
+  - first:
+      213: 4660966048039696278
+    second: VampireHealerSheet_24
+  - first:
+      213: 1777984055921383147
+    second: VampireHealerSheet_25
+  - first:
+      213: -2202727863459117909
+    second: VampireHealerSheet_26
+  - first:
+      213: -1933421581112570400
+    second: VampireHealerSheet_27
+  - first:
+      213: 8505008016941703778
+    second: VampireHealerSheet_28
+  - first:
+      213: -1275567137203450045
+    second: VampireHealerSheet_29
+  - first:
+      213: -7512788022055662746
+    second: VampireHealerSheet_30
+  - first:
+      213: 518923338586953996
+    second: VampireHealerSheet_31
+  - first:
+      213: 1489962697160820986
+    second: VampireHealerSheet_32
+  - first:
+      213: -3705964241140990407
+    second: VampireHealerSheet_33
+  - first:
+      213: -6457013672376911111
+    second: VampireHealerSheet_34
+  - first:
+      213: 8855007593681298006
+    second: VampireHealerSheet_35
+  - first:
+      213: 3520165722136536347
+    second: VampireHealerSheet_36
+  - first:
+      213: 301812531214045289
+    second: VampireHealerSheet_37
+  - first:
+      213: 8148278246789229251
+    second: VampireHealerSheet_38
+  - first:
+      213: 234098502904719572
+    second: VampireHealerSheet_39
+  - first:
+      213: 3876605377475269932
+    second: VampireHealerSheet_40
+  - first:
+      213: -1993185596157443316
+    second: VampireHealerSheet_41
+  - first:
+      213: 7449896377743694027
+    second: VampireHealerSheet_42
+  - first:
+      213: -4079034663857267721
+    second: VampireHealerSheet_43
+  - first:
+      213: 5214275849737186346
+    second: VampireHealerSheet_44
+  - first:
+      213: 4846552642613784328
+    second: VampireHealerSheet_45
+  - first:
+      213: 6137895120616065621
+    second: VampireHealerSheet_46
+  - first:
+      213: 3885992240423526682
+    second: VampireHealerSheet_47
+  - first:
+      213: 769211855632126900
+    second: VampireHealerSheet_48
+  - first:
+      213: 6753254570315985789
+    second: VampireHealerSheet_49
+  - first:
+      213: 2505962142214458716
+    second: VampireHealerSheet_50
+  - first:
+      213: 4889053832893239123
+    second: VampireHealerSheet_51
+  - first:
+      213: 7894856456099907158
+    second: VampireHealerSheet_52
+  - first:
+      213: 2884911206700542511
+    second: VampireHealerSheet_53
+  - first:
+      213: -4339196944235426303
+    second: VampireHealerSheet_54
+  - first:
+      213: 5328621066864472005
+    second: VampireHealerSheet_55
+  - first:
+      213: 944337981283435792
+    second: VampireHealerSheet_56
+  - first:
+      213: 5823991855258140822
+    second: VampireHealerSheet_57
+  - first:
+      213: 3185838621216383216
+    second: VampireHealerSheet_58
+  - first:
+      213: 5445427492474977691
+    second: VampireHealerSheet_59
+  - first:
+      213: -7776075649348383145
+    second: VampireHealerSheet_60
+  - first:
+      213: 1996758103799497916
+    second: VampireHealerSheet_61
+  - first:
+      213: 5523237852264709313
+    second: VampireHealerSheet_62
+  - first:
+      213: -6679311429536895410
+    second: VampireHealerSheet_63
+  - first:
+      213: 5883045835739954911
+    second: VampireHealerSheet_64
+  - first:
+      213: -6464438325786085508
+    second: VampireHealerSheet_65
+  - first:
+      213: -6017842379081883802
+    second: VampireHealerSheet_66
+  - first:
+      213: -1713467881286927955
+    second: VampireHealerSheet_67
+  - first:
+      213: 5646422320723825129
+    second: VampireHealerSheet_68
+  - first:
+      213: 4628985486528104933
+    second: VampireHealerSheet_69
+  - first:
+      213: -7631809466846898471
+    second: VampireHealerSheet_70
+  - first:
+      213: 2032254696941191926
+    second: VampireHealerSheet_71
+  - first:
+      213: 1628618436898113327
+    second: VampireHealerSheet_72
+  - first:
+      213: -4351427705684695383
+    second: VampireHealerSheet_73
+  - first:
+      213: 4699781642292443887
+    second: VampireHealerSheet_74
+  - first:
+      213: -4294897446712092758
+    second: VampireHealerSheet_75
+  - first:
+      213: 9151340415710565200
+    second: VampireHealerSheet_76
+  - first:
+      213: 1067225158124383024
+    second: VampireHealerSheet_77
+  - first:
+      213: -8249552120390670914
+    second: VampireHealerSheet_78
+  - first:
+      213: -7522336278820592977
+    second: VampireHealerSheet_79
+  - first:
+      213: -5852228901273046174
+    second: VampireHealerSheet_80
+  - first:
+      213: 6455823511846051568
+    second: VampireHealerSheet_81
+  - first:
+      213: -1639957631322291743
+    second: VampireHealerSheet_82
+  - first:
+      213: 6748009088864932628
+    second: VampireHealerSheet_83
+  - first:
+      213: 1170162284367083566
+    second: VampireHealerSheet_84
+  - first:
+      213: 8005805958292073021
+    second: VampireHealerSheet_85
+  - first:
+      213: 6221636118161599553
+    second: VampireHealerSheet_86
+  - first:
+      213: 3098575842050782288
+    second: VampireHealerSheet_87
+  - first:
+      213: -62513903809482245
+    second: VampireHealerSheet_88
+  - first:
+      213: -6813846739750254638
+    second: VampireHealerSheet_89
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: VampireHealerFrame000
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 672
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f9247497c54016941aa322f838ce27c0
+      internalID: -758922567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame001
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 672
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c994a11a41cbe694f8c81cabfc487000
+      internalID: 2013850980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame002
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 672
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7a47a196e57f5b24db67ad5602fc2a0a
+      internalID: 892043148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame003
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 672
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 99b2b03e3eed9b845ac96840594c9560
+      internalID: -1826877094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame004
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 672
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c0789d37d0f87346aee21b4d7f76ad8
+      internalID: 1855920272
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame005
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 672
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e555b000c6afef748a68c33156808318
+      internalID: -1120568089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame006
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 576
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 524b20193d2fb4447ba8658e700ec2d4
+      internalID: -425615842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame007
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 576
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 460b161dd119a8f4b8a3c27244354059
+      internalID: 1807300386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame008
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 576
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1ccc7600a3e1c2f438775bcb625d40d9
+      internalID: -1978737842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame009
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 576
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7acf17efad794f84a80feef08b0fd902
+      internalID: -1817781693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame010
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 576
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d01dc0526fe2b31479ed4f4f926cd27b
+      internalID: 1606792541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame011
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 576
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9df6c12f80cc9454db83628a72a40d7d
+      internalID: -340452829
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame012
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 576
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5895ea7077c70ed4a8c7367a0a9acd0d
+      internalID: 736705284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame013
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 576
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9c66b49e8450c8f49b88534b61314b44
+      internalID: -276191114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame014
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 480
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ddc738da7632a444cb26274c8bac9cff
+      internalID: 679515146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame015
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 480
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d17811495494448419dae06563cbec76
+      internalID: -20812593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame016
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 480
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3dd0b91ce0f2bd541a11b2bc569896cc
+      internalID: -1615648623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame017
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 480
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 385ca77cac3363143998a66024e85ee8
+      internalID: -472180464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame018
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 480
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e231be256083d5d4d843133d74218acd
+      internalID: 425216830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame019
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 480
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1e1efed17e28e7a44a3d1ee316a22b76
+      internalID: 1220692367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame020
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 384
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2dddb399f692fc741910185e89551835
+      internalID: -1445149624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame021
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 384
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 98751d422602a364faae37c539c7fecd
+      internalID: -977351001
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame022
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 384
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ad66e744a32ac384096199a1f7f8874e
+      internalID: 252350151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame023
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 384
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c8c7b41b23d26124fab3694241edd2b1
+      internalID: -311502799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame024
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 384
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9475ee4e950ef1f429db6a3ce77c0f56
+      internalID: -857382808
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame025
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 384
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 544da2e685bc5014591382dbba9da1fa
+      internalID: 79895547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame026
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 288
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1af0d4292a6b4594291b916bd74b4826
+      internalID: 1622112352
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame027
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 288
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 23393f377b70a4a4e9dc561d21b6820c
+      internalID: 1765448137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame028
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 288
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 49e87ec074fbe3a4a8b440961cab24bd
+      internalID: -187916728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame029
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 288
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed3bffd6c751e5b4eb6780252de9fbf8
+      internalID: -79507442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame030
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 288
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 09808568734cff44688fa03ee733cd6c
+      internalID: 901232615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame031
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 288
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2e010cab898c3c64790cd28083fd7c73
+      internalID: 1749816497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame032
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 288
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f58e7833d2e55f40a84c9d9d2318db9
+      internalID: -2022375742
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame033
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 288
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1bd04b198cf65634789b7710dfba64f7
+      internalID: -677519549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame034
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 192
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: be8270bb8f1bef043bf7f284fce2c4f9
+      internalID: 2050539895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame035
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 192
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c2e6a25a59d8e1043ba80104486a48ec
+      internalID: -43489558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame036
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 192
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e67649fdd56739f4a9f8b27d1c3f15ce
+      internalID: -815048176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame037
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 192
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f55074284740dd54a9e074d79a89b8a0
+      internalID: 1698901572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame038
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 192
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2e31ce2cd659a2d4595cc1599fc9ea37
+      internalID: 1001018079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame039
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 192
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 46bca02179903174fb8433397674fbba
+      internalID: 665811679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame040
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 192
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e104c57cee93e2e478a0e910382c7717
+      internalID: -1098592896
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame041
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 192
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1857939d366b63d49a3cec3840db32bb
+      internalID: -222262601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame042
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 96
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d2125e4dfcb5e7c4aa5a552f583a533a
+      internalID: -2009775343
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame043
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 96
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 65e51b65ebb919d41865d1992ce2a646
+      internalID: -2046797009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame044
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 96
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8959b65ad786a6c43a9b9650bcd12337
+      internalID: -725365391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame045
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 96
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 15014d1c0d8e48744927005582daa1c7
+      internalID: -1810299023
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame046
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0b9bb1ec35b4b2544a7cfecb8fdaaa73
+      internalID: 1298306943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame047
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 0
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dba38c3673e8aeb40afaf44741f920d2
+      internalID: -2031985814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame048
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7377bf139866e554797c6389749e1f87
+      internalID: -731383506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame049
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 0
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 65b5958bccbfdde41b15938e5f821430
+      internalID: 431181674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame050
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 0
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 298677c894b9a1f4590a6754da50c64c
+      internalID: -1885226745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame051
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 0
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 795b7834ae953904fb3445b42a4bf064
+      internalID: -1140280856
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame052
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 0
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9dc350a90131719498816e4112098d63
+      internalID: -2052446823
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame053
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 0
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8bd9d8fad87f96d4cbdd7f7397289d46
+      internalID: -1516743696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame054
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 0
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bdaee63a3eb713245bfb455d36d4c093
+      internalID: 1276066374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VampireHealerFrame055
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 0
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: db296d5dab8ccc44aa7777b4d26a12a7
+      internalID: 1729703716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 7f5361f8c1f31124bad6f2c5598fa2c9
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      VampireHealerFrame000: -758922567
+      VampireHealerFrame001: 2013850980
+      VampireHealerFrame002: 892043148
+      VampireHealerFrame003: -1826877094
+      VampireHealerFrame004: 1855920272
+      VampireHealerFrame005: -1120568089
+      VampireHealerFrame006: -425615842
+      VampireHealerFrame007: 1807300386
+      VampireHealerFrame008: -1978737842
+      VampireHealerFrame009: -1817781693
+      VampireHealerFrame010: 1606792541
+      VampireHealerFrame011: -340452829
+      VampireHealerFrame012: 736705284
+      VampireHealerFrame013: -276191114
+      VampireHealerFrame014: 679515146
+      VampireHealerFrame015: -20812593
+      VampireHealerFrame016: -1615648623
+      VampireHealerFrame017: -472180464
+      VampireHealerFrame018: 425216830
+      VampireHealerFrame019: 1220692367
+      VampireHealerFrame020: -1445149624
+      VampireHealerFrame021: -977351001
+      VampireHealerFrame022: 252350151
+      VampireHealerFrame023: -311502799
+      VampireHealerFrame024: -857382808
+      VampireHealerFrame025: 79895547
+      VampireHealerFrame026: 1622112352
+      VampireHealerFrame027: 1765448137
+      VampireHealerFrame028: -187916728
+      VampireHealerFrame029: -79507442
+      VampireHealerFrame030: 901232615
+      VampireHealerFrame031: 1749816497
+      VampireHealerFrame032: -2022375742
+      VampireHealerFrame033: -677519549
+      VampireHealerFrame034: 2050539895
+      VampireHealerFrame035: -43489558
+      VampireHealerFrame036: -815048176
+      VampireHealerFrame037: 1698901572
+      VampireHealerFrame038: 1001018079
+      VampireHealerFrame039: 665811679
+      VampireHealerFrame040: -1098592896
+      VampireHealerFrame041: -222262601
+      VampireHealerFrame042: -2009775343
+      VampireHealerFrame043: -2046797009
+      VampireHealerFrame044: -725365391
+      VampireHealerFrame045: -1810299023
+      VampireHealerFrame046: 1298306943
+      VampireHealerFrame047: -2031985814
+      VampireHealerFrame048: -731383506
+      VampireHealerFrame049: 431181674
+      VampireHealerFrame050: -1885226745
+      VampireHealerFrame051: -1140280856
+      VampireHealerFrame052: -2052446823
+      VampireHealerFrame053: -1516743696
+      VampireHealerFrame054: 1276066374
+      VampireHealerFrame055: 1729703716
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

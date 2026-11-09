@@ -26,6 +26,7 @@ namespace DarkLord.Player
         private bool recruitmentWindow, dragPlacement;
         private PlacementCameraZoom relocationZoom;
         private PlacementCameraPan relocationPan;
+        private MinionRelocationVisuals relocationVisuals;
         private readonly List<MinionController> guards = new List<MinionController>();
         private readonly Collider2D[] overlaps = new Collider2D[32];
         private ActorHealth health;
@@ -64,7 +65,8 @@ namespace DarkLord.Player
         public bool CanInteractRecruitment => !IsOpen && CanHandleMinions && (GetComponent<PlayerCombat>() == null || GetComponent<PlayerCombat>().CanUseFacilities) && dungeon.NearRecruitmentFacility(transform.position);
         private void Awake()
         {
-            if (GetComponent<MinionRelocationVisuals>() == null) gameObject.AddComponent<MinionRelocationVisuals>();
+            relocationVisuals = GetComponent<MinionRelocationVisuals>();
+            if (relocationVisuals == null) relocationVisuals = gameObject.AddComponent<MinionRelocationVisuals>();
             health = GetComponent<ActorHealth>(); commands = GetComponent<MinionCommands>(); worldCamera = Camera.main;
             close = new InputAction("Close summon menu", InputActionType.Button, "<Keyboard>/escape");
             place = new InputAction("Move minion to room", InputActionType.Button, "<Mouse>/leftButton");
@@ -92,6 +94,7 @@ namespace DarkLord.Player
             if (relocationPan != null) relocationPan.Release(this);
             relocationZoom = null;
             relocationPan = null;
+            if (relocationVisuals != null) relocationVisuals.Clear();
             ClearPreview(); IsPlacing = false; relocatingGuard = pressedGuard = null; dragPlacement = false;
             recruitmentStation = null; recruitmentWindow = false;
             IsOpen = value && isActiveAndEnabled && Time.timeScale > 0 && (health == null || health.IsAlive);
@@ -106,11 +109,15 @@ namespace DarkLord.Player
                 EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>() == null)) TryRecruit();
             if (!IsOpen) { UpdateHold(); return; }
             if (!IsPlacing) return;
+            if (!IsRelocating || !relocatingGuard.isActiveAndEnabled || !relocatingGuard.IsAlive || cancelPlacement.WasPressedThisFrame())
+            { SetOpen(false); return; }
             var mergeTarget = PointerWorld(out var pointer) ? GuardAt(pointer, relocatingGuard) : null;
             if (mergeTarget != null && !relocatingGuard.CanMergeWith(mergeTarget)) mergeTarget = null;
             if (mergeTarget != null && Time.frameCount > placementStartedFrame && (dragPlacement ? place.WasReleasedThisFrame() : place.WasPressedThisFrame()))
-            { TryMerge(relocatingGuard, mergeTarget); return; }
-            if (!IsRelocating || !relocatingGuard.IsAlive || cancelPlacement.WasPressedThisFrame()) { SetOpen(false); return; }
+            {
+                if (!TryMerge(relocatingGuard, mergeTarget) && dragPlacement) SetOpen(false);
+                return;
+            }
             if (!dragPlacement || place.IsPressed())
                 relocationPan?.Pan(Mouse.current != null ? Mouse.current.position.ReadValue() : (Vector2?)null,
                     relocationMove != null ? relocationMove.ReadValue<Vector2>() : Vector2.zero, Time.deltaTime);
@@ -166,7 +173,7 @@ namespace DarkLord.Player
             target.Promote(source);
             RemoveGuard(source);
             SetOpen(false);
-            GameplayEffects.Show(target.transform, GameplayEffectKind.BloodEmpower, target.transform.position, duration: .9f);
+            GameplayEffects.Show(target.transform, GameplayEffectKind.BloodEmpower, target.transform.position, follow: true, duration: .9f);
             message = $"{target.DisplayName}이(가) {target.TierName}으로 승급했습니다.";
             return true;
         }
@@ -195,7 +202,9 @@ namespace DarkLord.Player
             { message = $"시체를 소환소에 넣어 스택을 모으세요. 소환에는 스택 {SummonStackCost}개가 필요합니다. 합성으로 수를 줄이면 내려갑니다."; return false; }
             if (GuaranteesBloodSlime) return TrySummonInternal(MinionRole.BloodSlime, true);
             var available = new List<MinionRole>();
-            for (int i = 0; i < 3; i++) if (RecruitDefinitionFor((MinionRole)i) != null) available.Add((MinionRole)i);
+            foreach (var role in MinionRoster.Summonable)
+                if (RecruitDefinitionFor(role) != null)
+                    for (int weight = MinionRoster.SummonWeight(role); weight > 0; weight--) available.Add(role);
             return available.Count > 0 && TrySummonInternal(available[Random.Range(0, available.Count)], true);
         }
         private bool TrySummonInternal(MinionRole role, bool useStack)

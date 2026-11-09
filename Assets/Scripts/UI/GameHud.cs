@@ -135,7 +135,7 @@ namespace DarkLord.UI
             var image = orb.GetComponent<UnityEngine.UI.Image>();
             image.sprite = sprite;
             image.raycastTarget = false;
-            image.rectTransform.sizeDelta = Vector2.one * 22;
+            image.rectTransform.sizeDelta = Vector2.one * 40; // Exactly 2x the 20 px loot frame, whose art fills about half of it.
             Color tint = kind switch
             {
                 DeathLoot.Kind.Gold => new Color(1f, .82f, .24f),

@@ -42,7 +42,7 @@ namespace DarkLord.Player
             var worker = CreateWorker(definition, dungeon.CellCenter(cell), CorpseWorker.MaximumHealth);
             GameplayEffects.Show(worker.transform, GameplayEffectKind.Summon, worker.transform.position);
             SetOpen(false);
-            message = "시체 수거 슬라임을 소환했습니다.";
+            message = "일꾼 혈조를 소환했습니다.";
             return true;
         }
 
@@ -51,9 +51,9 @@ namespace DarkLord.Player
             workers.RemoveAll(worker => worker == null || !worker.IsAlive);
             var actor = Instantiate(definition, position, Quaternion.identity, dungeon.transform);
             actor.enabled = false;
-            actor.name = "시체 수거 슬라임";
+            actor.name = "일꾼 혈조";
             var visual = actor.GetComponentInChildren<SpriteRenderer>();
-            if (visual != null) visual.color = new Color(.6f, .9f, 1f);
+            if (visual != null) visual.gameObject.AddComponent<MinionSkin>().Apply(Resources.Load<MinionRoster>("MinionRoster")?.workerSkin);
             var worker = actor.gameObject.AddComponent<CorpseWorker>();
             worker.Configure(this, GetComponent<CorpseHarvest>(), currentHealth);
             workers.Add(worker);

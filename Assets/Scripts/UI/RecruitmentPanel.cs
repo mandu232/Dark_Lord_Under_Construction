@@ -31,7 +31,7 @@ namespace DarkLord.UI
             workerRect.anchoredPosition = randomRect.anchoredPosition + Vector2.down * 58;
             status.rectTransform.anchoredPosition += Vector2.down * 37;
             status.rectTransform.sizeDelta = new Vector2(status.rectTransform.sizeDelta.x, 44);
-            workerButton.GetComponentInChildren<TMP_Text>(true).text = "일꾼 슬라임 소환";
+            workerButton.GetComponentInChildren<TMP_Text>(true).text = "일꾼 혈조 소환";
             workerButton.onClick.AddListener(() => { if (summoning.TrySummonWorker()) window.SetActive(false); });
             randomButton.onClick.AddListener(() => { if (summoning.TrySummonRandom()) window.SetActive(false); });
             closeButton.onClick.AddListener(() => summoning.SetOpen(false));
