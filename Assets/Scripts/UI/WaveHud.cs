@@ -27,7 +27,7 @@ namespace DarkLord.UI
             node.transform.SetParent(canvas.transform, false);
             var rect = node.GetComponent<RectTransform>();
             rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(1, 0);
-            rect.anchoredPosition = new Vector2(-24, 100); rect.sizeDelta = new Vector2(460, 220);
+            rect.anchoredPosition = new Vector2(-24, 100); rect.sizeDelta = new Vector2(460, 270);
             var background = node.GetComponent<UnityEngine.UI.Image>();
             background.color = new Color(.07f, .025f, .05f, .94f); background.raycastTarget = false;
             var label = new GameObject("Formation and counters", typeof(RectTransform), typeof(TextMeshProUGUI));
@@ -102,7 +102,10 @@ namespace DarkLord.UI
             {
                 bool preparing = director.HasNextWave && (director.State == WaveState.Preparing || director.UsesWaveCountdown && director.State == WaveState.Active);
                 forecast.transform.parent.gameObject.SetActive(preparing);
-                if (preparing) forecast.text = $"<b>다음 습격 {director.CurrentWave + 1} · {WaveFormation.Name(director.CurrentWave + 1)}</b>\n" +
+                var nextRegion = director.NextWaveRegion;
+                if (preparing) forecast.text = (director.AwaitingRelocation ? $"<color=#E8B04A>이번 습격을 막아내면 던전 이동 · 다음 지역 {nextRegion.Name}</color>\n" : "") +
+                    $"<b>다음 습격 {director.CurrentWave + 1} · {WaveFormation.Name(director.CurrentWave + 1)}</b>\n" +
+                    $"<color=#E8B04A>{nextRegion.RaceName} · {nextRegion.Faction}</color>\n" +
                     WaveFormation.Summary(director.NextFormation) + $"\n총 {director.NextEnemyCount}명 · 개별 체력 {director.NextEnemyHealth}\n\n" +
                     WaveFormation.Advice(director.CurrentWave + 1) + "\n<color=#9DA6B5>표식: 파랑 방패 · 초록 십자 · 빨강 돌격</color>";
             }
@@ -124,13 +127,16 @@ namespace DarkLord.UI
                 case WaveState.RewardSelection:
                     statusText.text = "보상을 하나 선택하세요";
                     break;
+                case WaveState.Relocating:
+                    statusText.text = $"던전 이동 중 · {director.NextWaveRegion.Name}";
+                    break;
                 default:
                     waveText.text = "성 함락";
                     statusText.text = "침입자에게 패배했습니다";
                     break;
             }
-            if (director.UsesWaveCountdown && director.HasNextWave && (director.State == WaveState.Preparing || director.State == WaveState.Active))
-                statusText.text += $" · 다음 침공 {lastCountdown / 60}:{lastCountdown % 60:00}";
+            if (director.UsesWaveCountdown && director.HasNextWave && !director.AwaitingRelocation && (director.State == WaveState.Preparing || director.State == WaveState.Active))
+                statusText.text +=$" · 다음 침공 {lastCountdown / 60}:{lastCountdown % 60:00}";
         }
     }
 }

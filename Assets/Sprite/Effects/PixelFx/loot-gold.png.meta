@@ -88,7 +88,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -102,7 +102,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -125,10 +125,10 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -156,19 +156,19 @@ TextureImporter:
       name: loot-gold_0
       rect:
         serializedVersion: 2
-        x: 3
+        x: 0
         y: 60
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 515d9b1a083b622f0800000000000000
+      spriteID: 51b35a0f4c1d77d4d82236cc9281017e
       internalID: -997912902365489899
       vertices: []
       indices: 
@@ -178,19 +178,19 @@ TextureImporter:
       name: loot-gold_1
       rect:
         serializedVersion: 2
-        x: 23
+        x: 20
         y: 60
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 37b9d00129edc2be0800000000000000
+      spriteID: 6eedbf38d4bd34a4e8b25808a7f0778b
       internalID: -1500579856905299085
       vertices: []
       indices: 
@@ -200,19 +200,19 @@ TextureImporter:
       name: loot-gold_2
       rect:
         serializedVersion: 2
-        x: 43
+        x: 40
         y: 60
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 9687e42c4c4d23440800000000000000
+      spriteID: 466ed7bfa49807d4ebc283c7b266ff60
       internalID: 4914224084953233513
       vertices: []
       indices: 
@@ -222,19 +222,19 @@ TextureImporter:
       name: loot-gold_3
       rect:
         serializedVersion: 2
-        x: 63
+        x: 60
         y: 60
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: b27ea856caad95850800000000000000
+      spriteID: efbaf60d55c3d8f4c83f364d1b3141c2
       internalID: 6366359982237738795
       vertices: []
       indices: 
@@ -244,19 +244,19 @@ TextureImporter:
       name: loot-gold_4
       rect:
         serializedVersion: 2
-        x: 83
+        x: 80
         y: 60
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 4d60446ee0a7b9e00800000000000000
+      spriteID: 585cb6c610094e54d965e4fe8990a1e1
       internalID: 1052569142332491476
       vertices: []
       indices: 
@@ -266,19 +266,19 @@ TextureImporter:
       name: loot-gold_5
       rect:
         serializedVersion: 2
-        x: 3
+        x: 0
         y: 40
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: afc2d5b16f3d4f0b0800000000000000
+      spriteID: de3a3078a9ac00e42aee246efafc3c23
       internalID: -5695694574742328070
       vertices: []
       indices: 
@@ -288,19 +288,19 @@ TextureImporter:
       name: loot-gold_6
       rect:
         serializedVersion: 2
-        x: 23
+        x: 20
         y: 40
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 29ca7f4ec6e222500800000000000000
+      spriteID: 82465d66068cd074bb2cdc1d9735cc8a
       internalID: 369909164630584466
       vertices: []
       indices: 
@@ -310,19 +310,19 @@ TextureImporter:
       name: loot-gold_7
       rect:
         serializedVersion: 2
-        x: 43
+        x: 40
         y: 40
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 75e35322a1394ba70800000000000000
+      spriteID: eba83e789efa8874881c26cdb3e92d95
       internalID: 8841853708887473751
       vertices: []
       indices: 
@@ -332,19 +332,19 @@ TextureImporter:
       name: loot-gold_8
       rect:
         serializedVersion: 2
-        x: 63
+        x: 60
         y: 40
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 8a88f0432984978a0800000000000000
+      spriteID: 8468ea21655f9b04aadffb25029d50e8
       internalID: -6306930010379810648
       vertices: []
       indices: 
@@ -354,19 +354,19 @@ TextureImporter:
       name: loot-gold_9
       rect:
         serializedVersion: 2
-        x: 83
+        x: 80
         y: 40
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 68be5a77e283364a0800000000000000
+      spriteID: cdf472ae06304e341b1dfcca3396e036
       internalID: -6601370856568001658
       vertices: []
       indices: 
@@ -376,19 +376,19 @@ TextureImporter:
       name: loot-gold_10
       rect:
         serializedVersion: 2
-        x: 3
+        x: 0
         y: 20
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 0729d115d0a34b6b0800000000000000
+      spriteID: 8ce55c5dae700de4babcc8a181662d73
       internalID: -5281532634128870800
       vertices: []
       indices: 
@@ -398,19 +398,19 @@ TextureImporter:
       name: loot-gold_11
       rect:
         serializedVersion: 2
-        x: 23
+        x: 20
         y: 20
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 80d9cb0c643855c30800000000000000
+      spriteID: f9cffb26bf758d9448198daa58e26bee
       internalID: 4347525355200617736
       vertices: []
       indices: 
@@ -420,19 +420,19 @@ TextureImporter:
       name: loot-gold_12
       rect:
         serializedVersion: 2
-        x: 43
+        x: 40
         y: 20
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 46f6d794c69d4e800800000000000000
+      spriteID: ac7c40aa24c6a8646ae53105952f9192
       internalID: 640876106106105700
       vertices: []
       indices: 
@@ -442,19 +442,19 @@ TextureImporter:
       name: loot-gold_13
       rect:
         serializedVersion: 2
-        x: 63
+        x: 60
         y: 20
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: db2fcca2de7cc9a20800000000000000
+      spriteID: 924d3f38ceace4247b363ab99b8cd227
       internalID: 3070548867399086781
       vertices: []
       indices: 
@@ -464,19 +464,19 @@ TextureImporter:
       name: loot-gold_14
       rect:
         serializedVersion: 2
-        x: 83
+        x: 80
         y: 20
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 951f6d4f2af9e8820800000000000000
+      spriteID: 82865ac332924aa43a4a9b09ee805885
       internalID: 2922448730451276121
       vertices: []
       indices: 
@@ -486,19 +486,19 @@ TextureImporter:
       name: loot-gold_15
       rect:
         serializedVersion: 2
-        x: 3
+        x: 0
         y: 0
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 44b25681ef3c09b90800000000000000
+      spriteID: 89b9d9367e830b8489c8bb6378404711
       internalID: -7237069105085994172
       vertices: []
       indices: 
@@ -508,19 +508,19 @@ TextureImporter:
       name: loot-gold_16
       rect:
         serializedVersion: 2
-        x: 23
+        x: 20
         y: 0
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: cbad38c2b231cee40800000000000000
+      spriteID: c25020945bea16f4cab4fd2002e42495
       internalID: 5686941505613454012
       vertices: []
       indices: 
@@ -530,19 +530,19 @@ TextureImporter:
       name: loot-gold_17
       rect:
         serializedVersion: 2
-        x: 43
+        x: 40
         y: 0
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 684c327dca6e55e30800000000000000
+      spriteID: ad479d5d9e815614086ee9de3c0a6436
       internalID: 4491749833390146694
       vertices: []
       indices: 
@@ -552,7 +552,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 31e81dd90a3dd354a885ba7d6df84582
     internalID: 0
     vertices: []
     indices: 

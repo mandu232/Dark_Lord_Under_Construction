@@ -43,6 +43,10 @@ namespace DarkLord.Actors
         public int Level { get; private set; } = 1;
         public int ExperienceToNextLevel => 30 + (Level - 1) * 20;
         public int GrowthAttackBonus => (Level - 1) * 4;
+        // Extra melee distance for a wide target whose body keeps attackers away from its centre.
+        public Collider2D ContactCollider { get; set; }
+        public Vector2 ContactPoint(Vector2 from) =>
+            ContactCollider != null && ContactCollider.enabled ? ContactCollider.ClosestPoint(from) : (Vector2)transform.position;
         public void RestoreExperience(int level, int experience)
         {
             Level = Mathf.Clamp(level, 1, 100);

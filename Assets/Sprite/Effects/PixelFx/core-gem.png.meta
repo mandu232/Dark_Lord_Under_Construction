@@ -1,0 +1,1679 @@
+fileFormatVersion: 2
+guid: 4a1c5b4a54cdc8f4b896e6de1dd927c5
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8014097364202262223
+    second: core-gem_0
+  - first:
+      213: 7021892104524830067
+    second: core-gem_1
+  - first:
+      213: -8457396724730838202
+    second: core-gem_2
+  - first:
+      213: 5386648718664614974
+    second: core-gem_3
+  - first:
+      213: -175527881149819806
+    second: core-gem_4
+  - first:
+      213: -7555051642700199658
+    second: core-gem_5
+  - first:
+      213: 4134590073948550715
+    second: core-gem_6
+  - first:
+      213: 3819269141439171188
+    second: core-gem_7
+  - first:
+      213: -4666018541443343126
+    second: core-gem_8
+  - first:
+      213: -4278012315324503284
+    second: core-gem_9
+  - first:
+      213: -1795831185503271895
+    second: core-gem_10
+  - first:
+      213: 2382668566295205020
+    second: core-gem_11
+  - first:
+      213: 6112011145017226682
+    second: core-gem_12
+  - first:
+      213: -3740640807326968900
+    second: core-gem_13
+  - first:
+      213: -4520122152418046830
+    second: core-gem_14
+  - first:
+      213: 7552188763463574292
+    second: core-gem_15
+  - first:
+      213: -5234611183516968787
+    second: core-gem_16
+  - first:
+      213: -6914989723493519337
+    second: core-gem_17
+  - first:
+      213: -8269599233566402958
+    second: core-gem_18
+  - first:
+      213: -6097218190279759249
+    second: core-gem_19
+  - first:
+      213: -7395837918584400123
+    second: core-gem_20
+  - first:
+      213: -4592518237906021525
+    second: core-gem_21
+  - first:
+      213: 66128140071872040
+    second: core-gem_22
+  - first:
+      213: -882574410702415306
+    second: core-gem_23
+  - first:
+      213: -676243278229399241
+    second: core-gem_24
+  - first:
+      213: -5552629098854682252
+    second: core-gem_25
+  - first:
+      213: 5392902723436020269
+    second: core-gem_26
+  - first:
+      213: -9091064073586371563
+    second: core-gem_27
+  - first:
+      213: -7093675236072283584
+    second: core-gem_28
+  - first:
+      213: 3055384207079917106
+    second: core-gem_29
+  - first:
+      213: 5283667170098212497
+    second: core-gem_30
+  - first:
+      213: -7623917829029504381
+    second: core-gem_31
+  - first:
+      213: 1227249554665565391
+    second: core-gem_32
+  - first:
+      213: -5432272192180548354
+    second: core-gem_33
+  - first:
+      213: 7740897337736635148
+    second: core-gem_34
+  - first:
+      213: 61791977614192997
+    second: core-gem_35
+  - first:
+      213: 8777447065405148561
+    second: core-gem_36
+  - first:
+      213: 606184633265149376
+    second: core-gem_37
+  - first:
+      213: 4251987889169613387
+    second: core-gem_38
+  - first:
+      213: -5009581440723304881
+    second: core-gem_39
+  - first:
+      213: 199075359529051509
+    second: core-gem_40
+  - first:
+      213: 8033410426070349048
+    second: core-gem_41
+  - first:
+      213: 4567782684159667508
+    second: core-gem_42
+  - first:
+      213: -2355816169535441769
+    second: core-gem_43
+  - first:
+      213: -7079964360789590506
+    second: core-gem_44
+  - first:
+      213: 1441699610863952585
+    second: core-gem_45
+  - first:
+      213: -2929140316645169812
+    second: core-gem_46
+  - first:
+      213: -4781253764412484875
+    second: core-gem_47
+  - first:
+      213: -7550080720819787800
+    second: core-gem_48
+  - first:
+      213: 7854616365610685255
+    second: core-gem_49
+  - first:
+      213: -7159884155509972622
+    second: core-gem_50
+  - first:
+      213: 1800546295658906026
+    second: core-gem_51
+  - first:
+      213: 3220844443841152953
+    second: core-gem_52
+  - first:
+      213: -3447917080612213230
+    second: core-gem_53
+  - first:
+      213: -6373980718169515833
+    second: core-gem_54
+  - first:
+      213: 3919830682510789612
+    second: core-gem_55
+  - first:
+      213: 8747597996885539904
+    second: core-gem_56
+  - first:
+      213: -8201715489048068431
+    second: core-gem_57
+  - first:
+      213: 5579826341674222952
+    second: core-gem_58
+  - first:
+      213: -1951520304857780625
+    second: core-gem_59
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: core-gem_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 672
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5c338e3b938e87c44b130ce7145f10e8
+      internalID: -8014097364202262223
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_1
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 672
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff6e8f2a3a35ae449ba60c744af5f2cd
+      internalID: 7021892104524830067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_2
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 672
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7e9d1cf5cffc95a4d8d5cabb5eeec96a
+      internalID: -8457396724730838202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_3
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 672
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 70348f6d8cec1a4478c6702cc52f5de8
+      internalID: 5386648718664614974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_4
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 672
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 50c31c861944ae14491a5b42713aa9d2
+      internalID: -175527881149819806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_5
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 672
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f164746880271b746ad2aa86f742ca69
+      internalID: -7555051642700199658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_6
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 672
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 981dd869b7f7bd94fbd9c026f0c4f596
+      internalID: 4134590073948550715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_7
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 672
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 319abe33ed7a7f34daf31c126d526981
+      internalID: 3819269141439171188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_8
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 672
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0050cb0074747c44e9fea6fa3e2fc565
+      internalID: -4666018541443343126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 560
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0a823a19d3009cb42827d86726849fd7
+      internalID: -4278012315324503284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_10
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 560
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a2a2b58627b5ba3408f04d2342c52db3
+      internalID: -1795831185503271895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_11
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 560
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 703d94b3766d25a4fae72dfbcfded0b4
+      internalID: 2382668566295205020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_12
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 560
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 657c80b7f9992a543b32ac5bdbdf7102
+      internalID: 6112011145017226682
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_13
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 560
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bc57a99d19fc8c34eb549f76d7bcb057
+      internalID: -3740640807326968900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_14
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 560
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 818f259e6fb4b4e4b97637ccbc1a7c40
+      internalID: -4520122152418046830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_15
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 560
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 264858e7d057597418db7ecfcf7da150
+      internalID: 7552188763463574292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_16
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 560
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 670da4ed21f63bf40a8ae030b24f0338
+      internalID: -5234611183516968787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_17
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 560
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fb1d90fe91a4a5e44a199ff13740c6c1
+      internalID: -6914989723493519337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_18
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 448
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 39308502880954440a05dc8e362fc241
+      internalID: -8269599233566402958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_19
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 448
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bf97b3692ea610e408cfc3a63f1a57ca
+      internalID: -6097218190279759249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_20
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 448
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b772205a0a8014240b07be4ab6dae893
+      internalID: -7395837918584400123
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_21
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 448
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 87c2c5b37f5f2f14782336887617b416
+      internalID: -4592518237906021525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_22
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 448
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 96c7cf75fcda5ab48b4f4cfb942d3f3f
+      internalID: 66128140071872040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_23
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 448
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 64a06ec21e528df419330f61c90e9058
+      internalID: -882574410702415306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_24
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 448
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 36ff8ea09f7d6124994bfcd0837cd856
+      internalID: -676243278229399241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_25
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 448
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d8fc786d86f443f41b32e6b1116ebe4b
+      internalID: -5552629098854682252
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_26
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 448
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bc9acbd71ed3a6548a5bb2b658883714
+      internalID: 5392902723436020269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_27
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 336
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 80b51dadc00122e4c94edc331dbc81b1
+      internalID: -9091064073586371563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_28
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 336
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e10391b9ea0c1954dacd46fea6c127ba
+      internalID: -7093675236072283584
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_29
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 336
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4fec1a9e788f2f848be9634d7167188f
+      internalID: 3055384207079917106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_30
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 336
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0ef6045bfb85c3d4894be682c886c865
+      internalID: 5283667170098212497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_31
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 336
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9474e34f0248fb544b10f4956bb892cb
+      internalID: -7623917829029504381
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_32
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 336
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 64005eecc93553340be51101f7f9d3c1
+      internalID: 1227249554665565391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_33
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 336
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 716634b14529d7148980f5fe1a490ab6
+      internalID: -5432272192180548354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_34
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 336
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a7a52c88e1582f41ba35b544559003b
+      internalID: 7740897337736635148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_35
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 336
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f4dd71d6d80b144d9cf6bf7f0d5ee8c
+      internalID: 61791977614192997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_36
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 224
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4fb467f62aa69804db33ecdf4bdb99d5
+      internalID: 8777447065405148561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_37
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 224
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4fbec0c85ec47b8498dba980efed81a7
+      internalID: 606184633265149376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_38
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 224
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e67612469dce3024e81f511a1c942681
+      internalID: 4251987889169613387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_39
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 224
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0ea87d62fff58534a818959b52473894
+      internalID: -5009581440723304881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_40
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 224
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1f0aa20024d15b444a63eeaaf05550f6
+      internalID: 199075359529051509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_41
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 224
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 663a60e3f0ecd104a9bfcf992d015fa0
+      internalID: 8033410426070349048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_42
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 224
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1849eda546b4898418c3ef69f6f41af0
+      internalID: 4567782684159667508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_43
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 224
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d98dfbd2cb08d814f8d183a2804774f4
+      internalID: -2355816169535441769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_44
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 224
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d93db42ff19b80844bbc67ff4339e9f6
+      internalID: -7079964360789590506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_45
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 112
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e49007973dfdacd48b1c90cd8e89f7e1
+      internalID: 1441699610863952585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_46
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 112
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 21b5eae21bcb78844b67f7cf0d33801e
+      internalID: -2929140316645169812
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_47
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 112
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 99e8f64d1e7ff2a4dad383bacbbbe9a3
+      internalID: -4781253764412484875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_48
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 112
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 60c98ae99dd23ec43ba9832b1ad47d18
+      internalID: -7550080720819787800
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_49
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 112
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b349bda7e3fbd4e45b89c808750e6e88
+      internalID: 7854616365610685255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_50
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 112
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 57848d99a7f05c045a58023293167b9b
+      internalID: -7159884155509972622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_51
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 112
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed2eb0657f531e545abf3769259a0a01
+      internalID: 1800546295658906026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_52
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 112
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 171de70efaf5b264d8f331bddbaa0230
+      internalID: 3220844443841152953
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_53
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 112
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f63ca4e0947b2964b9f424b38525f3d6
+      internalID: -3447917080612213230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_54
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ccaa0a433b58974ab2f439370d5f316
+      internalID: -6373980718169515833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_55
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 0
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 866f6f4f832326743a4caf98d2dc9f65
+      internalID: 3919830682510789612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_56
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c8491b302c20934b92ee6cc5258be27
+      internalID: 8747597996885539904
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_57
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 0
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: af2622bc48d302d4b81bb74263aebc0c
+      internalID: -8201715489048068431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_58
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 0
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 105a96084e275e54a98478e80d6a5615
+      internalID: 5579826341674222952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-gem_59
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 0
+        width: 96
+        height: 112
+      alignment: 9
+      pivot: {x: 0.5, y: 0.10714286}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 02c294a66d2f70b47a99430f39406028
+      internalID: -1951520304857780625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 8b4b772a80f24794a9ac9bc12810bdd3
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      core-gem_0: -8014097364202262223
+      core-gem_1: 7021892104524830067
+      core-gem_10: -1795831185503271895
+      core-gem_11: 2382668566295205020
+      core-gem_12: 6112011145017226682
+      core-gem_13: -3740640807326968900
+      core-gem_14: -4520122152418046830
+      core-gem_15: 7552188763463574292
+      core-gem_16: -5234611183516968787
+      core-gem_17: -6914989723493519337
+      core-gem_18: -8269599233566402958
+      core-gem_19: -6097218190279759249
+      core-gem_2: -8457396724730838202
+      core-gem_20: -7395837918584400123
+      core-gem_21: -4592518237906021525
+      core-gem_22: 66128140071872040
+      core-gem_23: -882574410702415306
+      core-gem_24: -676243278229399241
+      core-gem_25: -5552629098854682252
+      core-gem_26: 5392902723436020269
+      core-gem_27: -9091064073586371563
+      core-gem_28: -7093675236072283584
+      core-gem_29: 3055384207079917106
+      core-gem_3: 5386648718664614974
+      core-gem_30: 5283667170098212497
+      core-gem_31: -7623917829029504381
+      core-gem_32: 1227249554665565391
+      core-gem_33: -5432272192180548354
+      core-gem_34: 7740897337736635148
+      core-gem_35: 61791977614192997
+      core-gem_36: 8777447065405148561
+      core-gem_37: 606184633265149376
+      core-gem_38: 4251987889169613387
+      core-gem_39: -5009581440723304881
+      core-gem_4: -175527881149819806
+      core-gem_40: 199075359529051509
+      core-gem_41: 8033410426070349048
+      core-gem_42: 4567782684159667508
+      core-gem_43: -2355816169535441769
+      core-gem_44: -7079964360789590506
+      core-gem_45: 1441699610863952585
+      core-gem_46: -2929140316645169812
+      core-gem_47: -4781253764412484875
+      core-gem_48: -7550080720819787800
+      core-gem_49: 7854616365610685255
+      core-gem_5: -7555051642700199658
+      core-gem_50: -7159884155509972622
+      core-gem_51: 1800546295658906026
+      core-gem_52: 3220844443841152953
+      core-gem_53: -3447917080612213230
+      core-gem_54: -6373980718169515833
+      core-gem_55: 3919830682510789612
+      core-gem_56: 8747597996885539904
+      core-gem_57: -8201715489048068431
+      core-gem_58: 5579826341674222952
+      core-gem_59: -1951520304857780625
+      core-gem_6: 4134590073948550715
+      core-gem_7: 3819269141439171188
+      core-gem_8: -4666018541443343126
+      core-gem_9: -4278012315324503284
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

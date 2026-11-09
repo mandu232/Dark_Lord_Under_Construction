@@ -404,8 +404,11 @@ namespace DarkLord.Minions
             return true;
         }
 
-        private bool InAttackRange(ActorHealth candidate) =>
-            ((Vector2)candidate.transform.position - (Vector2)transform.position).sqrMagnitude <= attackRange * attackRange;
+        private bool InAttackRange(ActorHealth candidate)
+        {
+            Vector2 position = transform.position;
+            return (candidate.ContactPoint(position) - position).sqrMagnitude <= attackRange * attackRange;
+        }
 
         private bool HasLineOfSight(ActorHealth candidate) =>
             !Physics2D.Linecast(transform.position, candidate.transform.position, obstacleLayers);
@@ -415,9 +418,13 @@ namespace DarkLord.Minions
 
         private bool SteerTo(Vector2 destination, ActorHealth combatTarget = null, float movementScale = 1)
         {
-            Vector2 delta = destination - (Vector2)transform.position;
+            Vector2 position = transform.position;
+            bool approachFootprint = combatTarget != null && combatTarget.ContactCollider != null;
+            if (approachFootprint) destination = combatTarget.ContactPoint(position);
+            Vector2 delta = destination - position;
+            float distance = delta.magnitude;
             float stopDistance = combatTarget != null ? Mathf.Max(0, attackRange - 0.02f) : arrivalDistance;
-            if (delta.magnitude <= stopDistance)
+            if (distance <= stopDistance)
             {
                 motor.Stop();
                 SetState(ActorState.Idle);
@@ -425,14 +432,18 @@ namespace DarkLord.Minions
             }
             // Stop at blocking terrain. Grid routing can replace this steering when the dungeon exists.
             if (Physics2D.CircleCast(transform.position, 0.22f, delta.normalized,
-                Mathf.Min(delta.magnitude, 0.35f), obstacleLayers))
+                Mathf.Min(distance, 0.35f), obstacleLayers))
             {
                 motor.Stop();
                 SetState(ActorState.Idle);
                 return false;
             }
-            if (combatTarget != null) motor.Approach(combatTarget.transform, stopDistance);
-            else motor.Move(delta.normalized * Mathf.Min(movementScale, delta.magnitude / Mathf.Max(0.01f, motor.MoveSpeed * Time.fixedDeltaTime)));
+            if (combatTarget != null && !approachFootprint) motor.Approach(combatTarget.transform, stopDistance);
+            else
+            {
+                float travel = approachFootprint ? distance - stopDistance : distance;
+                motor.Move(delta.normalized * Mathf.Min(movementScale, travel / Mathf.Max(0.01f, motor.MoveSpeed * Time.fixedDeltaTime)));
+            }
             SetState(ActorState.Run);
             return false;
         }

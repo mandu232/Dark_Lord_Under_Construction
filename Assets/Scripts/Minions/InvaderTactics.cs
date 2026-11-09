@@ -50,6 +50,29 @@ namespace DarkLord.Minions
         public bool IsPerforming => Action != InvaderAction.Ready;
         public static string RoleName(InvaderRole role) => role == InvaderRole.Shieldbearer ? "방패병" : role == InvaderRole.Healer ? "치유사" : role == InvaderRole.Charger ? "돌격병" : "전사";
 
+        private DarkLord.Gameplay.RegionDefinition region;
+        private bool enraged;
+        public DarkLord.Gameplay.InvaderRace Race => region != null ? region.Race : DarkLord.Gameplay.InvaderRace.Human;
+        public Color RaceTint => region != null ? region.BodyTint : Color.white;
+        public bool IsEnraged => enraged;
+        // Call before Configure: the uniform colour and movement pace both read the race.
+        public void SetRace(DarkLord.Gameplay.RegionDefinition value)
+        {
+            if (region == null && value != null) transform.localScale *= value.Scale;
+            region = value;
+        }
+        private Color RoleTint(InvaderRole role) => (role == InvaderRole.Shieldbearer ? new Color(.65f, .8f, 1) :
+            role == InvaderRole.Healer ? new Color(.65f, 1, .7f) :
+            role == InvaderRole.Charger ? new Color(1, .65f, .45f) : Color.white) * RaceTint * (enraged ? new Color(1, .55f, .5f) : Color.white);
+        private void UpdateRage()
+        {
+            if (enraged || region == null || !region.Enrages || !health.IsAlive || health.CurrentHealth * 2 > health.MaximumHealth) return;
+            enraged = true;
+            if (Action != InvaderAction.Charging) motor.SpeedMultiplier = HeroPace;
+            var body = controller.GetComponentInChildren<SpriteRenderer>();
+            if (body != null) body.color = RoleTint(Role);
+        }
+
         private void Awake()
         {
             controller = GetComponent<MinionController>();
@@ -68,9 +91,7 @@ namespace DarkLord.Minions
             Cancel(); Role = role; nextAbility = Time.time + 1;
             // Distinct uniforms complement the role badges without replacing authored animations.
             var body = controller.GetComponentInChildren<SpriteRenderer>();
-            if (body != null) body.color = role == InvaderRole.Shieldbearer ? new Color(.65f, .8f, 1) :
-                role == InvaderRole.Healer ? new Color(.65f, 1, .7f) :
-                role == InvaderRole.Charger ? new Color(1, .65f, .45f) : Color.white;
+            if (body != null) body.color = RoleTint(role);
             if (badge == null) CreateMarkers();
             badge.color = role == InvaderRole.Shieldbearer ? new Color(.35f, .7f, 1) : role == InvaderRole.Healer ? new Color(.3f, 1, .5f) : new Color(1, .3f, .2f);
             badge.transform.localScale = role == InvaderRole.Shieldbearer ? new Vector3(.34f, .42f, 1) : new Vector3(.12f, .4f, 1);
@@ -80,9 +101,11 @@ namespace DarkLord.Minions
         }
         private float Mitigate(ActorHealth source, DamageType type)
         {
-            if (!isActiveAndEnabled || Role != InvaderRole.Shieldbearer || type != DamageType.Physical || source == null) return 1;
+            if (!isActiveAndEnabled) return 1;
+            float race = region == null ? 1 : type == DamageType.Magic ? region.MagicTaken : region.PhysicalTaken;
+            if (Role != InvaderRole.Shieldbearer || type != DamageType.Physical || source == null) return race;
             Vector2 delta = source.transform.position - transform.position;
-            return delta.sqrMagnitude > .001f && Vector2.Dot(motor.Facing, delta.normalized) >= .5f ? .3f : 1;
+            return race * (delta.sqrMagnitude > .001f && Vector2.Dot(motor.Facing, delta.normalized) >= .5f ? .3f : 1);
         }
         private void Interrupt(ActorHealth source)
         {
@@ -327,6 +350,7 @@ namespace DarkLord.Minions
         }
         private void LateUpdate()
         {
+            UpdateRage();
             RefreshHeroWarning();
             if (Role != InvaderRole.Shieldbearer || cue == null) return;
             cue.gameObject.SetActive(health.IsAlive && controller.enabled);

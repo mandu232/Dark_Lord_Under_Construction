@@ -69,7 +69,7 @@ namespace DarkLord.UI
         {
             PresentedWave = number; elapsed = 0;
             heading.text = $"침공 개시 · 제 {number} 습격";
-            detail.text = $"{WaveFormation.Name(number)} · 균열로 적이 진입합니다";
+            detail.text = $"{RegionCatalog.ForDay(number).Faction} · {WaveFormation.Name(number)} · 균열로 적이 진입합니다";
             root.gameObject.SetActive(true); root.SetAsLastSibling();
             opacity.alpha = 0;
         }

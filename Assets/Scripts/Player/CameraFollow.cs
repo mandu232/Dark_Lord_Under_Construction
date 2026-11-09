@@ -16,6 +16,9 @@ namespace DarkLord.Player
         private Camera view;
         private float impactStarted, originalSize;
         private bool impactActive, restorePixels;
+        // A long earthquake and the castle's stride: the relocation sets these every frame and clears them when done.
+        public float Rumble { get; set; }
+        public Vector2 Sway { get; set; }
         public void Shake(float strength = .065f)
         {
             if (impactActive) return;
@@ -75,6 +78,8 @@ namespace DarkLord.Player
                 float remaining = Mathf.Clamp01((shakeUntil - Time.unscaledTime) / shakeDuration);
                 float phase = (Time.unscaledTime - shakeStarted) * 75f;
                 Vector2 offset = remaining > 0 ? new Vector2(Mathf.Sin(phase), Mathf.Cos(phase * 1.3f)) * (shakeStrength * remaining) : Vector2.zero;
+                float clock = Time.unscaledTime * 24f;
+                offset += Sway + new Vector2(Mathf.PerlinNoise(clock, 3.7f) - .5f, Mathf.PerlinNoise(9.1f, clock) - .5f) * (Rumble * 2);
                 transform.position = new Vector3(target.position.x + offset.x, target.position.y + offset.y, transform.position.z);
             }
             else UpdateCarrySnapping(false);

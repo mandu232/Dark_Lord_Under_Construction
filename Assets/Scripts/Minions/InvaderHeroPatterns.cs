@@ -17,7 +17,7 @@ namespace DarkLord.Minions
         public bool IsHero => hero;
         // Rowen cannot be interrupted mid-pattern, only punished in his recovery.
         public bool HeroArmored => hero && IsPerforming && Action != InvaderAction.Recovering;
-        private float HeroPace => hero && phaseTwo ? 1.25f : 1;
+        private float HeroPace => (hero && phaseTwo ? 1.25f : 1) * (enraged ? 1.25f : 1) * (region != null ? region.Pace : 1);
 
         private bool TryHeroPattern(ActorHealth target)
         {

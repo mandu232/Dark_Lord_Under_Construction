@@ -31,10 +31,11 @@ namespace DarkLord.Gameplay
         public float NextWaveRemaining => Mathf.Max(0, nextWaveRemaining);
         public bool HasNextWave => CurrentWave < finalWave && !IsFinished;
         private bool CanLaunchWave => !(Tutorial != null && Tutorial.Active) && isActiveAndEnabled && (State == WaveState.Preparing || State == WaveState.Active) &&
-            CurrentWave < finalWave && dungeonLord != null && dungeonLord.IsAlive && dungeonCore != null && dungeonCore.IsAlive && Time.timeScale > 0;
+            CurrentWave < finalWave && !AwaitingRelocation && dungeonLord != null && dungeonLord.IsAlive && dungeonCore != null && dungeonCore.IsAlive && Time.timeScale > 0;
         private void ScheduleNextWave() => nextWaveRemaining = options.PreparationSeconds(CurrentWave) * Random.Range(.92f, 1.08f);
         private void Update()
         {
+            UpdateRelocation(Time.deltaTime);
             UpdatePreparationHealing(Time.deltaTime);
             if (!UsesWaveCountdown || Tutorial != null && Tutorial.Active) { readyPreparationSeconds = 0; return; }
             if (State == WaveState.Active && dungeonLord != null && dungeonLord.IsAlive && dungeonCore != null && dungeonCore.IsAlive)
@@ -107,12 +108,12 @@ namespace DarkLord.Gameplay
         private int MemberWave(ActorHealth actor) => actor.GetComponent<WaveMember>()?.Number ?? CurrentWave;
         private WaveScheduleSaveData CaptureSchedule() => new WaveScheduleSaveData {
             openingInvasionScheduled = openingInvasionScheduled, remaining = nextWaveRemaining < 0 ? 120 : nextWaveRemaining, rewardWave = rewardWave,
-            pendingWaves = pendingWaves.ToArray(), completedWaves = SavedCompletedWaves(), rewardQueue = waveRewardQueue.ToArray()
+            pendingWaves = pendingWaves.ToArray(), completedWaves = SavedCompletedWaves(), rewardQueue = waveRewardQueue.ToArray(), arrivedRegion = arrivedRegion
         };
         private int[] SavedCompletedWaves()
         {
             if (AutomaticWaves) return completedWaves.OrderBy(n => n).ToArray();
-            int count = State == WaveState.Preparing || State == WaveState.RewardSelection || State == WaveState.Victorious ? CurrentWave : Mathf.Max(0, CurrentWave - 1);
+            int count = State == WaveState.Preparing || State == WaveState.Relocating || State == WaveState.RewardSelection || State == WaveState.Victorious ? CurrentWave : Mathf.Max(0, CurrentWave - 1);
             return Enumerable.Range(1, count).ToArray();
         }
         private void RestoreSchedule(WaveScheduleSaveData data)
@@ -120,6 +121,7 @@ namespace DarkLord.Gameplay
             openingInvasionScheduled = CurrentWave == 0 && data != null && data.openingInvasionScheduled;
             readyPreparationSeconds = 0;
             placementCheckRemaining = 0;
+            RestoreRelocation(data != null ? data.arrivedRegion : 0);
             completedWaves.Clear(); waveRewardQueue.Clear();
             rewardWave = data != null ? data.rewardWave : CurrentWave;
             if (data == null)

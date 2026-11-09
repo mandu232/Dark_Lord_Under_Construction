@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace DarkLord.Gameplay
 {
-    public enum WaveState { Preparing, Active, Defeated, Victorious, RewardSelection }
+    public enum WaveState { Preparing, Active, Defeated, Victorious, RewardSelection, Relocating }
 
     [DisallowMultipleComponent]
     public sealed partial class WaveDirector : MonoBehaviour
@@ -31,7 +31,6 @@ namespace DarkLord.Gameplay
         [SerializeField, Min(0)] private int enemyHealthGrowth = 10;
         [SerializeField, Min(0)] private int baseSoulReward = 12;
         [SerializeField, Min(0)] private int soulRewardGrowth = 4;
-        [SerializeField, Min(1)] private int finalWave = 5;
 
         private readonly List<ActorHealth> aliveInvaders = new List<ActorHealth>();
         private readonly Dictionary<ActorHealth, Action> deathHandlers = new Dictionary<ActorHealth, Action>();
@@ -61,9 +60,10 @@ namespace DarkLord.Gameplay
         }
 
         public int CurrentWave { get; private set; }
+        private int finalWave => RegionCatalog.FinalDay;
         public int FinalWave => finalWave;
-        private int EnemyCountForWave(int wave) => options.EnemyCount(WaveProgression.EnemyCount(wave, baseEnemyCount, enemyGrowthPerWave));
-        private int EnemyHealthForWave(int wave) => options.EnemyHealth(WaveProgression.EnemyHealth(wave, baseEnemyHealth, enemyHealthGrowth));
+        private int EnemyCountForWave(int wave) => options.EnemyCount(Mathf.RoundToInt(WaveProgression.EnemyCount(wave, baseEnemyCount, enemyGrowthPerWave) * RegionCatalog.ForDay(wave).CountScale));
+        private int EnemyHealthForWave(int wave) => options.EnemyHealth(Mathf.RoundToInt(WaveProgression.EnemyHealth(wave, baseEnemyHealth, enemyHealthGrowth) * RegionCatalog.ForDay(wave).HealthScale));
         public int NextEnemyCount => EnemyCountForWave(CurrentWave + 1);
         public int NextEnemyHealth => EnemyHealthForWave(CurrentWave + 1);
         public InvaderRole[] NextFormation => WaveFormation.Create(CurrentWave + 1, NextEnemyCount);
@@ -76,7 +76,7 @@ namespace DarkLord.Gameplay
         public RunEconomy Economy { get; private set; }
         public bool HasEntrance => dungeon != null && dungeon.Layout != null && dungeon.Layout.HasEntrance;
         public int RemainingEnemies => aliveInvaders.Count + pendingSpawns;
-        public bool CanStartWave => !(Tutorial != null && Tutorial.Active) && !UsesWaveCountdown && isActiveAndEnabled && State == WaveState.Preparing && CurrentWave < finalWave &&
+        public bool CanStartWave => !(Tutorial != null && Tutorial.Active) && !UsesWaveCountdown && isActiveAndEnabled && State == WaveState.Preparing && CurrentWave < finalWave && !AwaitingRelocation &&
             dungeonLord != null && dungeonLord.IsAlive && dungeonCore != null && dungeonCore.IsAlive && Time.timeScale > 0 && HasEntrance;
         public WaveState State { get; private set; } = WaveState.Preparing;
         public event Action Changed;
@@ -87,6 +87,9 @@ namespace DarkLord.Gameplay
             dungeon.Initialize();
             dungeonCore.ShareHealthWith(dungeonLord);
             dungeon.BindCore(dungeonCore, this);
+            // The scene starts the lord on the core's cell; the dais fills it now, so step down in front of it.
+            if (Vector2.Distance(dungeonLord.transform.position, dungeonCore.transform.position) < 1.8f)
+                dungeonLord.transform.position = dungeonCore.transform.position + Vector3.down * 2.2f;
             dungeon.Augments = Augments;
             foreach (var guard in FindObjectsByType<MinionController>(FindObjectsSortMode.None))
                 if (guard.gameObject.scene == gameObject.scene && guard.Health.Faction == Faction.Dungeon) dungeon.RegisterGuard(guard);
@@ -138,13 +141,14 @@ namespace DarkLord.Gameplay
             invader.gameObject.AddComponent<WaveMember>().Number = wave;
             var health = invader.GetComponent<ActorHealth>();
             health.Configure(Faction.Invader, EnemyHealthForWave(wave));
-            health.RestoreExperience(WaveProgression.EnemyLevel(wave), 0);
+            var region = RegionCatalog.ForDay(wave);
+            health.RestoreExperience(WaveProgression.EnemyLevel(wave) + region.LevelBonus, 0);
             var role = pendingRoles.Count > 0 ? pendingRoles.Dequeue() : InvaderRole.Warrior;
-            // Rowen comes back as he promised, last through the rift of the final invasion.
-            bool boss = wave >= finalWave && sequence == 1;
+            // Each region's champion comes last through the rift on its final day.
+            bool boss = RegionCatalog.IsBossDay(wave) && sequence == 1;
             if (boss) { role = InvaderRole.Charger; health.Configure(Faction.Invader, EnemyHealthForWave(wave) * BossHealthMultiplier); }
-            var tactics = ConfigureInvader(invader, role);
-            if (boss) MakeBoss(invader, tactics);
+            var tactics = ConfigureInvader(invader, role, region);
+            if (boss) MakeBoss(invader, tactics, region);
             invader.Assault(dungeonCore, dungeon, dungeonLord);
             Action handler = () => OnInvaderDied(health);
             deathHandlers.Add(health, handler);
@@ -154,19 +158,20 @@ namespace DarkLord.Gameplay
 
         private const int BossHealthMultiplier = 8;
         public ActorHealth ActiveBoss { get; private set; }
-        private void MakeBoss(MinionController invader, InvaderTactics tactics)
+        private void MakeBoss(MinionController invader, InvaderTactics tactics, RegionDefinition region)
         {
             tactics.SetHero(true);
-            invader.name = "서풍의 용사 로웬";
+            invader.name = region.BossName;
             invader.transform.localScale *= 1.4f;
             ActiveBoss = invader.Health;
         }
 
-        private static InvaderTactics ConfigureInvader(MinionController invader, InvaderRole role)
+        private static InvaderTactics ConfigureInvader(MinionController invader, InvaderRole role, RegionDefinition region)
         {
             var tactics = invader.GetComponent<InvaderTactics>() ?? invader.gameObject.AddComponent<InvaderTactics>();
+            tactics.SetRace(region);
             tactics.Configure(role);
-            invader.name = InvaderTactics.RoleName(role);
+            invader.name = region.RoleName(InvaderTactics.RoleName(role));
             return tactics;
         }
 

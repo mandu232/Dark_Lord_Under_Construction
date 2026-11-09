@@ -29,7 +29,8 @@ namespace DarkLord.Gameplay
             var actorGroup = source.GetComponentInParent<SortingGroup>();
             Visual.sortingLayerID = actorGroup != null ? actorGroup.sortingLayerID : source.sortingLayerID;
             Visual.sortingOrder = CorpseSortingOrder;
-            Visual.flipX = source.flipX; baseColor = new Color(.65f, .42f, .43f, 1); Visual.color = baseColor;
+            var tactics = source.GetComponentInParent<InvaderTactics>();
+            Visual.flipX = source.flipX; baseColor = new Color(.65f, .42f, .43f, 1) * (tactics != null ? tactics.RaceTint : Color.white); Visual.color = baseColor;
             transform.localScale = source.transform.lossyScale;
             transform.rotation = source.transform.rotation;
             contactTexture = new Texture2D(32, 12, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point };

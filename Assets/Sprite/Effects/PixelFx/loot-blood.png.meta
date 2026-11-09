@@ -88,7 +88,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -102,7 +102,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -125,10 +125,10 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -156,19 +156,19 @@ TextureImporter:
       name: loot-blood_0
       rect:
         serializedVersion: 2
-        x: 3
+        x: 0
         y: 60
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 1035c52ea40dbdd50800000000000000
+      spriteID: b5a2f8e2dffc063498f63cf7706d4ac1
       internalID: 6763228285470790401
       vertices: []
       indices: 
@@ -178,19 +178,19 @@ TextureImporter:
       name: loot-blood_1
       rect:
         serializedVersion: 2
-        x: 23
+        x: 20
         y: 60
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: db08a4b3abf1e9fc0800000000000000
+      spriteID: 013c9ec935cc62c40af8d9992c682292
       internalID: -3486314176819068739
       vertices: []
       indices: 
@@ -200,19 +200,19 @@ TextureImporter:
       name: loot-blood_2
       rect:
         serializedVersion: 2
-        x: 43
+        x: 40
         y: 60
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: f567fba49cdf8d090800000000000000
+      spriteID: 272c3e9bd3b029945813005c563811b9
       internalID: -8009372896294111649
       vertices: []
       indices: 
@@ -222,19 +222,19 @@ TextureImporter:
       name: loot-blood_3
       rect:
         serializedVersion: 2
-        x: 63
+        x: 60
         y: 60
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: db26e158eb282b0e0800000000000000
+      spriteID: 4b4c534e85d8c3b41b96c5bd4ef32c8c
       internalID: -2255596708570438979
       vertices: []
       indices: 
@@ -244,19 +244,19 @@ TextureImporter:
       name: loot-blood_4
       rect:
         serializedVersion: 2
-        x: 83
+        x: 80
         y: 60
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 9b5bd009a75e98400800000000000000
+      spriteID: d497c706de05786429194818d46431f3
       internalID: 327044762526660025
       vertices: []
       indices: 
@@ -266,19 +266,19 @@ TextureImporter:
       name: loot-blood_5
       rect:
         serializedVersion: 2
-        x: 3
+        x: 0
         y: 40
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d5065984c05463180800000000000000
+      spriteID: 455c34e32ae4e8b4085e8bc8e7803ff0
       internalID: -9136038875014799267
       vertices: []
       indices: 
@@ -288,19 +288,19 @@ TextureImporter:
       name: loot-blood_6
       rect:
         serializedVersion: 2
-        x: 23
+        x: 20
         y: 40
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: ab86fd2de8bd89c50800000000000000
+      spriteID: 776660adc57b27148b4c67ca20524809
       internalID: 6672324254419085498
       vertices: []
       indices: 
@@ -310,19 +310,19 @@ TextureImporter:
       name: loot-blood_7
       rect:
         serializedVersion: 2
-        x: 43
+        x: 40
         y: 40
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 083b733f7985fc310800000000000000
+      spriteID: af2f2fd9ff16a454baab7ae500186e24
       internalID: 1427457016543556480
       vertices: []
       indices: 
@@ -332,19 +332,19 @@ TextureImporter:
       name: loot-blood_8
       rect:
         serializedVersion: 2
-        x: 63
+        x: 60
         y: 40
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 0a900d04602f4e7c0800000000000000
+      spriteID: c5fac28f4b0fbd3449c45b798a78d4e7
       internalID: -4042840456800761440
       vertices: []
       indices: 
@@ -354,19 +354,19 @@ TextureImporter:
       name: loot-blood_9
       rect:
         serializedVersion: 2
-        x: 83
+        x: 80
         y: 40
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d4b9a9bb5e0520080800000000000000
+      spriteID: fd023a37076b56c4dac13665602459bf
       internalID: -9222720139276149939
       vertices: []
       indices: 
@@ -376,19 +376,19 @@ TextureImporter:
       name: loot-blood_10
       rect:
         serializedVersion: 2
-        x: 3
+        x: 0
         y: 20
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: c8a8cb8f1da6bb020800000000000000
+      spriteID: eb94a8d777bf509409a8df29ae491e26
       internalID: 2358596279912401548
       vertices: []
       indices: 
@@ -398,19 +398,19 @@ TextureImporter:
       name: loot-blood_11
       rect:
         serializedVersion: 2
-        x: 23
+        x: 20
         y: 20
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 34befcfcaee09f100800000000000000
+      spriteID: 41844cb90aba1a1468617931d26a61f0
       internalID: 142161264910527299
       vertices: []
       indices: 
@@ -420,19 +420,19 @@ TextureImporter:
       name: loot-blood_12
       rect:
         serializedVersion: 2
-        x: 43
+        x: 40
         y: 20
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: ce8c84d680658d0f0800000000000000
+      spriteID: 1ee392267c26c4b43888aeec73bb3292
       internalID: -1092028315444131604
       vertices: []
       indices: 
@@ -442,19 +442,19 @@ TextureImporter:
       name: loot-blood_13
       rect:
         serializedVersion: 2
-        x: 63
+        x: 60
         y: 20
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d8030d7d57ace4750800000000000000
+      spriteID: 7bdbebaaa845eba45800d03e62fb78e0
       internalID: 6291188336963891341
       vertices: []
       indices: 
@@ -464,19 +464,19 @@ TextureImporter:
       name: loot-blood_14
       rect:
         serializedVersion: 2
-        x: 83
+        x: 80
         y: 20
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: a54aacc57e94e8e90800000000000000
+      spriteID: 589e45bc89955ea4b9f598a4ef50a3e0
       internalID: -7021593510980967334
       vertices: []
       indices: 
@@ -486,19 +486,19 @@ TextureImporter:
       name: loot-blood_15
       rect:
         serializedVersion: 2
-        x: 3
+        x: 0
         y: 0
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 21f30423fa6c78830800000000000000
+      spriteID: 9ac18ead07fb6654c9701a7e1d79f5cc
       internalID: 4073442843744550674
       vertices: []
       indices: 
@@ -508,19 +508,19 @@ TextureImporter:
       name: loot-blood_16
       rect:
         serializedVersion: 2
-        x: 23
+        x: 20
         y: 0
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 7346f08e7b5fc4590800000000000000
+      spriteID: a9355cf25e4dedb42a1e6973ec054938
       internalID: -7688500293607136201
       vertices: []
       indices: 
@@ -530,19 +530,19 @@ TextureImporter:
       name: loot-blood_17
       rect:
         serializedVersion: 2
-        x: 43
+        x: 40
         y: 0
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 01156e79e9e229f80800000000000000
+      spriteID: 61cc68f6a91d8ff40b9ef920cc0d75bd
       internalID: -8101361520997936880
       vertices: []
       indices: 
@@ -552,7 +552,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: a9ddd55e5905ca04aa5afe3598ec3c60
     internalID: 0
     vertices: []
     indices: 

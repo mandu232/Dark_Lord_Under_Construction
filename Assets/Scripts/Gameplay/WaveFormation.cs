@@ -9,10 +9,13 @@ namespace DarkLord.Gameplay
         public static InvaderRole[] Create(int wave, int count)
         {
             count = Mathf.Max(1, count);
-            int shields = wave >= 4 ? Mathf.Max(1, Mathf.RoundToInt(count * .2f)) : 0;
-            int healers = wave >= 3 ? Mathf.Max(1, Mathf.RoundToInt(count * .12f)) : 0;
-            int chargers = wave >= 2 && wave < 5 ? 1 : wave >= 5 ? Mathf.Max(1, Mathf.RoundToInt(count * .18f)) : 0;
-            int specialLimit = wave >= 5 ? Mathf.Min(count - 1, Mathf.Max(3, Mathf.FloorToInt(count * .45f))) : count - 1;
+            var region = RegionCatalog.ForDay(wave);
+            // Later regions open with the roles the player has already learned to counter.
+            int tier = RegionCatalog.DayInRegion(wave) + region.Index * 2;
+            int shields = tier >= 4 ? Share(count, .2f, region.ShieldWeight) : 0;
+            int healers = tier >= 3 ? Share(count, .12f, region.HealerWeight) : 0;
+            int chargers = tier >= 2 && tier < 5 ? 1 : tier >= 5 ? Share(count, .18f, region.ChargerWeight) : 0;
+            int specialLimit = tier >= 5 ? Mathf.Min(count - 1, Mathf.Max(3, Mathf.FloorToInt(count * .45f))) : count - 1;
             // Keep at least one ordinary soldier, even for tiny custom/difficulty counts.
             while (shields + healers + chargers > specialLimit)
             {
@@ -35,14 +38,20 @@ namespace DarkLord.Gameplay
                 else if (healers-- > 0) result.Add(InvaderRole.Healer);
                 else result.Add(InvaderRole.Warrior);
             }
-            // Rowen enters last in the final wave as a charger, so the advertised formation ends with him.
-            int rowen = wave >= 5 ? result.IndexOf(InvaderRole.Charger) : -1;
-            if (rowen >= 0) { result.RemoveAt(rowen); result.Add(InvaderRole.Charger); }
+            // The region's boss enters last as a charger, so the advertised formation ends with them.
+            if (RegionCatalog.IsBossDay(wave))
+            {
+                int boss = result.IndexOf(InvaderRole.Charger);
+                if (boss >= 0) result.RemoveAt(boss); else result.RemoveAt(result.Count - 1);
+                result.Add(InvaderRole.Charger);
+            }
             return result.ToArray();
         }
 
-        public static string Name(int wave) => wave <= 1 ? "첫 침입" : wave == 2 ? "돌격대" : wave == 3 ? "치유 부대" : wave == 4 ? "방패 진형" : "로웬의 귀환";
-        public static string Advice(int wave) => wave <= 1 ? "하수인으로 저지하고 함정과 함께 공격하세요." : wave == 2 ? "붉은 돌진 예고를 피하세요. 방 하나는 수비 인원의 1.5배까지만 적을 붙잡고, 나머지는 안쪽으로 돌파합니다." : wave == 3 ? "초록 십자가는 치유사입니다. 회복 시전을 공격해 끊으세요." : wave == 4 ? "방패병의 측후방 또는 마법으로 공격하고 치유사를 먼저 제거하세요." : "마지막에 용사 로웬이 들어옵니다. 바닥 표식을 피하고, 큰 공격이 끝난 직후 몰아치세요.";
+        private static int Share(int count, float rate, float weight) => Mathf.Max(1, Mathf.RoundToInt(count * rate * weight));
+
+        public static string Name(int wave) => RegionCatalog.ForDay(wave).DayNames[RegionCatalog.DayInRegion(wave) - 1];
+        public static string Advice(int wave) => RegionCatalog.ForDay(wave).Advice[RegionCatalog.DayInRegion(wave) - 1];
         public static string Summary(IReadOnlyList<InvaderRole> formation)
         {
             var counts = new int[4];

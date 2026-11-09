@@ -19,7 +19,7 @@ namespace DarkLord.Dungeon
             if (buildings.Values.Any(b => b != null && b.IsRecruitmentFacility && Construction.RoomAt(b.Cell)?.IsCore == true)) return;
             var prefab = initialRecruitmentPrefab != null ? initialRecruitmentPrefab : Inventory.Find("MinionRecruitment")?.prefab;
             if (prefab == null) return;
-            var preferred = Layout.Core + new Vector2Int(1, 1);
+            var preferred = Layout.Core + new Vector2Int(1, -1);
             foreach (var cell in Construction.RoomAt(Layout.Core).Cells.OrderBy(c => (c - preferred).sqrMagnitude))
                 if (EmptyFloor(cell)) { SpawnBuilding(cell, prefab); return; }
         }
@@ -35,7 +35,7 @@ namespace DarkLord.Dungeon
             }
             if (starting == null) return;
             var core = Construction.RoomAt(Layout.Core);
-            var preferred = Layout.Core + new Vector2Int(1, 1);
+            var preferred = Layout.Core + new Vector2Int(1, -1);
             foreach (var cell in core.Cells.OrderBy(c => (c - preferred).sqrMagnitude))
             {
                 if (!EmptyFloor(cell) || Layout.HasEntrance && cell == Layout.Entrance) continue;

@@ -18,6 +18,7 @@ namespace DarkLord.Dungeon
         private UnityEngine.Rendering.SortingGroup targetSorting;
         private float opacity = 1;
 
+        public void SetDepthOffset(float value) => depthOffsetY = value;
         public void SetOcclusionTarget(DarkLord.Actors.ActorHealth target)
         {
             occlusionTarget = target;

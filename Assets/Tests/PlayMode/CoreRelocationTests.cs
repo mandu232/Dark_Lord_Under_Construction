@@ -54,6 +54,19 @@ namespace DarkLord.Tests
             Assert.AreEqual(grid.CellCenter(target), waves.Economy.CorePosition);
             Assert.AreEqual(old, grid.Layout.Core, "Moving the core must not shift the original map layout.");
         }
+        [Test] public void CoreCollisionFollowsTheChamferedBase()
+        {
+            var footprint = waves.Core.GetComponent<PolygonCollider2D>();
+            Vector2 origin = waves.Core.transform.position;
+            Assert.IsNotNull(footprint);
+            Assert.IsFalse(footprint.isTrigger);
+            Assert.IsTrue(footprint.OverlapPoint(origin + new Vector2(1.9f, -.35f)));
+            Assert.IsFalse(footprint.OverlapPoint(origin + new Vector2(1.9f, -.7f)));
+            Assert.IsFalse(footprint.OverlapPoint(origin + Vector2.up));
+
+            Vector2 approach = origin + new Vector2(2.5f, -.35f);
+            Assert.That(Vector2.Distance(approach, waves.Core.ContactPoint(approach)), Is.EqualTo(.5f).Within(.01f));
+        }
         [Test] public void InvalidAndOccupiedDestinationsDoNotMoveTheCore()
         {
             var old = grid.CoreCell;

@@ -1,0 +1,1825 @@
+fileFormatVersion: 2
+guid: 63aba47018b36a94ead0a32a366b69b5
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2261128308059896143
+    second: core-collapse_0
+  - first:
+      213: -6951493882482323722
+    second: core-collapse_1
+  - first:
+      213: 1129801918859321280
+    second: core-collapse_2
+  - first:
+      213: 8585618093507063013
+    second: core-collapse_3
+  - first:
+      213: -6308706743253036485
+    second: core-collapse_4
+  - first:
+      213: -5343469967814439888
+    second: core-collapse_5
+  - first:
+      213: 3241716309785783631
+    second: core-collapse_6
+  - first:
+      213: -8113651099650197574
+    second: core-collapse_7
+  - first:
+      213: 2086062024536288231
+    second: core-collapse_8
+  - first:
+      213: -7329174545039628721
+    second: core-collapse_9
+  - first:
+      213: 3278993134694597606
+    second: core-collapse_10
+  - first:
+      213: -5818766123657268006
+    second: core-collapse_11
+  - first:
+      213: -1866841636775073097
+    second: core-collapse_12
+  - first:
+      213: 8814504455253644240
+    second: core-collapse_13
+  - first:
+      213: 923305980606121570
+    second: core-collapse_14
+  - first:
+      213: -1711337439336023240
+    second: core-collapse_15
+  - first:
+      213: 5414577627762500787
+    second: core-collapse_16
+  - first:
+      213: -5019641059395895680
+    second: core-collapse_17
+  - first:
+      213: -2474134396836988012
+    second: core-collapse_18
+  - first:
+      213: 2620894779227073065
+    second: core-collapse_19
+  - first:
+      213: 4956589028109735635
+    second: core-collapse_20
+  - first:
+      213: 8980155136284743364
+    second: core-collapse_21
+  - first:
+      213: -5405593052052320110
+    second: core-collapse_22
+  - first:
+      213: 37851153020785872
+    second: core-collapse_23
+  - first:
+      213: -6683806380729052867
+    second: core-collapse_24
+  - first:
+      213: 1929862409116178557
+    second: core-collapse_25
+  - first:
+      213: 3391060077156572800
+    second: core-collapse_26
+  - first:
+      213: -6761159313754315937
+    second: core-collapse_27
+  - first:
+      213: 4280933030817370632
+    second: core-collapse_28
+  - first:
+      213: -9111235298784284234
+    second: core-collapse_29
+  - first:
+      213: 316639991461037584
+    second: core-collapse_30
+  - first:
+      213: -5749664308816649391
+    second: core-collapse_31
+  - first:
+      213: -6503277477017756479
+    second: core-collapse_32
+  - first:
+      213: -2602201732688607165
+    second: core-collapse_33
+  - first:
+      213: 6718848473654015215
+    second: core-collapse_34
+  - first:
+      213: -987792995631699555
+    second: core-collapse_35
+  - first:
+      213: 8143900065389976713
+    second: core-collapse_36
+  - first:
+      213: 5897874662688147192
+    second: core-collapse_37
+  - first:
+      213: 4129608191834024022
+    second: core-collapse_38
+  - first:
+      213: 5025467189573587976
+    second: core-collapse_39
+  - first:
+      213: 860048133192238931
+    second: core-collapse_40
+  - first:
+      213: 5233796299344832540
+    second: core-collapse_41
+  - first:
+      213: 6461837668076074867
+    second: core-collapse_42
+  - first:
+      213: -8165762768027404329
+    second: core-collapse_43
+  - first:
+      213: -2156578173327392405
+    second: core-collapse_44
+  - first:
+      213: 694526148954312472
+    second: core-collapse_45
+  - first:
+      213: 4359888145268033185
+    second: core-collapse_46
+  - first:
+      213: -4568682534607841319
+    second: core-collapse_47
+  - first:
+      213: -1412814814237129522
+    second: core-collapse_48
+  - first:
+      213: 8883687560792633353
+    second: core-collapse_49
+  - first:
+      213: 33580165068621012
+    second: core-collapse_50
+  - first:
+      213: 8277908942439671013
+    second: core-collapse_51
+  - first:
+      213: -4443615935472320967
+    second: core-collapse_52
+  - first:
+      213: 6462401019342924741
+    second: core-collapse_53
+  - first:
+      213: 8239328638340731079
+    second: core-collapse_54
+  - first:
+      213: 4109036395168931014
+    second: core-collapse_55
+  - first:
+      213: -781947939423281188
+    second: core-collapse_56
+  - first:
+      213: 6012013184137681040
+    second: core-collapse_57
+  - first:
+      213: 7026698222320040626
+    second: core-collapse_58
+  - first:
+      213: 4341961714884023373
+    second: core-collapse_59
+  - first:
+      213: -3018151438324877437
+    second: core-collapse_60
+  - first:
+      213: -7496393150888130916
+    second: core-collapse_61
+  - first:
+      213: 8861861802247012020
+    second: core-collapse_62
+  - first:
+      213: -4520620055034032808
+    second: core-collapse_63
+  - first:
+      213: 5209498477702943239
+    second: core-collapse_64
+  - first:
+      213: -7521148755683647301
+    second: core-collapse_65
+  - first:
+      213: -1869533924942692250
+    second: core-collapse_66
+  - first:
+      213: 8772424934319805021
+    second: core-collapse_67
+  - first:
+      213: -8921665151411047282
+    second: core-collapse_68
+  - first:
+      213: -1967060631334952280
+    second: core-collapse_69
+  - first:
+      213: 3078514926992793781
+    second: core-collapse_70
+  - first:
+      213: 6711926773800487342
+    second: core-collapse_71
+  - first:
+      213: -677323492244521254
+    second: core-collapse_72
+  - first:
+      213: -1542164622546991151
+    second: core-collapse_73
+  - first:
+      213: -6234067549181190460
+    second: core-collapse_74
+  - first:
+      213: -4448990468881789211
+    second: core-collapse_75
+  - first:
+      213: 2181889036514716960
+    second: core-collapse_76
+  - first:
+      213: -6850690924955491007
+    second: core-collapse_77
+  - first:
+      213: 5493991833887456286
+    second: core-collapse_78
+  - first:
+      213: 1293955244729664374
+    second: core-collapse_79
+  - first:
+      213: -2687259700369494723
+    second: core-collapse_80
+  - first:
+      213: -5784630828239850508
+    second: core-collapse_81
+  - first:
+      213: 1821132412933049583
+    second: core-collapse_82
+  - first:
+      213: -6580809000580808076
+    second: core-collapse_83
+  - first:
+      213: 5824978028120127062
+    second: core-collapse_84
+  - first:
+      213: -8989939536131485172
+    second: core-collapse_85
+  - first:
+      213: 9170927665156039394
+    second: core-collapse_86
+  - first:
+      213: 261433013357751587
+    second: core-collapse_87
+  - first:
+      213: -194530390893675723
+    second: core-collapse_88
+  - first:
+      213: -1199744149312785345
+    second: core-collapse_89
+  - first:
+      213: -5589852532335407214
+    second: core-collapse_90
+  - first:
+      213: -272929574239711931
+    second: core-collapse_91
+  - first:
+      213: -4368552611859874810
+    second: core-collapse_92
+  - first:
+      213: 2056958163281876669
+    second: core-collapse_93
+  - first:
+      213: -7333976814258406817
+    second: core-collapse_94
+  - first:
+      213: 6748973566080013755
+    second: core-collapse_95
+  - first:
+      213: -8530144726806094863
+    second: core-collapse_96
+  - first:
+      213: -8377053908002904290
+    second: core-collapse_97
+  - first:
+      213: -7091333296504140765
+    second: core-collapse_98
+  - first:
+      213: -8505373188806067844
+    second: core-collapse_99
+  - first:
+      213: -9167585580899149661
+    second: core-collapse_100
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: core-collapse_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1120
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2861642caf34a754d81c5eb135a40455
+      internalID: -2261128308059896143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_1
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 1120
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 24538bec46f92304ca820af9fbeee1c3
+      internalID: -6951493882482323722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_2
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 1120
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 16154b92ad017ce4d83359a79cfd115e
+      internalID: 1129801918859321280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_3
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 1120
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1452e7fbeb96d6d489df0e673a78b83e
+      internalID: 8585618093507063013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_4
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 1120
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 62452a03f00bae5409c38b5339f329a6
+      internalID: -6308706743253036485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_5
+      rect:
+        serializedVersion: 2
+        x: 880
+        y: 1120
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3e9231360dc868542a1b02d2e96f65cb
+      internalID: -5343469967814439888
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_6
+      rect:
+        serializedVersion: 2
+        x: 1056
+        y: 1120
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ae1294120cc7f4449bb4076b6a4a3aa1
+      internalID: 3241716309785783631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_7
+      rect:
+        serializedVersion: 2
+        x: 1232
+        y: 1120
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 712bf073f3d77974296635629b395e6f
+      internalID: -8113651099650197574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 960
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d1b522423c9e545418e3e67acf293e38
+      internalID: 2086062024536288231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_9
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 960
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 812ef2cfb6057ca49878bf60275d1682
+      internalID: -7329174545039628721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_10
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 960
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6a5162bee35082642bae8f9a63752a08
+      internalID: 3278993134694597606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_11
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 960
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9ad3f37ef4557cf488cc42e62f9b0a15
+      internalID: -5818766123657268006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_12
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 960
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 032025483f258f242a27e6a037936a94
+      internalID: -1866841636775073097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_13
+      rect:
+        serializedVersion: 2
+        x: 880
+        y: 960
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a800c5c2e39f68a4abc49a0528ffea91
+      internalID: 8814504455253644240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_14
+      rect:
+        serializedVersion: 2
+        x: 1056
+        y: 960
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8e4c3759ebfe6d745ad6ff5633a2e376
+      internalID: 923305980606121570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_15
+      rect:
+        serializedVersion: 2
+        x: 1232
+        y: 960
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4afc097584cef55419bcb1d1b84a8d69
+      internalID: -1711337439336023240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_16
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 800
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 41043b02dfc9dc247a0caadfbfcf145b
+      internalID: 5414577627762500787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_17
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 800
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 174833283af50a64f9a400ddfb580d18
+      internalID: -5019641059395895680
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_18
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 800
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d45392f22fe8b774886d64743d1fb36f
+      internalID: -2474134396836988012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_19
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 800
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 72d395b91eb59fb48bfb5e4e800b9883
+      internalID: 2620894779227073065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_20
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 800
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bf58713a444b0194eb11f184cbee1f9d
+      internalID: 4956589028109735635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_21
+      rect:
+        serializedVersion: 2
+        x: 880
+        y: 800
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1177fc4a2d145ae4bb988168e1625702
+      internalID: 8980155136284743364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_22
+      rect:
+        serializedVersion: 2
+        x: 1056
+        y: 800
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 54e33c598458b7848a46c2b4e7c6343b
+      internalID: -5405593052052320110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_23
+      rect:
+        serializedVersion: 2
+        x: 1232
+        y: 800
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff9d85c0d0a3dfd44bce6d9b854334a1
+      internalID: 37851153020785872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_24
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 640
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3940ac57d4390bc4dae40274377c9c74
+      internalID: -6683806380729052867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_25
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 640
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6c9b8dc3c0369b1498b88d192a5ff241
+      internalID: 1929862409116178557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_26
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 640
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c3d23a82ab74b76429d012703fbd0f68
+      internalID: 3391060077156572800
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_27
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 640
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 949799aefdb64e4428fb65203dc55976
+      internalID: -6761159313754315937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_28
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 640
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6ece35ac36b5ece42b6ab264e0f34332
+      internalID: 4280933030817370632
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_29
+      rect:
+        serializedVersion: 2
+        x: 880
+        y: 640
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f4f345cd0af4a2d4ea98d3c5c52a817b
+      internalID: -9111235298784284234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_30
+      rect:
+        serializedVersion: 2
+        x: 1056
+        y: 640
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 697dd2802adcc274f8ffd12d00b5d5ca
+      internalID: 316639991461037584
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_31
+      rect:
+        serializedVersion: 2
+        x: 1232
+        y: 640
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 26d9c802f2ac8ec47ab7798b2a79a8f2
+      internalID: -5749664308816649391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_32
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 480
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eb4fe6d03de586c45b4caa358b243d11
+      internalID: -6503277477017756479
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_33
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 480
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 267fa58754fde4c47a0c7e7b0efa2fe0
+      internalID: -2602201732688607165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_34
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 480
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8ed4fa54d155716418feab4840a28b6b
+      internalID: 6718848473654015215
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_35
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 480
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8bfe95c91b6842b4882844acc4fcc758
+      internalID: -987792995631699555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_36
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 480
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 75914aaed22fb9b44abb7dcbadba86d7
+      internalID: 8143900065389976713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_37
+      rect:
+        serializedVersion: 2
+        x: 880
+        y: 480
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1f65bb90d1396684bac7490efe346e65
+      internalID: 5897874662688147192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_38
+      rect:
+        serializedVersion: 2
+        x: 1056
+        y: 480
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 079d634893a12124a99cf3f8ed310d62
+      internalID: 4129608191834024022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_39
+      rect:
+        serializedVersion: 2
+        x: 1232
+        y: 480
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 51fe20bc5e6518d44bc54f8011741a47
+      internalID: 5025467189573587976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_40
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 320
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd4255b144a71214b93433b0439aee8d
+      internalID: 860048133192238931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_41
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 320
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a070d5348df482745a2c78dd1ac06efa
+      internalID: 5233796299344832540
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_42
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 320
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 23659ad469b101e4884a466e0544cc2c
+      internalID: 6461837668076074867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_43
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 320
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef14bfd7b7b075c49adcd8cd8cc024b5
+      internalID: -8165762768027404329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_44
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 320
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 955ce22488aa00d4eb8137a75a491d5c
+      internalID: -2156578173327392405
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_45
+      rect:
+        serializedVersion: 2
+        x: 880
+        y: 320
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f46e729df7733b043ae9e1e092968b89
+      internalID: 694526148954312472
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_46
+      rect:
+        serializedVersion: 2
+        x: 1056
+        y: 320
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7166c3e508515c44ba4aa0a6b9ec48a9
+      internalID: 4359888145268033185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_47
+      rect:
+        serializedVersion: 2
+        x: 1232
+        y: 320
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dfa5bc3db23aafa4b94bc8dea8196bfb
+      internalID: -4568682534607841319
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_48
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 160
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 803372a761bf23b4d96a67ec62b7eed6
+      internalID: -1412814814237129522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_49
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 160
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0ecea2c6d3c7fab42b5b665a1cbeea3b
+      internalID: 8883687560792633353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_50
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 160
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5aec2982fe1ffd8468ec0543b95d6800
+      internalID: 33580165068621012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_51
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 160
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c3c94ad07318e2541a387000f93c0652
+      internalID: 8277908942439671013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_52
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 160
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0001f32eedff1f944ac55c24229d036f
+      internalID: -4443615935472320967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_53
+      rect:
+        serializedVersion: 2
+        x: 880
+        y: 160
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f87ff516824ccc744a8acad46e91e709
+      internalID: 6462401019342924741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_54
+      rect:
+        serializedVersion: 2
+        x: 1056
+        y: 160
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f3445f321dc34c40b6c1708e4ba746e
+      internalID: 8239328638340731079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_55
+      rect:
+        serializedVersion: 2
+        x: 1232
+        y: 160
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7f3adb35bfd39ab439f5c76a03fa1f3b
+      internalID: 4109036395168931014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_56
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 52f461e1bde31bb49bb9f291d9dd0f75
+      internalID: -781947939423281188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_57
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 0
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b4fc868025df0c84d9331101f74dea02
+      internalID: 6012013184137681040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_58
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 0
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d70d465dc6852d744a149af1ee2c1d68
+      internalID: 7026698222320040626
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_59
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 0
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed5520c5e6d93b542977a9c5868cd041
+      internalID: 4341961714884023373
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: core-collapse_60
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 0
+        width: 176
+        height: 160
+      alignment: 9
+      pivot: {x: 0.5, y: 0.075}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2506f7319c637374d850460302649f12
+      internalID: -3018151438324877437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 7c1e2a5789adbad4bad72c10aab7d90f
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      core-collapse_0: -2261128308059896143
+      core-collapse_1: -6951493882482323722
+      core-collapse_10: 3278993134694597606
+      core-collapse_11: -5818766123657268006
+      core-collapse_12: -1866841636775073097
+      core-collapse_13: 8814504455253644240
+      core-collapse_14: 923305980606121570
+      core-collapse_15: -1711337439336023240
+      core-collapse_16: 5414577627762500787
+      core-collapse_17: -5019641059395895680
+      core-collapse_18: -2474134396836988012
+      core-collapse_19: 2620894779227073065
+      core-collapse_2: 1129801918859321280
+      core-collapse_20: 4956589028109735635
+      core-collapse_21: 8980155136284743364
+      core-collapse_22: -5405593052052320110
+      core-collapse_23: 37851153020785872
+      core-collapse_24: -6683806380729052867
+      core-collapse_25: 1929862409116178557
+      core-collapse_26: 3391060077156572800
+      core-collapse_27: -6761159313754315937
+      core-collapse_28: 4280933030817370632
+      core-collapse_29: -9111235298784284234
+      core-collapse_3: 8585618093507063013
+      core-collapse_30: 316639991461037584
+      core-collapse_31: -5749664308816649391
+      core-collapse_32: -6503277477017756479
+      core-collapse_33: -2602201732688607165
+      core-collapse_34: 6718848473654015215
+      core-collapse_35: -987792995631699555
+      core-collapse_36: 8143900065389976713
+      core-collapse_37: 5897874662688147192
+      core-collapse_38: 4129608191834024022
+      core-collapse_39: 5025467189573587976
+      core-collapse_4: -6308706743253036485
+      core-collapse_40: 860048133192238931
+      core-collapse_41: 5233796299344832540
+      core-collapse_42: 6461837668076074867
+      core-collapse_43: -8165762768027404329
+      core-collapse_44: -2156578173327392405
+      core-collapse_45: 694526148954312472
+      core-collapse_46: 4359888145268033185
+      core-collapse_47: -4568682534607841319
+      core-collapse_48: -1412814814237129522
+      core-collapse_49: 8883687560792633353
+      core-collapse_5: -5343469967814439888
+      core-collapse_50: 33580165068621012
+      core-collapse_51: 8277908942439671013
+      core-collapse_52: -4443615935472320967
+      core-collapse_53: 6462401019342924741
+      core-collapse_54: 8239328638340731079
+      core-collapse_55: 4109036395168931014
+      core-collapse_56: -781947939423281188
+      core-collapse_57: 6012013184137681040
+      core-collapse_58: 7026698222320040626
+      core-collapse_59: 4341961714884023373
+      core-collapse_6: 3241716309785783631
+      core-collapse_60: -3018151438324877437
+      core-collapse_7: -8113651099650197574
+      core-collapse_8: 2086062024536288231
+      core-collapse_9: -7329174545039628721
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

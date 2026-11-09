@@ -28,7 +28,7 @@ namespace DarkLord.Gameplay
     // Separate encounter ownership keeps the opening out of wave rewards and upkeep.
     public sealed partial class WaveDirector
     {
-        public bool BlocksTutorialInput => Tutorial != null && Tutorial.BlocksPlayerInput;
+        public bool BlocksTutorialInput => IsRelocating || Tutorial != null && Tutorial.BlocksPlayerInput;
         public bool InCombat => State == WaveState.Active || RemainingEnemies > 0 || Tutorial != null && Tutorial.Active && !Tutorial.Collapsed;
         public bool CanUseFacilities => !IsFinished && !InCombat && !BlocksTutorialInput;
         public StartingTutorial Tutorial { get; private set; }

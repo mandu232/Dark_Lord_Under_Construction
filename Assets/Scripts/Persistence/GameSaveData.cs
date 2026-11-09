@@ -122,6 +122,7 @@ namespace DarkLord.Persistence
         public float remaining;
         public int rewardWave;
         public int[] pendingWaves, completedWaves, rewardQueue;
+        public int arrivedRegion;
     }
 
     // Files contain data and stable build-item IDs, never scene object references.
@@ -341,6 +342,7 @@ namespace DarkLord.Persistence
             if (data.wave.schedule != null)
             {
                 var schedule = data.wave.schedule;
+                if (schedule.arrivedRegion < 0 || schedule.arrivedRegion >= RegionCatalog.Count) throw new InvalidDataException("지역 기록이 올바르지 않습니다.");
                 if (!InRange(schedule.remaining, 300) || schedule.rewardWave < 0 || schedule.rewardWave > data.wave.number ||
                     schedule.pendingWaves == null || schedule.pendingWaves.Length != data.wave.pending || schedule.completedWaves == null || schedule.rewardQueue == null)
                     throw new InvalidDataException("침공 일정이 올바르지 않습니다.");

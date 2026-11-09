@@ -182,8 +182,9 @@ namespace DarkLord.Tests
         }
         [Test] public void SameAttackClearingTwoWavesQueuesBothRewardsBeforeVictory()
         {
-            var data = Timed(5, 0, Enemy(1), Enemy(5));
-            data.schedule.completedWaves = new[] { 2, 3, 4 };
+            int final = waves.FinalWave;
+            var data = Timed(final, 0, Enemy(1), Enemy(final));
+            data.schedule.completedWaves = Enumerable.Range(2, final - 2).ToArray();
             waves.RestoreSave(data);
             foreach (var member in waves.transform.GetComponentsInChildren<WaveMember>())
                 member.GetComponent<DarkLord.Actors.ActorHealth>().Kill();
@@ -219,11 +220,12 @@ namespace DarkLord.Tests
         }
         [UnityTest] public IEnumerator FinalWaveDoesNotWinWhileOlderWaveIsAlive()
         {
-            var saved = Timed(5, 0, Enemy(1), Enemy(5));
-            saved.schedule.completedWaves = new[] { 2, 3, 4 };
+            int final = waves.FinalWave;
+            var saved = Timed(final, 0, Enemy(1), Enemy(final));
+            saved.schedule.completedWaves = Enumerable.Range(2, final - 2).ToArray();
             waves.RestoreSave(saved);
             foreach (var m in waves.transform.GetComponentsInChildren<MinionController>()) m.enabled = false;
-            waves.transform.GetComponentsInChildren<WaveMember>().Single(m => m.Number == 5).GetComponent<DarkLord.Actors.ActorHealth>().Kill();
+            waves.transform.GetComponentsInChildren<WaveMember>().Single(m => m.Number == final).GetComponent<DarkLord.Actors.ActorHealth>().Kill();
             Assert.IsTrue(waves.ChooseReward(0)); Assert.AreEqual(WaveState.Active, waves.State);
             waves.transform.GetComponentsInChildren<WaveMember>().Single(m => m.Number == 1).GetComponent<DarkLord.Actors.ActorHealth>().Kill();
             Assert.AreEqual(WaveState.RewardSelection, waves.State);

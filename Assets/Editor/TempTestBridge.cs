@@ -20,6 +20,13 @@ public static class TempTestBridge
 
     private static void Poll()
     {
+        if (File.Exists("Temp/claude_apply.txt") && !EditorApplication.isPlayingOrWillChangePlaymode && !EditorApplication.isCompiling)
+        {
+            File.Delete("Temp/claude_apply.txt");
+            DarkLord.EditorTools.PixelFxEffectsSetup.Apply();
+            File.WriteAllText("Temp/claude_applied.txt", "done");
+            return;
+        }
         if (!File.Exists(Trigger) || EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling) return;
         string filter = File.ReadAllText(Trigger).Trim();
         File.Delete(Trigger);

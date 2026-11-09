@@ -88,7 +88,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -102,7 +102,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -125,10 +125,10 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -156,19 +156,19 @@ TextureImporter:
       name: loot-crystal_0
       rect:
         serializedVersion: 2
-        x: 3
+        x: 0
         y: 60
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 12ce48954d510b970800000000000000
+      spriteID: ff43ef05745148a438fcccafc13a31d0
       internalID: 8768532476269489185
       vertices: []
       indices: 
@@ -178,19 +178,19 @@ TextureImporter:
       name: loot-crystal_1
       rect:
         serializedVersion: 2
-        x: 23
+        x: 20
         y: 60
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 687c35dbfb8bbe920800000000000000
+      spriteID: d14246471a2f9104391c777714708e51
       internalID: 3020711108736698246
       vertices: []
       indices: 
@@ -200,19 +200,19 @@ TextureImporter:
       name: loot-crystal_2
       rect:
         serializedVersion: 2
-        x: 43
+        x: 40
         y: 60
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 30de3fcd3fba70f80800000000000000
+      spriteID: ed17d055ae69ea841aaee74d3584612d
       internalID: -8140348737576506109
       vertices: []
       indices: 
@@ -222,19 +222,19 @@ TextureImporter:
       name: loot-crystal_3
       rect:
         serializedVersion: 2
-        x: 63
+        x: 60
         y: 60
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 1da8193602df81ba0800000000000000
+      spriteID: 51f9f998ddf5cfb489229a9adc6a45c8
       internalID: -6117861778231555375
       vertices: []
       indices: 
@@ -244,19 +244,19 @@ TextureImporter:
       name: loot-crystal_4
       rect:
         serializedVersion: 2
-        x: 83
+        x: 80
         y: 60
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d5d07e25a4100df60800000000000000
+      spriteID: b2d13be16c68db34b9ee76f30015a3d9
       internalID: 8056941152095898973
       vertices: []
       indices: 
@@ -266,19 +266,19 @@ TextureImporter:
       name: loot-crystal_5
       rect:
         serializedVersion: 2
-        x: 3
+        x: 0
         y: 40
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 5209fd9cefc2d3560800000000000000
+      spriteID: 81b0fa6826dba404383c447acb101302
       internalID: 7295036444230258725
       vertices: []
       indices: 
@@ -288,19 +288,19 @@ TextureImporter:
       name: loot-crystal_6
       rect:
         serializedVersion: 2
-        x: 23
+        x: 20
         y: 40
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 5421b6b885d5e1ed0800000000000000
+      spriteID: 71cd9fe7db78d3840bde265e54ad51e5
       internalID: -2441411313110674875
       vertices: []
       indices: 
@@ -310,19 +310,19 @@ TextureImporter:
       name: loot-crystal_7
       rect:
         serializedVersion: 2
-        x: 43
+        x: 40
         y: 40
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 52869d53cc5173b30800000000000000
+      spriteID: fe9aa9c80e480c34a8f09ec4e57f0883
       internalID: 4266903138777786405
       vertices: []
       indices: 
@@ -332,19 +332,19 @@ TextureImporter:
       name: loot-crystal_8
       rect:
         serializedVersion: 2
-        x: 63
+        x: 60
         y: 40
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d34b83602fdb174a0800000000000000
+      spriteID: c7c0d8dde1256f146942a0d1388e4d1c
       internalID: -6597283131936951235
       vertices: []
       indices: 
@@ -354,19 +354,19 @@ TextureImporter:
       name: loot-crystal_9
       rect:
         serializedVersion: 2
-        x: 83
+        x: 80
         y: 40
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: f26e420b89a1064c0800000000000000
+      spriteID: 6b262194b60d5494b9dd959a12002f0d
       internalID: -4296404801418893777
       vertices: []
       indices: 
@@ -376,19 +376,19 @@ TextureImporter:
       name: loot-crystal_10
       rect:
         serializedVersion: 2
-        x: 3
+        x: 0
         y: 20
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: f0f4d7b0ebe44fd30800000000000000
+      spriteID: 1920bb12283fa014cbf4bfb9ad769cc5
       internalID: 4464279708774518543
       vertices: []
       indices: 
@@ -398,19 +398,19 @@ TextureImporter:
       name: loot-crystal_11
       rect:
         serializedVersion: 2
-        x: 23
+        x: 20
         y: 20
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 36e04162d3dc671b0800000000000000
+      spriteID: af0bca83059cc124481cd968b2d144ca
       internalID: -5659110219228901789
       vertices: []
       indices: 
@@ -420,19 +420,19 @@ TextureImporter:
       name: loot-crystal_12
       rect:
         serializedVersion: 2
-        x: 43
+        x: 40
         y: 20
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 72c7419293bfbf190800000000000000
+      spriteID: 638ecd5305dc3a64a950da3043261386
       internalID: -7927466496134710233
       vertices: []
       indices: 
@@ -442,19 +442,19 @@ TextureImporter:
       name: loot-crystal_13
       rect:
         serializedVersion: 2
-        x: 63
+        x: 60
         y: 20
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: e3bfbcd1a4447dfb0800000000000000
+      spriteID: 906ae2d1ac6d8ec47b046c1bdb556e51
       internalID: -4623151407354348738
       vertices: []
       indices: 
@@ -464,19 +464,19 @@ TextureImporter:
       name: loot-crystal_14
       rect:
         serializedVersion: 2
-        x: 83
+        x: 80
         y: 20
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: cbb49d0a1b59200e0800000000000000
+      spriteID: 218ef6c891bbc2945844b83c3eb3eacf
       internalID: -2305115469119927364
       vertices: []
       indices: 
@@ -486,19 +486,19 @@ TextureImporter:
       name: loot-crystal_15
       rect:
         serializedVersion: 2
-        x: 3
+        x: 0
         y: 0
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: bf1943ba33fc66d50800000000000000
+      spriteID: 2c4d4746df525c745bc4e3863bea3c3c
       internalID: 6730294513974415867
       vertices: []
       indices: 
@@ -508,19 +508,19 @@ TextureImporter:
       name: loot-crystal_16
       rect:
         serializedVersion: 2
-        x: 23
+        x: 20
         y: 0
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 26c75eb1eac313830800000000000000
+      spriteID: ffe4564a88aa2dc4b89f3d0e2138c466
       internalID: 4049084258472787042
       vertices: []
       indices: 
@@ -530,19 +530,19 @@ TextureImporter:
       name: loot-crystal_17
       rect:
         serializedVersion: 2
-        x: 43
+        x: 40
         y: 0
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 4e1063e512e3bf6a0800000000000000
+      spriteID: bb97f66358f0ec047a226a873bf3ed77
       internalID: -6414464931223698972
       vertices: []
       indices: 
@@ -552,7 +552,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 9d44d428bd416fe4b82f259fda0281ff
     internalID: 0
     vertices: []
     indices: 

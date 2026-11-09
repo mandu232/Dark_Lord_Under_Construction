@@ -51,6 +51,8 @@ namespace DarkLord.UI
                         gameObject.AddComponent<WaveStartButtonPresentation>().Configure(director, button, healthText.font);
                 gameObject.AddComponent<CombatHud>().Configure(director, healthText);
                 gameObject.AddComponent<InvasionAlert>().Configure(director, healthText.font);
+                gameObject.AddComponent<DefeatPresentation>().Configure(director, healthText.font);
+                gameObject.AddComponent<RegionRelocationPresenter>().Configure(director, healthText.font);
                 gameObject.AddComponent<StartingTutorialPresentation>().Configure(director, healthText.font);
                 gameObject.AddComponent<CorpseHarvestHud>().Configure(director, healthText.font);
                 CreatePanel<AlchemyRoomPanel>().Configure(director, healthText);

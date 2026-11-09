@@ -88,7 +88,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -102,7 +102,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -125,10 +125,10 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -156,19 +156,19 @@ TextureImporter:
       name: loot-experience_0
       rect:
         serializedVersion: 2
-        x: 3
+        x: 0
         y: 60
-        width: 16
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 62237d6a17a5210f0800000000000000
+      spriteID: 7ed503bf42075d046aee2eedc2d49250
       internalID: -1147755510849129946
       vertices: []
       indices: 
@@ -178,19 +178,19 @@ TextureImporter:
       name: loot-experience_1
       rect:
         serializedVersion: 2
-        x: 23
+        x: 20
         y: 60
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 2044ded9061ec4820800000000000000
+      spriteID: 72c20fdeea55df949be9345858ef8ad1
       internalID: 2903943664829809666
       vertices: []
       indices: 
@@ -200,19 +200,19 @@ TextureImporter:
       name: loot-experience_2
       rect:
         serializedVersion: 2
-        x: 43
+        x: 40
         y: 60
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 32c7a18a5326ce8f0800000000000000
+      spriteID: b322d9ab2db152343b0a7c7af9f9151f
       internalID: -509924675206611933
       vertices: []
       indices: 
@@ -222,19 +222,19 @@ TextureImporter:
       name: loot-experience_3
       rect:
         serializedVersion: 2
-        x: 63
+        x: 60
         y: 60
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: b188d33cb570756b0800000000000000
+      spriteID: 81fbb23d4747aec4fb63cc1f125a781d
       internalID: -5307765545133832165
       vertices: []
       indices: 
@@ -244,19 +244,19 @@ TextureImporter:
       name: loot-experience_4
       rect:
         serializedVersion: 2
-        x: 82
+        x: 80
         y: 60
-        width: 15
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d386853360e4537a0800000000000000
+      spriteID: deee3fb605811824e9f6a2ec44bbe063
       internalID: -6398121907071719363
       vertices: []
       indices: 
@@ -266,19 +266,19 @@ TextureImporter:
       name: loot-experience_5
       rect:
         serializedVersion: 2
-        x: 2
+        x: 0
         y: 40
-        width: 15
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 60d6ded8b9f8c3790800000000000000
+      spriteID: 6c6da5a4f92667948956897bf52c0be6
       internalID: -7549000977115943674
       vertices: []
       indices: 
@@ -288,19 +288,19 @@ TextureImporter:
       name: loot-experience_6
       rect:
         serializedVersion: 2
-        x: 23
+        x: 20
         y: 40
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 13d6b5fe9624b9590800000000000000
+      spriteID: 290596aeb29201246ab5a0619bddcb60
       internalID: -7666460917913391823
       vertices: []
       indices: 
@@ -310,19 +310,19 @@ TextureImporter:
       name: loot-experience_7
       rect:
         serializedVersion: 2
-        x: 43
+        x: 40
         y: 40
-        width: 14
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 144bb13e2609fcbd0800000000000000
+      spriteID: 18aac5d09e6f29f48ada3e96ecb394fd
       internalID: -2607706904832789439
       vertices: []
       indices: 
@@ -332,19 +332,19 @@ TextureImporter:
       name: loot-experience_8
       rect:
         serializedVersion: 2
-        x: 63
+        x: 60
         y: 40
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 767addff080ec2dc0800000000000000
+      spriteID: 2879ec541473f7d4aa89beaef61c73c4
       internalID: -3662305552305903769
       vertices: []
       indices: 
@@ -354,19 +354,19 @@ TextureImporter:
       name: loot-experience_9
       rect:
         serializedVersion: 2
-        x: 83
+        x: 80
         y: 40
-        width: 16
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 383c7f527aa150930800000000000000
+      spriteID: 90a2979f06ef31c4c87029ee7ae17abb
       internalID: 4108719540244300675
       vertices: []
       indices: 
@@ -376,19 +376,19 @@ TextureImporter:
       name: loot-experience_10
       rect:
         serializedVersion: 2
-        x: 3
+        x: 0
         y: 20
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 4babc18fa79b13c10800000000000000
+      spriteID: 69b918085405ff644a28119188bc680e
       internalID: 2031608844720585396
       vertices: []
       indices: 
@@ -398,19 +398,19 @@ TextureImporter:
       name: loot-experience_11
       rect:
         serializedVersion: 2
-        x: 23
+        x: 20
         y: 20
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: cf01c9338cf5b1c80800000000000000
+      spriteID: f36ff00d823c2ed4bb3b3a6cdd5f4cf1
       internalID: -8350975770564488964
       vertices: []
       indices: 
@@ -420,19 +420,19 @@ TextureImporter:
       name: loot-experience_12
       rect:
         serializedVersion: 2
-        x: 43
+        x: 40
         y: 20
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: ba6510846c0729e10800000000000000
+      spriteID: 85bd9c6a8547e114b909d100914498a7
       internalID: 2202947164651476651
       vertices: []
       indices: 
@@ -442,19 +442,19 @@ TextureImporter:
       name: loot-experience_13
       rect:
         serializedVersion: 2
-        x: 62
+        x: 60
         y: 20
-        width: 15
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: e4f655e75edc0b6a0800000000000000
+      spriteID: 79b8baab08bac5c4682262a06799fd23
       internalID: -6435417481961705650
       vertices: []
       indices: 
@@ -464,19 +464,19 @@ TextureImporter:
       name: loot-experience_14
       rect:
         serializedVersion: 2
-        x: 82
+        x: 80
         y: 20
-        width: 15
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 30ed912bc02e2ef10800000000000000
+      spriteID: cadc54340b7f8e84aa96af2354b0cf97
       internalID: 2297647304067898883
       vertices: []
       indices: 
@@ -486,19 +486,19 @@ TextureImporter:
       name: loot-experience_15
       rect:
         serializedVersion: 2
-        x: 3
+        x: 0
         y: 0
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 7e3cc4382c504fd80800000000000000
+      spriteID: 92fca8f9219e4364b912c5709f313242
       internalID: -8217937087059672089
       vertices: []
       indices: 
@@ -508,19 +508,19 @@ TextureImporter:
       name: loot-experience_16
       rect:
         serializedVersion: 2
-        x: 23
+        x: 20
         y: 0
-        width: 14
-        height: 18
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 8455da034663c54c0800000000000000
+      spriteID: 9d9c24a0daba2f045b17e1985f7e1760
       internalID: -4297500140477000376
       vertices: []
       indices: 
@@ -530,19 +530,19 @@ TextureImporter:
       name: loot-experience_17
       rect:
         serializedVersion: 2
-        x: 43
+        x: 40
         y: 0
-        width: 14
-        height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 20
+        height: 20
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 88a7b6059a7a980d0800000000000000
+      spriteID: 05587dc546340834e975a1c9717a4006
       internalID: -3420018096370648440
       vertices: []
       indices: 
@@ -552,7 +552,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 7ddff9f4c9919e4429d3b2ab6f88e8a7
     internalID: 0
     vertices: []
     indices: 

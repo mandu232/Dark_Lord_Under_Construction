@@ -159,7 +159,7 @@ namespace DarkLord.Tests
                 if (WaveRewardCatalog.IsAugment(chosen)) selected.Add(chosen);
                 CollectionAssert.AreEqual(selected.OrderBy(id => id), waves.Augments.Capture());
             }
-            Assert.AreEqual(WaveState.Victorious, waves.State);
+            Assert.AreEqual(WaveState.Preparing, waves.State);
         }
         [Test, Category("TraitRework")] public void SaveRestoresSelectedEffectsAndActorTimersAndRejectsInvalidRecords()
         {

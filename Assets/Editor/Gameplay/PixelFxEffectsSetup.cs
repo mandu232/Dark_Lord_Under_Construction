@@ -44,6 +44,8 @@ namespace DarkLord.EditorTools
             new Sheet { kind = GameplayEffectKind.BloodBurst, file = "blood-burst", width = 80, height = 80, columns = 5, frames = 19, pivotX = 40, pivotY = 40, duration = .6f, fadeOut = .05f },
             new Sheet { kind = GameplayEffectKind.HolyMark, file = "holy-mark", width = 64, height = 64, columns = 5, frames = 22, pivotX = 32, pivotY = 32, duration = .7f, fadeOut = .03f },
             new Sheet { kind = GameplayEffectKind.HolyPulse, file = "holy-pulse", width = 96, height = 96, columns = 4, frames = 14, pivotX = 48, pivotY = 48, duration = .42f, fadeOut = .05f },
+            new Sheet { kind = GameplayEffectKind.CoreGem, file = "core-gem", width = 96, height = 112, columns = 9, frames = 60, pivotX = 48, pivotY = 100, duration = 3, fadeOut = 0, loop = true },
+            new Sheet { kind = GameplayEffectKind.CoreCollapse, file = "core-collapse", width = 176, height = 160, columns = 8, frames = 61, pivotX = 88, pivotY = 148, duration = 3.05f, fadeOut = 0 },
             new Sheet { kind = GameplayEffectKind.HolyCharge, file = "holy-charge", width = 112, height = 72, columns = 3, frames = 12, pivotX = 72, pivotY = 36, duration = .36f, fadeOut = .05f },
             new Sheet { kind = GameplayEffectKind.DebuffFrost, file = "debuff-frost", width = 72, height = 72, columns = 5, frames = 24, pivotX = 36, pivotY = 36, duration = .75f, fadeOut = 0 },
             new Sheet { kind = GameplayEffectKind.DebuffBrood, file = "debuff-brood", width = 72, height = 72, columns = 5, frames = 24, pivotX = 36, pivotY = 36, duration = .75f, fadeOut = 0 },
@@ -65,7 +67,9 @@ namespace DarkLord.EditorTools
             {
                 var path = Folder + sheet.file + ".png";
                 // Reslicing issues new sprite IDs, so leave sheets that are already cut alone.
-                if (AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().Count() != sheet.frames) Slice(path, sheet);
+                // A fresh sheet can import with trimmed automatic sprites, so the count alone doesn't prove it was cut.
+                var existing = AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().ToArray();
+                if (existing.Length != sheet.frames || existing.Any(s => s.rect.width != sheet.width || s.rect.height != sheet.height)) Slice(path, sheet);
                 var sprites = AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>()
                     .OrderBy(s => int.Parse(s.name.Substring(s.name.LastIndexOf('_') + 1))).ToArray();
                 if (sprites.Length != sheet.frames) { Debug.LogError($"{path}: expected {sheet.frames} frames, found {sprites.Length}."); return; }

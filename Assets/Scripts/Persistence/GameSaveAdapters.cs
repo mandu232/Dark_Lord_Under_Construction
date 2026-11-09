@@ -163,7 +163,7 @@ namespace DarkLord.Gameplay
 {
     public sealed partial class WaveDirector
     {
-        public WaveSaveData CaptureSave() => new WaveSaveData { minionRecoveryDisabled = !AutoMinionRecoveryEnabled, number=CurrentWave, state=State, pending=pendingSpawns, rewards=(int[])rewardChoices.Clone(),
+        public WaveSaveData CaptureSave() => new WaveSaveData { minionRecoveryDisabled = !AutoMinionRecoveryEnabled, number=CurrentWave, state=IsRelocating?WaveState.Preparing:State, pending=pendingSpawns, rewards=(int[])rewardChoices.Clone(),
             rewardItemIds=rewardBuildItems.Select(i => i != null ? i.name : "").ToArray(),
             pendingRoles=pendingRoles.ToArray(),
             augments=Augments.Capture(), tributeCharges=Augments.TributeCharges, thornCooldown=Augments.ThornCooldown, schedule=CaptureSchedule(),
@@ -203,8 +203,9 @@ namespace DarkLord.Gameplay
                 enemy.gameObject.AddComponent<WaveMember>().Number = saved.invasionWave > 0 ? saved.invasionWave : CurrentWave;
                 var health=enemy.Health;health.RestoreExperience(saved.level,0);health.RestoreHealth(saved.maximumHealth,saved.health);enemy.Assault(dungeonCore,dungeon,dungeonLord);
                 enemy.RestorePoise(saved.poise);
-                var enemyTactics=ConfigureInvader(enemy, saved.tactics != null ? saved.tactics.role : InvaderRole.Warrior);enemyTactics.RestoreSave(saved.tactics);
-                if(enemyTactics.IsHero)MakeBoss(enemy,enemyTactics);
+                var enemyRegion=RegionCatalog.ForDay(saved.invasionWave > 0 ? saved.invasionWave : CurrentWave);
+                var enemyTactics=ConfigureInvader(enemy, saved.tactics != null ? saved.tactics.role : InvaderRole.Warrior, enemyRegion);enemyTactics.RestoreSave(saved.tactics);
+                if(enemyTactics.IsHero)MakeBoss(enemy,enemyTactics,enemyRegion);
                 enemy.GetComponent<TopDownMotor>().RestoreSlows(saved.slows);
                 if (saved.augmentStatus != null) AugmentStatus.Get(health).RestoreSave(saved.augmentStatus);
                 Action handler=()=>OnInvaderDied(health);deathHandlers.Add(health,handler);health.Died+=handler;aliveInvaders.Add(health);
