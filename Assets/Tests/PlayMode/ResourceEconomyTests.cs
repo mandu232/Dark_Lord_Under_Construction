@@ -133,7 +133,7 @@ namespace DarkLord.Tests
             node.transform.position=waves.Lord.transform.position+Vector3.left*.8f;
             var target=node.GetComponent<ActorHealth>();target.Configure(Faction.Invader,500);Physics2D.SyncTransforms();
             Assert.IsTrue(waves.Combat.TryAttack(Vector2.left));Assert.AreEqual(470,target.CurrentHealth);
-            Assert.IsTrue(waves.Combat.TryNova());Assert.AreEqual(417,target.CurrentHealth);
+            Assert.IsTrue(waves.Combat.TryNova());Assert.AreEqual(420,target.CurrentHealth);
         }
         [UnityTest] public IEnumerator FOpensCoreFacilityAndEscapeClosesWithoutPausing()
         {

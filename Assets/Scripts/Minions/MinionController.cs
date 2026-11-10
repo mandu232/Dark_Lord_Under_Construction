@@ -307,7 +307,8 @@ namespace DarkLord.Minions
                     stateEnds = Time.time + Mathf.Max(attackDuration, attackWindup);
                     nextAttack = Time.time + Mathf.Max(attackCooldown, attackDuration, attackWindup);
                     damagePending = true;
-                    if (health.Faction == Faction.Invader || IsMelee)
+                    // No lunge at a facility: repeated steps would carry an invader into its cell.
+                    if ((health.Faction == Faction.Invader || IsMelee) && target.GetComponent<DarkLord.Dungeon.ResourceBuilding>() == null)
                         motor.AttackStep(delta, .26f, .14f, Mathf.Max(0, attackWindup - .10f));
                     SetState(ActorState.Attack);
                 }
@@ -428,7 +429,7 @@ namespace DarkLord.Minions
         private bool SteerTo(Vector2 destination, ActorHealth combatTarget = null, float movementScale = 1)
         {
             Vector2 position = transform.position;
-            bool approachFootprint = combatTarget != null && combatTarget.ContactCollider != null;
+            bool approachFootprint = combatTarget != null && combatTarget.HasContactFootprint;
             if (approachFootprint) destination = combatTarget.ContactPoint(position);
             Vector2 delta = destination - position;
             float distance = delta.magnitude;
@@ -440,9 +441,16 @@ namespace DarkLord.Minions
                 return true;
             }
             // Stop at blocking terrain. Grid routing can replace this steering when the dungeon exists.
-            if (Physics2D.CircleCast(transform.position, 0.22f, delta.normalized,
-                Mathf.Min(distance, 0.35f), obstacleLayers))
+            var wall = Physics2D.CircleCast(transform.position, 0.22f, delta.normalized,
+                Mathf.Min(distance, 0.35f), obstacleLayers);
+            if (wall)
             {
+                // Route followers slide round a corner instead of freezing against it.
+                if (dungeonRoute != null && TrySlideAlongWall(position, delta.normalized, wall, movementScale))
+                {
+                    SetState(ActorState.Run);
+                    return false;
+                }
                 motor.Stop();
                 SetState(ActorState.Idle);
                 return false;
@@ -455,6 +463,21 @@ namespace DarkLord.Minions
             }
             SetState(ActorState.Run);
             return false;
+        }
+
+        private bool TrySlideAlongWall(Vector2 position, Vector2 direction, RaycastHit2D wall, float movementScale)
+        {
+            Vector2 slide = direction - wall.normal * Vector2.Dot(direction, wall.normal);
+            // Head-on, or the slide is boxed in too: step back to the open middle of the
+            // current floor cell, from where every neighbouring waypoint is a clear line.
+            if (slide.sqrMagnitude < .04f || Physics2D.CircleCast(position, .22f, slide.normalized, .2f, obstacleLayers))
+            {
+                var dungeon = dungeonRoute.Dungeon;
+                slide = (Vector2)dungeon.CellCenter(dungeon.WorldToCell(position)) - position;
+                if (slide.sqrMagnitude < .0025f) return false;
+            }
+            motor.Move(slide.normalized * movementScale);
+            return true;
         }
 
         private void ShowAttackEffect(Vector3 point)
@@ -478,6 +501,8 @@ namespace DarkLord.Minions
 
         private void OnDamaged(ActorHealth source)
         {
+            // Invaders on a dungeon route strike back instead of walking on past their attacker.
+            if (dungeonRoute != null && IsHostile(source)) dungeonRoute.Engage(source);
             if (IsStaggerImmune)
             {
                 if (State == ActorState.Hit) { stateEnds = 0; SetState(ActorState.Idle); }

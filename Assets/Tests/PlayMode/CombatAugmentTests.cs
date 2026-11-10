@@ -73,7 +73,7 @@ namespace DarkLord.Tests
             slowed[0].gameObject.AddComponent<BoxCollider2D>().size = Vector2.one * .1f;
             var fast = Actor(Vector3.up); var ally = Actor(Vector3.left, true);
             Physics2D.SyncTransforms(); Assert.IsTrue(combat.TryNova());
-            CollectionAssert.AreEqual(new[]{60,80,80,80},slowed.Select(t=>t.CurrentHealth).OrderBy(h=>h).ToArray()); Assert.AreEqual(95, fast.CurrentHealth);
+            CollectionAssert.AreEqual(new[]{63,83,83,83},slowed.Select(t=>t.CurrentHealth).OrderBy(h=>h).ToArray()); Assert.AreEqual(98, fast.CurrentHealth);
             Assert.AreEqual(200, ally.CurrentHealth); Assert.AreEqual(85, combat.Mana);
         }
         [UnityTest] public IEnumerator LordMarkIsConsumedByExactlyOneRealMinionAttack()
@@ -95,7 +95,7 @@ namespace DarkLord.Tests
             for(int i=0;i<3;i++) target.TakeDamage(waves.Augments.MinionDamage(minion,target,10),guard);
             minion.enabled=true;
             Assert.AreEqual(.35f, target.GetComponent<TopDownMotor>().SlowMultiplier); Assert.AreEqual(155, target.CurrentHealth);
-            Physics2D.SyncTransforms(); Assert.IsTrue(combat.TryNova()); Assert.AreEqual(75, target.CurrentHealth);
+            Physics2D.SyncTransforms(); Assert.IsTrue(combat.TryNova()); Assert.AreEqual(78, target.CurrentHealth);
             minion.enabled=false; yield return new WaitForSeconds(3.2f);
             Assert.AreEqual(1, target.GetComponent<TopDownMotor>().SlowMultiplier);
         }
@@ -134,7 +134,7 @@ namespace DarkLord.Tests
         [Test] public void EffectsAreDisabledDuringPreparationPauseAndWithoutSelection()
         {
             Active(); var target = Actor(Vector3.right); target.GetComponent<TopDownMotor>().ApplySlow(.5f, 4);
-            Physics2D.SyncTransforms(); combat.TryNova(); Assert.AreEqual(155, target.CurrentHealth);
+            Physics2D.SyncTransforms(); combat.TryNova(); Assert.AreEqual(158, target.CurrentHealth);
             Active(WaveRewardCatalog.LordsHunt, WaveRewardCatalog.TrapBrand, WaveRewardCatalog.BloodNova);
             Time.timeScale = 0;
             Assert.AreEqual(25, waves.Augments.MeleeDamage(target, 25)); Assert.IsFalse(waves.Augments.NovaBonus(target));

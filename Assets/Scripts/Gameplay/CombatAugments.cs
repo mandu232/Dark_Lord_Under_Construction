@@ -148,8 +148,8 @@ namespace DarkLord.Gameplay
             { AugmentStatus.Get(target).BrandTrap(); Trigger(WaveRewardCatalog.TrapBrand,target.transform); }
             if(Has(WaveRewardCatalog.FrostPrison))
             {
-                target.GetComponent<TopDownMotor>()?.ApplySlow(.25f,2.5f);
-                target.GetComponent<MinionController>()?.ApplyStun(.6f);
+                target.GetComponent<TopDownMotor>()?.ApplySlow(.6f,1.5f);
+                target.GetComponent<MinionController>()?.ApplyStun(.25f);
                 Trigger(WaveRewardCatalog.FrostPrison,target.transform);
             }
         }

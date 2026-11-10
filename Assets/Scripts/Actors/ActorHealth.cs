@@ -45,8 +45,17 @@ namespace DarkLord.Actors
         public int GrowthAttackBonus => (Level - 1) * 4;
         // Extra melee distance for a wide target whose body keeps attackers away from its centre.
         public Collider2D ContactCollider { get; set; }
-        public Vector2 ContactPoint(Vector2 from) =>
-            ContactCollider != null && ContactCollider.enabled ? ContactCollider.ClosestPoint(from) : (Vector2)transform.position;
+        // Half-size of a box around this actor that attackers reach from its edge, such as a facility's floor cell.
+        public Vector2? ContactHalfExtent { get; set; }
+        public bool HasContactFootprint => ContactCollider != null || ContactHalfExtent.HasValue;
+        public Vector2 ContactPoint(Vector2 from)
+        {
+            if (ContactCollider != null && ContactCollider.enabled) return ContactCollider.ClosestPoint(from);
+            Vector2 center = transform.position;
+            if (!ContactHalfExtent.HasValue) return center;
+            var half = ContactHalfExtent.Value;
+            return new Vector2(Mathf.Clamp(from.x, center.x - half.x, center.x + half.x), Mathf.Clamp(from.y, center.y - half.y, center.y + half.y));
+        }
         public void RestoreExperience(int level, int experience)
         {
             Level = Mathf.Clamp(level, 1, 100);

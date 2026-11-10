@@ -74,6 +74,8 @@ namespace DarkLord.Dungeon
         private void Awake()
         {
             health = GetComponent<ActorHealth>();
+            // Attackers strike from the edge of the facility's floor cell instead of walking into it.
+            health.ContactHalfExtent = Vector2.one * (DungeonGrid.CellSize * .45f);
             health.DamageFilter = CanReceiveDamage;
             health.Died += OnDestroyed;
             health.Damaged += OnDamaged;
@@ -101,7 +103,13 @@ namespace DarkLord.Dungeon
         }
         public void Bind(DungeonGrid grid, Vector2Int cell, GameObject design)
         { dungeon = grid; Cell = cell; Design = design; }
-        private bool CanReceiveDamage(ActorHealth source) => source == null || source.Faction != Faction.Invader || !IsProtected;
+        private bool CanReceiveDamage(ActorHealth source) => source == null || source.Faction != Faction.Invader || !IsProtected || BlocksRouteOf(source);
+        // A guarded facility that seals the only way forward can still be broken down.
+        private bool BlocksRouteOf(ActorHealth source)
+        {
+            var invader = source.GetComponent<DarkLord.Minions.MinionController>();
+            return invader != null && invader.DungeonRoute != null && invader.DungeonRoute.BreachTarget == health;
+        }
         private void OnDestroyed() => RefreshVisuals();
         private void OnDamaged(ActorHealth source) => RefreshVisuals();
         private void RefreshVisuals()

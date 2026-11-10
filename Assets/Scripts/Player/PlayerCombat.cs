@@ -190,10 +190,10 @@ namespace DarkLord.Player
             nextNova = Time.time + 6;
             meleeAttack = false;
             attackUntil = Time.time + 0.3f;
-            DamageArea(6f, 30 + (waves?.Economy?.MagicBonus ?? 0) + (waves?.Augments.BeginNovaCast() ?? 0), Vector2.zero, -1, DamageType.Magic, impact: PlayerHitStop.ImpactKind.Spell, shockwave: true);
+            DamageArea(6f, 27 + (waves?.Economy?.MagicBonus ?? 0) + (waves?.Augments.BeginNovaCast() ?? 0), Vector2.zero, -1, DamageType.Magic, impact: PlayerHitStop.ImpactKind.Spell, shockwave: true, stun: .3f);
             GameplayEffects.Show(transform, GameplayEffectKind.BloodNova, transform.position);
             PresentNovaImpact();
-            Message = "혈파 · 광역 충격 / 넉백 / 기절 1.5초";
+            Message = "혈파 · 광역 충격 / 넉백 / 기절 0.3초";
             return true;
         }
         private void PresentNovaImpact()
@@ -246,7 +246,7 @@ namespace DarkLord.Player
         }
 
         private void DamageArea(float radius, int damage, Vector2 direction, float minimumDot, DamageType type, bool slow = false,
-            PlayerHitStop.ImpactKind impact = PlayerHitStop.ImpactKind.Light, bool shockwave = false)
+            PlayerHitStop.ImpactKind impact = PlayerHitStop.ImpactKind.Light, bool shockwave = false, float stun = 1.5f)
         {
             struck.Clear();
             int enhancedHits = 0;
@@ -276,7 +276,7 @@ namespace DarkLord.Player
                             var minion = target.GetComponent<DarkLord.Minions.MinionController>();
                             if (minion == null || !minion.IsStaggerImmune)
                             {
-                                minion?.ApplyStun(1.5f);
+                                minion?.ApplyStun(stun);
                                 target.GetComponent<TopDownMotor>()?.ApplyKnockback(delta.sqrMagnitude > .001f ? delta : Vector2.up, 12f, .5f, true);
                             }
                         }

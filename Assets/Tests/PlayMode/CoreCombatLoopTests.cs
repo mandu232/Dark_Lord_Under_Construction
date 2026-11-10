@@ -57,7 +57,7 @@ namespace DarkLord.Tests
             wall.AddComponent<BoxCollider2D>().size = new Vector2(3, .5f);
             Physics2D.SyncTransforms();
             Assert.IsTrue(combat.TryNova());
-            Assert.AreEqual(55, enemy.CurrentHealth);
+            Assert.AreEqual(58, enemy.CurrentHealth);
             Assert.IsTrue(controller.IsStunned);
             Assert.AreEqual(100, ally.CurrentHealth);
             Assert.AreEqual(100, distant.CurrentHealth);

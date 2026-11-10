@@ -432,6 +432,26 @@ namespace DarkLord.Dungeon
             return true;
         }
 
+        // When facilities seal every route, path through them as cheaply as possible.
+        // Returns the first facility on that path, with the path cut short in front of it.
+        private const int FacilityBreachCost = 12;
+        internal ResourceBuilding FindNpcBreachPath(Vector2Int start, Vector2Int destination,
+            System.Collections.Generic.List<Vector2Int> path, DungeonSection room = null)
+        {
+            if (!Construction.FindWeightedPath(start, destination, path, room, cell =>
+                    cell == CoreCell || IsAlchemyStationCell(cell) ? -1 : BlocksNpcMovement(cell) ? FacilityBreachCost : 1))
+                return null;
+            for (int i = 0; i < path.Count; i++)
+            {
+                var building = BuildingAt(path[i]);
+                if (building == null || !building.isActiveAndEnabled || building.IsRuined) continue;
+                path.RemoveRange(i, path.Count - i);
+                return building;
+            }
+            if (path.Count > 0 && BlocksNpcMovement(destination)) path.RemoveAt(path.Count - 1);
+            return null;
+        }
+
         public System.Collections.Generic.IReadOnlyList<DarkLord.Minions.MinionController> Guards => guards;
 
         public void RegisterGuard(DarkLord.Minions.MinionController guard)

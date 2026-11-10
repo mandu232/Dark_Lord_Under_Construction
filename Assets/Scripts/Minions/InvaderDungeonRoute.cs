@@ -23,6 +23,11 @@ namespace DarkLord.Minions
         private readonly List<Vector2Int> path = new List<Vector2Int>();
         private readonly List<Vector2Int> candidatePath = new List<Vector2Int>();
         private readonly List<ActorHealth> defenders = new List<ActorHealth>();
+        private readonly List<ResourceBuilding> buildings = new List<ResourceBuilding>();
+        private const float EngageDuration = 3f, EngageLeash = 9f, CommitDistance = 1.5f;
+        private const int EngagePathCells = 6;
+        private ActorHealth engaged;
+        private float engagedUntil;
         private readonly HashSet<DungeonSection> visited = new HashSet<DungeonSection>();
         private DungeonSection destinationRoom;
         private int waypoint, revision = -1;
@@ -31,6 +36,8 @@ namespace DarkLord.Minions
         internal DungeonGrid Dungeon => dungeon;
         public DungeonSection LockedRoom { get; private set; }
         public ActorHealth Target { get; private set; }
+        // A facility this invader must break because it seals the only way on.
+        public ActorHealth BreachTarget { get; private set; }
         public bool HasWaypoint => waypoint < path.Count;
         public Vector3 NextWaypoint => dungeon.CellCenter(path[waypoint]) + travelOffset;
         public bool CanApproachTargetDirectly => Target != null && !HasWaypoint;
@@ -46,9 +53,19 @@ namespace DarkLord.Minions
             dungeon.Initialize();
         }
 
+        // A hostile that hits this invader, or that it was already fighting, is pursued a short way
+        // instead of being ignored the moment it steps out of the room or into a corridor.
+        public void Engage(ActorHealth attacker, float duration = EngageDuration)
+        {
+            if (attacker == null || attacker == objective || attacker.GetComponent<ResourceBuilding>() != null) return;
+            if (engaged != attacker) { nextSearch = 0; engagedUntil = 0; }
+            engaged = attacker;
+            engagedUntil = Mathf.Max(engagedUntil, Time.time + duration);
+        }
+
         public void Update(Vector3 position, ActorHealth blockedBy = null)
         {
-            if (dungeon == null || objective == null || !objective.IsAlive) { path.Clear(); Target = null; return; }
+            if (dungeon == null || objective == null || !objective.IsAlive) { path.Clear(); Target = null; BreachTarget = null; return; }
             while (HasWaypoint && Vector2.Distance(position, NextWaypoint) <= 0.18f) waypoint++;
             var cell = dungeon.WorldToCell(position);
             var currentRoom = dungeon.Construction.RoomAt(cell);
@@ -58,65 +75,77 @@ namespace DarkLord.Minions
             nextSearch = Time.time + 0.2f;
             revision = dungeon.Construction.Revision;
             var previousTarget = Target;
-            path.Clear(); waypoint = 0; Target = null;
+            path.Clear(); waypoint = 0; Target = null; BreachTarget = null;
 
-            if (LockedRoom == null && currentRoom != null && !bypassed.Contains(currentRoom)) { LockedRoom = currentRoom; LockOrder = nextLockOrder++; }
-            if (LockedRoom != null && LockedRoom != dungeon.CoreRoom && owner != null)
+            if (LockedRoom == null && currentRoom != null && !bypassed.Contains(currentRoom))
             {
-                GetDefenders(LockedRoom);
-                if (defenders.Count > 0 && owner.AttackersHeldAhead(this) >= HoldLimit(defenders.Count))
+                LockedRoom = currentRoom; LockOrder = nextLockOrder++;
+                // Decide the surplus on arrival only. Re-checking later made invaders that were
+                // already fighting walk away whenever a defender died and the limit shrank.
+                if (LockedRoom != dungeon.CoreRoom && owner != null)
                 {
-                    bypassed.Add(LockedRoom); visited.Add(LockedRoom); LockedRoom = null;
+                    GetDefenders(LockedRoom);
+                    if (defenders.Count > 0 && owner.AttackersHeldAhead(this) >= HoldLimit(defenders.Count))
+                    {
+                        bypassed.Add(LockedRoom); visited.Add(LockedRoom); LockedRoom = null;
+                    }
                 }
             }
             if (LockedRoom != null)
             {
+                GetDefenders(LockedRoom);
+                if (defenders.Count == 0 && ChaseEngaged(cell, position)) return;
                 // Knockback can cross a doorway without clearing the room. A confined
                 // search rejects an outside start, so route back to its first floor cell.
                 if (!LockedRoom.Bounds.Contains(cell))
                 {
-                    if (dungeon.FindNpcPath(cell, LockedRoom.Center, path))
+                    if (dungeon.FindNpcPath(cell, LockedRoom.Center, path) || Breach(cell, LockedRoom.Center, null))
                         for (int i = 0; i < path.Count; i++)
                             if (LockedRoom.Bounds.Contains(path[i]))
                             {
                                 if (i + 1 < path.Count) path.RemoveRange(i + 1, path.Count - i - 1);
+                                Target = null; BreachTarget = null;
                                 break;
                             }
                     return;
                 }
-                GetDefenders(LockedRoom);
                 if (defenders.Count > 0)
                 {
                     float best = float.PositiveInfinity;
-                    var preferred = defenders.Contains(blockedBy) ? blockedBy : defenders.Contains(previousTarget) ? previousTarget : null;
+                    bool engagedHere = engaged != null && Time.time < engagedUntil && defenders.Contains(engaged);
+                    var preferred = defenders.Contains(blockedBy) ? blockedBy : engagedHere ? engaged : defenders.Contains(previousTarget) ? previousTarget : null;
+                    // Finish the fight in hand before turning to anyone else, the lord included.
+                    var committed = previousTarget != null && defenders.Contains(previousTarget) &&
+                        Vector2.Distance(position, previousTarget.transform.position) <= CommitDistance ? previousTarget : null;
                     foreach (var defender in defenders)
                     {
                         if (!dungeon.FindNpcPath(cell, dungeon.WorldToCell(defender.transform.position), candidatePath, LockedRoom)) continue;
-                        float score = defender == Player ? -2 : defender == preferred ? -1 : candidatePath.Count * DungeonGrid.CellSize + Vector2.Distance(position, defender.transform.position);
+                        float score = defender == committed ? -3 : defender == Player ? -2 : defender == preferred ? -1 : candidatePath.Count * DungeonGrid.CellSize + Vector2.Distance(position, defender.transform.position);
                         if (score >= best) continue;
                         best = score;
                         Target = defender;
                         path.Clear(); path.AddRange(candidatePath);
                     }
+                    if (Target == null)
+                    {
+                        // Every guard is walled in by facilities: break through to the nearest one.
+                        ActorHealth nearest = null;
+                        foreach (var defender in defenders)
+                            if (nearest == null || Vector2.Distance(position, defender.transform.position) < Vector2.Distance(position, nearest.transform.position))
+                                nearest = defender;
+                        if (!Breach(cell, dungeon.WorldToCell(nearest.transform.position), LockedRoom)) path.Clear();
+                    }
+                    else if (Vector2.Distance(position, Target.transform.position) <= CommitDistance + 1) Engage(Target, 2f);
                     // Never leave an uncleared room, even if its last guard is temporarily unreachable.
                     return;
                 }
-                var building = dungeon.BuildingInRoom(LockedRoom, true);
-                if (building != null && !building.IsRuined)
-                {
-                    // Keep clearing surviving facilities even when earlier ones are rubble.
-                    if (dungeon.FindNpcPath(cell, building.Cell, candidatePath, LockedRoom))
-                    {
-                        Target = building.Health;
-                        path.AddRange(candidatePath);
-                    }
-                    return;
-                }
+                if (TargetRoomFacility(cell, LockedRoom)) return;
                 if (LockedRoom != destinationRoom || ReachedRoomCenter(cell, LockedRoom) || LockedRoom == dungeon.CoreRoom)
                     visited.Add(LockedRoom);
                 LockedRoom = null;
             }
 
+            if (ChaseEngaged(cell, position)) return;
             if (destinationRoom != null && ReachedRoomCenter(cell, destinationRoom)) visited.Add(destinationRoom);
             destinationRoom = null;
             int shortest = int.MaxValue;
@@ -130,8 +159,11 @@ namespace DarkLord.Minions
             }
             if (destinationRoom == null)
             {
-                if (!dungeon.FindNpcPath(cell, dungeon.WorldToCell(objective.transform.position), path)) return;
-                Target = objective;
+                var core = dungeon.WorldToCell(objective.transform.position);
+                if (dungeon.FindNpcPath(cell, core, path)) Target = objective;
+                // Facilities seal the way to the core: break through the fewest of them.
+                else if (!Breach(cell, core, null)) return;
+                else if (BreachTarget == null) Target = objective;
             }
             // Stop on entering the first guarded room, including a room passed
             // through on the way to another branch. The next refresh acquires its guards.
@@ -143,9 +175,49 @@ namespace DarkLord.Minions
                 var building = dungeon.BuildingInRoom(room, true);
                 if (defenders.Count == 0 && (building == null || building.IsRuined)) continue;
                 if (i + 1 < path.Count) path.RemoveRange(i + 1, path.Count - i - 1);
-                Target = null;
+                Target = null; BreachTarget = null;
                 break;
             }
+        }
+
+        private bool ChaseEngaged(Vector2Int cell, Vector3 position)
+        {
+            if (engaged == null) return false;
+            if (Time.time >= engagedUntil || !engaged.isActiveAndEnabled || !engaged.IsAlive ||
+                Vector2.Distance(position, engaged.transform.position) > EngageLeash) { engaged = null; return false; }
+            var targetCell = dungeon.WorldToCell(engaged.transform.position);
+            var room = dungeon.Construction.RoomAt(targetCell);
+            if (room != null && room != LockedRoom && bypassed.Contains(room)) return false;
+            if (!dungeon.FindNpcPath(cell, targetCell, candidatePath) || candidatePath.Count > EngagePathCells) return false;
+            Target = engaged;
+            path.AddRange(candidatePath);
+            return true;
+        }
+
+        // Clear every surviving facility, breaking through any that wall off the rest.
+        private bool TargetRoomFacility(Vector2Int cell, DungeonSection room)
+        {
+            dungeon.GetLivingBuildingsInRoom(room, buildings);
+            if (buildings.Count == 0) return false;
+            int shortest = int.MaxValue;
+            foreach (var building in buildings)
+            {
+                if (!dungeon.FindNpcPath(cell, building.Cell, candidatePath, room) || candidatePath.Count >= shortest) continue;
+                shortest = candidatePath.Count;
+                Target = building.Health;
+                path.Clear(); path.AddRange(candidatePath);
+            }
+            if (Target == null && !Breach(cell, buildings[0].Cell, room)) path.Clear();
+            return true;
+        }
+
+        private bool Breach(Vector2Int cell, Vector2Int destination, DungeonSection room)
+        {
+            var blocker = dungeon.FindNpcBreachPath(cell, destination, path, room);
+            if (blocker == null) return path.Count > 0 || cell == destination;
+            BreachTarget = blocker.Health;
+            Target = BreachTarget;
+            return true;
         }
         private bool ReachedRoomCenter(Vector2Int cell, DungeonSection room)
         {

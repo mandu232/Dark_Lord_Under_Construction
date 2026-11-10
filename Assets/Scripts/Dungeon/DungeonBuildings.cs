@@ -74,6 +74,13 @@ namespace DarkLord.Dungeon
                 if (building != null && (!livingOnly || building.isActiveAndEnabled && !building.IsRuined) && Construction.RoomAt(building.Cell) == room) return building;
             return null;
         }
+        internal void GetLivingBuildingsInRoom(DungeonSection room, List<ResourceBuilding> result)
+        {
+            result.Clear();
+            if (room == null) return;
+            foreach (var building in buildings.Values)
+                if (building != null && building.isActiveAndEnabled && !building.IsRuined && Construction.RoomAt(building.Cell) == room) result.Add(building);
+        }
         public ResourceBuilding GetRoomBonuses(MinionController minion, HashSet<GameObject> designs,
             out int attack, out int physical, out int magic, List<ResourceBuilding> activeBuffs = null)
         {

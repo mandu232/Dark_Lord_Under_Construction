@@ -56,7 +56,7 @@ namespace DarkLord.Player
             new TechDefinition(TechId.BloodTithe,"피의 공납","단계마다 습격을 막아 낼 때 혈액을 3 더 얻습니다.",3,4,1,5,TechId.Scavenger,1),
             new TechDefinition(TechId.CrystalStudy,"혈석 정제","습격을 막아 낼 때마다 혈석을 1개 얻습니다.",1,8,2,5,TechId.BloodTithe,1),
             new TechDefinition(TechId.Salvage,"주머니 털기","쓰러진 적이 금화를 떨어뜨릴 확률이 10%p 늘어납니다.",1,6,3,5,TechId.BloodTithe,1),
-            new TechDefinition(TechId.BloodNova,"혈파","Q 공격 마법. 주변 6칸의 적을 밀쳐 내며 마법 피해를 주고 1.5초 기절시킵니다. (마나 30 · 재사용 6초)",1,3,0,6),
+            new TechDefinition(TechId.BloodNova,"혈파","Q 공격 마법. 주변 6칸의 적을 밀쳐 내며 마법 피해를 주고 0.3초 기절시킵니다. (마나 30 · 재사용 6초)",1,3,0,6),
         };
         private static readonly int[] LegacyParents = { -1,-1,-1,0,-1,4,0,1,1,1,0,2,3,4,10,1,5 };
         private static readonly int[] LegacyRequirements = { 1,1,1,1,1,1,2,1,2,1,1,2,2,2,1,3,2 };

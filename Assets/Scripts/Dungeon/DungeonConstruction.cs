@@ -81,6 +81,13 @@ namespace DarkLord.Dungeon
             var section = At(cell);
             return section != null && section.IsComplete && IsRoom(section.Kind) ? section : null;
         }
+        // A room or corridor cell that new construction may attach to. A finished section's
+        // cell that has turned back into rock (a collapsed opening) no longer counts.
+        public bool IsAttachable(Vector2Int cell)
+        {
+            var section = At(cell);
+            return section != null && (!section.IsComplete || layout.IsFloor(cell));
+        }
         public bool IsWalkable(Vector2Int cell) => layout.IsFloor(cell) && (At(cell) == null || At(cell).IsComplete);
 
         public ConstructionResult CanPlan(ConstructionKind kind, Vector2Int center)
@@ -95,8 +102,8 @@ namespace DarkLord.Dungeon
                 {
                     var neighbour = cell + direction;
                     if (bounds.Contains(neighbour)) continue;
+                    if (!IsAttachable(neighbour)) continue;
                     var section = At(neighbour);
-                    if (section == null) continue;
                     connected = true;
                     if (!IsRoom(section.Kind)) touchesCorridor = true;
                 }
@@ -158,10 +165,12 @@ namespace DarkLord.Dungeon
             {
                 if (!layout.Contains(cell) || layout.GetCell(cell) == DungeonCell.Bedrock) return ConstructionResult.OutsideMap;
                 var owner = At(cell);
-                if (owner == null && layout.GetCell(cell) == DungeonCell.Rock) hasNewCells = true;
-                if (owner != null) connected = true;
+                if (owner != null || layout.GetCell(cell) != DungeonCell.Rock) continue;
+                hasNewCells = true;
+                // Only cells this corridor actually digs count, and they must share an edge
+                // with a real room or corridor cell (dug, or reserved by a pending plan).
                 foreach (var direction in Directions)
-                    if (At(cell + direction) != null) connected = true;
+                    if (IsAttachable(cell + direction)) connected = true;
             }
             if (!hasNewCells) return ConstructionResult.Occupied;
             return connected ? ConstructionResult.Success : ConstructionResult.Disconnected;
@@ -224,6 +233,42 @@ namespace DarkLord.Dungeon
                     if (!IsWalkable(next) || (next != destination && blocked?.Invoke(next) == true) || parents.ContainsKey(next) || (confinedRoom != null && !confinedRoom.Bounds.Contains(next))) continue;
                     parents[next] = cell;
                     queue.Enqueue(next);
+                }
+            }
+            return false;
+        }
+
+        // Cheapest cardinal path where stepCost returns the price of entering a cell, or a negative value for a wall.
+        public bool FindWeightedPath(Vector2Int start, Vector2Int destination, List<Vector2Int> result,
+            DungeonSection confinedRoom, System.Func<Vector2Int, int> stepCost)
+        {
+            result.Clear();
+            if (!IsWalkable(start) || !IsWalkable(destination)) return false;
+            if (confinedRoom != null && (!confinedRoom.Bounds.Contains(start) || !confinedRoom.Bounds.Contains(destination))) return false;
+            var cost = new Dictionary<Vector2Int, int> { [start] = 0 };
+            var parents = new Dictionary<Vector2Int, Vector2Int> { [start] = start };
+            var open = new SortedSet<(int cost, int x, int y)> { (0, start.x, start.y) };
+            while (open.Count > 0)
+            {
+                var entry = open.Min; open.Remove(entry);
+                var cell = new Vector2Int(entry.x, entry.y);
+                if (entry.cost > cost[cell]) continue;
+                if (cell == destination)
+                {
+                    while (cell != start) { result.Add(cell); cell = parents[cell]; }
+                    result.Reverse();
+                    return true;
+                }
+                foreach (var direction in Directions)
+                {
+                    var next = cell + direction;
+                    if (!IsWalkable(next) || (confinedRoom != null && !confinedRoom.Bounds.Contains(next))) continue;
+                    int step = next == destination ? 1 : stepCost(next);
+                    if (step < 0) continue;
+                    int total = entry.cost + step;
+                    if (cost.TryGetValue(next, out int known) && known <= total) continue;
+                    cost[next] = total; parents[next] = cell;
+                    open.Add((total, next.x, next.y));
                 }
             }
             return false;
