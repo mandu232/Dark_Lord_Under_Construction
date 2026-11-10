@@ -1,110 +1,141 @@
-// Shared by core-gem.js and core-collapse.js: the stone dais and the cut ruby.
-import { TAU, lerp, clamp, fit } from "../../core/index.js";
+// Shared by core-gem.js and core-collapse.js: the rune plinth and the floating blood crystal.
+import { TAU, lerp, clamp, fit, WHITE } from "../../core/index.js";
+import { glyph } from "../arcane/_lib.js";
 
-// Blood ramp dark to white, and a stone ramp faintly warmed by the crimson light.
+// Blood ramp dark to white, a cold stone ramp, bronze trim and the violet of the carved runes.
 export const BLOOD = ["#14030a", "#3a0714", "#700b1f", "#ad1229", "#e22338", "#ff5f62", "#ffc1b8", "#ffffff"];
 export const STONE = ["#0c090f", "#1a1420", "#2b2230", "#413444", "#5d4c5c", "#857080"];
 export const GOLD = fit(["#684239", "#b77c54", "#f2bf81", "#ffe5bd"], 4);
-const SLATE = fit(["#101620", "#202936", "#34424e", "#4a5f68", "#708188"], 5);
-const ENAMEL = fit(["#351921", "#611f2c", "#983341"], 3);
+export const RUNE = fit(["#12061f", "#2a0d45", "#4b1a78", "#7a2fb8", "#a95ae8", "#d39bff", "#f3dcff"], 7);
+const SLATE = fit(["#0d0f17", "#1b1f2c", "#2c3141", "#424a5c", "#5f6a7c", "#8592a2"], 6);
 
-export const GEM_Y = -50, RAD = 17;
-const SEAT_Y = -16;
-const hexagon = (radius, height) => Array.from({ length: 6 }, (_, i) => {
-  const angle = (i / 6) * TAU;
-  return [Math.cos(angle) * radius, height, Math.sin(angle) * radius];
+// The crystal floats this high over the floor; RAD is its half-width scale.
+export const GEM_Y = -47, RAD = 14;
+export const TOP_Y = -15;   // the plinth's upper face
+const SY = 0.32;            // how flat a floor circle looks from above
+
+// A tall eight-sided bipyramid: a short crown, a wide girdle, a long point below.
+const ring = (n, radius, height, turn = 0) => Array.from({ length: n }, (_, i) => {
+  const a = ((i + turn) / n) * TAU;
+  return [Math.cos(a) * radius, height, Math.sin(a) * radius];
 });
-const VERTS = [...hexagon(0.55, 1.05), ...hexagon(1.03, 0.27), [0, -1.35, 0]];
-const TABLE = [5, 4, 3, 2, 1, 0];
-const CROWN = TABLE.map((i) => {
-  const next = (i + 1) % 6;
-  return [next, next + 6, i + 6, i];
-});
-const PAVILION = TABLE.map((i) => [12, i + 6, ((i + 1) % 6) + 6]);
-
-// The altar borrows its blue-grey masonry, crimson panels and bronze trim from the dungeon tiles.
-export function drawDais(p, ph, C, lit = 1, broken = 0) {
-  const S = SLATE;
-  // A soft cast shadow trails right, with its darkest pixels tucked under the stone.
-  for (let y = -10; y <= 7; y++) {
-    for (let x = -33; x <= 43; x++) {
-      const distance = ((x - 5) / 38) ** 2 + ((y + 1) / 9) ** 2;
-      p.blend(x, y, S[0], 0.76 * (1 - clamp(distance)) ** 1.4);
-    }
-  }
-  // A clipped stone footprint and two dressed courses, with the right bevel in shadow.
-  p.poly([[-23, -16], [23, -16], [32, -9], [32, -4], [25, 0], [-25, 0], [-32, -4], [-32, -9]], S[0]);
-  p.poly([[-25, -8], [25, -8], [31, -5], [24, -1], [-24, -1], [-31, -5]], S[2]);
-  p.line(-24, -1, 24, -1, S[3]);
-  p.poly([[-27, -15], [-20, -11], [-20, -3], [-27, -6]], S[2]);
-  p.poly([[20, -11], [27, -15], [27, -6], [20, -3]], S[1]);
-  p.poly([[-20, -12], [20, -12], [20, -3], [-20, -3]], S[1]);
-  p.line(-20, -3, 20, -3, S[3]);
-  p.polyline([[-29, -5], [-24, -2], [-4, -2]], S[3]);
-  p.polyline([[4, -2], [24, -2], [30, -5]], S[1]);
-  p.polyline([[-26, -8], [-23, -6], [-21, -6]], S[3]);
-  p.line(21, -5, 26, -7, S[0]);
-
-  // Recessed enamel and an engraved diamond echo the stained glass and carpet borders.
-  p.poly([[-15, -10], [15, -10], [17, -7], [15, -4], [-15, -4], [-17, -7]], S[0]);
-  p.poly([[-14, -9], [14, -9], [15, -7], [14, -5], [-14, -5], [-15, -7]], ENAMEL[broken ? 0 : 1]);
-  p.line(-12, -9, 12, -9, GOLD[0]);
-  for (const side of [-1, 1]) {
-    p.line(side * 19, -10, side * 19, -4, S[3]);
-    p.line(side * 24, -10, side * 24, -8, GOLD[0]);
-    p.px(side * 10, -7, GOLD[1]);
-  }
-  const pulse = lit * (0.75 + 0.25 * Math.cos(TAU * ph));
-  p.poly([[0, -10], [4, -7], [0, -4], [-4, -7]], GOLD[broken ? 0 : 1]);
-  p.poly([[0, -9], [2, -7], [0, -5], [-2, -7]], ENAMEL[broken ? 0 : 2]);
-
-  // A chamfered top slab frames the carved ritual seal.
-  p.poly([[-20, -22], [20, -22], [28, -16], [28, -14], [21, -10], [-21, -10], [-28, -14], [-28, -16]], S[0]);
-  p.poly([[-19, -21], [19, -21], [27, -16], [21, -12], [-21, -12], [-27, -16]], S[3]);
-  p.poly([[19, -21], [27, -16], [21, -12], [17, -13], [24, -16], [17, -20]], S[1]);
-  p.poly([[-18, -20], [18, -20], [24, -16], [19, -13], [-19, -13], [-24, -16]], S[2]);
-  p.polyline([[-26, -16], [-19, -21], [-4, -21]], S[4]);
-  p.line(-2, -21, 18, -21, S[3]);
-  p.line(-20, -11, 3, -11, S[3]);
-  p.line(4, -11, 20, -11, S[2]);
-  for (const side of [-1, 1]) {
-    p.polyline([[side * 22, -16], [side * 17, -19], [side * 10, -19]], GOLD[0]);
-    p.line(side * 20, -16, side * 15, -16, GOLD[1]);
-  }
-  p.poly([[0, SEAT_Y - 4], [10, SEAT_Y], [0, SEAT_Y + 4], [-10, SEAT_Y]], GOLD[broken ? 0 : 1]);
-  p.poly([[0, SEAT_Y - 3], [8, SEAT_Y], [0, SEAT_Y + 3], [-8, SEAT_Y]], ENAMEL[broken ? 0 : 1]);
-  if (!broken) {
-    p.line(-4, SEAT_Y - 1, 0, SEAT_Y - 3, GOLD[2]);
-    p.glow(0, SEAT_Y + 1, 16, C[4], 0.46 * pulse);
-  } else {
-    p.polyline([[-17, -21], [-13, -17], [-7, -16], [-4, -12], [-7, -8], [-5, -4]], S[0]);
-    p.polyline([[19, -19], [12, -16], [13, -14], [8, -12]], S[0]);
-    p.polyline([[18, -10], [14, -7], [16, -4], [12, -2]], S[0]);
-  }
+const N = 8;
+const VERTS = [...ring(N, 0.5, 0.95, 0.5), ...ring(N, 0.8, 0.15), [0, 1.75, 0], [0, -1.5, 0]];
+const UP = 2 * N, DOWN = 2 * N + 1;
+const FACES = [];
+for (let i = 0; i < N; i++) {
+  const j = (i + 1) % N;
+  FACES.push([N + i, N + j, j], [N + i, j, i]);       // the shoulders, girdle to crown
+  FACES.push([i, j, UP]);                              // the crown point
+  FACES.push([N + j, N + i, DOWN]);                    // the long point below
 }
 
-// Solid facets turn through a fixed light. Only the crown facing the light catches a sharp glint.
-export function drawGem(p, spin, C, { cx = 0, cy = GEM_Y, heat = 0 } = {}) {
-  const tilt = 0.48;
-  const P3 = VERTS.map(([x, y, z]) => {
-    const x1 = x * Math.cos(spin) + z * Math.sin(spin), z1 = -x * Math.sin(spin) + z * Math.cos(spin);
-    const y2 = y * Math.cos(tilt) - z1 * Math.sin(tilt), z2 = y * Math.sin(tilt) + z1 * Math.cos(tilt);
-    return [cx + x1 * RAD, cy - y2 * RAD, z2 * RAD];
-  });
-  for (const indices of [...PAVILION, ...CROWN, TABLE]) {
-    const face = indices.map((i) => P3[i]);
-    const [a, b, c] = face;
-    const [ux, uy, uz] = [b[0] - a[0], a[1] - b[1], b[2] - a[2]];
-    const [vx, vy, vz] = [c[0] - a[0], a[1] - c[1], c[2] - a[2]];
-    const [nx, ny, nz] = [uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx];
-    if (nz <= 0) continue;
-    const light = (-0.58 * nx + 0.65 * ny + 0.49 * nz) / Math.hypot(nx, ny, nz);
-    const shade = clamp(0.31 + 0.55 * light + heat);
-    p.poly(face, C[1 + Math.round(shade * 5)]);
-    if (face.length === 4 && light > 0.73) {
-      const shoulder = face[3];
-      p.line(lerp(a[0], shoulder[0], 0.14), lerp(a[1], shoulder[1], 0.14),
-        lerp(a[0], shoulder[0], 0.76), lerp(a[1], shoulder[1], 0.76), C[6]);
+// A solid cylinder seen from above and in front: a lit top face, a side lit from the left.
+function drum(p, rx, ry, yTop, yBot, top, sides, edge) {
+  p.shade(-rx - 1, yTop - ry - 1, rx + 1, yBot + ry + 1, (x, y, out) => {
+    const u = x / rx;
+    if (Math.abs(u) > 1) return;
+    const h = ry * Math.sqrt(1 - u * u), dTop = ((y - yTop) / ry) ** 2 + u * u;
+    if (dTop <= 1) {
+      out.c = dTop > 0.8 && y < yTop ? edge : top;
+      return;
     }
+    if (y < yTop || y > yBot + h) return;
+    out.c = y > yBot + h - 1 ? sides[0] : u < -0.45 ? sides[3] : u < 0.15 ? sides[2] : sides[1];
+  });
+}
+
+// Points on a flat floor circle at angle g, radius r, centred on (0, y).
+const at = (g, r, y) => [Math.cos(g) * r, y + Math.sin(g) * r * SY];
+
+// The plinth: two round drums of dressed stone, bronze bands, a circle of runes cut into each top and lit from inside.
+export function drawDais(p, ph, C, lit = 1, broken = 0) {
+  const S = SLATE, R = RUNE, pulse = lit * (0.75 + 0.25 * Math.cos(TAU * ph));
+  // A soft shadow pooled under the stone, heavier to the lower right.
+  for (let y = -12; y <= 6; y++)
+    for (let x = -40; x <= 44; x++) {
+      const d = ((x - 4) / 40) ** 2 + ((y + 2) / 9) ** 2;
+      p.blend(x, y, S[0], 0.7 * (1 - clamp(d)) ** 1.4);
+    }
+  drum(p, 31, 9, -7, -2, S[2], S, S[4]);
+  drum(p, 22, 7, TOP_Y, -7, S[3], S, S[5]);
+  // Bronze bands round the front of each drum.
+  for (const [r, ry, y] of [[31, 9, -2], [22, 7, -7]])
+    for (let g = 0.15; g < Math.PI - 0.15; g += 0.02) {
+      const x = Math.cos(g) * r, yy = y + Math.sin(g) * ry;
+      p.px(x, yy - 1, Math.cos(g) > 0.35 ? GOLD[0] : GOLD[1]);
+    }
+  // Studs on the lower band, the lit ones catching a highlight.
+  for (let k = 0; k < 7; k++) {
+    const g = 0.35 + (k / 6) * (Math.PI - 0.7), x = Math.cos(g) * 31, y = -3 + Math.sin(g) * 9;
+    p.px(x, y - 1, Math.cos(g) < -0.2 ? GOLD[3] : GOLD[2]);
   }
+  // The rune circle on the lower step, between the two drums: dark grooves, glowing glyphs.
+  const glow = broken ? 0 : pulse;
+  for (let k = 0; k < 10; k++) {
+    const g = ((k + 0.5) / 10) * TAU;
+    if (Math.sin(g) < 0.25) continue;     // only the front arc reads; the sides foreshorten to clutter
+    const [x, y] = at(g, 27, -7);
+    const hot = glow > 0 && ((k + Math.floor(ph * 10)) % 5 === 0);
+    glyph(p, k, x, y + 1, broken ? S[1] : hot ? R[6] : R[4], 1, broken ? 0 : R[1]);
+    if (glow > 0) p.glow(x, y - 1, hot ? 8 : 5, R[4], (hot ? 0.45 : 0.18) * glow);
+  }
+  // The seal on the top face: a double ring, a star of lines and a socket of light under the crystal.
+  for (const [r, c] of [[18, broken ? S[1] : R[3]], [12, broken ? S[1] : R[4]]])
+    for (let g = 0; g < TAU; g += 0.025) {
+      const [x, y] = at(g, r, TOP_Y);
+      p.px(x, y, Math.sin(g) < 0 ? scaleStep(c, S, broken) : c);
+    }
+  for (let k = 0; k < 5; k++) {
+    const a0 = (k / 5) * TAU - Math.PI / 2, a1 = ((k + 2) / 5) * TAU - Math.PI / 2;
+    const [x0, y0] = at(a0, 12, TOP_Y), [x1, y1] = at(a1, 12, TOP_Y);
+    p.line(x0, y0, x1, y1, broken ? S[2] : R[2]);
+  }
+  p.ellipse(0, TOP_Y, 5, 1.8, broken ? S[1] : C[2]);
+  p.ellipse(0, TOP_Y, 3, 1, broken ? S[0] : C[5]);
+  if (!broken) {
+    p.glow(0, TOP_Y, 26, R[3], 0.22 * pulse);
+    p.glow(0, TOP_Y, 10, C[4], 0.5 * pulse);
+  } else {
+    p.polyline([[-19, -16], [-13, -13], [-8, -12], [-6, -9], [-9, -5], [-7, -1]], S[0]);
+    p.polyline([[20, -15], [12, -12], [13, -10], [8, -7]], S[0]);
+    p.polyline([[26, -6], [21, -4], [23, -2], [18, 2]], S[0]);
+  }
+}
+// Far halves of the seal sit a step darker, as if sunk in the stone.
+const scaleStep = (c, S, broken) => (broken ? S[0] : RUNE[RUNE.indexOf(c) - 1] ?? c);
+
+// Solid facets turn through a fixed light from the upper left; a hot heart shines through the faces turned away.
+export function drawGem(p, spin, C, { cx = 0, cy = GEM_Y, heat = 0 } = {}) {
+  const tilt = 0.32;
+  // Turned and tipped in 3D, y up and z towards us, about the crystal's own centre.
+  const V3 = VERTS.map(([x, y, z]) => {
+    const x1 = x * Math.cos(spin) + z * Math.sin(spin), z1 = -x * Math.sin(spin) + z * Math.cos(spin);
+    return [x1, y * Math.cos(tilt) - z1 * Math.sin(tilt), y * Math.sin(tilt) + z1 * Math.cos(tilt)];
+  });
+  const faces = FACES.map((idx) => {
+    const [a, b, c] = idx.map((i) => V3[i]);
+    const u = [b[0] - a[0], b[1] - a[1], b[2] - a[2]], v = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
+    let n = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]];
+    // the crystal is convex round the origin, so the outward normal points away from it whatever the winding
+    const mid = [0, 1, 2].map((k) => (a[k] + b[k] + c[k]) / 3);
+    if (n[0] * mid[0] + n[1] * mid[1] + n[2] * mid[2] < 0) n = n.map((q) => -q);
+    return { f: [a, b, c].map(([x, y]) => [cx + x * RAD, cy - y * RAD]), n, z: mid[2] };
+  }).filter(({ n }) => n[2] > 0).sort((a, b) => a.z - b.z);
+  const P3 = V3.map(([x, y]) => [cx + x * RAD, cy - y * RAD]);
+  // A dark outline first, so the silhouette holds against the glow.
+  for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]])
+    for (const { f } of faces) p.poly(f.map(([x, y]) => [x + dx, y + dy]), C[0]);
+  for (const { f, n } of faces) {
+    const [nx, ny, nz] = n, L = Math.hypot(nx, ny, nz);
+    const light = (-0.55 * nx + 0.6 * ny + 0.58 * nz) / L;
+    // Faces turned from the light still show the red fire inside.
+    const shade = clamp(0.12 + 0.78 * light + heat + (light < 0.1 ? 0.1 : 0));
+    p.poly(f, C[1 + Math.round(shade * 5)]);
+    if (light > 0.7) p.line(f[0][0], f[0][1], lerp(f[0][0], f[2][0], 0.7), lerp(f[0][1], f[2][1], 0.7), C[7]);
+  }
+  // The heart of the crystal and a hard glint on the crown.
+  p.glow(cx, cy, RAD * 0.9, C[5], 0.32 + heat);
+  const [tx, ty] = P3[UP];
+  p.px(tx, ty + 1, WHITE);
 }

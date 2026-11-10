@@ -93,7 +93,7 @@ namespace DarkLord.UI
             bool final = waves.CurrentWave >= waves.FinalWave && waves.RemainingEnemies == 0;
             heading.text = final ? "승리의 전리품" : "전투 특성 선택";
             bool leaving = !final && RegionCatalog.IsBossDay(waves.RewardWave) && waves.RemainingEnemies == 0;
-            subtitle.text = final ? "마지막 습격을 격퇴했습니다. 특성 또는 보상 하나를 고르세요." : leaving ? $"{RegionCatalog.ForDay(waves.RewardWave).Name} 평정 · 보상을 고르면 던전이 다음 땅으로 이동합니다" : $"습격 {waves.RewardWave} 격퇴 · 날짜 보상: 방·시설·함정 각 1개 · 특성 또는 보상 하나를 고르세요";
+            subtitle.text = final ? "마지막 습격을 격퇴했습니다. 특성 또는 보상 하나를 고르세요." : leaving ? $"{waves.RegionForWave(waves.RewardWave).Name} 평정 · 보상을 고르면 던전이 다음 땅으로 이동합니다" : $"습격 {waves.RewardWave} 격퇴 · 날짜 보상: 방·시설·함정 각 1개 · 특성 또는 보상 하나를 고르세요";
             for (int i = 0; i < 3; i++)
             {
                 bool valid = i < waves.RewardChoices.Count; cards[i].interactable = valid;

@@ -1,0 +1,425 @@
+fileFormatVersion: 2
+guid: c903f5ac1e477844cb01560c2fbbad8d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2622048727730667860
+    second: ember-charge_0
+  - first:
+      213: -706542949655742974
+    second: ember-charge_1
+  - first:
+      213: 2078072030087802366
+    second: ember-charge_2
+  - first:
+      213: -5475183265775879457
+    second: ember-charge_3
+  - first:
+      213: 316137178143779322
+    second: ember-charge_4
+  - first:
+      213: -8304474169526998647
+    second: ember-charge_5
+  - first:
+      213: -4900757933931340793
+    second: ember-charge_6
+  - first:
+      213: 1802617425763100151
+    second: ember-charge_7
+  - first:
+      213: -5290843603812939177
+    second: ember-charge_8
+  - first:
+      213: 488034718147259550
+    second: ember-charge_9
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: ember-charge_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 216
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e2856f09c56b5d742be2067c675dc086
+      internalID: -2622048727730667860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-charge_1
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 216
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 39089b347e783c1488ccf4f998a32ede
+      internalID: -706542949655742974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-charge_2
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 216
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9c2645f9be3992c44a9bc624e12b0dda
+      internalID: 2078072030087802366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-charge_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 144
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a6aa42daee5eb5a48ba4cbac9b892243
+      internalID: -5475183265775879457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-charge_4
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 144
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 99e1b4de9195af04783916c416629799
+      internalID: 316137178143779322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-charge_5
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 144
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d1b3bcea9af194644902a5d847338c1e
+      internalID: -8304474169526998647
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-charge_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 72
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aec84947020d73844ab8cd4def32ed35
+      internalID: -4900757933931340793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-charge_7
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 72
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 341c0b11797fa2a47a3acf5b2826300e
+      internalID: 1802617425763100151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-charge_8
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 72
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7d4a7c4a1fb8cc9489fcb0fb7fc66a61
+      internalID: -5290843603812939177
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-charge_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 72eed286b60f6a041badf100ddd6c21a
+      internalID: 488034718147259550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-charge_10
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 0
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8b80f42ebb34cc94db327b5b51f269cf
+      internalID: 2096473703
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-charge_11
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 0
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 78a63501fc6a72147867fa79d6bf6135
+      internalID: 363691978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 47f5db840fa0e074a88f8e99f396f5fe
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      ember-charge_0: -2622048727730667860
+      ember-charge_1: -706542949655742974
+      ember-charge_10: 2096473703
+      ember-charge_11: 363691978
+      ember-charge_2: 2078072030087802366
+      ember-charge_3: -5475183265775879457
+      ember-charge_4: 316137178143779322
+      ember-charge_5: -8304474169526998647
+      ember-charge_6: -4900757933931340793
+      ember-charge_7: 1802617425763100151
+      ember-charge_8: -5290843603812939177
+      ember-charge_9: 488034718147259550
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

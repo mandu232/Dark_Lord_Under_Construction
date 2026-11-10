@@ -1,0 +1,786 @@
+fileFormatVersion: 2
+guid: 75358cc3538a6604ba79e1c5bb16a1ab
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4051207168440798310
+    second: orc-quake_0
+  - first:
+      213: 7502539665147714210
+    second: orc-quake_1
+  - first:
+      213: -613072313936409433
+    second: orc-quake_2
+  - first:
+      213: 8999358905040469011
+    second: orc-quake_3
+  - first:
+      213: -8637298776302444745
+    second: orc-quake_4
+  - first:
+      213: -8584328134227933979
+    second: orc-quake_5
+  - first:
+      213: -1071189406074298698
+    second: orc-quake_6
+  - first:
+      213: -4413857690027794125
+    second: orc-quake_7
+  - first:
+      213: 6290565611502119485
+    second: orc-quake_8
+  - first:
+      213: 1734555524463231643
+    second: orc-quake_9
+  - first:
+      213: 545797743682680968
+    second: orc-quake_10
+  - first:
+      213: -8786559629231029682
+    second: orc-quake_11
+  - first:
+      213: 1872029188430315916
+    second: orc-quake_12
+  - first:
+      213: 9155437673342615884
+    second: orc-quake_13
+  - first:
+      213: -7649652898567909819
+    second: orc-quake_14
+  - first:
+      213: 8844401946280301519
+    second: orc-quake_15
+  - first:
+      213: -3748247733959348959
+    second: orc-quake_16
+  - first:
+      213: -4554900604289629189
+    second: orc-quake_17
+  - first:
+      213: 616738032348916229
+    second: orc-quake_18
+  - first:
+      213: 8996310592714075167
+    second: orc-quake_19
+  - first:
+      213: -8211675156841960095
+    second: orc-quake_20
+  - first:
+      213: 254573164230468485
+    second: orc-quake_21
+  - first:
+      213: 7785962522033677216
+    second: orc-quake_22
+  - first:
+      213: -3465359665343072086
+    second: orc-quake_23
+  - first:
+      213: -4963984943235270545
+    second: orc-quake_24
+  - first:
+      213: 983686822552565779
+    second: orc-quake_25
+  - first:
+      213: -9060287348572983650
+    second: orc-quake_26
+  - first:
+      213: 6205271437877582033
+    second: orc-quake_27
+  - first:
+      213: -943912052394992708
+    second: orc-quake_28
+  - first:
+      213: 639811232004597164
+    second: orc-quake_29
+  - first:
+      213: 5694228729547542044
+    second: orc-quake_30
+  - first:
+      213: 1593128934327794590
+    second: orc-quake_31
+  - first:
+      213: -5532733864735699569
+    second: orc-quake_32
+  - first:
+      213: 4836214054817582885
+    second: orc-quake_33
+  - first:
+      213: -8561528093355972191
+    second: orc-quake_34
+  - first:
+      213: -9026145250865017878
+    second: orc-quake_35
+  - first:
+      213: 6735411367264595039
+    second: orc-quake_36
+  - first:
+      213: 2569548740278829112
+    second: orc-quake_37
+  - first:
+      213: 551066501353552729
+    second: orc-quake_38
+  - first:
+      213: -7581480446439183704
+    second: orc-quake_39
+  - first:
+      213: -3003541247595501103
+    second: orc-quake_40
+  - first:
+      213: -3094930668343933414
+    second: orc-quake_41
+  - first:
+      213: 2773555246911135632
+    second: orc-quake_42
+  - first:
+      213: -3354106228269922452
+    second: orc-quake_43
+  - first:
+      213: 7658817541766458454
+    second: orc-quake_44
+  - first:
+      213: -7594298631307691846
+    second: orc-quake_45
+  - first:
+      213: 5470483341910021191
+    second: orc-quake_46
+  - first:
+      213: -3221220147035776095
+    second: orc-quake_47
+  - first:
+      213: -6694022169156577368
+    second: orc-quake_48
+  - first:
+      213: 4711242034935583364
+    second: orc-quake_49
+  - first:
+      213: 3725744536609859344
+    second: orc-quake_50
+  - first:
+      213: 3226196637325247261
+    second: orc-quake_51
+  - first:
+      213: -8706355476502356352
+    second: orc-quake_52
+  - first:
+      213: -4504799576338302705
+    second: orc-quake_53
+  - first:
+      213: -1766086181538546631
+    second: orc-quake_54
+  - first:
+      213: 2287406342790772340
+    second: orc-quake_55
+  - first:
+      213: -3698891722286160840
+    second: orc-quake_56
+  - first:
+      213: 5911689581467089884
+    second: orc-quake_57
+  - first:
+      213: -6660468790074374689
+    second: orc-quake_58
+  - first:
+      213: -2580923435017075156
+    second: orc-quake_59
+  - first:
+      213: 8226870073060564791
+    second: orc-quake_60
+  - first:
+      213: 1207613677078226388
+    second: orc-quake_61
+  - first:
+      213: 7394287320737313389
+    second: orc-quake_62
+  - first:
+      213: 5291936077981460085
+    second: orc-quake_63
+  - first:
+      213: 5311968243701859525
+    second: orc-quake_64
+  - first:
+      213: -7953974753868985953
+    second: orc-quake_65
+  - first:
+      213: -2078802149114507384
+    second: orc-quake_66
+  - first:
+      213: -6173935345148399056
+    second: orc-quake_67
+  - first:
+      213: 7280140717635775020
+    second: orc-quake_68
+  - first:
+      213: 4649464044403070847
+    second: orc-quake_69
+  - first:
+      213: 3770869766483646478
+    second: orc-quake_70
+  - first:
+      213: -1017294799344238587
+    second: orc-quake_71
+  - first:
+      213: 1367212076694281210
+    second: orc-quake_72
+  - first:
+      213: -4374714646926515021
+    second: orc-quake_73
+  - first:
+      213: -7691336495006310247
+    second: orc-quake_74
+  - first:
+      213: 9192950250829611550
+    second: orc-quake_75
+  - first:
+      213: 6774144430750491808
+    second: orc-quake_76
+  - first:
+      213: 8495056422264940005
+    second: orc-quake_77
+  - first:
+      213: -8590908866126246602
+    second: orc-quake_78
+  - first:
+      213: -8964133800349120846
+    second: orc-quake_79
+  - first:
+      213: -2927678878214190827
+    second: orc-quake_80
+  - first:
+      213: -8974555698157205851
+    second: orc-quake_81
+  - first:
+      213: 6344854050613936671
+    second: orc-quake_82
+  - first:
+      213: -7811568337884809747
+    second: orc-quake_83
+  - first:
+      213: 706156205625165947
+    second: orc-quake_84
+  - first:
+      213: -8892311007158058544
+    second: orc-quake_85
+  - first:
+      213: -9195072709150289496
+    second: orc-quake_86
+  - first:
+      213: 3063026059392477832
+    second: orc-quake_87
+  - first:
+      213: 1279452041770866958
+    second: orc-quake_88
+  - first:
+      213: 3868589320306359189
+    second: orc-quake_89
+  - first:
+      213: 6713434952077962524
+    second: orc-quake_90
+  - first:
+      213: 8228026506133019376
+    second: orc-quake_91
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: orc-quake_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 384
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 78a4ff57c0190e645a5495b39184b0a7
+      internalID: -4051207168440798310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-quake_1
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 384
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f75cd648b168e2b4aa9853b6fe6317c4
+      internalID: 7502539665147714210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-quake_2
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 384
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 24b8a1a37c33075428e7390d3b9e93a4
+      internalID: -613072313936409433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-quake_3
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 384
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 90c557a7c48ae204ea4244b1ec0a9d60
+      internalID: 8999358905040469011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-quake_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 288
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d65fd9879ffc3c74cbb8c9c7e38da474
+      internalID: -8637298776302444745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-quake_5
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 288
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: abcf655e44a5f8c479083ad141debf4a
+      internalID: -8584328134227933979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-quake_6
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 288
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 310064df2f0d81d49bcd3be9cf88be75
+      internalID: -1071189406074298698
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-quake_7
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 288
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2e52aa6f5aca94f468e45898e4871e91
+      internalID: -4413857690027794125
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-quake_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 192
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6bbb78b657177044c871055930cd98a6
+      internalID: 6290565611502119485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-quake_9
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 192
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e7fb26d4fa363a647bb6b31e75f42479
+      internalID: 1734555524463231643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-quake_10
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 192
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f8e557a191d410c49b065f63b126add0
+      internalID: 545797743682680968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-quake_11
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 192
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dca903e199db95d4aa880a5c908c9d73
+      internalID: -8786559629231029682
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-quake_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 96
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5e2c751dbf438f94089477201e9f6c96
+      internalID: 1872029188430315916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-quake_13
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 96
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8b1b56a5dca26a746b48ce2e140ff8a9
+      internalID: 9155437673342615884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-quake_14
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 96
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a2cd21263fdf451499235da49714566d
+      internalID: -7649652898567909819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-quake_15
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 96
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4b285cfee61a6234f91e3d088ca74725
+      internalID: 8844401946280301519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-quake_16
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b9c75815bb78d5e4197710ea542847a6
+      internalID: -3748247733959348959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 91293b80d8a9a0c4f84d25131072d0ba
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      orc-quake_0: -4051207168440798310
+      orc-quake_1: 7502539665147714210
+      orc-quake_10: 545797743682680968
+      orc-quake_11: -8786559629231029682
+      orc-quake_12: 1872029188430315916
+      orc-quake_13: 9155437673342615884
+      orc-quake_14: -7649652898567909819
+      orc-quake_15: 8844401946280301519
+      orc-quake_16: -3748247733959348959
+      orc-quake_2: -613072313936409433
+      orc-quake_3: 8999358905040469011
+      orc-quake_4: -8637298776302444745
+      orc-quake_5: -8584328134227933979
+      orc-quake_6: -1071189406074298698
+      orc-quake_7: -4413857690027794125
+      orc-quake_8: 6290565611502119485
+      orc-quake_9: 1734555524463231643
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

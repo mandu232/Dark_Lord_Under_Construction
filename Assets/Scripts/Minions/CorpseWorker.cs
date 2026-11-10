@@ -24,10 +24,12 @@ namespace DarkLord.Minions
         private const float CarrySpeedMultiplier = .85f;
         private readonly List<Vector2Int> path = new List<Vector2Int>();
         private readonly List<Vector2Int> candidatePath = new List<Vector2Int>();
+        private readonly HashSet<Collider2D> overflownFacilities = new HashSet<Collider2D>();
         private MinionSummoning summoning;
         private CorpseHarvest harvest;
         private DungeonGrid dungeon;
         private TopDownMotor motor;
+        private CircleCollider2D bodyCollider;
         private ActorAnimation animation;
         private InvaderCorpse corpse;
         private ResourceBuilding station;
@@ -43,6 +45,8 @@ namespace DarkLord.Minions
             summoning = owner;
             harvest = source;
             dungeon = owner.Dungeon;
+            // The core can overlap a worker's starting tile before it receives a contact event.
+            if (dungeon.CoreFootprintCollider != null) IgnoreFacilityFootprint(dungeon.CoreFootprintCollider);
             motor.SpeedMultiplier = WorkerSpeedMultiplier;
             Health.Configure(Faction.Dungeon, MaximumHealth);
             Health.RestoreHealth(MaximumHealth, health);
@@ -52,6 +56,7 @@ namespace DarkLord.Minions
         {
             Health = GetComponent<ActorHealth>();
             motor = GetComponent<TopDownMotor>();
+            bodyCollider = GetComponent<CircleCollider2D>();
             animation = GetComponent<ActorAnimation>();
         }
 
@@ -59,8 +64,28 @@ namespace DarkLord.Minions
         private void OnDisable()
         {
             Health.Died -= OnDied;
+            if (bodyCollider != null && bodyCollider.isActiveAndEnabled)
+                foreach (var facility in overflownFacilities)
+                    if (facility != null && facility.isActiveAndEnabled) Physics2D.IgnoreCollision(bodyCollider, facility, false);
+            overflownFacilities.Clear();
             ReleaseCorpse();
             motor.Stop();
+        }
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            var footprint = collision.collider;
+            if (!isActiveAndEnabled || !IsAlive || collision.otherCollider != bodyCollider ||
+                dungeon == null || !dungeon.IsFacilityFootprint(footprint)) return;
+
+            // The bird flies over protruding bases while its route still avoids reserved facility cells.
+            IgnoreFacilityFootprint(footprint);
+        }
+
+        private void IgnoreFacilityFootprint(Collider2D footprint)
+        {
+            Physics2D.IgnoreCollision(bodyCollider, footprint);
+            overflownFacilities.Add(footprint);
         }
 
         private void OnDied()

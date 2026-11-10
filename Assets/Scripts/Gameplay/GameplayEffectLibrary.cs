@@ -3,7 +3,10 @@ using UnityEngine;
 
 namespace DarkLord.Gameplay
 {
-    public enum GameplayEffectKind { Slash, WideSlash, BloodNova, BloodWard, Summon, Curse, Heal, HolySlash, HolyCharge, FrostNova, Aegis, Haste, BloodPulse, BloodLance, BloodBite, BloodBolt, BloodNeedle, BloodThread, HolyHeal, BloodEmpower, BloodAura, BloodHit, HolyHit, BloodBurst, HolyMark, HolyPulse, DebuffFrost, DebuffBrood, DebuffBrand, DebuffHunt, DebuffExecute, LootBlood, LootCrystal, LootGold, LootExperience, CoreGem, CoreCollapse }
+    public enum GameplayEffectKind { Slash, WideSlash, BloodNova, BloodWard, Summon, Curse, Heal, HolySlash, HolyCharge, FrostNova, Aegis, Haste, BloodPulse, BloodLance, BloodBite, BloodBolt, BloodNeedle, BloodThread, HolyHeal, BloodEmpower, BloodAura, BloodHit, HolyHit, BloodBurst, HolyMark, HolyPulse, DebuffFrost, DebuffBrood, DebuffBrand, DebuffHunt, DebuffExecute, LootBlood, LootCrystal, LootGold, LootExperience, CoreGem, CoreCollapse, Rift, CollectBlood, CollectCrystal, CollectGold, CollectExperience, RiftClosed, LevelUp, HolyWave, RowenBody, OrcShamanCast, OrcShamanMend, ElfMageCast, ElfMageMend, ClericCast,
+        OrcCleave, OrcCharge, OrcMark, OrcPulse, ElfCleave, ElfCharge, ElfMark, ElfPulse,
+        FrostCleave, FrostCharge, FrostMark, FrostPulse, EmberCleave, EmberCharge, EmberMark, EmberPulse,
+        OrcQuake, ElfMoonfall, FrostSpikes, EmberMeteor }
 
     public sealed class GameplayEffectLibrary : ScriptableObject
     {

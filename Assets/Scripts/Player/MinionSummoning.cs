@@ -269,6 +269,8 @@ namespace DarkLord.Player
         private void OnGuardFell(MinionController guard)
         {
             if (!guards.Remove(guard) || !guard.gameObject.scene.isLoaded) return;
+            // Tutorial losses are scripted and must stay dead instead of returning after the tutorial.
+            if (GetComponent<CorpseHarvest>()?.InTutorial == true) return;
             var data = DarkLord.Persistence.SaveSnapshots.Actor(guard);
             data.health = Mathf.Max(1, data.maximumHealth / 2); data.order = MinionOrder.Defend;
             data.slows = null; data.support = null; data.augmentStatus = null; data.attackCooldown = 0;

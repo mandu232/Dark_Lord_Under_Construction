@@ -1,0 +1,647 @@
+fileFormatVersion: 2
+guid: 0ba195c0eb428894da0d9fcd7118b901
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1356770086432489050
+    second: ember-meteor_0
+  - first:
+      213: 8576603385531685503
+    second: ember-meteor_1
+  - first:
+      213: 7564298456454867303
+    second: ember-meteor_2
+  - first:
+      213: -3676787093794030925
+    second: ember-meteor_3
+  - first:
+      213: 7053308167386429815
+    second: ember-meteor_4
+  - first:
+      213: -3005441813702814232
+    second: ember-meteor_5
+  - first:
+      213: -3749587854394465911
+    second: ember-meteor_6
+  - first:
+      213: 2471299539360624367
+    second: ember-meteor_7
+  - first:
+      213: 7229959153872891019
+    second: ember-meteor_8
+  - first:
+      213: 5930191591706704801
+    second: ember-meteor_9
+  - first:
+      213: -4180261734264745537
+    second: ember-meteor_10
+  - first:
+      213: 3693570518936126977
+    second: ember-meteor_11
+  - first:
+      213: -5737699648735770245
+    second: ember-meteor_12
+  - first:
+      213: -8444680005070363440
+    second: ember-meteor_13
+  - first:
+      213: -904646100204713093
+    second: ember-meteor_14
+  - first:
+      213: -7497078300330311248
+    second: ember-meteor_15
+  - first:
+      213: -633320693221598151
+    second: ember-meteor_16
+  - first:
+      213: 423679951666398411
+    second: ember-meteor_17
+  - first:
+      213: -6711139466281301446
+    second: ember-meteor_18
+  - first:
+      213: -6123332061800148076
+    second: ember-meteor_19
+  - first:
+      213: -3748940810430700886
+    second: ember-meteor_20
+  - first:
+      213: 1327290195107412883
+    second: ember-meteor_21
+  - first:
+      213: -6638022192984633364
+    second: ember-meteor_22
+  - first:
+      213: -3263486048826542021
+    second: ember-meteor_23
+  - first:
+      213: 4916646708771843146
+    second: ember-meteor_24
+  - first:
+      213: -8804922548502451719
+    second: ember-meteor_25
+  - first:
+      213: 9171763521261663013
+    second: ember-meteor_26
+  - first:
+      213: 6393994010835216346
+    second: ember-meteor_27
+  - first:
+      213: 9005430954409699657
+    second: ember-meteor_28
+  - first:
+      213: -8362798937836080188
+    second: ember-meteor_29
+  - first:
+      213: -2160904962521822849
+    second: ember-meteor_30
+  - first:
+      213: -4325991877306702723
+    second: ember-meteor_31
+  - first:
+      213: 6078506886490668304
+    second: ember-meteor_32
+  - first:
+      213: 5902631248824233199
+    second: ember-meteor_33
+  - first:
+      213: 8974703461930247695
+    second: ember-meteor_34
+  - first:
+      213: 5238808829907854360
+    second: ember-meteor_35
+  - first:
+      213: 4048088900956294389
+    second: ember-meteor_36
+  - first:
+      213: -3492664622823565575
+    second: ember-meteor_37
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: ember-meteor_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 192
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 648e8f502a7db7942b2054cbd36a7365
+      internalID: -1356770086432489050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-meteor_1
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 192
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cffc7d4aae94df74e839fb5e8b4febb3
+      internalID: 8576603385531685503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-meteor_2
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 192
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f673b30c0aef88f4c9798a8d8db486bc
+      internalID: 7564298456454867303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-meteor_3
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 192
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8cb2ad2ff42e8ba4e861a1cce0b40c63
+      internalID: -3676787093794030925
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-meteor_4
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 192
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2ac235e2aa89fa4429290dcb1d295789
+      internalID: 7053308167386429815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-meteor_5
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 192
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1ec549894d3a9e843be5c50d0d5d3ab9
+      internalID: -3005441813702814232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-meteor_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 96
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 51a094ff7a0469b48a75f2d39f26db1d
+      internalID: -3749587854394465911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-meteor_7
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 96
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 757f64109afe6344b9c28d9a37b9f8b9
+      internalID: 2471299539360624367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-meteor_8
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 96
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 11ccacff7b9ee3447af51ec1cedad171
+      internalID: 7229959153872891019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-meteor_9
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 96
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6700672659cdba34b8eca65072dde35f
+      internalID: 5930191591706704801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-meteor_10
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 96
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 50662e08eda2b9b41b41478d1ca4e20b
+      internalID: -4180261734264745537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-meteor_11
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 96
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f5c6312286c7cb42b1cad2208d198f3
+      internalID: 3693570518936126977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-meteor_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a4c9ec4a53e24b449d19d9340ca616c
+      internalID: -5737699648735770245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-meteor_13
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 0
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2dceef28c810dc040a4365a2b4ea52d0
+      internalID: -8444680005070363440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-meteor_14
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 506e9e7b42d59014ba76a6b4adb50c27
+      internalID: -904646100204713093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-meteor_15
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 0
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2628e76e12d949942a4ea21b0c786b8d
+      internalID: -7497078300330311248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-meteor_16
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 0
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6f91bcde6fd9dc34b852ca038acfe377
+      internalID: -633320693221598151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ember-meteor_17
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 0
+        width: 96
+        height: 96
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 937642757e30ad4438aad4f0c7571ecb
+      internalID: 423679951666398411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 9e0a45792f0aafa438684e66957ef885
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      ember-meteor_0: -1356770086432489050
+      ember-meteor_1: 8576603385531685503
+      ember-meteor_10: -4180261734264745537
+      ember-meteor_11: 3693570518936126977
+      ember-meteor_12: -5737699648735770245
+      ember-meteor_13: -8444680005070363440
+      ember-meteor_14: -904646100204713093
+      ember-meteor_15: -7497078300330311248
+      ember-meteor_16: -633320693221598151
+      ember-meteor_17: 423679951666398411
+      ember-meteor_2: 7564298456454867303
+      ember-meteor_3: -3676787093794030925
+      ember-meteor_4: 7053308167386429815
+      ember-meteor_5: -3005441813702814232
+      ember-meteor_6: -3749587854394465911
+      ember-meteor_7: 2471299539360624367
+      ember-meteor_8: 7229959153872891019
+      ember-meteor_9: 5930191591706704801
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

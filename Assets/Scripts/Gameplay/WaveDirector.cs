@@ -62,11 +62,11 @@ namespace DarkLord.Gameplay
         public int CurrentWave { get; private set; }
         private int finalWave => RegionCatalog.FinalDay;
         public int FinalWave => finalWave;
-        private int EnemyCountForWave(int wave) => options.EnemyCount(Mathf.RoundToInt(WaveProgression.EnemyCount(wave, baseEnemyCount, enemyGrowthPerWave) * RegionCatalog.ForDay(wave).CountScale));
-        private int EnemyHealthForWave(int wave) => options.EnemyHealth(Mathf.RoundToInt(WaveProgression.EnemyHealth(wave, baseEnemyHealth, enemyHealthGrowth) * RegionCatalog.ForDay(wave).HealthScale));
+        private int EnemyCountForWave(int wave) => options.EnemyCount(Mathf.RoundToInt(WaveProgression.EnemyCount(wave, baseEnemyCount, enemyGrowthPerWave) * RegionForWave(wave).CountScale));
+        private int EnemyHealthForWave(int wave) => options.EnemyHealth(Mathf.RoundToInt(WaveProgression.EnemyHealth(wave, baseEnemyHealth, enemyHealthGrowth) * RegionForWave(wave).HealthScale));
         public int NextEnemyCount => EnemyCountForWave(CurrentWave + 1);
         public int NextEnemyHealth => EnemyHealthForWave(CurrentWave + 1);
-        public InvaderRole[] NextFormation => WaveFormation.Create(CurrentWave + 1, NextEnemyCount);
+        public InvaderRole[] NextFormation => WaveFormation.Create(CurrentWave + 1, NextEnemyCount, NextWaveRegion);
         public ActorHealth Core => dungeonCore;
         public ActorHealth Lord => dungeonLord;
         public bool IsFinished => State == WaveState.Defeated || State == WaveState.Victorious;
@@ -141,12 +141,16 @@ namespace DarkLord.Gameplay
             invader.gameObject.AddComponent<WaveMember>().Number = wave;
             var health = invader.GetComponent<ActorHealth>();
             health.Configure(Faction.Invader, EnemyHealthForWave(wave));
-            var region = RegionCatalog.ForDay(wave);
+            var region = RegionForWave(wave);
             health.RestoreExperience(WaveProgression.EnemyLevel(wave) + region.LevelBonus, 0);
             var role = pendingRoles.Count > 0 ? pendingRoles.Dequeue() : InvaderRole.Warrior;
             // Each region's champion comes last through the rift on its final day.
             bool boss = RegionCatalog.IsBossDay(wave) && sequence == 1;
-            if (boss) { role = InvaderRole.Charger; health.Configure(Faction.Invader, EnemyHealthForWave(wave) * BossHealthMultiplier); }
+            if (boss)
+            {
+                role = region.IsHolyKingdom ? InvaderRole.Paladin : InvaderRole.Charger;
+                health.Configure(Faction.Invader, EnemyHealthForWave(wave) * BossHealthMultiplier);
+            }
             var tactics = ConfigureInvader(invader, role, region);
             if (boss) MakeBoss(invader, tactics, region);
             invader.Assault(dungeonCore, dungeon, dungeonLord);

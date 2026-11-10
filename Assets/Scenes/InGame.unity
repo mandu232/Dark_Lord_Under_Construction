@@ -152,7 +152,6 @@ MonoBehaviour:
   alchemyStationPrefab: {fileID: 5289637485477138575, guid: 47ce1f889b15f8149a65dc1b70296bd5, type: 3}
   roomFloorTile: {fileID: 11400000, guid: 8fb70da6ed87cc14b961eab438953265, type: 2}
   corridorCarpetTile: {fileID: 11400000, guid: 53eeb16829f6edc4e99a68edb7ffe71c, type: 2}
-  storageWallTexture: {fileID: 2800000, guid: 99129d64f0ef7df4ea3846d1f0c43c07, type: 3}
   repeatingWallTile: {fileID: 11400000, guid: 5d43b113d9576434daf967554c776bf7, type: 2}
   stonePieces:
   - {fileID: 11400000, guid: 911fef68f704a334b848da93079415df, type: 2}
@@ -200,6 +199,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ae9bec98562a82d4cabdecedef91d64d, type: 2}
   - {fileID: 11400000, guid: 02d8fb59f316a364e8e93255870fa47e, type: 2}
   - {fileID: 11400000, guid: 04eb69a766cc1d24c9405d215b713d66, type: 2}
+  storageWallTexture: {fileID: 2800000, guid: 99129d64f0ef7df4ea3846d1f0c43c07, type: 3}
   windowLightSprite: {fileID: 469396953, guid: f21c191486f942045bab6d4942df8264, type: 3}
   windowLightMaterial: {fileID: 2100000, guid: 4c796f1ada9b55642ae657a5229fe5b2, type: 2}
   wallTorchPrefab: {fileID: 3055035832026806590, guid: 3a9fe595165f60e44999ed3b7b23cb9e, type: 3}
@@ -849,7 +849,7 @@ MonoBehaviour:
   m_AssetsPPU: 16
   m_RefResolutionX: 320
   m_RefResolutionY: 180
-  m_CropFrame: 3
+  m_CropFrame: 0
   m_GridSnapping: 1
   m_FilterMode: 0
   m_UpscaleRT: 0
@@ -1061,7 +1061,6 @@ MonoBehaviour:
   enemyHealthGrowth: 10
   baseSoulReward: 12
   soulRewardGrowth: 4
-  finalWave: 5
 --- !u!4 &702650913
 Transform:
   m_ObjectHideFlags: 0

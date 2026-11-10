@@ -1,12 +1,12 @@
 import { burst, fit, seg, ease, TAU, WHITE } from "../../core/index.js";
 
-const GOLD = ["#2a1604", "#6b3a08", "#b56f10", "#e8a81e", "#ffd34d", "#ffec9c", "#fffbe6"];
+const VIOLET = ["#1a0630", "#3d0d63", "#6a1fa0", "#9a3fd8", "#c27af0", "#e3b8ff", "#f8ecff"];
 
 export const meta = {
   name: "Lord's hunt",
-  desc: "Seen from above: four golden fangs plunge from outside to pin the target, a sentence ring stamps down with a flash, it spins slowly and thins away with falling gold motes.",
+  desc: "Seen from above: four violet fangs plunge from outside to pin the target, a sentence ring stamps down with a flash, it spins slowly and thins away with falling violet motes.",
   tags: ["debuff", "mark", "top-down"], size: [72, 72], origin: [36, 36], duration: 0.75, loop: false, fps: 30, bg: "dark",
-  options: { palette: GOLD, seed: 41 },
+  options: { palette: VIOLET, seed: 41 },
 };
 const LAND = 0.12, R = 19;
 

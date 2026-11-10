@@ -71,6 +71,7 @@ namespace DarkLord.Persistence
                 else if (newOptions != null)
                 {
                     options = newOptions;
+                    waves.InitializeRegionRoute();
                     waves.ConfigureRun(options);
                 }
                 if (loaded == null) { dungeon.EnsureStartingRecruitment(); summoning.GrantStartingSlime(); }

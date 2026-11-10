@@ -9,8 +9,23 @@ namespace DarkLord.Minions
         [SerializeField] private MinionSkinAsset skin;
         private SpriteRenderer visual;
 
-        public void Apply(MinionSkinAsset asset) => skin = asset;
-        private void Awake() => visual = GetComponent<SpriteRenderer>();
-        private void LateUpdate() { if (skin != null) visual.sprite = skin.Resolve(visual.sprite); }
+        public void Apply(MinionSkinAsset asset)
+        {
+            skin = asset;
+            ResolveSprite();
+        }
+
+        private void Awake()
+        {
+            visual = GetComponent<SpriteRenderer>();
+            ResolveSprite();
+        }
+
+        private void LateUpdate() => ResolveSprite();
+
+        private void ResolveSprite()
+        {
+            if (skin != null && visual != null) visual.sprite = skin.Resolve(visual.sprite);
+        }
     }
 }

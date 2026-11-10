@@ -83,6 +83,7 @@ namespace DarkLord.Minions
         public float AttackCooldownRemaining => Mathf.Max(0, nextAttack - Time.time);
         public void RestoreAttackCooldown(float remaining) => nextAttack = Time.time + Mathf.Clamp(remaining, 0, AttackInterval);
         private InvaderTactics tactics;
+        public LayerMask ObstacleLayers => obstacleLayers;
         public bool HasTerrainLineOfSight(ActorHealth candidate) => candidate != null && HasLineOfSight(candidate);
 
         public ActorState State { get; private set; } = ActorState.Idle;
@@ -123,6 +124,8 @@ namespace DarkLord.Minions
             health.Died -= OnDied;
             damagePending = false;
             target = null;
+            archerRetreatTarget = null;
+            archerRetreatRetryAt = 0f;
             motor.Stop();
             motor.CancelAttackMotion();
         }
@@ -212,10 +215,12 @@ namespace DarkLord.Minions
             if (Time.timeScale == 0 || IsHeld) { motor.Stop(); return; }
             if (RecoverFromBlockedRoomCell()) return;
             if (IsStunned) return;
-            if (State == ActorState.Hit && Time.time < stateEnds) return;
+            if (IsFlinching) return;
             if (Order != MinionOrder.Return && support != null && support.TryAct())
             { damagePending = false; SetState(ActorState.Attack); return; }
             if (tactics == null) tactics = GetComponent<InvaderTactics>();
+            if (Order != MinionOrder.Return && health.Faction == Faction.Invader &&
+                tactics != null && tactics.IsArcher && TryArcherRetreat()) return;
             if (tactics != null && tactics.IsPerforming && tactics.TryAct(target)) return;
             if (State == ActorState.Attack)
             {
@@ -289,12 +294,14 @@ namespace DarkLord.Minions
             }
             Vector2 delta = (Vector2)target.transform.position - (Vector2)transform.position;
             if (tactics != null && tactics.TryAct(target)) { damagePending = false; return; }
-            if (TryEncirclePlayer()) return;
+            bool archer = tactics != null && tactics.IsArcher;
+            if (!archer && TryEncirclePlayer()) return;
             motor.Face(delta);
-            if (InAttackRange(target) && HasLineOfSight(target))
+            if (archer ? tactics.CanShoot(target) : InAttackRange(target) && HasLineOfSight(target))
             {
                 motor.Stop();
-                if (Time.time >= nextAttack)
+                if (archer) SetState(ActorState.Idle);
+                else if (Time.time >= nextAttack)
                 {
                     damageAt = Time.time + attackWindup;
                     stateEnds = Time.time + Mathf.Max(attackDuration, attackWindup);
@@ -328,6 +335,8 @@ namespace DarkLord.Minions
 
         private bool IsHostile(ActorHealth candidate) => candidate != null
             && candidate.isActiveAndEnabled && candidate.IsAlive && candidate.Faction != health.Faction;
+
+        internal bool IsFlinching => State == ActorState.Hit && Time.time < stateEnds;
 
         private bool AllowedRouteBlocker(ActorHealth candidate)
         {
@@ -375,21 +384,21 @@ namespace DarkLord.Minions
             score *= .7f + .3f * candidate.CurrentHealth / Mathf.Max(1, candidate.MaximumHealth);
             if (IsMelee) return score;
             var enemy = candidate.GetComponent<InvaderTactics>();
-            return enemy == null ? score : enemy.Role == InvaderRole.Healer ? score * .35f : enemy.Role == InvaderRole.Shieldbearer ? score * 1.6f : score;
+            return enemy == null ? score : enemy.IsHealer ? score * .35f : enemy.HasShield ? score * 1.6f : score;
         }
 
         // Between attacks: shooters and healers back away from anything close, melee invaders circle their target.
         private bool TryReposition(Vector2 delta)
         {
             if (delta.sqrMagnitude < .0001f || target.GetComponent<TopDownMotor>() == null) return false;
-            bool skirmisher = health.Faction == Faction.Dungeon ? !IsMelee : tactics != null && tactics.Role == InvaderRole.Healer;
+            bool skirmisher = health.Faction == Faction.Dungeon ? !IsMelee : tactics != null && tactics.IsHealer;
             Vector2 direction; float pace;
             if (skirmisher)
             {
                 if (delta.sqrMagnitude > 4) return false;
                 direction = -delta.normalized; pace = .8f;
             }
-            else if (health.Faction == Faction.Invader && tactics != null && tactics.Role != InvaderRole.Shieldbearer)
+            else if (health.Faction == Faction.Invader && tactics != null && !tactics.HasShield)
             {
                 direction = new Vector2(-delta.y, delta.x).normalized * (encirclementId % 2 == 0 ? 1 : -1); pace = .45f;
             }

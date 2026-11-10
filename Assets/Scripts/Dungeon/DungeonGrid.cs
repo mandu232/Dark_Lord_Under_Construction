@@ -414,6 +414,15 @@ namespace DarkLord.Dungeon
                 (building != null && building.isActiveAndEnabled && !building.IsRuined);
         }
 
+        internal Collider2D CoreFootprintCollider => coreActor != null ? coreActor.ContactCollider : null;
+
+        internal bool IsFacilityFootprint(Collider2D collider)
+        {
+            return collider != null && collider.transform.IsChildOf(transform) &&
+                (collider == CoreFootprintCollider ||
+                 collider.GetComponentInParent<ResourceBuilding>() != null || collider.GetComponentInParent<AlchemyStation>() != null);
+        }
+
         internal bool FindNpcPath(Vector2Int start, Vector2Int destination,
             System.Collections.Generic.List<Vector2Int> path, DungeonSection room = null)
         {
@@ -465,13 +474,20 @@ namespace DarkLord.Dungeon
                 if (entrancePrefab != null) entranceMarker = Instantiate(entrancePrefab, CellCenter(Layout.Entrance), transform.rotation, generated.transform);
                 return;
             }
-            if (entranceCrackSprite == null) entranceCrackSprite = MakeEntranceCrack();
             entranceMarker = new GameObject("Entrance fissure", typeof(SpriteRenderer));
             entranceMarker.transform.SetParent(generated.transform, false);
             entranceMarker.transform.position = CellCenter(Layout.Entrance);
+            if (EntranceRiftVisual.TryAttach(entranceMarker, -31994, RiftOpen)) return;
+            if (entranceCrackSprite == null) entranceCrackSprite = MakeEntranceCrack();
             var renderer = entranceMarker.GetComponent<SpriteRenderer>();
             renderer.sprite = entranceCrackSprite;
             renderer.sortingOrder = -31994;
+        }
+        // The rift stands open while invaders are coming or still inside, and is sealed between waves.
+        private bool RiftOpen()
+        {
+            var waves = coreDirector != null ? coreDirector : alchemyWaves;
+            return waves == null || waves.InCombat;
         }
         private static Sprite MakeEntranceCrack()
         {

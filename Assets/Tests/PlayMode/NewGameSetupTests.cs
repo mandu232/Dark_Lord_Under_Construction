@@ -153,6 +153,9 @@ namespace DarkLord.Tests
             var snapshot = session.Capture();
             Assert.AreEqual(GameDifficulty.Nightmare, snapshot.options.difficulty);
             Assert.AreEqual("검은 지붕", snapshot.options.saveName); Assert.IsTrue(snapshot.options.skipOpening);
+            var route = snapshot.wave.schedule.regionOrder;
+            Assert.AreEqual(0, route[0]);
+            CollectionAssert.AreEquivalent(Enumerable.Range(0, RegionCatalog.Count), route);
             var directory = System.IO.Path.Combine(Application.temporaryCachePath, "RunOptions-" + System.Guid.NewGuid().ToString("N"));
             try
             {
@@ -160,6 +163,7 @@ namespace DarkLord.Tests
                 Assert.IsTrue(session.Save(2, store));
                 Assert.IsTrue(store.TryRead(2, out var loaded, out _));
                 session.Restore(loaded);
+                CollectionAssert.AreEqual(route, session.Capture().wave.schedule.regionOrder);
                 Assert.AreEqual("검은 지붕", session.Options.saveName);
                 Assert.AreEqual(GameDifficulty.Nightmare, session.Options.difficulty);
                 Assert.AreEqual(snapshot.gold, session.Capture().gold, "Difficulty must not change starting resources.");

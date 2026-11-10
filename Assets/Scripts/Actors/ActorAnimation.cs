@@ -118,8 +118,13 @@ namespace DarkLord.Actors
             if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         }
 
+        // What gameplay last asked for and when, for sprite players that bypass the Animator (Rowen).
+        public ActorState LastRequested { get; private set; }
+        public float LastRequestedAt { get; private set; } = float.NegativeInfinity;
+
         public void Present(ActorState state, Vector2 facing, int attackVariant = 0)
         {
+            LastRequested = state; LastRequestedAt = Time.time;
             if (expressionPlaying)
             {
                 if (state == ActorState.Die || ExpressionFinished()) StopExpression();

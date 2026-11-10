@@ -1,0 +1,588 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!74 &-4750919771042685793
+AnimationClip:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: orc-warrior_Attack
+  serializedVersion: 8
+  m_Legacy: 0
+  m_Compressed: 0
+  m_UseHighQualityCurve: 1
+  m_RotationCurves: []
+  m_CompressedRotationCurves: []
+  m_EulerCurves: []
+  m_PositionCurves: []
+  m_ScaleCurves: []
+  m_FloatCurves: []
+  m_PPtrCurves:
+  - serializedVersion: 2
+    curve:
+    - time: 0
+      value: {fileID: -3981308160136759307, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.1
+      value: {fileID: 6502413706289564352, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.2
+      value: {fileID: 2188729497039793232, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.3
+      value: {fileID: -3074932495973593026, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.5
+      value: {fileID: 8077342342265100654, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    attribute: m_Sprite
+    path: 
+    classID: 212
+    script: {fileID: 0}
+    flags: 2
+  m_SampleRate: 60
+  m_WrapMode: 0
+  m_Bounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  m_ClipBindingConstant:
+    genericBindings:
+    - serializedVersion: 2
+      path: 0
+      attribute: 0
+      script: {fileID: 0}
+      typeID: 212
+      customType: 23
+      isPPtrCurve: 1
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
+      metaData: 0
+    pptrCurveMapping:
+    - {fileID: -3981308160136759307, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: 6502413706289564352, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: 2188729497039793232, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: -3074932495973593026, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: 8077342342265100654, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+  m_AnimationClipSettings:
+    serializedVersion: 2
+    m_AdditiveReferencePoseClip: {fileID: 0}
+    m_AdditiveReferencePoseTime: 0
+    m_StartTime: 0
+    m_StopTime: 0.51666665
+    m_OrientationOffsetY: 0
+    m_Level: 0
+    m_CycleOffset: 0
+    m_HasAdditiveReferencePose: 0
+    m_LoopTime: 0
+    m_LoopBlend: 0
+    m_LoopBlendOrientation: 0
+    m_LoopBlendPositionY: 0
+    m_LoopBlendPositionXZ: 0
+    m_KeepOriginalOrientation: 0
+    m_KeepOriginalPositionY: 1
+    m_KeepOriginalPositionXZ: 0
+    m_HeightFromFeet: 0
+    m_Mirror: 0
+  m_EditorCurves: []
+  m_EulerEditorCurves: []
+  m_HasGenericRootTransform: 0
+  m_HasMotionFloatCurves: 0
+  m_Events: []
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: orc-warrior
+  m_Controller: {fileID: 9100000, guid: c1093a95a5b45a349a25ea1c8556043e, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 75685e4ea23eaad48ad3b534d5178ef0, type: 2}
+    m_OverrideClip: {fileID: 7401367213687896801}
+  - m_OriginalClip: {fileID: 7400000, guid: 8d60ee173e475e04f9a3b0676df8fe19, type: 2}
+    m_OverrideClip: {fileID: 422955436790060315}
+  - m_OriginalClip: {fileID: 7400000, guid: 75a399d1ef5315e4096c4e96bbb46fea, type: 2}
+    m_OverrideClip: {fileID: 6663345018072871665}
+  - m_OriginalClip: {fileID: 7400000, guid: 6cd117c580e310a47a7face79e899c77, type: 2}
+    m_OverrideClip: {fileID: -4750919771042685793}
+  - m_OriginalClip: {fileID: 7400000, guid: 3e8468fc20b6db94c8b4c7230b61105b, type: 2}
+    m_OverrideClip: {fileID: 7674297207899211683}
+  - m_OriginalClip: {fileID: 7400000, guid: 68d7bbe966e07a84caaa39a76030e552, type: 2}
+    m_OverrideClip: {fileID: 9127113879435341764}
+  - m_OriginalClip: {fileID: 7400000, guid: 6e86a776ec31d5542bacc0bfc46f9317, type: 2}
+    m_OverrideClip: {fileID: 9024644719147597680}
+--- !u!74 &422955436790060315
+AnimationClip:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: orc-warrior_Die
+  serializedVersion: 8
+  m_Legacy: 0
+  m_Compressed: 0
+  m_UseHighQualityCurve: 1
+  m_RotationCurves: []
+  m_CompressedRotationCurves: []
+  m_EulerCurves: []
+  m_PositionCurves: []
+  m_ScaleCurves: []
+  m_FloatCurves: []
+  m_PPtrCurves:
+  - serializedVersion: 2
+    curve:
+    - time: 0
+      value: {fileID: 7893865562648235519, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.12
+      value: {fileID: -9192304765268231997, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.32
+      value: {fileID: 9060567921321576234, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.54
+      value: {fileID: 9060567921321576234, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    attribute: m_Sprite
+    path: 
+    classID: 212
+    script: {fileID: 0}
+    flags: 2
+  m_SampleRate: 60
+  m_WrapMode: 0
+  m_Bounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  m_ClipBindingConstant:
+    genericBindings:
+    - serializedVersion: 2
+      path: 0
+      attribute: 0
+      script: {fileID: 0}
+      typeID: 212
+      customType: 23
+      isPPtrCurve: 1
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
+      metaData: 0
+    pptrCurveMapping:
+    - {fileID: 7893865562648235519, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: -9192304765268231997, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: 9060567921321576234, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: 9060567921321576234, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+  m_AnimationClipSettings:
+    serializedVersion: 2
+    m_AdditiveReferencePoseClip: {fileID: 0}
+    m_AdditiveReferencePoseTime: 0
+    m_StartTime: 0
+    m_StopTime: 0.5566667
+    m_OrientationOffsetY: 0
+    m_Level: 0
+    m_CycleOffset: 0
+    m_HasAdditiveReferencePose: 0
+    m_LoopTime: 0
+    m_LoopBlend: 0
+    m_LoopBlendOrientation: 0
+    m_LoopBlendPositionY: 0
+    m_LoopBlendPositionXZ: 0
+    m_KeepOriginalOrientation: 0
+    m_KeepOriginalPositionY: 1
+    m_KeepOriginalPositionXZ: 0
+    m_HeightFromFeet: 0
+    m_Mirror: 0
+  m_EditorCurves: []
+  m_EulerEditorCurves: []
+  m_HasGenericRootTransform: 0
+  m_HasMotionFloatCurves: 0
+  m_Events: []
+--- !u!74 &6663345018072871665
+AnimationClip:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: orc-warrior_Walk
+  serializedVersion: 8
+  m_Legacy: 0
+  m_Compressed: 0
+  m_UseHighQualityCurve: 1
+  m_RotationCurves: []
+  m_CompressedRotationCurves: []
+  m_EulerCurves: []
+  m_PositionCurves: []
+  m_ScaleCurves: []
+  m_FloatCurves: []
+  m_PPtrCurves:
+  - serializedVersion: 2
+    curve:
+    - time: 0
+      value: {fileID: -3272710278583371917, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.1
+      value: {fileID: 8250851548368218218, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.2
+      value: {fileID: -3725748105780734251, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.3
+      value: {fileID: 7274136917685611654, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.4
+      value: {fileID: -3272710278583371917, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    attribute: m_Sprite
+    path: 
+    classID: 212
+    script: {fileID: 0}
+    flags: 2
+  m_SampleRate: 60
+  m_WrapMode: 0
+  m_Bounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  m_ClipBindingConstant:
+    genericBindings:
+    - serializedVersion: 2
+      path: 0
+      attribute: 0
+      script: {fileID: 0}
+      typeID: 212
+      customType: 23
+      isPPtrCurve: 1
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
+      metaData: 0
+    pptrCurveMapping:
+    - {fileID: -3272710278583371917, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: 8250851548368218218, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: -3725748105780734251, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: 7274136917685611654, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: -3272710278583371917, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+  m_AnimationClipSettings:
+    serializedVersion: 2
+    m_AdditiveReferencePoseClip: {fileID: 0}
+    m_AdditiveReferencePoseTime: 0
+    m_StartTime: 0
+    m_StopTime: 0.4166667
+    m_OrientationOffsetY: 0
+    m_Level: 0
+    m_CycleOffset: 0
+    m_HasAdditiveReferencePose: 0
+    m_LoopTime: 1
+    m_LoopBlend: 0
+    m_LoopBlendOrientation: 0
+    m_LoopBlendPositionY: 0
+    m_LoopBlendPositionXZ: 0
+    m_KeepOriginalOrientation: 0
+    m_KeepOriginalPositionY: 1
+    m_KeepOriginalPositionXZ: 0
+    m_HeightFromFeet: 0
+    m_Mirror: 0
+  m_EditorCurves: []
+  m_EulerEditorCurves: []
+  m_HasGenericRootTransform: 0
+  m_HasMotionFloatCurves: 0
+  m_Events: []
+--- !u!74 &7401367213687896801
+AnimationClip:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: orc-warrior_Hit
+  serializedVersion: 8
+  m_Legacy: 0
+  m_Compressed: 0
+  m_UseHighQualityCurve: 1
+  m_RotationCurves: []
+  m_CompressedRotationCurves: []
+  m_EulerCurves: []
+  m_PositionCurves: []
+  m_ScaleCurves: []
+  m_FloatCurves: []
+  m_PPtrCurves:
+  - serializedVersion: 2
+    curve:
+    - time: 0
+      value: {fileID: 7893865562648235519, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.14
+      value: {fileID: -2934934072278182352, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.24
+      value: {fileID: -2934934072278182352, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    attribute: m_Sprite
+    path: 
+    classID: 212
+    script: {fileID: 0}
+    flags: 2
+  m_SampleRate: 60
+  m_WrapMode: 0
+  m_Bounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  m_ClipBindingConstant:
+    genericBindings:
+    - serializedVersion: 2
+      path: 0
+      attribute: 0
+      script: {fileID: 0}
+      typeID: 212
+      customType: 23
+      isPPtrCurve: 1
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
+      metaData: 0
+    pptrCurveMapping:
+    - {fileID: 7893865562648235519, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: -2934934072278182352, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: -2934934072278182352, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+  m_AnimationClipSettings:
+    serializedVersion: 2
+    m_AdditiveReferencePoseClip: {fileID: 0}
+    m_AdditiveReferencePoseTime: 0
+    m_StartTime: 0
+    m_StopTime: 0.25666666
+    m_OrientationOffsetY: 0
+    m_Level: 0
+    m_CycleOffset: 0
+    m_HasAdditiveReferencePose: 0
+    m_LoopTime: 0
+    m_LoopBlend: 0
+    m_LoopBlendOrientation: 0
+    m_LoopBlendPositionY: 0
+    m_LoopBlendPositionXZ: 0
+    m_KeepOriginalOrientation: 0
+    m_KeepOriginalPositionY: 1
+    m_KeepOriginalPositionXZ: 0
+    m_HeightFromFeet: 0
+    m_Mirror: 0
+  m_EditorCurves: []
+  m_EulerEditorCurves: []
+  m_HasGenericRootTransform: 0
+  m_HasMotionFloatCurves: 0
+  m_Events: []
+--- !u!74 &7674297207899211683
+AnimationClip:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: orc-warrior_Attack2
+  serializedVersion: 8
+  m_Legacy: 0
+  m_Compressed: 0
+  m_UseHighQualityCurve: 1
+  m_RotationCurves: []
+  m_CompressedRotationCurves: []
+  m_EulerCurves: []
+  m_PositionCurves: []
+  m_ScaleCurves: []
+  m_FloatCurves: []
+  m_PPtrCurves:
+  - serializedVersion: 2
+    curve:
+    - time: 0
+      value: {fileID: -3981308160136759307, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.1
+      value: {fileID: 6502413706289564352, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.2
+      value: {fileID: 2188729497039793232, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.3
+      value: {fileID: -3074932495973593026, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.5
+      value: {fileID: 8077342342265100654, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    attribute: m_Sprite
+    path: 
+    classID: 212
+    script: {fileID: 0}
+    flags: 2
+  m_SampleRate: 60
+  m_WrapMode: 0
+  m_Bounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  m_ClipBindingConstant:
+    genericBindings:
+    - serializedVersion: 2
+      path: 0
+      attribute: 0
+      script: {fileID: 0}
+      typeID: 212
+      customType: 23
+      isPPtrCurve: 1
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
+      metaData: 0
+    pptrCurveMapping:
+    - {fileID: -3981308160136759307, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: 6502413706289564352, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: 2188729497039793232, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: -3074932495973593026, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: 8077342342265100654, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+  m_AnimationClipSettings:
+    serializedVersion: 2
+    m_AdditiveReferencePoseClip: {fileID: 0}
+    m_AdditiveReferencePoseTime: 0
+    m_StartTime: 0
+    m_StopTime: 0.51666665
+    m_OrientationOffsetY: 0
+    m_Level: 0
+    m_CycleOffset: 0
+    m_HasAdditiveReferencePose: 0
+    m_LoopTime: 0
+    m_LoopBlend: 0
+    m_LoopBlendOrientation: 0
+    m_LoopBlendPositionY: 0
+    m_LoopBlendPositionXZ: 0
+    m_KeepOriginalOrientation: 0
+    m_KeepOriginalPositionY: 1
+    m_KeepOriginalPositionXZ: 0
+    m_HeightFromFeet: 0
+    m_Mirror: 0
+  m_EditorCurves: []
+  m_EulerEditorCurves: []
+  m_HasGenericRootTransform: 0
+  m_HasMotionFloatCurves: 0
+  m_Events: []
+--- !u!74 &9024644719147597680
+AnimationClip:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: orc-warrior_Block
+  serializedVersion: 8
+  m_Legacy: 0
+  m_Compressed: 0
+  m_UseHighQualityCurve: 1
+  m_RotationCurves: []
+  m_CompressedRotationCurves: []
+  m_EulerCurves: []
+  m_PositionCurves: []
+  m_ScaleCurves: []
+  m_FloatCurves: []
+  m_PPtrCurves:
+  - serializedVersion: 2
+    curve:
+    - time: 0
+      value: {fileID: -2934934072278182352, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.08
+      value: {fileID: -2934934072278182352, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.32
+      value: {fileID: -2934934072278182352, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    attribute: m_Sprite
+    path: 
+    classID: 212
+    script: {fileID: 0}
+    flags: 2
+  m_SampleRate: 60
+  m_WrapMode: 0
+  m_Bounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  m_ClipBindingConstant:
+    genericBindings:
+    - serializedVersion: 2
+      path: 0
+      attribute: 0
+      script: {fileID: 0}
+      typeID: 212
+      customType: 23
+      isPPtrCurve: 1
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
+      metaData: 0
+    pptrCurveMapping:
+    - {fileID: -2934934072278182352, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: -2934934072278182352, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: -2934934072278182352, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+  m_AnimationClipSettings:
+    serializedVersion: 2
+    m_AdditiveReferencePoseClip: {fileID: 0}
+    m_AdditiveReferencePoseTime: 0
+    m_StartTime: 0
+    m_StopTime: 0.33666667
+    m_OrientationOffsetY: 0
+    m_Level: 0
+    m_CycleOffset: 0
+    m_HasAdditiveReferencePose: 0
+    m_LoopTime: 0
+    m_LoopBlend: 0
+    m_LoopBlendOrientation: 0
+    m_LoopBlendPositionY: 0
+    m_LoopBlendPositionXZ: 0
+    m_KeepOriginalOrientation: 0
+    m_KeepOriginalPositionY: 1
+    m_KeepOriginalPositionXZ: 0
+    m_HeightFromFeet: 0
+    m_Mirror: 0
+  m_EditorCurves: []
+  m_EulerEditorCurves: []
+  m_HasGenericRootTransform: 0
+  m_HasMotionFloatCurves: 0
+  m_Events: []
+--- !u!74 &9127113879435341764
+AnimationClip:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: orc-warrior_Idle
+  serializedVersion: 8
+  m_Legacy: 0
+  m_Compressed: 0
+  m_UseHighQualityCurve: 1
+  m_RotationCurves: []
+  m_CompressedRotationCurves: []
+  m_EulerCurves: []
+  m_PositionCurves: []
+  m_ScaleCurves: []
+  m_FloatCurves: []
+  m_PPtrCurves:
+  - serializedVersion: 2
+    curve:
+    - time: 0
+      value: {fileID: 8077342342265100654, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.16
+      value: {fileID: 6856980519141109581, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.32
+      value: {fileID: -8108410421765611004, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - time: 0.48
+      value: {fileID: 8077342342265100654, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    attribute: m_Sprite
+    path: 
+    classID: 212
+    script: {fileID: 0}
+    flags: 2
+  m_SampleRate: 60
+  m_WrapMode: 0
+  m_Bounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  m_ClipBindingConstant:
+    genericBindings:
+    - serializedVersion: 2
+      path: 0
+      attribute: 0
+      script: {fileID: 0}
+      typeID: 212
+      customType: 23
+      isPPtrCurve: 1
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
+      metaData: 0
+    pptrCurveMapping:
+    - {fileID: 8077342342265100654, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: 6856980519141109581, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: -8108410421765611004, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+    - {fileID: 8077342342265100654, guid: 8b88e3bb1da11844baed9349b0928d04, type: 3}
+  m_AnimationClipSettings:
+    serializedVersion: 2
+    m_AdditiveReferencePoseClip: {fileID: 0}
+    m_AdditiveReferencePoseTime: 0
+    m_StartTime: 0
+    m_StopTime: 0.49666667
+    m_OrientationOffsetY: 0
+    m_Level: 0
+    m_CycleOffset: 0
+    m_HasAdditiveReferencePose: 0
+    m_LoopTime: 1
+    m_LoopBlend: 0
+    m_LoopBlendOrientation: 0
+    m_LoopBlendPositionY: 0
+    m_LoopBlendPositionXZ: 0
+    m_KeepOriginalOrientation: 0
+    m_KeepOriginalPositionY: 1
+    m_KeepOriginalPositionXZ: 0
+    m_HeightFromFeet: 0
+    m_Mirror: 0
+  m_EditorCurves: []
+  m_EulerEditorCurves: []
+  m_HasGenericRootTransform: 0
+  m_HasMotionFloatCurves: 0
+  m_Events: []

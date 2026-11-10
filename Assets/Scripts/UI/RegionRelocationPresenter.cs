@@ -16,13 +16,21 @@ namespace DarkLord.UI
         private GameMenu menu;
         private CameraFollow follow;
         private RectTransform root, topBar, bottomBar, card;
-        private Image ambience, flash;
-        private InvasionRingGraphic shockwave;
-        private readonly Image[] dust = new Image[56], streaks = new Image[18], edges = new Image[4];
+        // Arrival weather (snow on the snowfield, embers in the volcano): a far and a near layer of the region's tile.
+        private readonly RawImage[] weather = new RawImage[2];
+        private int weatherRegion = -1;
+        private float weatherFade;
+        private Vector2 weatherScroll;
+        // Screen drift per region index, in tiles per second; y up. Tiles come from Tools/Art/RegionWeatherFx.
+        private static readonly Vector2[] WeatherDrift =
+        {
+            new Vector2(.16f, -.05f), new Vector2(.12f, -.03f), new Vector2(.02f, .05f),
+            new Vector2(0, .06f), new Vector2(.03f, -.16f), new Vector2(.02f, .12f),
+        };
+        private const float WeatherFadeOutSeconds = 3f;
         private TMP_Text kicker, title, detail, regionLabel;
         private CanvasGroup cardOpacity;
         private GameObject regionPlate;
-        private Color shownAmbience;
         private string regionText;
 
         public void Configure(WaveDirector source, TMP_FontAsset font)
@@ -32,20 +40,12 @@ namespace DarkLord.UI
             menu = scene.SelectMany(r => r.GetComponentsInChildren<GameMenu>(true)).FirstOrDefault();
             follow = scene.SelectMany(r => r.GetComponentsInChildren<CameraFollow>(true)).FirstOrDefault();
 
-            ambience = Stretch("Region ambience", transform);
-            ambience.transform.SetAsFirstSibling();
-            shownAmbience = waves.CurrentRegion.Ambience;
-            ambience.color = shownAmbience;
             regionPlate = RegionPlate(font);
 
+            // Behind the rest of the HUD, so it stays readable over the weather.
+            for (int i = 0; i < weather.Length; i++) { weather[i] = Weather("Region weather " + i); weather[i].transform.SetSiblingIndex(i); }
             root = Stretch("Dungeon relocation", transform).rectTransform;
             Destroy(root.GetComponent<Image>());
-            for (int i = 0; i < edges.Length; i++) edges[i] = Edge(i);
-            for (int i = 0; i < streaks.Length; i++) streaks[i] = Piece("Travel streak " + i);
-            for (int i = 0; i < dust.Length; i++) dust[i] = Piece("Falling dust " + i);
-            var ring = new GameObject("Landing shockwave", typeof(RectTransform)); ring.transform.SetParent(root, false);
-            shockwave = ring.AddComponent<InvasionRingGraphic>(); shockwave.raycastTarget = false;
-            flash = Stretch("Landing flash", root);
             topBar = Bar("Cinematic top bar", 1); bottomBar = Bar("Cinematic bottom bar", 0);
             CreateCard(font);
             root.gameObject.SetActive(false);
@@ -58,20 +58,11 @@ namespace DarkLord.UI
             var image = node.GetComponent<Image>(); image.raycastTarget = false; image.color = Color.clear;
             return image;
         }
-        private Image Piece(string name)
+        private RawImage Weather(string name)
         {
-            var node = new GameObject(name, typeof(RectTransform), typeof(Image)); node.transform.SetParent(root, false);
-            var rect = node.GetComponent<RectTransform>(); rect.anchorMin = rect.anchorMax = rect.pivot = Vector2.zero;
-            var image = node.GetComponent<Image>(); image.raycastTarget = false; return image;
-        }
-        private Image Edge(int side)
-        {
-            var image = Stretch("Tremor edge " + side, root);
-            var rect = image.rectTransform;
-            if (side == 0) rect.anchorMin = new Vector2(0, 1); else if (side == 1) rect.anchorMax = new Vector2(1, 0);
-            else if (side == 2) rect.anchorMax = new Vector2(0, 1); else rect.anchorMin = new Vector2(1, 0);
-            rect.offsetMin = side == 0 ? new Vector2(0, -26) : side == 3 ? new Vector2(-34, 0) : Vector2.zero;
-            rect.offsetMax = side == 1 ? new Vector2(0, 26) : side == 2 ? new Vector2(34, 0) : Vector2.zero;
+            var node = new GameObject(name, typeof(RectTransform), typeof(RawImage)); node.transform.SetParent(transform, false);
+            var rect = node.GetComponent<RectTransform>(); rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one; rect.offsetMin = rect.offsetMax = Vector2.zero;
+            var image = node.GetComponent<RawImage>(); image.raycastTarget = false; image.enabled = false;
             return image;
         }
         private RectTransform Bar(string name, float edge)
@@ -115,9 +106,9 @@ namespace DarkLord.UI
         private void LateUpdate()
         {
             if (waves == null || root == null) return;
-            UpdateAmbience();
             UpdateRegionLabel();
             bool playing = menu == null || menu.State == GameMenu.ScreenState.Playing;
+            UpdateWeather(playing);
             if (!waves.IsRelocating || !playing)
             {
                 root.gameObject.SetActive(false);
@@ -128,10 +119,35 @@ namespace DarkLord.UI
             Present(waves.RelocationElapsed);
         }
 
-        private void UpdateAmbience()
+        // Plays only from the landing on, then fades a few seconds into the new region so it never covers play.
+        private void UpdateWeather(bool playing)
         {
-            shownAmbience = Color.Lerp(shownAmbience, waves.CurrentRegion.Ambience, 1 - Mathf.Exp(-Time.unscaledDeltaTime * 3));
-            ambience.color = shownAmbience;
+            bool landed = playing && waves.IsRelocating && waves.RelocationElapsed >= WaveDirector.RelocationArrivalAt;
+            if (landed && weatherRegion != waves.CurrentRegion.Index) LoadWeather(waves.CurrentRegion.Index);
+            if (playing) weatherFade = landed ? Mathf.Min(1, weatherFade + Time.deltaTime * 2) : Mathf.Max(0, weatherFade - Time.deltaTime / WeatherFadeOutSeconds);
+            bool shown = weatherFade > 0 && weather[0].texture != null;
+            for (int i = 0; i < weather.Length; i++)
+            {
+                var layer = weather[i];
+                if (layer.enabled != shown) layer.enabled = shown;
+                if (!shown) continue;
+                // Far layer: small, slow and dim; near layer: big pixels, faster, full strength.
+                float pixel = i == 0 ? 3 : 5, speed = i == 0 ? .6f : 1.15f;
+                var rect = layer.rectTransform.rect;
+                var size = new Vector2(rect.width / (layer.texture.width * pixel), rect.height / (layer.texture.height * pixel));
+                var offset = -weatherScroll * speed / pixel * 3 + (i == 0 ? Vector2.zero : new Vector2(.37f, .61f));
+                layer.uvRect = new Rect(offset, size);
+                layer.color = new Color(1, 1, 1, weatherFade * (i == 0 ? .55f : .9f));
+            }
+            if (shown && playing) weatherScroll += WeatherDrift[Mathf.Clamp(weatherRegion, 0, WeatherDrift.Length - 1)] * Time.deltaTime;
+        }
+
+        private void LoadWeather(int index)
+        {
+            weatherRegion = index; weatherScroll = Vector2.zero;
+            var texture = Resources.Load<Texture2D>("RegionWeather/" + index);
+            if (texture != null) { texture.filterMode = FilterMode.Point; texture.wrapMode = TextureWrapMode.Repeat; }
+            foreach (var layer in weather) layer.texture = texture;
         }
 
         private void UpdateRegionLabel()
@@ -142,7 +158,7 @@ namespace DarkLord.UI
             if (!visible) return;
             var region = waves.CurrentRegion;
             int day = Mathf.Max(1, waves.CurrentWave);
-            string text = $"제{region.Index + 1}지역 {region.Name} · {region.RaceName} · {day}일차 / {waves.FinalWave}";
+            string text = $"제{waves.CurrentRegionNumber}지역 {region.Name} · {region.RaceName} · {day}일차 / {waves.FinalWave}";
             if (text != regionText) regionLabel.text = regionText = text;
         }
 
@@ -170,46 +186,6 @@ namespace DarkLord.UI
             Vector2 barSize = new Vector2(0, 92 * bars);
             topBar.sizeDelta = barSize; bottomBar.sizeDelta = barSize;
 
-            Color edge = new Color(.1f, .03f, .02f, (.2f + .55f * tremor + stride * .25f) * ending);
-            foreach (var image in edges) image.color = edge;
-
-            float width = root.rect.width, height = root.rect.height;
-            Color dustColor = (arrived ? region : RegionCatalog.At(destination.Index - 1)).Dust;
-            float dustAmount = !arrived ? tremor : landing;
-            for (int i = 0; i < dust.Length; i++)
-            {
-                float seed = Mathf.Repeat(i * .618034f, 1);
-                bool shown = i < dust.Length * dustAmount;
-                dust[i].enabled = shown;
-                if (!shown) continue;
-                float speed = 220 + i % 5 * 90;
-                float size = 5 + i % 3 * 4;
-                float x = Mathf.Repeat(seed + Mathf.Sin(t + i) * .01f - travel * t * .07f, 1) * width;
-                float y = (1 - Mathf.Repeat(seed * 3.3f + t * speed / height, 1)) * height;
-                dust[i].rectTransform.anchoredPosition = new Vector2(x, y);
-                dust[i].rectTransform.sizeDelta = new Vector2(size, size);
-                dust[i].color = new Color(dustColor.r, dustColor.g, dustColor.b, (.45f + i % 4 * .12f) * Mathf.Max(ending, 0));
-            }
-            for (int i = 0; i < streaks.Length; i++)
-            {
-                float seed = Mathf.Repeat(i * .381966f, 1);
-                float length = 140 + i % 4 * 90;
-                float x = (1 - Mathf.Repeat(seed + t * (1.1f + i % 3 * .35f), 1)) * (width + length) - length;
-                streaks[i].rectTransform.anchoredPosition = new Vector2(x, Mathf.Repeat(seed * 7.7f, 1) * height);
-                streaks[i].rectTransform.sizeDelta = new Vector2(length, 3 + i % 2 * 2);
-                streaks[i].color = new Color(dustColor.r, dustColor.g, dustColor.b, .24f * travel);
-            }
-
-            float ring = Mathf.Clamp01(afterLanding / .8f);
-            shockwave.gameObject.SetActive(arrived && ring < 1);
-            if (arrived)
-            {
-                shockwave.rectTransform.anchorMin = shockwave.rectTransform.anchorMax = new Vector2(.5f, .5f);
-                shockwave.rectTransform.anchoredPosition = Vector2.zero;
-                shockwave.rectTransform.sizeDelta = Vector2.one * Mathf.Lerp(120, Mathf.Max(width, height) * 1.3f, 1 - (1 - ring) * (1 - ring));
-                shockwave.color = new Color(dustColor.r, dustColor.g, dustColor.b, (1 - ring) * .85f);
-            }
-            flash.color = new Color(dustColor.r, dustColor.g, dustColor.b, arrived ? Mathf.Clamp01(1 - afterLanding / .45f) * .85f : 0);
             PresentCard(t, arrived, afterLanding, ending, region, destination);
         }
 
@@ -217,7 +193,7 @@ namespace DarkLord.UI
         {
             if (arrived)
             {
-                kicker.text = $"제{region.Index + 1}지역 도착";
+                kicker.text = $"제{waves.CurrentRegionNumber}지역 도착";
                 title.text = region.Name;
                 detail.text = $"{region.RaceName} · {region.Faction}\n{region.Trait}";
                 cardOpacity.alpha = Mathf.Clamp01((afterLanding - .15f) / .35f) * ending;

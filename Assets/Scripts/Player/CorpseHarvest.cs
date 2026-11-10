@@ -37,6 +37,7 @@ namespace DarkLord.Player
         public IReadOnlyList<InvaderCorpse> Corpses => corpses;
         public DungeonGrid Dungeon => dungeon;
         internal bool WorkersFlee => waves != null && waves.InCombat;
+        internal bool InTutorial => waves != null && waves.Tutorial != null && waves.Tutorial.Active;
         internal bool WorkersCanCollect => isActiveAndEnabled && waves != null && !waves.IsFinished &&
             !waves.InCombat && (waves.Tutorial == null || !waves.Tutorial.Active);
         public bool IsDragging => false;
@@ -54,18 +55,31 @@ namespace DarkLord.Player
         }
         private void OnEnable() { interact.Enable(); cancel.Enable(); }
         private void OnDisable() { interact.Disable(); cancel.Disable(); DropCarried(); }
-        private void OnDestroy() { interact.Dispose(); cancel.Dispose(); Clear(); }
+        private void OnDestroy() { interact.Dispose(); cancel.Dispose(); Clear(); if (waves != null) waves.InvasionStarted -= RotOldCorpses; }
         public void Configure(DungeonGrid grid, WaveDirector director, SpriteRenderer template)
-        { dungeon = grid; waves = director; corpseTemplate = template; EnsureRoot(); }
+        { dungeon = grid; waves = director; corpseTemplate = template; EnsureRoot(); waves.InvasionStarted -= RotOldCorpses; waves.InvasionStarted += RotOldCorpses; }
+        // Corpses left uncollected rot away when the second day after their fall begins.
+        private void RotOldCorpses(int day)
+        {
+            for (int i = corpses.Count - 1; i >= 0; i--)
+            {
+                var corpse = corpses[i];
+                if (corpse == null) { corpses.RemoveAt(i); continue; }
+                if (corpse.Consumed || corpse == Carried || corpse.AssignedWorker != null || day - corpse.Day < 2) continue;
+                corpses.RemoveAt(i); Destroy(corpse.gameObject);
+            }
+        }
         private void EnsureRoot()
         {
             if (remains != null) return;
             var node = new GameObject("Invader remains"); node.transform.SetParent(waves.transform, false); remains = node.transform;
         }
-        public InvaderCorpse LeaveCorpse(ActorHealth enemy)
+        public InvaderCorpse LeaveCorpse(ActorHealth enemy, bool guaranteed = false)
         {
             if (enemy == null || enemy.IsAlive || enemy.Faction != Faction.Invader) return null;
             DeathLoot.Scatter(enemy.transform.position, transform, remains != null ? remains : waves.transform, waves);
+            // No corpse: the invader keeps its own death animation and is destroyed with it.
+            if (!guaranteed && Random.value >= WaveProgression.CorpseChance(waves.CurrentWave)) return null;
             var source = enemy.GetComponentInChildren<SpriteRenderer>(); if (source == null) return null;
             var role = enemy.GetComponent<InvaderTactics>()?.Role ?? InvaderRole.Warrior;
             var corpse = Create(enemy.transform.position, role, source);
@@ -75,7 +89,7 @@ namespace DarkLord.Player
         private InvaderCorpse Create(Vector3 position, InvaderRole role, SpriteRenderer source)
         {
             EnsureRoot(); var node = new GameObject("Fallen " + role, typeof(InvaderCorpse)); node.transform.SetParent(remains, true); node.transform.position = position;
-            var corpse = node.GetComponent<InvaderCorpse>(); corpse.Configure(source, role); corpses.Add(corpse); return corpse;
+            var corpse = node.GetComponent<InvaderCorpse>(); corpse.Configure(source, role); corpse.Day = waves != null ? waves.CurrentWave : 0; corpses.Add(corpse); return corpse;
         }
         public InvaderCorpse NearbyCorpse
         {
@@ -189,12 +203,12 @@ namespace DarkLord.Player
             if (interact.WasPressedThisFrame() && TryInteract()) return;
         }
         private void LateUpdate() { if (Time.timeScale > 0) FollowCarried(); }
-        public CorpseSaveData[] Capture() => corpses.Where(c => c != null && !c.Consumed).Select(c => new CorpseSaveData { position=c.transform.position, role=c.Role, carried=c==Carried }).ToArray();
+        public CorpseSaveData[] Capture() => corpses.Where(c => c != null && !c.Consumed).Select(c => new CorpseSaveData { position=c.transform.position, role=c.Role, carried=c==Carried, day=c.Day }).ToArray();
         public void Restore(CorpseSaveData[] saved)
         {
             Clear(); EnsureRoot();
             if (saved == null || corpseTemplate == null) return;
-            foreach (var data in saved) { var corpse = Create(data.position, data.role, corpseTemplate); if (data.carried) { Carried = corpse; corpse.SetHeld(true); } }
+            foreach (var data in saved) { var corpse = Create(data.position, data.role, corpseTemplate); corpse.Day = data.day; if (data.carried) { Carried = corpse; corpse.SetHeld(true); } }
             BeginDrag();
         }
         private void Clear()

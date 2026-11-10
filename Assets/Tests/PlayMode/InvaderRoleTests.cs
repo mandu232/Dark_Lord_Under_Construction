@@ -62,6 +62,19 @@ namespace DarkLord.Tests
             Assert.AreEqual(75, far.CurrentHealth);
             Assert.AreEqual(InvaderAction.Recovering, hero.Action); Assert.IsFalse(hero.HeroArmored, "The recovery is the opening to punish him");
         }
+        [Test] public void RegionalBossSignatureHitsOverlappingMarksOnceAndHrimsIceSlows()
+        {
+            var boss = Enemy(InvaderRole.Charger); boss.SetRace(RegionCatalog.At(4)); boss.SetHero(true);
+            var far = Actor(Vector3.right * 4, Faction.Dungeon);
+            var motor = far.gameObject.AddComponent<TopDownMotor>();
+            Physics2D.SyncTransforms();
+            Vector2 point = far.transform.position;
+            boss.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Charger, action = InvaderAction.Signature, marks = new[] { point, point + Vector2.right * .5f } });
+            Assert.IsTrue(boss.TryAct(far));
+            Assert.AreEqual(78, far.CurrentHealth, "Two overlapping marks strike once");
+            Assert.Less(motor.SlowMultiplier, 1f, "Frost marks slow what they hit");
+            Assert.AreEqual(InvaderAction.Recovering, boss.Action);
+        }
         [Test] public void ShieldbearerBashesAdjacentTargetAfterTelegraph()
         {
             var shield = Enemy(InvaderRole.Shieldbearer);
@@ -73,6 +86,37 @@ namespace DarkLord.Tests
             shield.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Shieldbearer, action = InvaderAction.ShieldBash, direction = Vector2.right });
             Assert.IsTrue(shield.TryAct(near));
             Assert.AreEqual(90, near.CurrentHealth);
+        }
+
+        [Test] public void PaladinBlocksAndBashesWhileClericHealsItsWoundedAlly()
+        {
+            var paladin = Enemy(InvaderRole.Paladin);
+            var guard = Actor(Vector3.right, Faction.Dungeon);
+            var paladinHealth = paladin.GetComponent<ActorHealth>();
+            paladin.GetComponent<TopDownMotor>().Face(Vector2.right);
+            paladinHealth.TakeDamage(20, guard);
+            Assert.AreEqual(94, paladinHealth.CurrentHealth);
+            Physics2D.SyncTransforms();
+            Assert.IsTrue(paladin.TryAct(guard));
+            Assert.AreEqual(InvaderAction.ShieldBash, paladin.Action);
+            var bash = paladin.CaptureSave();
+            bash.remaining = 0;
+            paladin.RestoreSave(bash);
+            Assert.IsTrue(paladin.TryAct(guard));
+            Assert.AreEqual(90, guard.CurrentHealth);
+
+            var cleric = Enemy(InvaderRole.Cleric);
+            var wounded = Actor(Vector3.up * 3);
+            wounded.Configure(Faction.Invader, 250);
+            wounded.TakeDamage(80);
+            Physics2D.SyncTransforms();
+            Assert.IsTrue(cleric.TryAct(null));
+            Assert.AreEqual(InvaderAction.Healing, cleric.Action);
+            var heal = cleric.CaptureSave();
+            heal.remaining = 0;
+            cleric.RestoreSave(heal);
+            Assert.IsTrue(cleric.TryAct(null));
+            Assert.AreEqual(200, wounded.CurrentHealth);
         }
         [Test] public void RowenCleaveHitsAllEnemiesInFrontAndKeepsChargeAtRange()
         {
@@ -169,11 +213,12 @@ namespace DarkLord.Tests
 
         [Test] public void FiveWavesIntroduceDifferentProblemsAndRespectScaledCounts()
         {
-            int[][] expected = { new[] {3,0,0,0}, new[] {4,0,0,1}, new[] {6,0,1,0}, new[] {6,2,1,0}, new[] {7,2,1,1} };
+            int[][] expected = { new[] {3,0,0,0,0}, new[] {4,0,0,1,0}, new[] {5,0,1,1,0}, new[] {5,2,1,1,0}, new[] {6,2,1,1,1} };
             for (int wave = 1; wave <= 5; wave++)
             {
                 var formation = WaveFormation.Create(wave, wave * 2 + 1);
-                for (int role = 0; role < 4; role++) Assert.AreEqual(expected[wave - 1][role], formation.Count(r => (int)r == role));
+                for (int role = 0; role < expected[wave - 1].Length; role++)
+                    Assert.AreEqual(expected[wave - 1][role], formation.Count(r => (int)r == role));
                 foreach (GameDifficulty difficulty in System.Enum.GetValues(typeof(GameDifficulty)))
                 {
                     int count = new NewGameOptions { difficulty = difficulty }.EnemyCount(wave * 2 + 1);
@@ -181,6 +226,101 @@ namespace DarkLord.Tests
                 }
             }
             Assert.AreEqual(1, WaveFormation.Create(5, 0).Length);
+        }
+        [UnityTest] public IEnumerator ArcherAimsAtRangeReleasesWithItsSpriteAndHitsAfterTravel()
+        {
+            var prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Enemies/WaveInvader.prefab");
+            var node = Object.Instantiate(prefab, Center, Quaternion.identity); objects.Add(node);
+            var tactics = node.GetComponent<InvaderTactics>() ?? node.AddComponent<InvaderTactics>();
+            var archer = node.GetComponent<MinionController>();
+            var body = node.GetComponent<SpriteRenderer>();
+            archer.Health.Configure(Faction.Invader, 100);
+            tactics.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Archer });
+            var victim = Actor(Vector3.right * 5, Faction.Dungeon);
+            var ally = Actor(Vector3.right * 2);
+            archer.Assault(victim);
+            Physics2D.SyncTransforms();
+
+            for (float limit = Time.time + 2; body.sprite.name != "archer_9" && Time.time < limit;)
+                yield return null;
+            Assert.AreEqual(InvaderAction.Aiming, tactics.Action);
+            Assert.AreEqual("archer_9", body.sprite.name);
+            Assert.That(Vector3.Distance(node.transform.position, Center), Is.LessThan(.1f));
+            Assert.AreEqual(100, victim.CurrentHealth);
+
+            for (float limit = Time.time + 1; body.sprite.name != "archer_10" && Time.time < limit;)
+                yield return null;
+            Assert.AreEqual("archer_10", body.sprite.name);
+            Assert.AreEqual(InvaderAction.Recovering, tactics.Action);
+            Assert.IsNotNull(Object.FindAnyObjectByType<InvaderArrow>());
+            Assert.AreEqual(100, victim.CurrentHealth);
+            yield return new WaitForSeconds(.48f);
+            Assert.AreEqual(88, victim.CurrentHealth);
+            Assert.AreEqual(100, ally.CurrentHealth);
+
+            var wall = new GameObject("Arrow blocking wall") { layer = 8 };
+            objects.Add(wall); wall.transform.position = Center + Vector3.right * 3;
+            wall.AddComponent<BoxCollider2D>().size = new Vector2(.3f, 2);
+            Physics2D.SyncTransforms();
+            // A wall placed after aiming still intercepts a released arrow.
+            tactics.RestoreSave(new InvaderTacticsSaveData {
+                role = InvaderRole.Archer, action = InvaderAction.Aiming, direction = Vector2.right, cooldown = 2
+            });
+            yield return new WaitForSeconds(.55f);
+            Assert.AreEqual(88, victim.CurrentHealth);
+            Assert.IsNull(Object.FindAnyObjectByType<InvaderArrow>());
+        }
+
+        [UnityTest] public IEnumerator ArcherBacksAwayFromAClosingPlayerThenStopsAndReaims()
+        {
+            var bow = Enemy(InvaderRole.Archer);
+            var archer = bow.GetComponent<MinionController>();
+            var player = Actor(Vector3.right * 5f, Faction.Dungeon);
+            player.gameObject.AddComponent<DarkLord.Player.PlayerCombat>().enabled = false;
+            archer.Assault(player);
+            yield return null;
+            Assert.AreEqual(InvaderAction.Aiming, bow.Action);
+
+            player.GetComponent<Rigidbody2D>().position = Center + Vector3.right * 1.2f;
+            player.transform.position = Center + Vector3.right * 1.2f;
+            Physics2D.SyncTransforms();
+            yield return null;
+            yield return null;
+            Assert.AreEqual(InvaderAction.Ready, bow.Action, "Close pressure cancels the first aim");
+            Assert.AreEqual(ActorState.Run, archer.State);
+
+            for (float end = Time.time + 3; bow.Action != InvaderAction.Aiming && Time.time < end;)
+            {
+                Assert.IsNull(Object.FindAnyObjectByType<InvaderArrow>(), "No arrows while retreating");
+                yield return null;
+            }
+            Assert.AreEqual(InvaderAction.Aiming, bow.Action);
+            Assert.GreaterOrEqual(Vector2.Distance(archer.transform.position, player.transform.position), 3.2f);
+            var position = archer.transform.position;
+            yield return new WaitForSeconds(.2f);
+            Assert.That(Vector2.Distance(position, archer.transform.position), Is.LessThan(.05f));
+            yield return new WaitForSeconds(.8f);
+            Assert.AreEqual(88, player.CurrentHealth);
+        }
+
+        [UnityTest] public IEnumerator ArcherCanShootWhenItsRetreatIsBlockedByTerrain()
+        {
+            var bow = Enemy(InvaderRole.Archer);
+            var archer = bow.GetComponent<MinionController>();
+            var player = Actor(Vector3.right * 1.25f, Faction.Dungeon);
+            player.gameObject.AddComponent<DarkLord.Player.PlayerCombat>().enabled = false;
+            var wall = new GameObject("Wall behind archer") { layer = 8 };
+            objects.Add(wall);
+            wall.transform.position = Center + Vector3.left * .5f;
+            wall.AddComponent<BoxCollider2D>().size = new Vector2(.3f, 4f);
+            var data = new UnityEditor.SerializedObject(archer);
+            data.FindProperty("obstacleLayers").intValue = 1 << 8;
+            data.ApplyModifiedPropertiesWithoutUndo();
+            Physics2D.SyncTransforms();
+            archer.Assault(player);
+            yield return new WaitForSeconds(1);
+            Assert.AreEqual(88, player.CurrentHealth);
+            Assert.That(Vector2.Distance(Center, archer.transform.position), Is.LessThan(.05f));
         }
         [Test] public void ShieldReducesOnlyFrontalPhysicalDamageAndUnsubscribesOnDisable()
         {
@@ -324,7 +464,7 @@ namespace DarkLord.Tests
             scene = SceneManager.GetSceneByPath("Assets/Scenes/InGame.unity"); yield return null; yield return null;
             var waves = Find<WaveDirector>(); Time.timeScale = 1;
             waves.ConfigureRun(new NewGameOptions { difficulty = GameDifficulty.Easy });
-            waves.RestoreSave(new WaveSaveData { number = 4, state = WaveState.Preparing, enemies = new MinionSaveData[0] });
+            waves.RestoreSave(new WaveSaveData { number = RegionCatalog.DaysPerRegion - 1, state = WaveState.Preparing, enemies = new MinionSaveData[0] });
             var expected = waves.NextFormation;
             var data = new UnityEditor.SerializedObject(waves); data.FindProperty("spawnInterval").floatValue = .05f; data.ApplyModifiedPropertiesWithoutUndo();
             waves.BeginNextWave(); var midway = JsonUtility.FromJson<WaveSaveData>(JsonUtility.ToJson(waves.CaptureSave()));
@@ -334,6 +474,7 @@ namespace DarkLord.Tests
             var saved = session.Capture();
             Assert.AreEqual(0, saved.wave.pending);
             CollectionAssert.AreEqual(expected, saved.wave.enemies.Select(e => e.tactics.role).ToArray());
+            Assert.AreEqual(1, saved.wave.enemies.Count(e => e.tactics.role == InvaderRole.Archer));
             Assert.AreEqual(1, saved.wave.enemies.Count(e => e.tactics.hero), "Rowen arrives exactly once, last");
             Assert.IsTrue(saved.wave.enemies[saved.wave.enemies.Length - 1].tactics.hero);
             SaveSlotStore.Validate(saved);

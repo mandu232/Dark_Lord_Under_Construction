@@ -32,6 +32,8 @@ namespace DarkLord.UI
         private CameraFollow follow;
         private Vector3 originalPosition;
         private bool focusing, followWasEnabled, dustShown;
+        private System.Collections.Generic.List<Vector2Int> collapseCells;
+        private float trickleClock;
         private float originalSize;
         private Behaviour pixelPerfect;
         private bool pixelWasEnabled;
@@ -206,6 +208,7 @@ namespace DarkLord.UI
             else RestoreCamera();
             float burst = Mathf.Clamp01(1 - (elapsed - StartingTutorial.CollapseAt) / 1.2f);
             flash.color = elapsed >= StartingTutorial.CollapseAt ? new Color(.82f, .64f, .43f, burst * .65f) : new Color(.7f, .02f, .01f, cinematic ? .08f + .05f * Mathf.Sin(elapsed * 8) : 0);
+            if (!tutorial.Collapsed && elapsed >= StartingTutorial.BattleEnds && !tutorial.DialogueOpen) Trickle(elapsed);
             if (tutorial.Collapsed && !dustShown) { dustShown = true; Debris(); }
         }
         private void RefreshDialogueText()
@@ -260,39 +263,144 @@ namespace DarkLord.UI
             if (pixelPerfect != null) pixelPerfect.enabled = pixelWasEnabled;
             focusing = false;
         }
+        // Cells of the corridor that is about to cave in; read before the collapse turns them to rock.
+        private System.Collections.Generic.List<Vector2Int> CollapseCells(DungeonGrid grid)
+        {
+            if (collapseCells != null) return collapseCells;
+            collapseCells = new System.Collections.Generic.List<Vector2Int>();
+            for (int x = 0; x <= grid.Layout.Core.x - 5; x++)
+                for (int y = grid.Layout.Core.y - 1; y <= grid.Layout.Core.y + 1; y++)
+                    if (grid.Layout.IsFloor(new Vector2Int(x, y))) collapseCells.Add(new Vector2Int(x, y));
+            return collapseCells;
+        }
+        // Warning: pebbles trickle from the ceiling, faster as the collapse nears.
+        private void Trickle(float elapsed)
+        {
+            var grid = FindFirstObjectByType<DungeonGrid>(); if (grid == null) return;
+            var cells = CollapseCells(grid); if (cells.Count == 0) return;
+            float urgency = Mathf.Clamp01((elapsed - StartingTutorial.BattleEnds) / (StartingTutorial.CollapseAt - StartingTutorial.BattleEnds));
+            trickleClock -= Time.deltaTime * Mathf.Lerp(4, 18, urgency);
+            while (trickleClock <= 0)
+            {
+                trickleClock += 1;
+                var landing = grid.CellCenter(cells[Random.Range(0, cells.Count)]) + new Vector3(Random.Range(-.9f, .9f), Random.Range(-.9f, .9f));
+                OpeningCollapseFx.Rock(grid.transform, landing, 0, Random.Range(.3f, .5f), false);
+            }
+        }
+        // The cave-in: rocks rain cell by cell from the doorway outward, each big one landing in a dust cloud.
         private void Debris()
         {
-            var grid = FindFirstObjectByType<DungeonGrid>();
-            for (int x = 2; x <= grid.Layout.Core.x - 5; x++)
-                for (int i = 0; i < 6; i++)
-                {
-                    var node = new GameObject("Falling corridor rubble");
-                    node.transform.SetParent(grid.transform, false);
-                    node.transform.position = grid.CellCenter(new Vector2Int(x, grid.Layout.Core.y)) + new Vector3(Random.Range(-.8f, .8f), Random.Range(-2f, 2f));
-                    node.AddComponent<OpeningDebris>();
-                }
+            var grid = FindFirstObjectByType<DungeonGrid>(); if (grid == null) return;
+            var cells = collapseCells;
+            if (cells == null || cells.Count == 0)
+            {
+                // Loaded straight into the collapse: the floor is already rock, so use the corridor's usual span.
+                cells = new System.Collections.Generic.List<Vector2Int>();
+                for (int x = 2; x <= grid.Layout.Core.x - 5; x++)
+                    for (int y = grid.Layout.Core.y - 1; y <= grid.Layout.Core.y + 1; y++) cells.Add(new Vector2Int(x, y));
+            }
+            int edge = grid.Layout.Core.x - 5;
+            foreach (var cell in cells)
+            {
+                float delay = (edge - cell.x) * .06f + Random.Range(0, .15f);
+                var center = grid.CellCenter(cell);
+                OpeningCollapseFx.Rock(grid.transform, center + new Vector3(Random.Range(-.5f, .5f), Random.Range(-.5f, .5f)), delay, Random.Range(1.1f, 1.6f), true);
+                OpeningCollapseFx.Rock(grid.transform, center + new Vector3(Random.Range(-.9f, .9f), Random.Range(-.9f, .9f)), delay + Random.Range(.05f, .25f), Random.Range(.6f, 1f), true);
+                OpeningCollapseFx.Rock(grid.transform, center + new Vector3(Random.Range(-.9f, .9f), Random.Range(-.9f, .9f)), delay + Random.Range(.1f, .35f), Random.Range(.3f, .5f), false);
+                // A wider, slower cloud that hangs over the rubble after the rocks settle.
+                OpeningCollapseFx.Dust(grid.transform, center + Vector3.down * .6f, delay + .35f, Random.Range(1.3f, 1.7f), 1.8f);
+            }
         }
         private void OnDisable() => RestoreCamera();
         private void OnDestroy() { RestoreCamera(); if (panel != null) Destroy(panel.gameObject); if (bossBar != null) Destroy(bossBar.gameObject); if (flash != null) Destroy(flash.gameObject); if (objective != null) Destroy(objective.transform.parent.gameObject); }
     }
-    public sealed class OpeningDebris : MonoBehaviour
+    // Tutorial collapse pieces drawn by Tools/Art/OpeningCollapseFx; the sizes below must match that script.
+    public sealed class OpeningCollapseFx : MonoBehaviour
     {
-        private static Sprite sprite;
+        private const int RockSize = 16, RockCount = 8, DustWidth = 64, DustHeight = 48, DustFrames = 12;
+        private const float PixelsPerUnit = 16, FallHeight = 7, Gravity = 60, RestSeconds = 1.1f;
+        // Above every actor (ActorDepthSorting uses -30000..30000), so the cave-in reads in front of the fight.
+        private const int RockOrder = 30020, DustOrder = 30010;
+        private static Sprite[] rocks, dust;
+        private static Material material;
         private SpriteRenderer image;
-        private Vector3 velocity;
-        private float life;
-        private void Awake()
+        private Vector3 landing;
+        private float delay, life, scale, fall, speed, dustLength;
+        private bool isDust, kicksDust;
+
+        private static bool Load()
         {
-            if (sprite == null) sprite = Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, Texture2D.whiteTexture.width, Texture2D.whiteTexture.height), Vector2.one * .5f, Texture2D.whiteTexture.width);
-            image = gameObject.AddComponent<SpriteRenderer>(); image.sprite = sprite; image.sortingOrder = 100;
-            image.color = new Color(.6f, .46f, .32f); transform.localScale = Vector3.one * Random.Range(.12f, .45f);
-            velocity = new Vector3(Random.Range(-2f, 2f), Random.Range(2f, 5f));
+            if (rocks != null) return rocks.Length > 0 && dust.Length > 0;
+            material = Resources.Load<Material>("GameplayEffectOriginalColor");
+            rocks = Slice(Resources.Load<Texture2D>("OpeningCollapse/rocks"), RockSize, RockSize, RockCount, new Vector2(.5f, .5f));
+            dust = Slice(Resources.Load<Texture2D>("OpeningCollapse/dust"), DustWidth, DustHeight, DustFrames, new Vector2(.5f, 4f / DustHeight));
+            return rocks.Length > 0 && dust.Length > 0;
+        }
+        private static Sprite[] Slice(Texture2D texture, int width, int height, int count, Vector2 pivot)
+        {
+            if (texture == null) return new Sprite[0];
+            texture.filterMode = FilterMode.Point;
+            var sprites = new Sprite[count];
+            for (int i = 0; i < count; i++) sprites[i] = Sprite.Create(texture, new Rect(i * width, 0, width, height), pivot, PixelsPerUnit);
+            return sprites;
+        }
+        private static OpeningCollapseFx Create(Transform parent, string name)
+        {
+            var node = new GameObject(name); node.transform.SetParent(parent, false);
+            var fx = node.AddComponent<OpeningCollapseFx>();
+            fx.image = node.AddComponent<SpriteRenderer>(); if (material != null) fx.image.sharedMaterial = material;
+            fx.image.enabled = false; return fx;
+        }
+        // A rock that drops from the ceiling onto `at`; big ones throw up their own dust when they land.
+        public static void Rock(Transform parent, Vector3 at, float delay, float scale, bool kicksDust)
+        {
+            if (!Load()) return;
+            var fx = Create(parent, "Collapse rock");
+            fx.landing = at; fx.delay = delay; fx.scale = scale; fx.kicksDust = kicksDust;
+            fx.image.sprite = rocks[Random.Range(0, rocks.Length)]; fx.image.flipX = Random.value < .5f;
+            fx.image.sortingOrder = RockOrder; fx.transform.localScale = Vector3.one * scale;
+            fx.transform.rotation = Quaternion.Euler(0, 0, Random.Range(0, 4) * 90);
+            fx.fall = FallHeight * Random.Range(.8f, 1.2f);
+        }
+        public static void Dust(Transform parent, Vector3 at, float delay, float scale, float length = 1.1f)
+        {
+            if (!Load()) return;
+            var fx = Create(parent, "Collapse dust");
+            fx.isDust = true; fx.landing = at; fx.delay = delay; fx.dustLength = length;
+            fx.image.sortingOrder = DustOrder; fx.image.flipX = Random.value < .5f;
+            fx.transform.localScale = Vector3.one * scale; fx.transform.position = at;
         }
         private void Update()
         {
-            life += Time.deltaTime; velocity += Vector3.down * (6 * Time.deltaTime); transform.position += velocity * Time.deltaTime;
-            transform.Rotate(0, 0, 160 * Time.deltaTime); var color = image.color; color.a = Mathf.Clamp01(1 - life / 2.5f); image.color = color;
-            if (life >= 2.5f) Destroy(gameObject);
+            if (delay > 0) { delay -= Time.deltaTime; return; }
+            life += Time.deltaTime;
+            if (isDust) { UpdateDust(); return; }
+            if (fall > 0)
+            {
+                // Drops in fast with no fade-in: the weight comes from the speed.
+                image.enabled = true;
+                speed += Gravity * Time.deltaTime; fall = Mathf.Max(0, fall - speed * Time.deltaTime);
+                transform.position = landing + Vector3.up * fall;
+                if (fall <= 0)
+                {
+                    life = 0;
+                    if (kicksDust) Dust(transform.parent, landing + Vector3.down * .3f, 0, scale * .9f);
+                }
+                return;
+            }
+            // A small hop on impact, a rest, then it shrinks away to reveal the rock tiles underneath.
+            float hop = Mathf.Sin(Mathf.Clamp01(life / .18f) * Mathf.PI) * .18f * scale;
+            transform.position = landing + Vector3.up * hop;
+            float gone = Mathf.Clamp01((life - RestSeconds) / .35f);
+            transform.localScale = Vector3.one * scale * (1 - gone);
+            if (gone >= 1) Destroy(gameObject);
+        }
+        private void UpdateDust()
+        {
+            int frame = Mathf.FloorToInt(life / dustLength * dust.Length);
+            if (frame >= dust.Length) { Destroy(gameObject); return; }
+            image.enabled = true; image.sprite = dust[frame];
+            transform.position = landing + Vector3.up * (life * .25f);
         }
     }
 }

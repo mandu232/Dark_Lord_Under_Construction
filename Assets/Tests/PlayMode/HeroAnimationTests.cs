@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System.Collections;
 using DarkLord.Actors;
+using DarkLord.Gameplay;
 using DarkLord.Minions;
 using NUnit.Framework;
 using UnityEditor;
@@ -37,6 +38,77 @@ namespace DarkLord.Tests
             actor = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(
                 "Assets/Prefabs/Enemies/WaveInvader.prefab"));
             actor.transform.position = new Vector3(1000, 1000, 0);
+        }
+
+        [UnityTest]
+        public IEnumerator HumanSoldiersUseTheirRoleArtAndPatternFrames()
+        {
+            Spawn();
+            actor.GetComponent<MinionController>().enabled = false;
+            var tactics = actor.GetComponent<InvaderTactics>() ?? actor.AddComponent<InvaderTactics>();
+            var animator = actor.GetComponent<Animator>();
+            var body = actor.GetComponent<SpriteRenderer>();
+            var original = animator.runtimeAnimatorController;
+            var roles = new[] { InvaderRole.Shieldbearer, InvaderRole.Healer, InvaderRole.Charger, InvaderRole.Warrior,
+                InvaderRole.HolyKnight, InvaderRole.Paladin, InvaderRole.Cleric };
+            var actions = new[] { InvaderAction.ShieldBash, InvaderAction.Healing, InvaderAction.Charging, InvaderAction.Ready,
+                InvaderAction.Ready, InvaderAction.ShieldBash, InvaderAction.Healing };
+            var art = new[] { "shield", "healer", "knight", "warrior", "holy-knight", "paladin", "cleric" };
+            var firstPatternFrames = new[] { 8, 8, 9, -1, -1, 8, 8 };
+            for (int i = 0; i < roles.Length; i++)
+            {
+                tactics.RestoreSave(new InvaderTacticsSaveData {
+                    role = roles[i], action = actions[i], remaining = 5, healPosition = new Vector2(990, 1000)
+                });
+                yield return null;
+                yield return null;
+                Assert.That(animator.runtimeAnimatorController.name, Is.EqualTo(art[i]));
+                Assert.That(body.sprite.name, Does.StartWith(art[i] + "_"));
+                if (firstPatternFrames[i] >= 0)
+                    Assert.That(body.sprite.name, Is.EqualTo(art[i] + "_" + firstPatternFrames[i]));
+                if (actions[i] == InvaderAction.Healing) Assert.That(body.flipX, Is.True);
+            }
+
+            tactics.SetRace(RegionCatalog.At(1));
+            yield return null;
+            yield return null;
+            Assert.That(animator.runtimeAnimatorController, Is.SameAs(original));
+        }
+
+        [UnityTest]
+        public IEnumerator RegionalRolesAndChampionsUseTheirOwnArt()
+        {
+            Spawn();
+            actor.GetComponent<MinionController>().enabled = false;
+            var tactics = actor.GetComponent<InvaderTactics>() ?? actor.AddComponent<InvaderTactics>();
+            var body = actor.GetComponent<SpriteRenderer>();
+            var roles = new[] { InvaderRole.Warrior, InvaderRole.Shieldbearer, InvaderRole.Healer,
+                InvaderRole.Charger, InvaderRole.Charger };
+            var actions = new[] { InvaderAction.Ready, InvaderAction.ShieldBash, InvaderAction.Healing,
+                InvaderAction.Charging, InvaderAction.Judging };
+            var suffixes = new[] { "warrior", "shield", "healer", "charger", "champion" };
+            var patternFrames = new[] { -1, 8, 8, 9, 10 };
+            foreach (var (region, prefix) in new[] { (1, "orc-"), (2, "elf-"), (4, "frost-"), (5, "ember-") })
+            {
+                tactics.SetRace(RegionCatalog.At(region));
+                for (int i = 0; i < roles.Length; i++)
+                {
+                    if (region == 4 && roles[i] == InvaderRole.Healer ||
+                        region == 5 && roles[i] == InvaderRole.Shieldbearer) continue;
+                    tactics.SetHero(false);
+                    tactics.RestoreSave(new InvaderTacticsSaveData {
+                        role = roles[i], action = actions[i], hero = i == roles.Length - 1,
+                        remaining = 5, direction = Vector2.right
+                    });
+                    yield return null;
+                    yield return null;
+                    string sheet = prefix + suffixes[i];
+                    Assert.That(actor.GetComponent<Animator>().runtimeAnimatorController.name, Is.EqualTo(sheet));
+                    Assert.That(body.sprite.name, Does.StartWith(sheet + "_"));
+                    if (patternFrames[i] >= 0)
+                        Assert.That(body.sprite.name, Is.EqualTo(sheet + "_" + patternFrames[i]));
+                }
+            }
         }
 
         [UnityTest]

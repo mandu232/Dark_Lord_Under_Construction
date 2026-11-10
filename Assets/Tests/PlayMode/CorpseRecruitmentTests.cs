@@ -407,7 +407,7 @@ namespace DarkLord.Tests
             var prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Enemies/WaveInvader.prefab");
             var actor = Object.Instantiate(prefab).GetComponent<MinionController>();
             actor.Health.Configure(Faction.Invader, 50); actor.Health.Kill();
-            var corpse = waves.Harvest.LeaveCorpse(actor.Health);
+            var corpse = waves.Harvest.LeaveCorpse(actor.Health, true);
             var clip = UnityEditor.AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/Animations/Enemies/SwordSoldier/SwordSoldierDie.anim");
             var binding = UnityEditor.AnimationUtility.GetObjectReferenceCurveBindings(clip).Single();
             var expected = (Sprite)UnityEditor.AnimationUtility.GetObjectReferenceCurve(clip, binding).Last().value;

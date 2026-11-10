@@ -8,10 +8,27 @@ namespace DarkLord.Gameplay
     {
         public const float RelocationDuration = 7f, RelocationArrivalAt = 4.6f;
         private int arrivedRegion;
+        private int[] regionOrder;
         public float RelocationElapsed { get; private set; }
         public bool IsRelocating => State == WaveState.Relocating;
-        public RegionDefinition CurrentRegion => RegionCatalog.At(arrivedRegion);
-        public RegionDefinition NextWaveRegion => RegionCatalog.ForDay(CurrentWave + 1);
+        public int CurrentRegionNumber => arrivedRegion + 1;
+        public RegionDefinition CurrentRegion => RegionAtSlot(arrivedRegion);
+        public RegionDefinition NextWaveRegion => RegionForWave(CurrentWave + 1);
+        public RegionDefinition RegionForWave(int wave) => RegionAtSlot(RegionCatalog.IndexForDay(wave));
+
+        private RegionDefinition RegionAtSlot(int slot) => RegionCatalog.At(regionOrder == null ? slot : regionOrder[slot]);
+
+        internal void InitializeRegionRoute()
+        {
+            regionOrder = new int[RegionCatalog.Count];
+            for (int i = 0; i < regionOrder.Length; i++) regionOrder[i] = i;
+            // Keep the tutorial region first, then visit every other region once.
+            for (int i = regionOrder.Length - 1; i > 1; i--)
+            {
+                int other = UnityEngine.Random.Range(1, i + 1);
+                (regionOrder[i], regionOrder[other]) = (regionOrder[other], regionOrder[i]);
+            }
+        }
         // True from the moment a region's last day has begun until the dungeon lands in the next one.
         public bool AwaitingRelocation => CurrentWave < FinalWave && RegionCatalog.IndexForDay(CurrentWave + 1) > arrivedRegion;
         public event Action RelocationStarted;
@@ -46,7 +63,7 @@ namespace DarkLord.Gameplay
         {
             RelocationElapsed = 0;
             arrivedRegion = Mathf.Max(savedRegion, RegionCatalog.IndexForDay(CurrentWave));
-            // Runs that had already won under the old five-day limit carry on to the next day.
+            // Victories saved under shorter campaigns carry on to the next region.
             if (State == WaveState.Victorious && CurrentWave < FinalWave) State = WaveState.Preparing;
             if (State == WaveState.Relocating) State = WaveState.Preparing;
         }

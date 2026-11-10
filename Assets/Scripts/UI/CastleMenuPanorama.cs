@@ -17,6 +17,8 @@ namespace DarkLord.UI
         private Sprite originalCharacterSprite;
         [SerializeField, Min(.1f)] private float duration = .85f;
         private Vector2 characterOrigin, titleOrigin, actionsOrigin;
+        // The canvas size the character was placed for (the CanvasScaler reference, 1920x1080).
+        private Vector2 designCanvas = new Vector2(1920, 1080);
         private Vector3 castleScale, characterScale;
         private float setupZoom, zoomFrom, zoomTarget;
         private float view, from, target, elapsed;
@@ -36,6 +38,8 @@ namespace DarkLord.UI
             actionsOrigin=actions.anchoredPosition;
             castleScale=castle.localScale;
             characterScale=character.localScale;
+            var scaler=GetComponentInParent<UnityEngine.UI.CanvasScaler>();
+            if(scaler!=null && scaler.referenceResolution.x>0 && scaler.referenceResolution.y>0)designCanvas=scaler.referenceResolution;
             settingsGroup=settings.GetComponent<CanvasGroup>();
             slotsGroup=slots.GetComponent<CanvasGroup>();
             actionsGroup=actions.GetComponent<CanvasGroup>();
@@ -75,13 +79,16 @@ namespace DarkLord.UI
         {
             float width=((RectTransform)transform).rect.width;
             float height=((RectTransform)transform).rect.height;
-            // Cover ultrawide windows too; the far wall moves less than the foreground.
-            float artWidth=Mathf.Max(height*3, width+1400)+80;
-            castle.sizeDelta=new Vector2(artWidth,Mathf.Max(height+60,artWidth/3));
+            var art=CastleSize(width,height);
+            castle.sizeDelta=art;
             castle.localScale=castleScale*(1+.08f*setupZoom);
-            character.localScale=characterScale*(1+.12f*setupZoom);
-            castle.anchoredPosition=new Vector2(-view*(artWidth-width)*.46f,0)-pointer*5;
-            character.anchoredPosition=characterOrigin+Vector2.left*(view*(width+100))-pointer*14;
+            // The castle is refit to every window shape, so the character (placed for the design canvas)
+            // keeps its seat by scaling and moving with it around the screen centre.
+            float fit=art.y/CastleSize(designCanvas.x,designCanvas.y).y;
+            var seat=new Vector2(width*.5f,-height*.5f)+(characterOrigin-new Vector2(designCanvas.x*.5f,-designCanvas.y*.5f))*fit;
+            character.localScale=characterScale*(fit*(1+.12f*setupZoom));
+            castle.anchoredPosition=new Vector2(-view*(art.x-width)*.46f,0)-pointer*5;
+            character.anchoredPosition=seat+Vector2.left*(view*(width+100))-pointer*14;
             title.anchoredPosition=titleOrigin+Vector2.left*(view*width);
             actions.anchoredPosition=actionsOrigin+Vector2.left*(view*width);
             bool setupVisible=state==GameMenu.ScreenState.NewGameSetup || (leavingSetup && elapsed<duration);
@@ -104,6 +111,13 @@ namespace DarkLord.UI
             }
             SetInput(actionsGroup,ready&&state==GameMenu.ScreenState.Main);
             if(dimmer!=null)dimmer.SetActive(state==GameMenu.ScreenState.Quit);
+        }
+
+        // Cover ultrawide and tall windows too; the far wall moves less than the foreground.
+        private static Vector2 CastleSize(float width,float height)
+        {
+            float artWidth=Mathf.Max(height*3,width+1400)+80;
+            return new Vector2(artWidth,Mathf.Max(height+60,artWidth/3));
         }
 
         private void SetPanel(RectTransform panel,CanvasGroup group,bool visible,bool input)

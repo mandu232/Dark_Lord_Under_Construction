@@ -1,6 +1,7 @@
 using DarkLord.Dungeon;
 using DarkLord.Minions;
 using UnityEngine;
+using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.Animations;
@@ -15,17 +16,27 @@ namespace DarkLord.Gameplay
         private const int CorpseSortingOrder = -30001;
         public InvaderRole Role { get; private set; }
         public bool Consumed { get; private set; }
+        // The wave/day number on which this corpse fell; it rots two days later.
+        public int Day { get; internal set; }
         internal DarkLord.Minions.CorpseWorker AssignedWorker { get; set; }
         public SpriteRenderer Visual { get; private set; }
         private Color baseColor;
         private Sprite contactSprite;
         private Texture2D contactTexture;
+        private RowenAnimator fallingRowen;
         public void Configure(SpriteRenderer source, InvaderRole role)
         {
             Role = role;
             Visual = gameObject.AddComponent<SpriteRenderer>();
-            Visual.sprite = source.sprite; Visual.sharedMaterial = source.sharedMaterial;
-            Visual.sprite = DeathPose(source) ?? source.sprite;
+            Visual.sharedMaterial = source.sharedMaterial;
+            var rowen = source.GetComponentInParent<RowenAnimator>();
+            if (rowen != null && rowen.DeathSprite != null)
+            {
+                fallingRowen = rowen;
+                Visual.sprite = rowen.DeathFrame(0);
+                StartCoroutine(PlayFall());
+            }
+            else Visual.sprite = DeathPose(source) ?? source.sprite;
             var actorGroup = source.GetComponentInParent<SortingGroup>();
             Visual.sortingLayerID = actorGroup != null ? actorGroup.sortingLayerID : source.sortingLayerID;
             Visual.sortingOrder = CorpseSortingOrder;
@@ -76,11 +87,35 @@ namespace DarkLord.Gameplay
             if (contactSprite != null) Destroy(contactSprite);
             if (contactTexture != null) Destroy(contactTexture);
         }
+        private IEnumerator PlayFall()
+        {
+            float startedAt = Time.time;
+            while (fallingRowen != null)
+            {
+                Visual.sprite = fallingRowen.DeathFrame(Time.time - startedAt);
+                if (Visual.sprite == fallingRowen.DeathSprite)
+                {
+                    fallingRowen = null;
+                    yield break;
+                }
+                yield return null;
+            }
+        }
+        private void FinishFall()
+        {
+            if (fallingRowen == null) return;
+            Visual.sprite = fallingRowen.DeathSprite;
+            fallingRowen = null;
+        }
         public void SetHeld(bool held)
-        { if (Visual != null) { Visual.sortingOrder = CorpseSortingOrder; Visual.color = baseColor; } }
+        {
+            if (held) FinishFall();
+            if (Visual != null) { Visual.sortingOrder = CorpseSortingOrder; Visual.color = baseColor; }
+        }
         public void Absorb(ResourceBuilding facility)
         {
             if (Consumed) return;
+            FinishFall();
             Consumed = true;
             gameObject.AddComponent<CorpseAbsorptionEffect>().Begin(Visual, facility.transform.position);
         }

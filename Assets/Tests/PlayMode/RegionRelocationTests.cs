@@ -47,16 +47,22 @@ namespace DarkLord.Tests
             Time.timeScale = 1;
         }
 
-        [Test] public void ThreeRegionsLastSevenDaysEach()
+        [Test] public void SixRegionsLastSevenDaysEach()
         {
-            Assert.AreEqual(21, waves.FinalWave);
+            Assert.AreEqual(42, waves.FinalWave);
             Assert.AreEqual(InvaderRace.Human, RegionCatalog.ForDay(7).Race);
             Assert.AreEqual(InvaderRace.Orc, RegionCatalog.ForDay(8).Race);
             Assert.AreEqual(InvaderRace.Orc, RegionCatalog.ForDay(14).Race);
             Assert.AreEqual(InvaderRace.Elf, RegionCatalog.ForDay(15).Race);
             Assert.AreEqual(InvaderRace.Elf, RegionCatalog.ForDay(21).Race);
+            Assert.AreEqual("성국", RegionCatalog.ForDay(22).Name);
+            Assert.AreEqual("성국", RegionCatalog.ForDay(28).Name);
+            Assert.AreEqual(InvaderRace.Frostkin, RegionCatalog.ForDay(29).Race);
+            Assert.AreEqual(InvaderRace.Frostkin, RegionCatalog.ForDay(35).Race);
+            Assert.AreEqual(InvaderRace.Emberborn, RegionCatalog.ForDay(36).Race);
+            Assert.AreEqual(InvaderRace.Emberborn, RegionCatalog.ForDay(42).Race);
             Assert.AreNotEqual(RegionCatalog.ForDay(1).Faction, RegionCatalog.ForDay(8).Faction);
-            foreach (int day in new[] { 7, 14, 21 }) Assert.IsTrue(RegionCatalog.IsBossDay(day));
+            foreach (int day in new[] { 7, 14, 21, 28, 35, 42 }) Assert.IsTrue(RegionCatalog.IsBossDay(day));
             Assert.IsFalse(RegionCatalog.IsBossDay(5));
         }
 
@@ -70,22 +76,55 @@ namespace DarkLord.Tests
             Assert.That(WaveProgression.EnemyCount(21, 4, 2), Is.LessThan(40));
         }
 
-        [Test] public void EveryDayHasAPlanAndBossDaysEndWithACharger()
+        [Test] public void EveryDayHasAPlanAndEndsBossDaysWithItsChampion()
         {
-            for (int day = 1; day <= 21; day++)
+            for (int day = 1; day <= waves.FinalWave; day++)
             {
                 Assert.IsNotEmpty(WaveFormation.Name(day)); Assert.IsNotEmpty(WaveFormation.Advice(day));
                 foreach (int count in new[] { 1, 3, 9, 27 })
                 {
                     var formation = WaveFormation.Create(day, count);
                     Assert.AreEqual(count, formation.Length);
-                    if (RegionCatalog.IsBossDay(day)) Assert.AreEqual(InvaderRole.Charger, formation.Last());
+                    if (RegionCatalog.IsBossDay(day))
+                        Assert.AreEqual(day == 28 ? InvaderRole.Paladin : InvaderRole.Charger, formation.Last());
+                    if (day >= 22 && day <= 28 && count >= 3)
+                        CollectionAssert.AreEquivalent(new[] { InvaderRole.HolyKnight, InvaderRole.Paladin, InvaderRole.Cleric }, formation.Distinct());
                 }
             }
             int Healers(int day) => WaveFormation.Create(day, 20).Count(r => r == InvaderRole.Healer);
             int Chargers(int day) => WaveFormation.Create(day, 20).Count(r => r == InvaderRole.Charger);
             Assert.That(Healers(19), Is.GreaterThan(Healers(12)), "Elves field more healers than orcs");
             Assert.That(Chargers(12), Is.GreaterThan(Chargers(19)), "Orcs field more chargers than elves");
+            CollectionAssert.AreEquivalent(new[] { InvaderRole.Warrior, InvaderRole.Shieldbearer, InvaderRole.Charger },
+                WaveFormation.Create(8, 20, RegionCatalog.At(4)).Distinct());
+            CollectionAssert.AreEquivalent(new[] { InvaderRole.Warrior, InvaderRole.Healer, InvaderRole.Charger },
+                WaveFormation.Create(8, 20, RegionCatalog.At(5)).Distinct());
+        }
+
+        [UnityTest] public IEnumerator FormerDay21VictoryRelocatesAndSpawnsTheHolyArmy()
+        {
+            waves.ConfigureRun(new NewGameOptions { difficulty = GameDifficulty.Easy });
+            waves.RestoreSave(Day(21, WaveState.Victorious));
+            Assert.IsTrue(waves.AwaitingRelocation);
+            yield return null;
+            yield return null;
+            Assert.IsTrue(waves.IsRelocating);
+            yield return UntilNotRelocating();
+            Assert.AreEqual("성국", waves.CurrentRegion.Name);
+            Assert.AreEqual(21, waves.CurrentWave);
+
+            var data = new UnityEditor.SerializedObject(waves);
+            data.FindProperty("spawnInterval").floatValue = .04f;
+            data.ApplyModifiedPropertiesWithoutUndo();
+            waves.BeginNextWave();
+            for (float end = Time.time + 5; waves.CaptureSave().pending > 0 && Time.time < end;)
+                yield return null;
+            Assert.AreEqual(22, waves.CurrentWave);
+            var army = waves.GetComponentsInChildren<InvaderTactics>();
+            CollectionAssert.AreEquivalent(new[] { InvaderRole.HolyKnight, InvaderRole.Paladin, InvaderRole.Cleric },
+                army.Select(t => t.Role).Distinct());
+            Assert.IsTrue(army.All(t => t.name == InvaderTactics.RoleName(t.Role)));
+            SaveSlotStore.Validate(Find<GameSaveSession>().Capture());
         }
 
         [UnityTest] public IEnumerator DungeonRelocatesAfterTheLastDayAndLocksInputUntilLanding()
@@ -107,15 +146,21 @@ namespace DarkLord.Tests
             Assert.AreEqual(WaveState.Preparing, waves.State, "Only one journey per region");
         }
 
-        [UnityTest] public IEnumerator SavingMidJourneyIsValidAndLoadingFinishesTheTrip()
+        [UnityTest] public IEnumerator ShuffledRouteSurvivesSavingMidJourneyAndDeterminesTheNextArmy()
         {
             waves.ConfigureRun(new NewGameOptions { difficulty = GameDifficulty.Easy });
-            waves.RestoreSave(Day(7));
+            var departure = Day(7);
+            var order = new[] { 0, 5, 4, 3, 1, 2 };
+            departure.schedule.regionOrder = order;
+            waves.RestoreSave(departure);
+            Assert.AreEqual(InvaderRace.Emberborn, waves.NextWaveRegion.Race);
             yield return null; yield return null;
             Assert.IsTrue(waves.IsRelocating);
             var session = Find<GameSaveSession>();
             var saved = JsonUtility.FromJson<GameSaveData>(JsonUtility.ToJson(session.Capture()));
+            saved.options.difficulty = GameDifficulty.Easy;
             Assert.AreEqual(WaveState.Preparing, saved.wave.state);
+            CollectionAssert.AreEqual(order, saved.wave.schedule.regionOrder);
             SaveSlotStore.Validate(saved);
             session.Restore(saved);
             Assert.IsFalse(waves.IsRelocating);
@@ -127,7 +172,24 @@ namespace DarkLord.Tests
             session.Restore(arrived);
             yield return null; yield return null;
             Assert.IsFalse(waves.IsRelocating, "Arrival is remembered");
-            Assert.AreEqual(InvaderRace.Orc, waves.CurrentRegion.Race);
+            Assert.AreEqual(2, waves.CurrentRegionNumber);
+            Assert.AreEqual(InvaderRace.Emberborn, waves.CurrentRegion.Race);
+            Assert.AreEqual(InvaderRace.Frostkin, waves.RegionForWave(15).Race);
+
+            Assert.IsTrue(waves.CanStartWave);
+            var expectedFormation = waves.NextFormation;
+            var director = new UnityEditor.SerializedObject(waves);
+            director.FindProperty("spawnInterval").floatValue = .04f;
+            director.ApplyModifiedPropertiesWithoutUndo();
+            waves.BeginNextWave();
+            for (float end = Time.time + 5; waves.CaptureSave().pending > 0 && Time.time < end;)
+                yield return null;
+            Assert.AreEqual(8, waves.CurrentWave);
+            var army = waves.GetComponentsInChildren<InvaderTactics>();
+            CollectionAssert.AreEquivalent(expectedFormation, army.Select(t => t.Role));
+            Assert.IsTrue(army.All(t => t.Race == InvaderRace.Emberborn));
+            session.Restore(JsonUtility.FromJson<GameSaveData>(JsonUtility.ToJson(session.Capture())));
+            Assert.IsTrue(waves.GetComponentsInChildren<InvaderTactics>().All(t => t.Race == InvaderRace.Emberborn));
         }
 
         [UnityTest] public IEnumerator AutomaticInvasionWaitsForTheDungeonToLeave()

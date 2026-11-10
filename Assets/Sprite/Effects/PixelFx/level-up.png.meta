@@ -1,0 +1,1979 @@
+fileFormatVersion: 2
+guid: 7a08dd60acbcc244ab30c1da312eafa2
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5778072383123337153
+    second: level-up_0
+  - first:
+      213: -228348366837613795
+    second: level-up_1
+  - first:
+      213: 5248118758586235745
+    second: level-up_2
+  - first:
+      213: -4396421399193760398
+    second: level-up_3
+  - first:
+      213: 2472788682686172385
+    second: level-up_4
+  - first:
+      213: -1489370588447082523
+    second: level-up_5
+  - first:
+      213: 4025561863212812827
+    second: level-up_6
+  - first:
+      213: -9142672131800932827
+    second: level-up_7
+  - first:
+      213: -2365614276738138252
+    second: level-up_8
+  - first:
+      213: -3789245752470000831
+    second: level-up_9
+  - first:
+      213: 1882946538726766230
+    second: level-up_10
+  - first:
+      213: -5885979386287448337
+    second: level-up_11
+  - first:
+      213: 1678474097531010059
+    second: level-up_12
+  - first:
+      213: -6827635429364771952
+    second: level-up_13
+  - first:
+      213: 6348205240039878630
+    second: level-up_14
+  - first:
+      213: -1737021411993026586
+    second: level-up_15
+  - first:
+      213: 6366632445014051425
+    second: level-up_16
+  - first:
+      213: -578059674820838784
+    second: level-up_17
+  - first:
+      213: -3223933136112054768
+    second: level-up_18
+  - first:
+      213: -4432467977181073399
+    second: level-up_19
+  - first:
+      213: -1831636681247276053
+    second: level-up_20
+  - first:
+      213: -7440721399057531632
+    second: level-up_21
+  - first:
+      213: 1806723467358896183
+    second: level-up_22
+  - first:
+      213: -3335708663408962812
+    second: level-up_23
+  - first:
+      213: -415822384615764918
+    second: level-up_24
+  - first:
+      213: 3077640379396684974
+    second: level-up_25
+  - first:
+      213: -7585354221488223167
+    second: level-up_26
+  - first:
+      213: -8672464691736601014
+    second: level-up_27
+  - first:
+      213: -8242920999447865265
+    second: level-up_28
+  - first:
+      213: -9045960475802573366
+    second: level-up_29
+  - first:
+      213: -110194731301631013
+    second: level-up_30
+  - first:
+      213: -1426216339777150191
+    second: level-up_31
+  - first:
+      213: 7972636323152689675
+    second: level-up_32
+  - first:
+      213: -4027262457717149572
+    second: level-up_33
+  - first:
+      213: -4993204423694238923
+    second: level-up_34
+  - first:
+      213: 6233591486016243879
+    second: level-up_35
+  - first:
+      213: 7719194193747257979
+    second: level-up_36
+  - first:
+      213: 8888876269089003915
+    second: level-up_37
+  - first:
+      213: 859844177047710295
+    second: level-up_38
+  - first:
+      213: 1698586524767096437
+    second: level-up_39
+  - first:
+      213: -3035088721673035503
+    second: level-up_40
+  - first:
+      213: -8613161494108110271
+    second: level-up_41
+  - first:
+      213: 6556993510220314697
+    second: level-up_42
+  - first:
+      213: -8707640504611827471
+    second: level-up_43
+  - first:
+      213: 492378873853938969
+    second: level-up_44
+  - first:
+      213: 3614087115525957259
+    second: level-up_45
+  - first:
+      213: 3986196139694401224
+    second: level-up_46
+  - first:
+      213: 4597773382742833616
+    second: level-up_47
+  - first:
+      213: 6441573240547790020
+    second: level-up_48
+  - first:
+      213: -8923995793598156587
+    second: level-up_49
+  - first:
+      213: 3950085705868885501
+    second: level-up_50
+  - first:
+      213: 1267337053513134947
+    second: level-up_51
+  - first:
+      213: -953263525452421227
+    second: level-up_52
+  - first:
+      213: 4963626283464473833
+    second: level-up_53
+  - first:
+      213: 8711421272921336777
+    second: level-up_54
+  - first:
+      213: -3044794495568972596
+    second: level-up_55
+  - first:
+      213: -2623593962465511199
+    second: level-up_56
+  - first:
+      213: -1134018211066769601
+    second: level-up_57
+  - first:
+      213: 8843989046089849895
+    second: level-up_58
+  - first:
+      213: 1490914931873646693
+    second: level-up_59
+  - first:
+      213: 7962290408333276710
+    second: level-up_60
+  - first:
+      213: -5294855226059892286
+    second: level-up_61
+  - first:
+      213: -7301694241426761602
+    second: level-up_62
+  - first:
+      213: -3357148812863544254
+    second: level-up_63
+  - first:
+      213: 4721405168672592187
+    second: level-up_64
+  - first:
+      213: 2323667106533816614
+    second: level-up_65
+  - first:
+      213: -2289400744728839615
+    second: level-up_66
+  - first:
+      213: -3950284266166641662
+    second: level-up_67
+  - first:
+      213: -409778436025145713
+    second: level-up_68
+  - first:
+      213: -7790914950438451820
+    second: level-up_69
+  - first:
+      213: -3950399372713924121
+    second: level-up_70
+  - first:
+      213: -755600332871870654
+    second: level-up_71
+  - first:
+      213: 2450335635773593424
+    second: level-up_72
+  - first:
+      213: 5587956151434520314
+    second: level-up_73
+  - first:
+      213: -533735224798974177
+    second: level-up_74
+  - first:
+      213: -3221995685060018723
+    second: level-up_75
+  - first:
+      213: -8508550213343668577
+    second: level-up_76
+  - first:
+      213: 6056917778540704352
+    second: level-up_77
+  - first:
+      213: 4311364107691068065
+    second: level-up_78
+  - first:
+      213: -7301006423367149389
+    second: level-up_79
+  - first:
+      213: -3985409620855035105
+    second: level-up_80
+  - first:
+      213: 5869259324413708451
+    second: level-up_81
+  - first:
+      213: 938198450999306308
+    second: level-up_82
+  - first:
+      213: 2486736633141511814
+    second: level-up_83
+  - first:
+      213: 8798253451423000373
+    second: level-up_84
+  - first:
+      213: 2184081433694922779
+    second: level-up_85
+  - first:
+      213: -8670279824251022046
+    second: level-up_86
+  - first:
+      213: 8616318677055995678
+    second: level-up_87
+  - first:
+      213: 3039592473871837684
+    second: level-up_88
+  - first:
+      213: -6037516551755706990
+    second: level-up_89
+  - first:
+      213: 5752289545524069718
+    second: level-up_90
+  - first:
+      213: -3684272427127056931
+    second: level-up_91
+  - first:
+      213: -6397437979139753926
+    second: level-up_92
+  - first:
+      213: 5715403766277055848
+    second: level-up_93
+  - first:
+      213: 2727128888479939899
+    second: level-up_94
+  - first:
+      213: 5348120897582814360
+    second: level-up_95
+  - first:
+      213: -5488069628052469544
+    second: level-up_96
+  - first:
+      213: -3855286164615941803
+    second: level-up_97
+  - first:
+      213: -2913504323157170890
+    second: level-up_98
+  - first:
+      213: -5609788677893666816
+    second: level-up_99
+  - first:
+      213: -7449769048833741699
+    second: level-up_100
+  - first:
+      213: -3316301115186545366
+    second: level-up_101
+  - first:
+      213: 2840372460214142485
+    second: level-up_102
+  - first:
+      213: 5994601775377575466
+    second: level-up_103
+  - first:
+      213: -2897757500744337196
+    second: level-up_104
+  - first:
+      213: -4396270756281974822
+    second: level-up_105
+  - first:
+      213: 6129295755192915923
+    second: level-up_106
+  - first:
+      213: -4735532988708489108
+    second: level-up_107
+  - first:
+      213: -4539688334123113150
+    second: level-up_108
+  - first:
+      213: 2475620516657423780
+    second: level-up_109
+  - first:
+      213: -6731442167981623629
+    second: level-up_110
+  - first:
+      213: -3755003448522331408
+    second: level-up_111
+  - first:
+      213: 1972288832190722711
+    second: level-up_112
+  - first:
+      213: 7291859051920008454
+    second: level-up_113
+  - first:
+      213: -7457130991557876680
+    second: level-up_114
+  - first:
+      213: -8244254917390417849
+    second: level-up_115
+  - first:
+      213: -5978604173454188597
+    second: level-up_116
+  - first:
+      213: -5554240201320477679
+    second: level-up_117
+  - first:
+      213: 1305260543980141388
+    second: level-up_118
+  - first:
+      213: -7734466347894947273
+    second: level-up_119
+  - first:
+      213: 5015928261006613434
+    second: level-up_120
+  - first:
+      213: -1097653344722052044
+    second: level-up_121
+  - first:
+      213: 9063664285613491984
+    second: level-up_122
+  - first:
+      213: -5654618676392692386
+    second: level-up_123
+  - first:
+      213: 3043925085441490342
+    second: level-up_124
+  - first:
+      213: -2461125294560588805
+    second: level-up_125
+  - first:
+      213: -5821650455968200974
+    second: level-up_126
+  - first:
+      213: -7521996057875953875
+    second: level-up_127
+  - first:
+      213: -994576444407070138
+    second: level-up_128
+  - first:
+      213: 7779482547498705888
+    second: level-up_129
+  - first:
+      213: 2660087137884837606
+    second: level-up_130
+  - first:
+      213: 4054278744730584863
+    second: level-up_131
+  - first:
+      213: -6484609400790200810
+    second: level-up_132
+  - first:
+      213: -8775535920222403278
+    second: level-up_133
+  - first:
+      213: 2507250403521505582
+    second: level-up_134
+  - first:
+      213: 6144813936446358508
+    second: level-up_135
+  - first:
+      213: 7791132346027473062
+    second: level-up_136
+  - first:
+      213: -5109249946370164653
+    second: level-up_137
+  - first:
+      213: 2509579849506731987
+    second: level-up_138
+  - first:
+      213: 2430649066728020134
+    second: level-up_139
+  - first:
+      213: 8762783860207788703
+    second: level-up_140
+  - first:
+      213: -5661870631636818715
+    second: level-up_141
+  - first:
+      213: -88838993394939951
+    second: level-up_142
+  - first:
+      213: -7362573457614192957
+    second: level-up_143
+  - first:
+      213: 2210783737381042103
+    second: level-up_144
+  - first:
+      213: 337217640820990020
+    second: level-up_145
+  - first:
+      213: 4275706169785118780
+    second: level-up_146
+  - first:
+      213: 3315927634792458681
+    second: level-up_147
+  - first:
+      213: 2471169673645254506
+    second: level-up_148
+  - first:
+      213: -7655100988207257227
+    second: level-up_149
+  - first:
+      213: -5185848021274522146
+    second: level-up_150
+  - first:
+      213: -1493221025913651296
+    second: level-up_151
+  - first:
+      213: 5367660026563636815
+    second: level-up_152
+  - first:
+      213: -7597800040833613942
+    second: level-up_153
+  - first:
+      213: -4124454913537102107
+    second: level-up_154
+  - first:
+      213: -1332436170441681178
+    second: level-up_155
+  - first:
+      213: 5600789379691470147
+    second: level-up_156
+  - first:
+      213: -9112647640651086898
+    second: level-up_157
+  - first:
+      213: -44760448843609519
+    second: level-up_158
+  - first:
+      213: 1622217438143460383
+    second: level-up_159
+  - first:
+      213: -3561958219731735607
+    second: level-up_160
+  - first:
+      213: 1699229729407451430
+    second: level-up_161
+  - first:
+      213: 9877390134768156
+    second: level-up_162
+  - first:
+      213: 4163583132559127467
+    second: level-up_163
+  - first:
+      213: 3572323121864504396
+    second: level-up_164
+  - first:
+      213: 3914660920415722380
+    second: level-up_165
+  - first:
+      213: -6495489585698012555
+    second: level-up_166
+  - first:
+      213: 5042309336188199859
+    second: level-up_167
+  - first:
+      213: 6773802152748545718
+    second: level-up_168
+  - first:
+      213: -8296877486700653111
+    second: level-up_169
+  - first:
+      213: 6016109235422065299
+    second: level-up_170
+  - first:
+      213: -5708100036093392312
+    second: level-up_171
+  - first:
+      213: -4178596536850320543
+    second: level-up_172
+  - first:
+      213: 1802966995020267313
+    second: level-up_173
+  - first:
+      213: 9065385722290857365
+    second: level-up_174
+  - first:
+      213: -5601119543054136045
+    second: level-up_175
+  - first:
+      213: 2182889011202278028
+    second: level-up_176
+  - first:
+      213: -7881711641091073785
+    second: level-up_177
+  - first:
+      213: 5609542575675073717
+    second: level-up_178
+  - first:
+      213: -3857879138269809000
+    second: level-up_179
+  - first:
+      213: 4852273175805938806
+    second: level-up_180
+  - first:
+      213: -7781047518303128435
+    second: level-up_181
+  - first:
+      213: 2333355499719014712
+    second: level-up_182
+  - first:
+      213: 3649252758164085001
+    second: level-up_183
+  - first:
+      213: -5518617348664411337
+    second: level-up_184
+  - first:
+      213: -6460447464262872380
+    second: level-up_185
+  - first:
+      213: -2118880081557210091
+    second: level-up_186
+  - first:
+      213: 3356668984615843904
+    second: level-up_187
+  - first:
+      213: 7411852632135596935
+    second: level-up_188
+  - first:
+      213: 1721645307192148054
+    second: level-up_189
+  - first:
+      213: -2931492893652166240
+    second: level-up_190
+  - first:
+      213: -8080799038136798408
+    second: level-up_191
+  - first:
+      213: -7979401641968467597
+    second: level-up_192
+  - first:
+      213: 2998165720606395750
+    second: level-up_193
+  - first:
+      213: 5029234765995506472
+    second: level-up_194
+  - first:
+      213: -6358285708140841670
+    second: level-up_195
+  - first:
+      213: 4063346390543084638
+    second: level-up_196
+  - first:
+      213: -6515808538994576969
+    second: level-up_197
+  - first:
+      213: 3424698066589020544
+    second: level-up_198
+  - first:
+      213: 7588677683602173885
+    second: level-up_199
+  - first:
+      213: 8522835368620818070
+    second: level-up_200
+  - first:
+      213: 4662306365702754704
+    second: level-up_201
+  - first:
+      213: -2800212328342139969
+    second: level-up_202
+  - first:
+      213: 6916106459600423050
+    second: level-up_203
+  - first:
+      213: 3953231193154375595
+    second: level-up_204
+  - first:
+      213: 5516305829581628644
+    second: level-up_205
+  - first:
+      213: 1149407083400904589
+    second: level-up_206
+  - first:
+      213: -7247746617734366015
+    second: level-up_207
+  - first:
+      213: -2005779480418903320
+    second: level-up_208
+  - first:
+      213: -7399978072516601639
+    second: level-up_209
+  - first:
+      213: -508963483490042370
+    second: level-up_210
+  - first:
+      213: -3840143828559090705
+    second: level-up_211
+  - first:
+      213: 8732681602643531518
+    second: level-up_212
+  - first:
+      213: 991119645986198921
+    second: level-up_213
+  - first:
+      213: -5825050373817380168
+    second: level-up_214
+  - first:
+      213: 6675613625418709863
+    second: level-up_215
+  - first:
+      213: -1767290299043420116
+    second: level-up_216
+  - first:
+      213: 6081068726623682101
+    second: level-up_217
+  - first:
+      213: 1621831034398374686
+    second: level-up_218
+  - first:
+      213: -7726088032120001855
+    second: level-up_219
+  - first:
+      213: 7932007940549893099
+    second: level-up_220
+  - first:
+      213: 6112375619986180939
+    second: level-up_221
+  - first:
+      213: 5013974252156362722
+    second: level-up_222
+  - first:
+      213: 6732104127997082787
+    second: level-up_223
+  - first:
+      213: -5591548250103755804
+    second: level-up_224
+  - first:
+      213: 4469875385155908137
+    second: level-up_225
+  - first:
+      213: -4861045073965833218
+    second: level-up_226
+  - first:
+      213: -6772443965890006993
+    second: level-up_227
+  - first:
+      213: -7890344026221737953
+    second: level-up_228
+  - first:
+      213: 8046567709083748502
+    second: level-up_229
+  - first:
+      213: 4546099146440298621
+    second: level-up_230
+  - first:
+      213: -4524850126000407545
+    second: level-up_231
+  - first:
+      213: -8724321780872963112
+    second: level-up_232
+  - first:
+      213: -880134316585364775
+    second: level-up_233
+  - first:
+      213: 6775029508165906581
+    second: level-up_234
+  - first:
+      213: 8230968807727515056
+    second: level-up_235
+  - first:
+      213: 8168015006448953953
+    second: level-up_236
+  - first:
+      213: -4494309062590011297
+    second: level-up_237
+  - first:
+      213: 2304664112851806699
+    second: level-up_238
+  - first:
+      213: 2150840840171683765
+    second: level-up_239
+  - first:
+      213: 3704162246091379206
+    second: level-up_240
+  - first:
+      213: 5327039799071786251
+    second: level-up_241
+  - first:
+      213: 8026698419283257434
+    second: level-up_242
+  - first:
+      213: -3381370481158918292
+    second: level-up_243
+  - first:
+      213: -4509881511704686452
+    second: level-up_244
+  - first:
+      213: -3639233780504018626
+    second: level-up_245
+  - first:
+      213: 4986653781862415681
+    second: level-up_246
+  - first:
+      213: 6248254557434712441
+    second: level-up_247
+  - first:
+      213: 1006847305051858830
+    second: level-up_248
+  - first:
+      213: -3104688884948906942
+    second: level-up_249
+  - first:
+      213: -1926678464041924139
+    second: level-up_250
+  - first:
+      213: -2700021704481152873
+    second: level-up_251
+  - first:
+      213: 2709951075512123329
+    second: level-up_252
+  - first:
+      213: -5404869237343233977
+    second: level-up_253
+  - first:
+      213: 5069590448696365408
+    second: level-up_254
+  - first:
+      213: -2805394040542476372
+    second: level-up_255
+  - first:
+      213: -5781282408684383155
+    second: level-up_256
+  - first:
+      213: 6851417706098892698
+    second: level-up_257
+  - first:
+      213: 2236988877868719501
+    second: level-up_258
+  - first:
+      213: 1695131574132339074
+    second: level-up_259
+  - first:
+      213: -4583019436858705625
+    second: level-up_260
+  - first:
+      213: -2706100348746503780
+    second: level-up_261
+  - first:
+      213: 8002659977339924425
+    second: level-up_262
+  - first:
+      213: 5374071399688672410
+    second: level-up_263
+  - first:
+      213: 5171807894766508161
+    second: level-up_264
+  - first:
+      213: -3866673681793413315
+    second: level-up_265
+  - first:
+      213: 7159314847052026842
+    second: level-up_266
+  - first:
+      213: 2227584695827289931
+    second: level-up_267
+  - first:
+      213: -227356452290127512
+    second: level-up_268
+  - first:
+      213: 5773742652815264421
+    second: level-up_269
+  - first:
+      213: -558671414095311641
+    second: level-up_270
+  - first:
+      213: 5401443722171216211
+    second: level-up_271
+  - first:
+      213: -5234956197935845039
+    second: level-up_272
+  - first:
+      213: 2682750609691494632
+    second: level-up_273
+  - first:
+      213: 1681909247938179422
+    second: level-up_274
+  - first:
+      213: -8404966327591612312
+    second: level-up_275
+  - first:
+      213: 4839758758218874405
+    second: level-up_276
+  - first:
+      213: -4625065137793345063
+    second: level-up_277
+  - first:
+      213: 1790891586101446053
+    second: level-up_278
+  - first:
+      213: 3315975082334605553
+    second: level-up_279
+  - first:
+      213: -7898384764321679971
+    second: level-up_280
+  - first:
+      213: 5138347349806188951
+    second: level-up_281
+  - first:
+      213: -7181312675520207339
+    second: level-up_282
+  - first:
+      213: 6407421481821735289
+    second: level-up_283
+  - first:
+      213: 5310103136934799582
+    second: level-up_284
+  - first:
+      213: 6814376204977727308
+    second: level-up_285
+  - first:
+      213: 516481502691408577
+    second: level-up_286
+  - first:
+      213: 6005128525082630722
+    second: level-up_287
+  - first:
+      213: -4499447345673521841
+    second: level-up_288
+  - first:
+      213: 7786081558012151182
+    second: level-up_289
+  - first:
+      213: 3440830127205667262
+    second: level-up_290
+  - first:
+      213: 4010477248683603241
+    second: level-up_291
+  - first:
+      213: 4615498421602940984
+    second: level-up_292
+  - first:
+      213: 5228140087077040086
+    second: level-up_293
+  - first:
+      213: 4658475553978228275
+    second: level-up_294
+  - first:
+      213: -5965023586798542264
+    second: level-up_295
+  - first:
+      213: -9130206522337873202
+    second: level-up_296
+  - first:
+      213: 5654602091693984030
+    second: level-up_297
+  - first:
+      213: 4953235971900039727
+    second: level-up_298
+  - first:
+      213: 7067393571761650383
+    second: level-up_299
+  - first:
+      213: 4066730544757350550
+    second: level-up_300
+  - first:
+      213: -7042984504431666913
+    second: level-up_301
+  - first:
+      213: 4146545543821406346
+    second: level-up_302
+  - first:
+      213: 458529439147774411
+    second: level-up_303
+  - first:
+      213: 5362709967386089517
+    second: level-up_304
+  - first:
+      213: 2644717374130441880
+    second: level-up_305
+  - first:
+      213: -2220793601541925191
+    second: level-up_306
+  - first:
+      213: 8465383276177652378
+    second: level-up_307
+  - first:
+      213: 1249768005894290832
+    second: level-up_308
+  - first:
+      213: 2601121510556542499
+    second: level-up_309
+  - first:
+      213: -5602133735005377546
+    second: level-up_310
+  - first:
+      213: 1248362925258837701
+    second: level-up_311
+  - first:
+      213: -2102807995936257338
+    second: level-up_312
+  - first:
+      213: 1328618673404249720
+    second: level-up_313
+  - first:
+      213: 4138079897053340311
+    second: level-up_314
+  - first:
+      213: 1676897845671775907
+    second: level-up_315
+  - first:
+      213: 1135880203337827470
+    second: level-up_316
+  - first:
+      213: -4583885014828099529
+    second: level-up_317
+  - first:
+      213: -2380818433300995995
+    second: level-up_318
+  - first:
+      213: -1967284334224044683
+    second: level-up_319
+  - first:
+      213: 5563408269984560652
+    second: level-up_320
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: level-up_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 400
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e8a51ba5e2c17b34ba6aac97a57885e1
+      internalID: 5778072383123337153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 400
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2fefbe3aea62acf4c89804de871965cf
+      internalID: -228348366837613795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 400
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: acd8ad5ad8534e94ba9548d63836b17b
+      internalID: 5248118758586235745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 400
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d583b1ef7fd0aad42b5cfe954c709bbd
+      internalID: -4396421399193760398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_4
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 400
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd06f0a96b693df4283a99ed5cc290f5
+      internalID: 2472788682686172385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_5
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 400
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8d57cc9da4bffba429a2066e3c3753ff
+      internalID: -1489370588447082523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_6
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 400
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc414b62006428840a420a579934be15
+      internalID: 4025561863212812827
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_7
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 320
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 85d3e4d8c2197594fb1125231c34026a
+      internalID: -9142672131800932827
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_8
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 320
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 54c6fb981c6c2f842a49cb17d394b044
+      internalID: -2365614276738138252
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_9
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 320
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 784e1e96a2f3f9b42885cdb963ec50b0
+      internalID: -3789245752470000831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_10
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 320
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a1ae8e0811b24a945950262b6ea1e501
+      internalID: 1882946538726766230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_11
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 320
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cfc974a87d8ba3d45a786264bd1b9094
+      internalID: -5885979386287448337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_12
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 320
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c65d69f0fe6ea3149a5b3911d3f9ef99
+      internalID: 1678474097531010059
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_13
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 320
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bee103b590d86004a8eb5416f0daa6a4
+      internalID: -6827635429364771952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_14
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 240
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bee46f6c783801b4bb84477ad5e7cd26
+      internalID: 6348205240039878630
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_15
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 240
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 12c0c93b1bb924245b35504e0c3236d9
+      internalID: -1737021411993026586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_16
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 240
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7cfc9e4ad0e7a4e4b96dac828bf5f3a8
+      internalID: 6366632445014051425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_17
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 240
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c89e80dfac1ff6047a0124cbfb2b2d04
+      internalID: -578059674820838784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_18
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 240
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ed4e179c936a824ba35814c2cba409e
+      internalID: -3223933136112054768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_19
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 240
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2a8484b21b105a54fa3f89bd1ecf94ea
+      internalID: -4432467977181073399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_20
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 240
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 59145aecbb4cd634ea211a65f072d063
+      internalID: -1831636681247276053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_21
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 160
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 84c38ae057b3847468762c8030b6a9a2
+      internalID: -7440721399057531632
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_22
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 160
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 75dc89e347cea024a868d522c6d87eca
+      internalID: 1806723467358896183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_23
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 160
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4637b73806290f948a19e58d5decac19
+      internalID: -3335708663408962812
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_24
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 160
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f51ccdfa8992ae949aa6778b42210562
+      internalID: -415822384615764918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_25
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 160
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 648a7c62833f1c94e8a7484780188d9a
+      internalID: 3077640379396684974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_26
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 160
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 08b5e67afc8af8547a7c847cac814d14
+      internalID: -7585354221488223167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_27
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 160
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 67e3fdc4f7c6179489e2a012eeb01147
+      internalID: -8672464691736601014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_28
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 80
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 80fb7e7a30b0b0b45943e9551e644a44
+      internalID: -8242920999447865265
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_29
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 80
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c3a2d1ccbff703645af7b1c5483fe64a
+      internalID: -9045960475802573366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_30
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 80
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ffe2ebfc0e949714c8d877d390b99fbc
+      internalID: -110194731301631013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_31
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 80
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0fa0c35ff96eb9b4ab38c5866991f543
+      internalID: -1426216339777150191
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_32
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 80
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 07b04102748f0644ebea485c4cea92c9
+      internalID: 7972636323152689675
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_33
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 80
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 299a1b2524d784c4e830258e12981e2c
+      internalID: -4027262457717149572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_34
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 80
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b2b083306c49a5b4cb557678bcdd3a07
+      internalID: -4993204423694238923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_35
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 266f3d0db0a8c0c48ae87c05c7be6aee
+      internalID: 6233591486016243879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_36
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 014744f83bfad434ba369c36e1c2859b
+      internalID: 7719194193747257979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_37
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ec7fb1bb80854b542a6dc08082dc84d1
+      internalID: 8888876269089003915
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: level-up_38
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 64
+        height: 80
+      alignment: 9
+      pivot: {x: 0.5, y: 0.175}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fad66fc005ce46f41b1e4791c0987314
+      internalID: 859844177047710295
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5f72bf2a527011d4fbc71e9c738b8c04
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      level-up_0: 5778072383123337153
+      level-up_1: -228348366837613795
+      level-up_10: 1882946538726766230
+      level-up_11: -5885979386287448337
+      level-up_12: 1678474097531010059
+      level-up_13: -6827635429364771952
+      level-up_14: 6348205240039878630
+      level-up_15: -1737021411993026586
+      level-up_16: 6366632445014051425
+      level-up_17: -578059674820838784
+      level-up_18: -3223933136112054768
+      level-up_19: -4432467977181073399
+      level-up_2: 5248118758586235745
+      level-up_20: -1831636681247276053
+      level-up_21: -7440721399057531632
+      level-up_22: 1806723467358896183
+      level-up_23: -3335708663408962812
+      level-up_24: -415822384615764918
+      level-up_25: 3077640379396684974
+      level-up_26: -7585354221488223167
+      level-up_27: -8672464691736601014
+      level-up_28: -8242920999447865265
+      level-up_29: -9045960475802573366
+      level-up_3: -4396421399193760398
+      level-up_30: -110194731301631013
+      level-up_31: -1426216339777150191
+      level-up_32: 7972636323152689675
+      level-up_33: -4027262457717149572
+      level-up_34: -4993204423694238923
+      level-up_35: 6233591486016243879
+      level-up_36: 7719194193747257979
+      level-up_37: 8888876269089003915
+      level-up_38: 859844177047710295
+      level-up_4: 2472788682686172385
+      level-up_5: -1489370588447082523
+      level-up_6: 4025561863212812827
+      level-up_7: -9142672131800932827
+      level-up_8: -2365614276738138252
+      level-up_9: -3789245752470000831
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

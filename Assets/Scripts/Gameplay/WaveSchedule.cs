@@ -76,7 +76,7 @@ namespace DarkLord.Gameplay
             Economy?.OnRoundStarted(CurrentWave);
             State = WaveState.Active;
             Combat?.RefillMana();
-            var formation = WaveFormation.Create(CurrentWave, EnemyCountForWave(CurrentWave));
+            var formation = WaveFormation.Create(CurrentWave, EnemyCountForWave(CurrentWave), RegionForWave(CurrentWave));
             foreach (var role in formation) { pendingRoles.Enqueue(role); pendingWaves.Enqueue(CurrentWave); }
             pendingSpawns += formation.Length;
             if (AutomaticWaves) ScheduleNextWave();
@@ -108,7 +108,8 @@ namespace DarkLord.Gameplay
         private int MemberWave(ActorHealth actor) => actor.GetComponent<WaveMember>()?.Number ?? CurrentWave;
         private WaveScheduleSaveData CaptureSchedule() => new WaveScheduleSaveData {
             openingInvasionScheduled = openingInvasionScheduled, remaining = nextWaveRemaining < 0 ? 120 : nextWaveRemaining, rewardWave = rewardWave,
-            pendingWaves = pendingWaves.ToArray(), completedWaves = SavedCompletedWaves(), rewardQueue = waveRewardQueue.ToArray(), arrivedRegion = arrivedRegion
+            pendingWaves = pendingWaves.ToArray(), completedWaves = SavedCompletedWaves(), rewardQueue = waveRewardQueue.ToArray(), arrivedRegion = arrivedRegion,
+            regionOrder = regionOrder == null ? null : (int[])regionOrder.Clone()
         };
         private int[] SavedCompletedWaves()
         {
@@ -121,6 +122,7 @@ namespace DarkLord.Gameplay
             openingInvasionScheduled = CurrentWave == 0 && data != null && data.openingInvasionScheduled;
             readyPreparationSeconds = 0;
             placementCheckRemaining = 0;
+            regionOrder = data?.regionOrder != null && data.regionOrder.Length > 0 ? (int[])data.regionOrder.Clone() : null;
             RestoreRelocation(data != null ? data.arrivedRegion : 0);
             completedWaves.Clear(); waveRewardQueue.Clear();
             rewardWave = data != null ? data.rewardWave : CurrentWave;

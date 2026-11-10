@@ -229,10 +229,12 @@ namespace DarkLord.Gameplay
             actor.Health.Died += () =>
             {
                 if (actor == null || boss) return;
+                // The tutorial always leaves exactly one corpse, even if two soldiers fall in the same frame.
+                bool first = !enemyCasualtyResolved && (waves.Harvest == null || waves.Harvest.Corpses.All(c => c == null || c.Consumed));
                 enemyCasualtyResolved = true;
                 foreach (var survivor in enemies)
                     if (survivor != null && survivor.IsAlive) survivor.Health.ScriptedHealthFloor = 1;
-                waves.Harvest?.LeaveCorpse(actor.Health);
+                if (first) waves.Harvest?.LeaveCorpse(actor.Health, true);
             };
             enemies.Add(actor);
         }

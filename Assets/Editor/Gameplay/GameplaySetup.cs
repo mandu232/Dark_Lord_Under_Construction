@@ -168,7 +168,9 @@ namespace DarkLord.Editor
             pixel.refResolutionX = 320;
             pixel.refResolutionY = 180;
             pixel.gridSnapping = PixelPerfectCamera.GridSnapping.PixelSnapping;
-            pixel.cropFrame = PixelPerfectCamera.CropFrame.Windowbox;
+            // Windowbox shrinks the view into black bars on screens that are not an exact 320x180 multiple
+            // (16:10 monitors, Windows display scaling); None keeps integer pixels and shows a little more instead.
+            pixel.cropFrame = PixelPerfectCamera.CropFrame.None;
             var data = camera.GetComponent<UniversalAdditionalCameraData>();
             if (data != null)
             {

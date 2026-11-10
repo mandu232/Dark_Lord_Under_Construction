@@ -1,0 +1,425 @@
+fileFormatVersion: 2
+guid: 0cc1793e8217c3047ad80aaee250c6cd
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5128742288445326631
+    second: orc-charge_0
+  - first:
+      213: -1892773539549623935
+    second: orc-charge_1
+  - first:
+      213: 547768718285447264
+    second: orc-charge_2
+  - first:
+      213: -5785231702137631468
+    second: orc-charge_3
+  - first:
+      213: 387814608838716304
+    second: orc-charge_4
+  - first:
+      213: 4409347829790130561
+    second: orc-charge_5
+  - first:
+      213: -1116241025402557249
+    second: orc-charge_6
+  - first:
+      213: -5395739467313585600
+    second: orc-charge_7
+  - first:
+      213: -1696788275758933054
+    second: orc-charge_8
+  - first:
+      213: 5642166991429627913
+    second: orc-charge_9
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: orc-charge_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 216
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 92d60b2524893e0479ffbf98bee0a94f
+      internalID: -5128742288445326631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-charge_1
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 216
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ada695644f735f349b69d19baba22454
+      internalID: -1892773539549623935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-charge_2
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 216
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e65bc4c3230d5a640a9751b3002b88cf
+      internalID: 547768718285447264
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-charge_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 144
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6bcd34e25f1797489eae8c2d24efcac
+      internalID: -5785231702137631468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-charge_4
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 144
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8de7c7f9a7f0a02448539dca4c5ad05a
+      internalID: 387814608838716304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-charge_5
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 144
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e2528dc6ff6d7014099fd27ce6de1d0c
+      internalID: 4409347829790130561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-charge_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 72
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 534c7a9a4e056954db0915c5824d0133
+      internalID: -1116241025402557249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-charge_7
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 72
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0422077fc503a5640912563b4b07dbe6
+      internalID: -5395739467313585600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-charge_8
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 72
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 866e5c2f77992384b903004d5d19df2d
+      internalID: -1696788275758933054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-charge_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1fda94b1ded04b64489eea0a3fd0bda7
+      internalID: 5642166991429627913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-charge_10
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 0
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b02e9ddaf0c2a5f47b62df98c2fce91b
+      internalID: -13165593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: orc-charge_11
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 0
+        width: 112
+        height: 72
+      alignment: 9
+      pivot: {x: 0.64285713, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6d6f1ff579844b04e86554ec439db0a8
+      internalID: 532607179
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: fc8e45895b73bc04e94b0ebed6f77f1d
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      orc-charge_0: -5128742288445326631
+      orc-charge_1: -1892773539549623935
+      orc-charge_10: -13165593
+      orc-charge_11: 532607179
+      orc-charge_2: 547768718285447264
+      orc-charge_3: -5785231702137631468
+      orc-charge_4: 387814608838716304
+      orc-charge_5: 4409347829790130561
+      orc-charge_6: -1116241025402557249
+      orc-charge_7: -5395739467313585600
+      orc-charge_8: -1696788275758933054
+      orc-charge_9: 5642166991429627913
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

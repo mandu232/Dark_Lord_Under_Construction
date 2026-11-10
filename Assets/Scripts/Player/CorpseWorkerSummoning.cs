@@ -103,8 +103,15 @@ namespace DarkLord.Player
             if (saved == null || definition == null) return;
             foreach (var entry in saved)
             {
-                var position = dungeon.Construction.IsWalkable(dungeon.WorldToCell(entry.position))
-                    ? entry.position : dungeon.CellCenter(dungeon.CoreCell);
+                var position = entry.position;
+                var cell = dungeon.WorldToCell(position);
+                if (!dungeon.Construction.IsWalkable(cell) || dungeon.BlocksNpcMovement(cell))
+                {
+                    var room = dungeon.CoreRoom;
+                    position = room != null &&
+                        (FindSpawnNear(dungeon.CoreCell, room, out var landing) || FirstEmpty(room, out landing))
+                        ? dungeon.CellCenter(landing) : dungeon.CellCenter(dungeon.CoreCell);
+                }
                 CreateWorker(definition, position, entry.health);
             }
         }

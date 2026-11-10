@@ -37,6 +37,8 @@ namespace DarkLord.Persistence
         public Vector3 position;
         public InvaderRole role;
         public bool carried;
+        // Missing in legacy saves: 0 makes those corpses rot at the next invasion.
+        public int day;
     }
     [Serializable] public sealed class DungeonSaveData
     {
@@ -123,6 +125,7 @@ namespace DarkLord.Persistence
         public int rewardWave;
         public int[] pendingWaves, completedWaves, rewardQueue;
         public int arrivedRegion;
+        public int[] regionOrder;
     }
 
     // Files contain data and stable build-item IDs, never scene object references.
@@ -343,6 +346,17 @@ namespace DarkLord.Persistence
             {
                 var schedule = data.wave.schedule;
                 if (schedule.arrivedRegion < 0 || schedule.arrivedRegion >= RegionCatalog.Count) throw new InvalidDataException("지역 기록이 올바르지 않습니다.");
+                if (schedule.regionOrder != null && schedule.regionOrder.Length > 0)
+                {
+                    var order = schedule.regionOrder;
+                    if (order.Length != RegionCatalog.Count || order[0] != 0) throw new InvalidDataException("지역 방문 순서가 올바르지 않습니다.");
+                    var visited = new bool[RegionCatalog.Count];
+                    foreach (int region in order)
+                    {
+                        if (region < 0 || region >= visited.Length || visited[region]) throw new InvalidDataException("지역 방문 순서가 올바르지 않습니다.");
+                        visited[region] = true;
+                    }
+                }
                 if (!InRange(schedule.remaining, 300) || schedule.rewardWave < 0 || schedule.rewardWave > data.wave.number ||
                     schedule.pendingWaves == null || schedule.pendingWaves.Length != data.wave.pending || schedule.completedWaves == null || schedule.rewardQueue == null)
                     throw new InvalidDataException("침공 일정이 올바르지 않습니다.");
@@ -395,9 +409,12 @@ namespace DarkLord.Persistence
                 throw new InvalidDataException("증강 효과 시간이 올바르지 않습니다.");
             if (t != null && (!Enum.IsDefined(typeof(InvaderRole), t.role) || !Enum.IsDefined(typeof(InvaderAction), t.action) ||
                 !InRange(t.remaining, 1) || !InRange(t.cooldown, 6) || !Finite(t.direction) || !Finite(t.healPosition) ||
-                (t.action == InvaderAction.Healing && t.role != InvaderRole.Healer) ||
-                ((t.action == InvaderAction.WindingUp || t.action == InvaderAction.Charging || t.action == InvaderAction.Recovering) &&
-                    (t.role != InvaderRole.Charger || t.direction.sqrMagnitude < .5f))))
+                (t.action == InvaderAction.Healing && !InvaderTactics.IsHealingRole(t.role)) ||
+                (t.action == InvaderAction.Aiming && (t.role != InvaderRole.Archer || t.hero || t.direction.sqrMagnitude < .5f)) ||
+                ((t.action == InvaderAction.WindingUp || t.action == InvaderAction.Charging) &&
+                    (!InvaderTactics.IsChargeRole(t.role, t.hero) || t.direction.sqrMagnitude < .5f)) ||
+                (t.action == InvaderAction.Recovering && t.role != InvaderRole.Charger && t.role != InvaderRole.Archer &&
+                    !InvaderTactics.IsShieldRole(t.role))))
                 throw new InvalidDataException("용사 행동 기록이 올바르지 않습니다.");
         }
     }

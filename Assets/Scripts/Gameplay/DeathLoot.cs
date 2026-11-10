@@ -16,7 +16,7 @@ namespace DarkLord.Gameplay
     public sealed class DeathLoot : MonoBehaviour
     {
         public enum Kind { Blood, Crystal, Gold, Experience }
-        private const float VisualScale = 1.5f;
+        private const float VisualScale = .3f; // A fifth of the original 1.5.
         private Transform collector;
         private WaveDirector waves;
         private ActorHealth health;
@@ -144,7 +144,7 @@ namespace DarkLord.Gameplay
                 health.AddExperience(amount);
                 if (health.Level != level || health.Experience != experience)
                     OrbCollected?.Invoke(health, kind, transform.position, orbSprite);
-                GrowthFeedback.Pickup(collector, color);
+                GrowthFeedback.Pickup(collector, color); PlayCollectBurst();
             }
             else
             {
@@ -153,12 +153,14 @@ namespace DarkLord.Gameplay
                 if (accepted > 0)
                 {
                     OrbCollected?.Invoke(health, kind, transform.position, orbSprite);
-                    GrowthFeedback.Pickup(collector, color);
+                    GrowthFeedback.Pickup(collector, color); PlayCollectBurst();
                 }
                 if (amount > 0) return;
             }
             Collected = true; gameObject.SetActive(false); Destroy(gameObject);
         }
+        // The pop where the orb is absorbed, themed for blood, bloodstone, gold or soul (same order as Kind).
+        private void PlayCollectBurst() => GameplayEffects.Show(collector, GameplayEffectKind.CollectBlood + (int)kind, transform.position);
         private CurrencyType Currency() => kind == Kind.Blood ? CurrencyType.Souls : kind == Kind.Crystal ? CurrencyType.DarkCrystals : CurrencyType.Gold;
         public static LootSaveData[] Capture(Transform player) => FindObjectsByType<DeathLoot>(FindObjectsSortMode.None)
             .Where(d => d.collector == player && !d.Collected).Select(d => new LootSaveData {

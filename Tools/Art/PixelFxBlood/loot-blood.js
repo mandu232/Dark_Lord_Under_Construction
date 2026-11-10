@@ -1,25 +1,15 @@
-import { hex } from "../../core/index.js";
-import { LOOT, bob, shadow, glint } from "./_loot.js";
+import { TAU, hex } from "../../core/index.js";
+import { LOOT, bob, shadow, glint, marble } from "./_loot.js";
 
-export const meta = { ...LOOT, name: "Loot: blood drop", desc: "A fat bead of blood bobbing over its shadow; a highlight glints across it.", tags: ["pickup", "loot"], options: {} };
-const ROWS = [
-  "...a...",
-  "...a...",
-  "..aba..",
-  "..abb..",
-  ".abcbb.",
-  "abccbbd",
-  "abccbbd",
-  "abbbbbd",
-  ".abbbd.",
-  "..ddd..",
-];
-const PAL = { a: hex("#4a0612"), b: hex("#c8102e"), c: hex("#ff4a63"), d: hex("#8a0a1e") };
+export const meta = { ...LOOT, name: "Loot: blood marble", desc: "A glass marble with a ribbon of blood curling slowly inside, bobbing over its shadow; a glint crosses its highlight.", tags: ["pickup", "loot", "orb", "marble"], options: {} };
+const RAMP = ["#2a0309", "#5c0816", "#a3112a", "#e5233f", "#ff7a8a", "#ffd6dc"];
+
+// One fat ribbon of blood, curled in an S, turning once a loop.
+const inner = (s, th, ph) => (s < 0.85 && Math.cos(th - 2.2 * s - TAU * ph) > 0.55 ? (s < 0.45 ? 4 : 3) : -1);
 
 export function draw(p, t) {
   const y = bob(t);
   shadow(p, y);
-  p.sprite(ROWS, PAL, -3, -5 + y);
-  p.glow(0, y, 7, hex("#ee1c40"), 0.28);
-  if (glint(t, 0.3) > 0.4) { p.px(-1, y, hex("#ffffff")); p.px(-1, y + 1, hex("#ffc2ca")); }
+  marble(p, t, y, RAMP, inner);
+  if (glint(t, 0.3) > 0.4) { p.px(-3, y - 2, hex("#ffffff")); p.px(-2, y - 3, hex("#ffffff")); }
 }

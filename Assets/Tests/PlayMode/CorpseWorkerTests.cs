@@ -30,6 +30,43 @@ namespace DarkLord.Tests
             Time.timeScale = previousTime;
         }
 
+        [UnityTest] public IEnumerator WorkerCollectsCorpseUnderCoreOverhangInAdjacentTile()
+        {
+            previousTime = Time.timeScale;
+            Time.timeScale = 1;
+            yield return SceneManager.LoadSceneAsync("Assets/Scenes/InGame.unity", LoadSceneMode.Additive);
+            scene = SceneManager.GetSceneByPath("Assets/Scenes/InGame.unity");
+            yield return null;
+            yield return null;
+            var waves = Find<WaveDirector>();
+            var session = Find<GameSaveSession>();
+            var grid = waves.Lord.GetComponent<MinionSummoning>().Dungeon;
+            var snapshot = session.Capture();
+            snapshot.options.difficulty = GameDifficulty.Easy;
+            snapshot.workers = new[] { new CorpseWorkerSaveData
+            {
+                position = grid.CellCenter(grid.CoreCell + new Vector2Int(-1, -1)),
+                health = CorpseWorker.MaximumHealth
+            } };
+            session.Restore(snapshot);
+
+            var target = grid.CellCenter(grid.CoreCell) + new Vector3(-1.1f, -.375f);
+            Assert.AreEqual(grid.CoreCell + Vector2Int.left, grid.WorldToCell(target));
+            Assert.IsTrue(waves.Core.ContactCollider.OverlapPoint(target));
+            waves.Harvest.Restore(new[] { new CorpseSaveData { position = target } });
+            var station = grid.RecruitmentFacilities.Single();
+            int expectedStacks = station.SummonStacks + 1;
+            float deadline = Time.time + 8;
+            while (station.SummonStacks < expectedStacks && Time.time < deadline) yield return null;
+            var worker = Find<CorpseWorker>();
+            var body = worker.GetComponent<CircleCollider2D>();
+            Assert.AreEqual(expectedStacks, station.SummonStacks,
+                $"Worker at {worker.transform.position}, target {target}, remaining {waves.Harvest.Corpses.Count}, " +
+                $"time scale {Time.timeScale}, " +
+                $"core collision ignored {Physics2D.GetIgnoreCollision(body, waves.Core.ContactCollider)}.");
+            Assert.IsEmpty(waves.Harvest.Corpses);
+        }
+
         [UnityTest] public IEnumerator RecruitedWorkerDeliversCorpsePersistsAndFleesWhenCombatStarts()
         {
             previousTime = Time.timeScale;

@@ -203,7 +203,7 @@ namespace DarkLord.Gameplay
                 enemy.gameObject.AddComponent<WaveMember>().Number = saved.invasionWave > 0 ? saved.invasionWave : CurrentWave;
                 var health=enemy.Health;health.RestoreExperience(saved.level,0);health.RestoreHealth(saved.maximumHealth,saved.health);enemy.Assault(dungeonCore,dungeon,dungeonLord);
                 enemy.RestorePoise(saved.poise);
-                var enemyRegion=RegionCatalog.ForDay(saved.invasionWave > 0 ? saved.invasionWave : CurrentWave);
+                var enemyRegion=RegionForWave(saved.invasionWave > 0 ? saved.invasionWave : CurrentWave);
                 var enemyTactics=ConfigureInvader(enemy, saved.tactics != null ? saved.tactics.role : InvaderRole.Warrior, enemyRegion);enemyTactics.RestoreSave(saved.tactics);
                 if(enemyTactics.IsHero)MakeBoss(enemy,enemyTactics,enemyRegion);
                 enemy.GetComponent<TopDownMotor>().RestoreSlows(saved.slows);

@@ -162,6 +162,12 @@ namespace DarkLord.Tests
                 var definition = summoning.RecruitDefinitionFor(role); Assert.IsNotNull(definition, role.ToString());
                 Assert.AreEqual(role, definition.Role);
                 if (role != MinionRole.BloodSlime) Assert.IsNotNull(definition.GetComponentInChildren<MinionSkin>(), role.ToString());
+                var summon = Object.Instantiate(definition, Center, Quaternion.identity);
+                objects.Add(summon.gameObject);
+                // The summon card reads the portrait before the first LateUpdate.
+                var texture = summon.GetComponentInChildren<SpriteRenderer>().sprite.texture;
+                Assert.AreEqual(role + "Sheet", texture.name, role.ToString());
+                Assert.AreEqual(TextureFormat.RGBA32, texture.format, role.ToString());
             }
             Assert.IsNull(summoning.RecruitDefinitionFor(MinionRole.BloodArcher), "Retired roles can no longer be summoned.");
         }

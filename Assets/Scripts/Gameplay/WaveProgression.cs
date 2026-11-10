@@ -15,6 +15,9 @@ namespace DarkLord.Gameplay
             return baseCount + Mathf.Max(0, growthPerWave) * (steep - 1) + Mathf.Max(0, steep - 3) + (wave - steep);
         }
 
+        // Bigger waves would otherwise flood the dungeon with corpses: day 1 100%, -10% a day, floor 35%.
+        public static float CorpseChance(int wave) => Mathf.Clamp(1.1f - Mathf.Max(1, wave) * .1f, .35f, 1f);
+
         // With the default base 55 and growth 10: 50, 70, 90, 110, 130, 150, 170, then +12 a day.
         public static int EnemyHealth(int wave, int baseHealth, int healthGrowth)
         {

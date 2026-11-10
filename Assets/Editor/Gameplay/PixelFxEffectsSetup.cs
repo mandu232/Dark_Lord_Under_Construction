@@ -21,7 +21,7 @@ namespace DarkLord.EditorTools
         }
 
         // Sources are in Tools/Art/PixelFxBlood; sizes, columns and pivots come from each sheet's pixelfx JSON.
-        private static readonly Sheet[] Sheets = {
+        private static readonly Sheet[] BaseSheets = {
             new Sheet { kind = GameplayEffectKind.WideSlash, file = "blood-slash", width = 104, height = 104, columns = 4, frames = 14, pivotX = 52, pivotY = 52, duration = .42f, fadeOut = .05f },
             new Sheet { kind = GameplayEffectKind.BloodNova, file = "blood-nova", width = 216, height = 216, columns = 6, frames = 31, pivotX = 108, pivotY = 108, duration = 1f, fadeOut = .05f },
             new Sheet { kind = GameplayEffectKind.BloodWard, file = "blood-ward", width = 64, height = 64, columns = 6, frames = 36, pivotX = 32, pivotY = 32, duration = 1.2f, fadeOut = .2f, loop = true },
@@ -56,7 +56,46 @@ namespace DarkLord.EditorTools
             new Sheet { kind = GameplayEffectKind.LootCrystal, file = "loot-crystal", width = 20, height = 20, columns = 5, frames = 18, pivotX = 10, pivotY = 10, duration = 1.2f, fadeOut = 0, loop = true },
             new Sheet { kind = GameplayEffectKind.LootGold, file = "loot-gold", width = 20, height = 20, columns = 5, frames = 18, pivotX = 10, pivotY = 10, duration = 1.2f, fadeOut = 0, loop = true },
             new Sheet { kind = GameplayEffectKind.LootExperience, file = "loot-experience", width = 20, height = 20, columns = 5, frames = 18, pivotX = 10, pivotY = 10, duration = 1.2f, fadeOut = 0, loop = true },
+            new Sheet { kind = GameplayEffectKind.Rift, file = "rift", width = 64, height = 64, columns = 7, frames = 40, pivotX = 32, pivotY = 32, duration = 2, fadeOut = 0, loop = true },
+            new Sheet { kind = GameplayEffectKind.RiftClosed, file = "rift-closed", width = 64, height = 64, columns = 7, frames = 40, pivotX = 32, pivotY = 32, duration = 2, fadeOut = 0, loop = true },
+            new Sheet { kind = GameplayEffectKind.HolyWave, file = "holy-wave", width = 48, height = 48, columns = 3, frames = 8, pivotX = 24, pivotY = 24, duration = .4f, fadeOut = 0, loop = true },
+            // Rowen's whole body sheet; RowenAnimator picks the frames, so duration here is only the sheet's length.
+            new Sheet { kind = GameplayEffectKind.RowenBody, file = "rowen", width = 96, height = 96, columns = 10, frames = 90, pivotX = 48, pivotY = 48, duration = 7.5f, fadeOut = 0 },
+            new Sheet { kind = GameplayEffectKind.LevelUp, file = "level-up", width = 64, height = 80, columns = 7, frames = 39, pivotX = 32, pivotY = 66, duration = 1.6f, fadeOut = 0 },
+            new Sheet { kind = GameplayEffectKind.CollectBlood, file = "collect-blood", width = 32, height = 32, columns = 5, frames = 19, pivotX = 16, pivotY = 18, duration = .6f, fadeOut = 0 },
+            new Sheet { kind = GameplayEffectKind.CollectCrystal, file = "collect-crystal", width = 32, height = 32, columns = 5, frames = 19, pivotX = 16, pivotY = 18, duration = .6f, fadeOut = 0 },
+            new Sheet { kind = GameplayEffectKind.CollectGold, file = "collect-gold", width = 32, height = 32, columns = 5, frames = 19, pivotX = 16, pivotY = 18, duration = .6f, fadeOut = 0 },
+            new Sheet { kind = GameplayEffectKind.CollectExperience, file = "collect-experience", width = 32, height = 32, columns = 5, frames = 19, pivotX = 16, pivotY = 18, duration = .6f, fadeOut = 0 },
+            // Invader caster skills from Tools/Art/InvaderSkillFx/render.mjs. Pivots sit about 10 px above the drawn floor ring,
+            // because an invader's transform is its body centre, not its feet.
+            new Sheet { kind = GameplayEffectKind.OrcShamanCast, file = "orc-shaman-cast", width = 48, height = 64, columns = 5, frames = 15, pivotX = 24, pivotY = 38, duration = .5f, fadeOut = 0 },
+            new Sheet { kind = GameplayEffectKind.OrcShamanMend, file = "orc-shaman-mend", width = 56, height = 56, columns = 6, frames = 24, pivotX = 28, pivotY = 26, duration = .8f, fadeOut = 0 },
+            new Sheet { kind = GameplayEffectKind.ElfMageCast, file = "elf-mage-cast", width = 48, height = 48, columns = 5, frames = 14, pivotX = 24, pivotY = 28, duration = .45f, fadeOut = 0 },
+            new Sheet { kind = GameplayEffectKind.ElfMageMend, file = "elf-mage-mend", width = 56, height = 56, columns = 6, frames = 24, pivotX = 28, pivotY = 26, duration = .8f, fadeOut = 0 },
+            new Sheet { kind = GameplayEffectKind.ClericCast, file = "cleric-cast", width = 48, height = 64, columns = 5, frames = 15, pivotX = 24, pivotY = 38, duration = .5f, fadeOut = 0 },
+            // Boss signature impacts, also from render.mjs.
+            new Sheet { kind = GameplayEffectKind.OrcQuake, file = "orc-quake", width = 96, height = 96, columns = 4, frames = 17, pivotX = 48, pivotY = 48, duration = .55f, fadeOut = 0 },
+            new Sheet { kind = GameplayEffectKind.ElfMoonfall, file = "elf-moonfall", width = 96, height = 96, columns = 4, frames = 15, pivotX = 48, pivotY = 48, duration = .5f, fadeOut = 0 },
+            new Sheet { kind = GameplayEffectKind.FrostSpikes, file = "frost-spikes", width = 96, height = 96, columns = 6, frames = 18, pivotX = 48, pivotY = 48, duration = .6f, fadeOut = 0 },
+            new Sheet { kind = GameplayEffectKind.EmberMeteor, file = "ember-meteor", width = 96, height = 96, columns = 6, frames = 18, pivotX = 48, pivotY = 48, duration = .6f, fadeOut = 0 },
         };
+        // Declared after BaseSheets: static initializers run in source order.
+        private static readonly Sheet[] Sheets = BaseSheets.Concat(BossKits()).ToArray();
+
+        // Regional boss kits: render.mjs recolours the holy cleave, charge, mark and pulse, so they keep those sheets' layout and timing.
+        private static System.Collections.Generic.IEnumerable<Sheet> BossKits()
+        {
+            var holy = new[] { GameplayEffectKind.HolySlash, GameplayEffectKind.HolyCharge, GameplayEffectKind.HolyMark, GameplayEffectKind.HolyPulse };
+            var slots = new[] { "Cleave", "Charge", "Mark", "Pulse" };
+            foreach (var theme in new[] { "Orc", "Elf", "Frost", "Ember" })
+                for (int i = 0; i < slots.Length; i++)
+                {
+                    var source = BaseSheets.First(s => s.kind == holy[i]);
+                    yield return new Sheet { kind = System.Enum.Parse<GameplayEffectKind>(theme + slots[i]), file = (theme + "-" + slots[i]).ToLowerInvariant(),
+                        width = source.width, height = source.height, columns = source.columns, frames = source.frames, pivotX = source.pivotX, pivotY = source.pivotY,
+                        duration = source.duration, fadeOut = source.fadeOut };
+                }
+        }
 
         [MenuItem("Tools/Dark Lord/Apply PixelFx Skill Effects")]
         public static void Apply()
