@@ -46,6 +46,9 @@ namespace DarkLord.Minions
             Vector2 delta = target.transform.position - transform.position;
             float distance = delta.magnitude;
             bool sight = controller.HasTerrainLineOfSight(target);
+            // Every regional boss but Rowen opens every third decision with its own pattern when the target is in its reach.
+            if (!HasRowenBody && bossTurn++ % 3 == 1 && distance > .001f && distance <= SkillReach(Skill) &&
+                (sight || Skill == BossSkill.EruptionChase) && StartBossSkill(target)) return true;
             if (sight && distance > .001f && distance <= HeroCleaveRadius)
             {
                 direction = delta / distance; motor.Face(direction); motor.Stop();
@@ -202,6 +205,7 @@ namespace DarkLord.Minions
                 else Begin(InvaderAction.Recovering, phaseTwo ? 1f : 1.2f);
                 return true;
             }
+            if (Action == InvaderAction.BossSkill) { ContinueBossSkill(target); return true; }
             if (Action == InvaderAction.Signature)
             {
                 ShowSoldierImpact();

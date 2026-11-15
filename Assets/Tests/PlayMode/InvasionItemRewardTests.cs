@@ -40,13 +40,17 @@ namespace DarkLord.Tests
             waves.RestoreSave(new WaveSaveData { number = number, state = WaveState.Active, enemies = Array.Empty<MinionSaveData>() });
             typeof(WaveDirector).GetMethod("CheckWaveCleared", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).Invoke(waves, null);
         }
-        [Test] public void RewardOffersRoomTrapAndSuppliesWithoutFacilities()
+        // The room or trap card; which of the two is rolled per clear.
+        private int ItemCardIndex() => waves.RewardChoices.ToList().FindIndex(id => id == WaveRewardCatalog.RoomItem || id == WaveRewardCatalog.TrapItem);
+
+        [Test] public void RewardOffersTwoTraitsAndOneRoomOrTrapWithoutFacilities()
         {
             ClearWave();
-            Assert.Contains(WaveRewardCatalog.RoomItem, waves.RewardChoices.ToArray());
             Assert.IsFalse(waves.RewardChoices.Contains(WaveRewardCatalog.FacilityItem));
             Assert.AreEqual(3, waves.RewardChoices.Distinct().Count());
-            Assert.IsTrue(waves.RewardChoices.All(id => !WaveRewardCatalog.IsAugment(id)));
+            Assert.AreEqual(2, waves.RewardChoices.Count(WaveRewardCatalog.IsAugment), "Two trait cards on every clear.");
+            Assert.GreaterOrEqual(ItemCardIndex(), 0, "The third card is a room or trap item.");
+            Assert.IsFalse(waves.RewardChoices.Contains(WaveRewardCatalog.LanceVolley), "Traits for unresearched skills are not offered.");
             for (int i = 0; i < 3; i++)
             {
                 int id = waves.RewardChoices[i]; var item = waves.RewardItem(i);
@@ -55,14 +59,14 @@ namespace DarkLord.Tests
                     Assert.IsNotNull(item); Assert.IsNotNull(item.icon);
                     Assert.AreEqual(id == WaveRewardCatalog.RoomItem ? BuildCategory.Rooms : BuildCategory.Traps, item.category);
                 }
-                else { Assert.That(id, Is.InRange(0, 2)); Assert.IsNull(item); }
+                else Assert.IsNull(item);
             }
             Assert.IsEmpty(waves.Augments.Capture());
         }
         [Test] public void ExactDisplayedItemAndChoicesSurviveReloadAndCanOnlyBeClaimedOnce()
         {
             ClearWave();
-            int index = waves.RewardChoices.ToList().IndexOf(WaveRewardCatalog.RoomItem);
+            int index = ItemCardIndex();
             var shown = waves.RewardItem(index); var grid = Find<DungeonGrid>();
             int before = grid.Inventory.Count(shown);
             var session = Find<GameSaveSession>();
@@ -95,10 +99,14 @@ namespace DarkLord.Tests
             var root = view.transform.Find("Wave reward selection");
             var texts = root.GetComponentsInChildren<TMP_Text>();
             Assert.IsFalse(texts.Any(t => t.text.Contains("증강")));
-            Assert.IsTrue(texts.Any(t => t.text.Contains("전리품")));
+            foreach (int id in waves.RewardChoices.Where(WaveRewardCatalog.IsAugment))
+            {
+                Assert.IsTrue(texts.Any(t => t.text.Contains(WaveRewardCatalog.Name(id))), "Trait card shows its name: " + WaveRewardCatalog.Name(id));
+                Assert.IsTrue(texts.Any(t => t.text.Contains(WaveRewardCatalog.Pair(id))), "Trait card shows its pairing: " + WaveRewardCatalog.Pair(id));
+            }
             Canvas.ForceUpdateCanvases();
             foreach (var label in texts) { label.ForceMeshUpdate(); Assert.IsFalse(label.isTextOverflowing, label.name + ": " + label.text); }
-            int index = waves.RewardChoices.ToList().IndexOf(WaveRewardCatalog.RoomItem);
+            int index = ItemCardIndex();
             var item = waves.RewardItem(index); int before = Find<DungeonGrid>().Inventory.Count(item);
             var card = root.Find("Item acquisition/Reward " + (index + 1));
             Assert.AreEqual(item.icon, card.Find("Card artwork/Emblem").GetComponent<UnityEngine.UI.Image>().sprite);
@@ -201,7 +209,7 @@ namespace DarkLord.Tests
         [Test] public void UnknownRewardItemIsRejectedBeforeMutatingLiveInventory()
         {
             ClearWave(); var session = Find<GameSaveSession>(); var save = session.Capture();
-            int index = Array.IndexOf(save.wave.rewards, WaveRewardCatalog.RoomItem);
+            int index = Array.FindIndex(save.wave.rewards, id => id == WaveRewardCatalog.RoomItem || id == WaveRewardCatalog.TrapItem);
             save.wave.rewardItemIds[index] = "missing reward asset";
             string before = JsonUtility.ToJson(Find<DungeonGrid>().Inventory.Capture());
             Assert.Throws<InvalidOperationException>(() => session.Restore(save));

@@ -182,7 +182,8 @@ namespace DarkLord.Tests
             director.FindProperty("spawnInterval").floatValue = .04f;
             director.ApplyModifiedPropertiesWithoutUndo();
             waves.BeginNextWave();
-            for (float end = Time.time + 5; waves.CaptureSave().pending > 0 && Time.time < end;)
+            // Each further party enters 5 s after the previous one.
+            for (float end = Time.time + 20; waves.CaptureSave().pending > 0 && Time.time < end;)
                 yield return null;
             Assert.AreEqual(8, waves.CurrentWave);
             var army = waves.GetComponentsInChildren<InvaderTactics>();

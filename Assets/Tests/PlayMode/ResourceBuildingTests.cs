@@ -66,12 +66,16 @@ namespace DarkLord.Tests
         private static GameObject Prefab(string name)=>UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Dungeon/"+name+".prefab");
         [UnityTest] public IEnumerator MinionFacilitiesRecruitExpandAndRestore()
         {
-            invader.transform.position = dungeon.CellCenter(dungeon.Layout.Core);
+            invader.transform.position = dungeon.CellCenter(dungeon.Layout.Entrance);
             var summoning = wallet.GetComponent<MinionSummoning>();
             var combat = wallet.GetComponent<PlayerCombat>();
             var room = dungeon.Construction.RoomAt(RoomCell);
             int original = summoning.RoomCapacity(room);
-            Assert.IsTrue(dungeon.TryPlaceBuilding(RoomCell, Prefab("MinionRecruitment"), wallet));
+            // A new game already owns its single summoning facility in the core room; a second is refused.
+            var recruitment = dungeon.RecruitmentFacilities.Single();
+            var recruitmentCell = recruitment.Cell;
+            Assert.AreSame(dungeon.CoreRoom, dungeon.Construction.RoomAt(recruitmentCell));
+            Assert.IsFalse(dungeon.TryPlaceBuilding(RoomCell, Prefab("MinionRecruitment"), wallet));
             Assert.IsTrue(dungeon.TryPlaceBuilding(RoomCell + Vector2Int.left, Prefab("MinionQuarters"), wallet));
             Assert.IsTrue(dungeon.TryPlaceBuilding(RoomCell + Vector2Int.right, Prefab("MinionQuarters"), wallet));
             Assert.AreEqual(original + 4, summoning.RoomCapacity(room));
@@ -79,24 +83,30 @@ namespace DarkLord.Tests
             var quarters = dungeon.BuildingAt(RoomCell + Vector2Int.left);
             quarters.Health.Kill(); Assert.AreEqual(original + 2, summoning.RoomCapacity(room));
             Assert.IsTrue(quarters.TryRepair(wallet)); Assert.AreEqual(original + 4, summoning.RoomCapacity(room));
-            wallet.transform.position = dungeon.CellCenter(RoomCell + Vector2Int.up);
+            // Standing next to the core always allows summoning, so test from the far side of the facility.
+            Vector3 recruitmentPoint = dungeon.CellCenter(recruitmentCell), corePoint = dungeon.CellCenter(dungeon.Layout.Core);
+            wallet.transform.position = recruitmentPoint + (recruitmentPoint - corePoint).normalized * 2.5f;
+            Assert.Greater(Vector2.Distance(wallet.transform.position, corePoint), 3f);
             Physics2D.SyncTransforms();
             Assert.IsTrue(combat.CanSummon);
-            var recruitment = dungeon.BuildingAt(RoomCell);
             recruitment.Health.Kill(); Assert.IsFalse(combat.CanSummon);
             Assert.IsTrue(recruitment.TryRepair(wallet)); Assert.IsTrue(combat.CanSummon);
             Assert.AreEqual(0, recruitment.PayRound(wallet, 1));
             Assert.AreEqual(0, quarters.PayRound(wallet, 1));
+            // Summons appear beside the core-room facility; its starting garrison already fills that room.
+            Assert.IsTrue(dungeon.TryPlaceBuilding(dungeon.CoreRoom.Cells.First(dungeon.CanPlaceBuilding), Prefab("MinionQuarters"), wallet));
             Assert.IsTrue(summoning.TryRecruit());
-            Assert.IsTrue(summoning.TrySummon(false));
             float mana = combat.Mana;
-            Assert.IsTrue(summoning.TryPlace(RoomCell + Vector2Int.up + Vector2Int.right));
+            Assert.IsTrue(summoning.TrySummon(false), summoning.Message);
             Assert.AreEqual(mana - 20, combat.Mana);
+            // A new summon waits beside the facility until the lord moves it.
+            Assert.IsTrue(summoning.BeginRelocation(dungeon.Guards.Last()));
+            Assert.IsTrue(summoning.TryPlace(RoomCell + Vector2Int.up + Vector2Int.right), summoning.Message);
             var saved = session.Capture(); session.Restore(saved); Time.timeScale = 1;
             room = dungeon.Construction.RoomAt(RoomCell);
             Assert.AreEqual(original + 4, summoning.RoomCapacity(room));
-            Assert.IsTrue(dungeon.BuildingAt(RoomCell).IsRecruitmentFacility);
-            Assert.IsTrue(dungeon.NearRecruitmentFacility(dungeon.CellCenter(RoomCell + Vector2Int.up)));
+            Assert.IsTrue(dungeon.BuildingAt(recruitmentCell).IsRecruitmentFacility);
+            Assert.IsTrue(dungeon.NearRecruitmentFacility(dungeon.CellCenter(recruitmentCell + Vector2Int.up)));
             Assert.IsTrue(dungeon.NearRecruitmentFacility(dungeon.CellCenter(dungeon.Layout.Core)), "The free starting recruitment facility is now in the main room.");
             yield return null;
         }
@@ -222,10 +232,13 @@ namespace DarkLord.Tests
             var expansion=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<DungeonExpansion>(true)).Single();
             var view=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ConstructionPanel>(true)).Single();
             expansion.SetExpansionMode(true);view.ShowCategory(BuildCategory.Buildings);
-            var cards=view.GetComponentsInChildren<BuildItemButton>();Assert.AreEqual(11,cards.Length);
-            Assert.IsTrue(cards.Any(c=>c.Item.name=="MinionRecruitment"));
-            Assert.IsTrue(cards.Any(c=>c.Item.name=="MinionQuarters"));
-            var mint=cards.Single(c=>c.Item.name=="GoldMint");dungeon.Inventory.Grant(mint.Item);view.Choose(mint.Item);
+            // Facility cards only appear for items the lord owns.
+            Assert.AreEqual(0,view.GetComponentsInChildren<BuildItemButton>().Length);
+            BuildItemDefinition Item(string name)=>UnityEditor.AssetDatabase.LoadAssetAtPath<BuildItemDefinition>("Assets/Data/Construction/"+name+".asset");
+            dungeon.Inventory.Grant(Item("GoldMint"));dungeon.Inventory.Grant(Item("MinionQuarters"));view.ShowCategory(BuildCategory.Buildings);
+            var cards=view.GetComponentsInChildren<BuildItemButton>();
+            CollectionAssert.AreEquivalent(new[]{"GoldMint","MinionQuarters"},cards.Select(c=>c.Item.name));
+            var mint=cards.Single(c=>c.Item.name=="GoldMint");view.Choose(mint.Item);
             view.ShowDetails(mint.Item);
             Assert.IsFalse(expansion.IsPlacementView);Assert.IsTrue(((GameObject)new UnityEditor.SerializedObject(view).FindProperty("detailsWindow").objectReferenceValue).activeSelf);
             Assert.IsTrue(expansion.TryBuildOrRepairBuilding(RoomCell));Assert.AreEqual(2000,wallet.Gold);Assert.AreEqual(0,dungeon.Inventory.Count(mint.Item));
@@ -282,6 +295,7 @@ namespace DarkLord.Tests
         }
         [UnityTest] public IEnumerator PlacementReservesEachBuildingCellAndIncomePaysOnceOnClear()
         {
+            waves.ConfigureRun(new NewGameOptions{difficulty=GameDifficulty.Easy}); // Easy waves start manually.
             Assert.IsFalse(dungeon.TryPlaceBuilding(dungeon.Layout.Core+Vector2Int.right,Prefab("GoldMint"),wallet));
             wallet.RestoreAmounts(79,0,0);Assert.IsFalse(dungeon.TryPlaceBuilding(RoomCell,Prefab("GoldMint"),wallet));Assert.AreEqual(79,wallet.Gold);
             wallet.RestoreAmounts(500,0,0);Assert.IsTrue(dungeon.TryPlaceBuilding(RoomCell,Prefab("GoldMint"),wallet));Assert.AreEqual(420,wallet.Gold);

@@ -6,7 +6,7 @@ using UnityEngine;
 namespace DarkLord.Minions
 {
     public enum InvaderRole { Warrior = 0, Shieldbearer = 1, Healer = 2, Charger = 3, Archer = 4, HolyKnight = 5, Paladin = 6, Cleric = 7 }
-    public enum InvaderAction { Ready, Healing, WindingUp, Charging, Recovering, HeroCleave, ShieldBash, Judging, Roaring, Leaping, Slamming, SwordWave, Aiming, Signature }
+    public enum InvaderAction { Ready, Healing, WindingUp, Charging, Recovering, HeroCleave, ShieldBash, Judging, Roaring, Leaping, Slamming, SwordWave, Aiming, Signature, BossSkill }
 
     [Serializable]
     public sealed class InvaderTacticsSaveData
@@ -17,6 +17,7 @@ namespace DarkLord.Minions
         public Vector2 direction, healPosition;
         public bool hero, phaseTwo;
         public Vector2[] marks;
+        public int skillStep;
     }
 
     [DisallowMultipleComponent, RequireComponent(typeof(MinionController))]
@@ -50,7 +51,7 @@ namespace DarkLord.Minions
         private Vector2 savedHealPosition;
         private readonly Collider2D[] nearby = new Collider2D[96];
         private Sprite iconSprite;
-        private SpriteRenderer badge, cross, cue;
+        private SpriteRenderer cue;
         public InvaderRole Role { get; private set; }
         public InvaderAction Action { get; private set; }
         public bool IsPerforming => Action != InvaderAction.Ready;
@@ -106,6 +107,7 @@ namespace DarkLord.Minions
         private void Awake()
         {
             controller = GetComponent<MinionController>();
+            controller?.BindTactics(this);
             health = GetComponent<ActorHealth>();
             motor = GetComponent<TopDownMotor>();
             presentation = GetComponent<ActorAnimation>();
@@ -123,17 +125,14 @@ namespace DarkLord.Minions
             // Regional tint also serves as the fallback before role art loads.
             var body = controller.GetComponentInChildren<SpriteRenderer>();
             if (body != null) body.color = RoleTint(role);
-            if (badge == null) CreateMarkers();
-            badge.color = HasShield ? new Color(.35f, .7f, 1) : IsHealer ? new Color(.3f, 1, .5f) : new Color(1, .3f, .2f);
-            badge.transform.localScale = HasShield ? new Vector3(.34f, .42f, 1) : new Vector3(.12f, .4f, 1);
-            badge.gameObject.SetActive(HasShield || IsHealer || role == InvaderRole.Charger);
-            cross.color = badge.color;
-            cross.gameObject.SetActive(IsHealer);
+            // Roles read from the soldier art itself; only ability warnings float over them.
+            if (cue == null) CreateMarkers();
         }
         private float Mitigate(ActorHealth source, DamageType type)
         {
             if (!isActiveAndEnabled) return 1;
             float race = region == null ? 1 : type == DamageType.Magic ? region.MagicTaken : region.PhysicalTaken;
+            if (Sanctified) race *= .5f;
             if (!HasShield || type != DamageType.Physical || source == null) return race;
             Vector2 delta = source.transform.position - transform.position;
             return race * (delta.sqrMagnitude > .001f && Vector2.Dot(motor.Facing, delta.normalized) >= .5f ? .3f : 1);
@@ -408,8 +407,6 @@ namespace DarkLord.Minions
         private void CreateMarkers()
         {
             iconSprite = Sprite.Create(Texture2D.whiteTexture, new Rect(0, 0, 1, 1), Vector2.one * .5f, 1);
-            badge = Marker("Role badge", new Vector3(0, .9f), Vector3.one);
-            cross = Marker("Healer cross", new Vector3(0, .9f), new Vector3(.4f, .12f, 1));
             cue = Marker("Ability warning", Vector3.zero, Vector3.one); cue.gameObject.SetActive(false);
         }
         private void LateUpdate()
@@ -419,17 +416,11 @@ namespace DarkLord.Minions
             UpdateRage();
             DrawSoldierArt();
             RefreshHeroWarning();
-            if (!HasShield || cue == null || hero) return;
-            cue.gameObject.SetActive(health.IsAlive && controller.enabled);
-            cue.color = new Color(.35f, .7f, 1, .85f);
-            cue.transform.localPosition = (Vector3)(motor.Facing * .65f);
-            cue.transform.localScale = new Vector3(.12f, .65f, 1);
-            cue.transform.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(motor.Facing.y, motor.Facing.x) * Mathf.Rad2Deg);
         }
         public InvaderTacticsSaveData CaptureSave() => new InvaderTacticsSaveData { role = Role, action = Action,
             remaining = IsPerforming ? Mathf.Max(0, endsAt - Time.time) : 0, cooldown = Mathf.Max(0, nextAbility - Time.time), direction = direction,
             healPosition = healTarget != null ? (Vector2)healTarget.transform.position : savedHealPosition,
-            hero = hero, phaseTwo = phaseTwo, marks = marks };
+            hero = hero, phaseTwo = phaseTwo, marks = marks, skillStep = skillStep };
         public void RestoreSave(InvaderTacticsSaveData data)
         {
             Configure(data != null ? data.role : InvaderRole.Warrior);
@@ -437,7 +428,7 @@ namespace DarkLord.Minions
             direction = data.direction.normalized; savedHealPosition = data.healPosition;
             nextAbility = Time.time + data.cooldown;
             if (data.hero) hero = true;
-            phaseTwo = data.phaseTwo; marks = data.marks ?? System.Array.Empty<Vector2>();
+            phaseTwo = data.phaseTwo; marks = data.marks ?? System.Array.Empty<Vector2>(); skillStep = data.skillStep;
             if (data.action != InvaderAction.Ready) Begin(data.action, data.remaining);
             if (data.action == InvaderAction.Aiming)
             {

@@ -68,18 +68,20 @@ namespace DarkLord.Tests
             Assert.AreEqual(108,killer.Health.CurrentHealth);Assert.AreEqual(108,close.Health.CurrentHealth);Assert.AreEqual(100,far.Health.CurrentHealth);
             Assert.AreEqual(blood,wallet.Souls);
         }
-        [Test] public void FrostPrisonWorksWithoutTrapBrandAndStunsOnlyVulnerableTargets()
+        [Test] public void FrostPrisonOnlySlowsBrieflyWithoutStunning()
         {
-            waves.Augments.Restore(new[]{17});var enemy=Actor(Vector3.right,false,true);
-            waves.Augments.TrapHit(enemy);Assert.IsTrue(enemy.GetComponent<MinionController>().IsStunned);
-            Assert.AreEqual(.25f,enemy.GetComponent<TopDownMotor>().SlowMultiplier);Assert.IsNull(enemy.GetComponent<AugmentStatus>());
+            waves.Augments.Restore(new[]{17});var enemy=Actor(Vector3.right,false,true);var motor=enemy.GetComponent<TopDownMotor>();
+            waves.Augments.TrapHit(enemy);Assert.IsFalse(enemy.GetComponent<MinionController>().IsStunned,"Frost prison no longer stuns");
+            Assert.AreEqual(.6f,motor.SlowMultiplier,.001f);Assert.IsNull(enemy.GetComponent<AugmentStatus>());
             Assert.AreEqual(17,enemy.GetComponentInChildren<TraitProcFeedback>().Trait);
+            var slows=motor.CaptureSlows();Assert.AreEqual(1,slows.Length);
+            Assert.AreEqual(.2f,slows[0].remaining,.01f,"The slow lasts only 0.2 seconds");
         }
         [Test] public void ExtendedTraitPoolSkipsConstructionIdsAndOffersNewTraits()
         {
             Assert.AreEqual(11,WaveRewardCatalog.AugmentIds.Distinct().Count());
             Assert.IsFalse(WaveRewardCatalog.IsAugment(11));Assert.IsFalse(WaveRewardCatalog.IsAugment(12));Assert.IsFalse(WaveRewardCatalog.IsAugment(13));
-            waves.Augments.Restore(new[]{5,6,7,8,9,10});typeof(WaveDirector).GetMethod("OfferRewards",Flags).Invoke(waves,null);
+            waves.Augments.Restore(new[]{5,6,7,8,9,10},grades:new[]{3,3,3,3,3,3});typeof(WaveDirector).GetMethod("OfferRewards",Flags).Invoke(waves,null);
             Assert.AreEqual(2,waves.RewardChoices.Count(id=>id>=14&&id<=17));
         }
         [Test] public void ProcEffectsReuseActorVisualAndPauseDoesNotTriggerNewTraits()
@@ -146,11 +148,12 @@ namespace DarkLord.Tests
             var enemy=Actor(Vector3.right);Physics2D.SyncTransforms();Assert.IsTrue(combat.TryNova());
             Assert.AreEqual(105,enemy.CurrentHealth);Assert.AreEqual(0,waves.Augments.TributeCharges);
         }
-        [Test] public void RewardOffersTwoUnownedTraitsAndOneOtherReward()
+        [Test] public void RewardOffersTwoUpgradableTraitsAndOneOtherReward()
         {
-            waves.Augments.Restore(new[]{5,6,7});typeof(WaveDirector).GetMethod("OfferRewards",Flags).Invoke(waves,null);
+            waves.Augments.Restore(new[]{5,6,7},grades:new[]{3,1,2});typeof(WaveDirector).GetMethod("OfferRewards",Flags).Invoke(waves,null);
             Assert.AreEqual(3,waves.RewardChoices.Count);Assert.AreEqual(2,waves.RewardChoices.Count(WaveRewardCatalog.IsAugment));
-            Assert.IsTrue(waves.RewardChoices.Where(WaveRewardCatalog.IsAugment).All(id=>!waves.Augments.Has(id)));
+            Assert.IsTrue(waves.RewardChoices.Where(WaveRewardCatalog.IsAugment).All(waves.Augments.CanUpgrade),"Only traits below the cap are offered");
+            Assert.IsFalse(waves.RewardChoices.Contains(5));
             Assert.AreEqual(3,waves.RewardChoices.Distinct().Count());
         }
         [Test] public void BroodProgressAndExtendedTimersRoundTripWithoutReapplyingStats()
@@ -166,6 +169,48 @@ namespace DarkLord.Tests
             Time.timeScale=0;Assert.AreEqual(10,waves.Augments.MinionDamage(ally.GetComponent<MinionController>(),target,10));
             Assert.AreEqual(15,waves.Augments.MeleeDamage(target,15));Assert.IsFalse(waves.Augments.NovaBonus(target));Assert.IsNull(target.GetComponent<AugmentStatus>());
             Time.timeScale=1;Set("<State>k__BackingField",WaveState.Preparing);waves.Augments.TrapHit(target);Assert.IsNull(target.GetComponent<AugmentStatus>());
+        }
+        private void OfferForChoice(params int[] rewards)
+        {
+            var core=Child<ActorHealth>("Live core");core.Configure(Faction.Dungeon,100);Set("dungeonCore",core);
+            Set("rewardChoices",rewards);Set("rewardBuildItems",new BuildItemDefinition[rewards.Length]);Set("<State>k__BackingField",WaveState.RewardSelection);
+        }
+        [Test] public void ChoosingAnOwnedTraitRaisesItsGradeUpToTheCapAndScalesItsEffect()
+        {
+            waves.Augments.Restore(new[]{14});Assert.AreEqual(1,waves.Augments.Grade(14));
+            OfferForChoice(14,0,1);Assert.IsTrue(waves.ChooseReward(0),"An owned trait can be picked again");
+            Assert.AreEqual(2,waves.Augments.Grade(14));CollectionAssert.AreEqual(new[]{14},waves.Augments.Capture());
+            Set("<State>k__BackingField",WaveState.Active);
+            var enemy=Actor(Vector3.right);Physics2D.SyncTransforms();
+            waves.Lord.TakeDamage(10,enemy);Assert.AreEqual(200-WaveRewardCatalog.ThornDamage(2),enemy.CurrentHealth);
+            Assert.That(waves.Augments.ThornCooldown,Is.EqualTo(WaveRewardCatalog.ThornCooldown(2)).Within(.01f));
+            Assert.Greater(WaveRewardCatalog.ThornDamage(2),WaveRewardCatalog.ThornDamage(1));
+            OfferForChoice(14,0,1);Assert.IsTrue(waves.ChooseReward(0));Assert.AreEqual(WaveRewardCatalog.MaxGrade,waves.Augments.Grade(14));
+            OfferForChoice(14,0,1);Assert.IsFalse(waves.ChooseReward(0),"A maxed trait cannot be raised further");
+            Assert.AreEqual(WaveRewardCatalog.MaxGrade,waves.Augments.Grade(14));
+            StringAssert.Contains("3등급",WaveRewardCatalog.Name(14,3));
+            StringAssert.Contains(WaveRewardCatalog.ThornDamage(3).ToString(),WaveRewardCatalog.Description(14,3));
+        }
+        [Test] public void EveryTraitGetsStrongerWithGrade()
+        {
+            foreach(int id in WaveRewardCatalog.AugmentIds)
+                Assert.AreNotEqual(WaveRewardCatalog.Description(id,1),WaveRewardCatalog.Description(id,3),WaveRewardCatalog.Name(id));
+            waves.Augments.Restore(new[]{15},grades:new[]{3});var target=Actor(Vector3.right);
+            target.RestoreHealth(200,80);Assert.AreEqual(30,waves.Augments.MeleeDamage(target,15),"Grade 3 executes below 40%");
+            waves.Augments.Restore(new[]{15});target.RestoreHealth(200,80);Assert.AreEqual(15,waves.Augments.MeleeDamage(target,15));
+            waves.Augments.Restore(new[]{17},grades:new[]{3});var frozen=Actor(Vector3.left);waves.Augments.TrapHit(frozen);
+            Assert.AreEqual(WaveRewardCatalog.FrostSlow(3),frozen.GetComponent<TopDownMotor>().SlowMultiplier,.001f);
+        }
+        [Test] public void TraitGradesRoundTripThroughSavesAndOldSavesLoadAtGradeOne()
+        {
+            waves.Augments.Restore(new[]{6,14,17},grades:new[]{2,3,1});
+            var saved=JsonUtility.FromJson<WaveSaveData>(JsonUtility.ToJson(waves.CaptureSave()));
+            CollectionAssert.AreEqual(new[]{6,14,17},saved.augments);CollectionAssert.AreEqual(new[]{2,3,1},saved.augmentGrades);
+            waves.Augments.Restore(null);waves.RestoreSave(saved);
+            Assert.AreEqual(2,waves.Augments.Grade(6));Assert.AreEqual(3,waves.Augments.Grade(14));Assert.AreEqual(1,waves.Augments.Grade(17));
+            saved.augmentGrades=null;waves.RestoreSave(saved);
+            Assert.AreEqual(1,waves.Augments.Grade(6));Assert.AreEqual(1,waves.Augments.Grade(14));
+            waves.Augments.Restore(new[]{14},grades:new[]{9});Assert.AreEqual(1,waves.Augments.Grade(14),"An out-of-range grade falls back to 1");
         }
     }
 }

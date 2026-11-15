@@ -121,6 +121,22 @@ namespace DarkLord.Tests
             legacy.behaviour = (DarkLord.Minions.MinionBehaviour)99;
             Assert.Throws<InvalidDataException>(() => store.Write(0, data));
         }
+        [Test] public void TraitGradesAndBossSkillStepsAreValidated()
+        {
+            var data=Data();data.wave.augments=new[]{6,14};data.wave.augmentGrades=new[]{2,3};store.Write(0,data);
+            Assert.IsTrue(store.TryRead(0,out var read,out _));CollectionAssert.AreEqual(new[]{2,3},read.wave.augmentGrades);
+            data.wave.augmentGrades=new[]{2};Assert.Throws<InvalidDataException>(()=>store.Write(0,data),"Grades must pair with traits");
+            data.wave.augmentGrades=new[]{2,4};Assert.Throws<InvalidDataException>(()=>store.Write(0,data),"Grades stop at the cap");
+            data.wave.augmentGrades=new[]{0,1};Assert.Throws<InvalidDataException>(()=>store.Write(0,data));
+            data.wave.augmentGrades=null;store.Write(0,data);
+            data.wave.augmentGrades=null;
+            var boss=JsonUtility.FromJson<MinionSaveData>("{\"health\":100,\"maximumHealth\":100,\"order\":0}");
+            boss.tactics=new DarkLord.Minions.InvaderTacticsSaveData{role=DarkLord.Minions.InvaderRole.Charger,action=DarkLord.Minions.InvaderAction.BossSkill,
+                hero=true,remaining=.5f,skillStep=2,direction=Vector2.right};
+            data.guards=new[]{boss};store.Write(0,data);
+            boss.tactics.hero=false;Assert.Throws<InvalidDataException>(()=>store.Write(0,data),"Only bosses run boss patterns");
+            boss.tactics.hero=true;boss.tactics.skillStep=7;Assert.Throws<InvalidDataException>(()=>store.Write(0,data));
+        }
         [Test] public void InvalidWritePreservesPreviousRecordAndUnknownVersionIsRejected()
         {
             var data=Data();store.Write(0,data);data.version=999;

@@ -8,10 +8,13 @@ namespace DarkLord.Minions
     {
         [SerializeField] private MinionSkinAsset skin;
         private SpriteRenderer visual;
+        private Sprite resolved;
+        private MinionSkinAsset resolvedFrom;
 
         public void Apply(MinionSkinAsset asset)
         {
             skin = asset;
+            resolved = null;
             ResolveSprite();
         }
 
@@ -25,7 +28,10 @@ namespace DarkLord.Minions
 
         private void ResolveSprite()
         {
-            if (skin != null && visual != null) visual.sprite = skin.Resolve(visual.sprite);
+            // Only a frame the Animator just wrote needs mapping; a paused (offscreen) one costs nothing.
+            if (skin == null || visual == null || (visual.sprite == resolved && resolvedFrom == skin)) return;
+            visual.sprite = resolved = skin.Resolve(visual.sprite);
+            resolvedFrom = skin;
         }
     }
 }

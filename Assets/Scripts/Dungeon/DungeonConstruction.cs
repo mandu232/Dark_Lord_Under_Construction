@@ -215,27 +215,91 @@ namespace DarkLord.Dungeon
             result.Clear();
             if (!IsWalkable(start) || !IsWalkable(destination)) return false;
             if (confinedRoom != null && (!confinedRoom.Bounds.Contains(start) || !confinedRoom.Bounds.Contains(destination))) return false;
-            var queue = new Queue<Vector2Int>();
-            var parents = new Dictionary<Vector2Int, Vector2Int> { [start] = start };
-            queue.Enqueue(start);
-            while (queue.Count > 0)
+            // Invaders search many times a second; reuse per-cell arrays instead of a fresh queue and dictionary.
+            int generation = BeginSearch(ref searchSeen, ref searchParent, ref searchGeneration);
+            int startIndex = Index(start), destinationIndex = Index(destination);
+            int head = 0, tail = 0;
+            searchSeen[startIndex] = generation; searchParent[startIndex] = startIndex;
+            searchQueue[tail++] = startIndex;
+            while (head < tail)
             {
-                var cell = queue.Dequeue();
-                if (cell == destination)
-                {
-                    while (cell != start) { result.Add(cell); cell = parents[cell]; }
-                    result.Reverse();
-                    return true;
-                }
+                int index = searchQueue[head++];
+                if (index == destinationIndex) { Trace(searchParent, index, startIndex, result); return true; }
+                var cell = CellOf(index);
                 foreach (var direction in Directions)
                 {
                     var next = cell + direction;
-                    if (!IsWalkable(next) || (next != destination && blocked?.Invoke(next) == true) || parents.ContainsKey(next) || (confinedRoom != null && !confinedRoom.Bounds.Contains(next))) continue;
-                    parents[next] = cell;
-                    queue.Enqueue(next);
+                    if (!IsWalkable(next)) continue;
+                    int nextIndex = Index(next);
+                    if (searchSeen[nextIndex] == generation || (confinedRoom != null && !confinedRoom.Bounds.Contains(next)) ||
+                        (nextIndex != destinationIndex && blocked?.Invoke(next) == true)) continue;
+                    searchSeen[nextIndex] = generation; searchParent[nextIndex] = index;
+                    searchQueue[tail++] = nextIndex;
                 }
             }
             return false;
+        }
+
+        // One breadth-first search from start serving several destinations: PathTo then returns, for each,
+        // the same path FindPath would. A blocked cell is entered only when it is a destination and never
+        // searched through, exactly as FindPath treats its own destination.
+        public void BuildPathTree(Vector2Int start, DungeonSection confinedRoom, System.Predicate<Vector2Int> blocked, HashSet<Vector2Int> destinations)
+        {
+            treeRoom = confinedRoom;
+            treeStart = -1;
+            if (!IsWalkable(start) || (confinedRoom != null && !confinedRoom.Bounds.Contains(start))) return;
+            int generation = BeginSearch(ref treeSeen, ref treeParent, ref treeGeneration);
+            treeStart = Index(start);
+            int head = 0, tail = 0;
+            treeSeen[treeStart] = generation; treeParent[treeStart] = treeStart;
+            searchQueue[tail++] = treeStart;
+            while (head < tail)
+            {
+                int index = searchQueue[head++];
+                var cell = CellOf(index);
+                foreach (var direction in Directions)
+                {
+                    var next = cell + direction;
+                    if (!IsWalkable(next)) continue;
+                    int nextIndex = Index(next);
+                    if (treeSeen[nextIndex] == generation || (confinedRoom != null && !confinedRoom.Bounds.Contains(next))) continue;
+                    bool closed = blocked?.Invoke(next) == true;
+                    if (closed && (destinations == null || !destinations.Contains(next))) continue;
+                    treeSeen[nextIndex] = generation; treeParent[nextIndex] = index;
+                    if (!closed) searchQueue[tail++] = nextIndex;
+                }
+            }
+        }
+
+        public bool PathTo(Vector2Int destination, List<Vector2Int> result)
+        {
+            result.Clear();
+            if (treeStart < 0 || !IsWalkable(destination) || (treeRoom != null && !treeRoom.Bounds.Contains(destination))) return false;
+            int index = Index(destination);
+            if (treeSeen[index] != treeGeneration) return false;
+            Trace(treeParent, index, treeStart, result);
+            return true;
+        }
+
+        private int[] searchSeen, searchParent, searchQueue, treeSeen, treeParent;
+        private int searchGeneration, treeGeneration, treeStart = -1;
+        private DungeonSection treeRoom;
+        private int Index(Vector2Int cell) => cell.y * layout.Width + cell.x;
+        private Vector2Int CellOf(int index) => new Vector2Int(index % layout.Width, index / layout.Width);
+
+        private int BeginSearch(ref int[] seen, ref int[] parent, ref int generation)
+        {
+            int size = layout.Width * layout.Height;
+            if (seen == null || seen.Length != size) { seen = new int[size]; parent = new int[size]; generation = 0; }
+            if (searchQueue == null || searchQueue.Length != size) searchQueue = new int[size];
+            if (++generation == int.MaxValue) { System.Array.Clear(seen, 0, size); generation = 1; }
+            return generation;
+        }
+
+        private void Trace(int[] parent, int index, int startIndex, List<Vector2Int> result)
+        {
+            while (index != startIndex) { result.Add(CellOf(index)); index = parent[index]; }
+            result.Reverse();
         }
 
         // Cheapest cardinal path where stepCost returns the price of entering a cell, or a negative value for a wall.

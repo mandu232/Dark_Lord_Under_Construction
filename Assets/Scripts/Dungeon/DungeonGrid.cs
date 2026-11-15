@@ -426,7 +426,21 @@ namespace DarkLord.Dungeon
         internal bool FindNpcPath(Vector2Int start, Vector2Int destination,
             System.Collections.Generic.List<Vector2Int> path, DungeonSection room = null)
         {
-            if (!Construction.FindPath(start, destination, path, room, BlocksNpcMovement)) return false;
+            if (!Construction.FindPath(start, destination, path, room, blocksNpc ??= BlocksNpcMovement)) return false;
+            if (path.Count > 0 && BlocksNpcMovement(destination))
+                path.RemoveAt(path.Count - 1);
+            return true;
+        }
+        private System.Predicate<Vector2Int> blocksNpc;
+
+        // One search for many destinations (rooms, defenders, facilities); FindNpcTreePath then gives,
+        // for each, the path FindNpcPath would. Read the paths before the next tree is built.
+        internal void BuildNpcPathTree(Vector2Int start, System.Collections.Generic.HashSet<Vector2Int> destinations, DungeonSection room = null)
+            => Construction.BuildPathTree(start, room, blocksNpc ??= BlocksNpcMovement, destinations);
+
+        internal bool FindNpcTreePath(Vector2Int destination, System.Collections.Generic.List<Vector2Int> path)
+        {
+            if (!Construction.PathTo(destination, path)) return false;
             if (path.Count > 0 && BlocksNpcMovement(destination))
                 path.RemoveAt(path.Count - 1);
             return true;
@@ -605,6 +619,7 @@ namespace DarkLord.Dungeon
             DestroyEffectTile(windowGlow);
             if (windowFloorLight != null) Destroy(windowFloorLight);
             if (floorShades != null) foreach (var tile in floorShades) DestroyEffectTile(tile);
+            if (sideWallShades != null) foreach (var tile in sideWallShades) DestroyEffectTile(tile);
             DestroyWallPieces(carpetInnerCorners);
         }
     }

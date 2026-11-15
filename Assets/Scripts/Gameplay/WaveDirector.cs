@@ -37,6 +37,11 @@ namespace DarkLord.Gameplay
         private Coroutine spawnRoutine;
         private int pendingSpawns;
         private readonly Queue<InvaderRole> pendingRoles = new Queue<InvaderRole>();
+        // Party id of each pending spawn; members of one party enter together and share an InvaderParty.
+        private readonly Queue<int> pendingParties = new Queue<int>();
+        private readonly Dictionary<int, InvaderParty> parties = new Dictionary<int, InvaderParty>();
+        private int nextPartyId;
+        private const float PartyInterval = 5f;
         private NewGameOptions options = new NewGameOptions();
         private int[] rewardChoices = Array.Empty<int>();
         private float rewardTimeScale = 1;
@@ -62,11 +67,18 @@ namespace DarkLord.Gameplay
         public int CurrentWave { get; private set; }
         private int finalWave => RegionCatalog.FinalDay;
         public int FinalWave => finalWave;
-        private int EnemyCountForWave(int wave) => options.EnemyCount(Mathf.RoundToInt(WaveProgression.EnemyCount(wave, baseEnemyCount, enemyGrowthPerWave) * RegionForWave(wave).CountScale));
-        private int EnemyHealthForWave(int wave) => options.EnemyHealth(Mathf.RoundToInt(WaveProgression.EnemyHealth(wave, baseEnemyHealth, enemyHealthGrowth) * RegionForWave(wave).HealthScale));
-        public int NextEnemyCount => EnemyCountForWave(CurrentWave + 1);
+        // Fewer but tougher invaders: whole parties, each member well above the old mob soldier.
+        private const float PartyHealthScale = 1.6f;
+        private const int PartyLevelBonus = 2;
+        private int PartyCountForWave(int wave) => options.EnemyCount(Mathf.Max(1, Mathf.RoundToInt(WaveFormation.BasePartyCount(wave) * RegionForWave(wave).CountScale)));
+        private int EnemyCountForWave(int wave) => PartyCountForWave(wave) * WaveFormation.PartySize(wave);
+        private int EnemyHealthForWave(int wave) => options.EnemyHealth(Mathf.RoundToInt(WaveProgression.EnemyHealth(wave, baseEnemyHealth, enemyHealthGrowth) * RegionForWave(wave).HealthScale * PartyHealthScale));
+        public int NextEnemyCount => EnemyCountForWave(CurrentWave + 1) + RetreatBonus;
         public int NextEnemyHealth => EnemyHealthForWave(CurrentWave + 1);
-        public InvaderRole[] NextFormation => WaveFormation.Create(CurrentWave + 1, NextEnemyCount, NextWaveRegion);
+        public InvaderRole[] NextFormation => System.Linq.Enumerable.ToArray(System.Linq.Enumerable.SelectMany(NextParties, p => p));
+        public InvaderRole[][] NextParties => WaveFormation.AddReinforcements(
+            WaveFormation.CreateParties(CurrentWave + 1, PartyCountForWave(CurrentWave + 1), NextWaveRegion), CurrentWave + 1, RetreatBonus, NextWaveRegion);
+        public int NextPartyCount => PartyCountForWave(CurrentWave + 1);
         public ActorHealth Core => dungeonCore;
         public ActorHealth Lord => dungeonLord;
         public bool IsFinished => State == WaveState.Defeated || State == WaveState.Victorious;
@@ -124,7 +136,8 @@ namespace DarkLord.Gameplay
                 SpawnInvader(pendingSpawns);
                 pendingSpawns--;
                 Changed?.Invoke();
-                if (pendingSpawns > 0) yield return new WaitForSeconds(spawnInterval);
+                // A short gap inside a party, a longer one before the next party.
+                if (pendingSpawns > 0) yield return new WaitForSeconds(pendingParties.Count > 0 && pendingParties.Peek() >= 0 && !parties.ContainsKey(pendingParties.Peek()) ? PartyInterval : spawnInterval);
             }
             spawnRoutine = null;
             CheckWaveCleared();
@@ -142,8 +155,9 @@ namespace DarkLord.Gameplay
             var health = invader.GetComponent<ActorHealth>();
             health.Configure(Faction.Invader, EnemyHealthForWave(wave));
             var region = RegionForWave(wave);
-            health.RestoreExperience(WaveProgression.EnemyLevel(wave) + region.LevelBonus, 0);
             var role = pendingRoles.Count > 0 ? pendingRoles.Dequeue() : InvaderRole.Warrior;
+            int partyId = pendingParties.Count > 0 ? pendingParties.Dequeue() : -1;
+            health.RestoreExperience(WaveProgression.EnemyLevel(wave) + region.LevelBonus + PartyLevelBonus, 0);
             // Each region's champion comes last through the rift on its final day.
             bool boss = RegionCatalog.IsBossDay(wave) && sequence == 1;
             if (boss)
@@ -154,10 +168,52 @@ namespace DarkLord.Gameplay
             var tactics = ConfigureInvader(invader, role, region);
             if (boss) MakeBoss(invader, tactics, region);
             invader.Assault(dungeonCore, dungeon, dungeonLord);
+            if (partyId >= 0)
+            {
+                if (!parties.TryGetValue(partyId, out var party))
+                {
+                    parties[partyId] = party = new InvaderParty();
+                    party.Retreated += _ => OnPartyRetreated(wave);
+                }
+                party.Add(invader);
+            }
+            Track(invader);
+        }
+
+        private void Track(MinionController invader)
+        {
+            var health = invader.Health;
             Action handler = () => OnInvaderDied(health);
             deathHandlers.Add(health, handler);
             health.Died += handler;
+            invader.Escaped += () => OnInvaderEscaped(health);
             aliveInvaders.Add(health);
+        }
+
+        // A party that fled tells of the dungeon: the next wave brings one or two more invaders.
+        // Each wave's retreat counts once, however many of its parties run.
+        private readonly HashSet<int> retreatedWaves = new HashSet<int>();
+        public int RetreatBonus { get; private set; }
+        public const int MaxRetreatBonus = 2;
+        public void OnPartyRetreated(int wave)
+        {
+            if (!retreatedWaves.Add(wave)) return;
+            RetreatBonus += UnityEngine.Random.Range(1, MaxRetreatBonus + 1);
+            Changed?.Invoke();
+        }
+
+        // An invader that got out through the rift leaves no corpse or loot, and no longer holds the wave open.
+        private void OnInvaderEscaped(ActorHealth health)
+        {
+            if (health == null) return;
+            if (deathHandlers.TryGetValue(health, out Action handler))
+            {
+                health.Died -= handler;
+                deathHandlers.Remove(health);
+            }
+            if (!aliveInvaders.Remove(health)) return;
+            Changed?.Invoke();
+            CheckWaveCleared();
         }
 
         private const int BossHealthMultiplier = 8;
@@ -225,7 +281,7 @@ namespace DarkLord.Gameplay
             var designs = new List<BuildItemDefinition>();
             var available = new List<int>();
             foreach(int id in WaveRewardCatalog.AugmentIds)
-                if(!Augments.Has(id)&&TraitUsable(id)) available.Add(id);
+                if(Augments.CanUpgrade(id)&&TraitUsable(id)) available.Add(id);
             while(offers.Count<2 && available.Count>0)
             {
                 int index=UnityEngine.Random.Range(0,available.Count);
@@ -269,7 +325,7 @@ namespace DarkLord.Gameplay
             if (State != WaveState.RewardSelection || index < 0 || index >= rewardChoices.Length) return false;
             if (!dungeonLord.IsAlive || !dungeonCore.IsAlive) { ReconcileHealth(); return false; }
             int reward = rewardChoices[index];
-            if (!WaveRewardCatalog.IsValid(reward) || (WaveRewardCatalog.IsAugment(reward) && Augments.Has(reward))) return false;
+            if (!WaveRewardCatalog.IsValid(reward) || (WaveRewardCatalog.IsAugment(reward) && !Augments.CanUpgrade(reward))) return false;
             var item = RewardItem(index);
             rewardChoices = Array.Empty<int>();
             rewardBuildItems = Array.Empty<BuildItemDefinition>();
@@ -314,6 +370,7 @@ namespace DarkLord.Gameplay
             pendingSpawns = 0;
             pendingRoles.Clear();
             pendingWaves.Clear();
+            pendingParties.Clear();
             if (spawnRoutine != null) StopCoroutine(spawnRoutine);
             spawnRoutine = null;
             foreach (var invader in aliveInvaders)

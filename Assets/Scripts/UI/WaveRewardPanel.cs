@@ -100,10 +100,11 @@ namespace DarkLord.UI
                 if (!valid) continue;
                 int id = waves.RewardChoices[i];
                 var item = waves.RewardItem(i);
-                titles[i].text = item != null ? item.displayName : WaveRewardCatalog.Name(id);
+                int grade = WaveRewardCatalog.IsAugment(id) ? waves.Augments.Grade(id) : 0;
+                titles[i].text = item != null ? item.displayName : WaveRewardCatalog.Name(id, grade > 0 ? grade + 1 : 0);
                 pairs[i].text = item != null ? item.category == BuildCategory.Rooms ? "방 아이템" : item.category == BuildCategory.Traps ? "함정 아이템" : "시설 아이템" : WaveRewardCatalog.IsAugment(id) ? WaveRewardCatalog.Pair(id) : "자원 꾸러미";
-                descriptions[i].text = ItemDescription(item, id);
-                durations[i].text = item != null ? "보관함에 추가 · 설치 시 1개 소모" : WaveRewardCatalog.IsAugment(id) ? "선택 후 이번 원정 내내 유지" : "획득 즉시 적용";
+                descriptions[i].text = item == null && grade > 0 ? WaveRewardCatalog.Description(id, grade + 1) : ItemDescription(item, id);
+                durations[i].text = item != null ? "보관함에 추가 · 설치 시 1개 소모" : WaveRewardCatalog.IsAugment(id) ? grade > 0 ? $"{grade}등급 → {grade + 1}등급 강화 (최대 {WaveRewardCatalog.MaxGrade})" : "원정 내내 유지 · 다시 고르면 강화" : "획득 즉시 적용";
                 icons[i].sprite = item != null ? item.icon : skin != null ? skin.Icon(id) : null;
                 icons[i].enabled = icons[i].sprite != null;
             }

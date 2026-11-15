@@ -135,7 +135,7 @@ namespace DarkLord.Tests
             typeof(DungeonGrid).GetField("corridorCarpetTile", fields).SetValue(grid, carpet);
             typeof(DungeonGrid).GetField("repeatingWallTile", fields).SetValue(grid, wall);
             typeof(DungeonGrid).GetField("wallPieces", fields).SetValue(grid, new UnityEngine.Tilemaps.TileBase[] { wall });
-            var windowMask = UnityEditor.AssetDatabase.LoadAllAssetsAtPath("Assets/Sprtie/Dungeon/WindowLight.png");
+            var windowMask = UnityEditor.AssetDatabase.LoadAllAssetsAtPath("Assets/Sprite/Dungeon/WindowLight.png");
             Sprite windowSprite = null;
             foreach (var asset in windowMask) if (asset is Sprite sprite) windowSprite = sprite;
             Assert.NotNull(windowSprite);
@@ -174,11 +174,13 @@ namespace DarkLord.Tests
             int doorwayX = room.Bounds.xMin * 2 - 1;
             int doorwayBottom = room.Bounds.yMin * 2;
             int doorwayTop = (grid.Layout.Core.y - 1) * 2 - 1;
-            for (int row = 0; row < 3; row++)
+            // Plain shaft rows, then the same horizontal capital that tops the side wall.
+            for (int row = 0; row < doorwayTop - doorwayBottom - 1; row++)
             {
                 var pillar = map.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(doorwayX, doorwayBottom + row, 0));
                 Assert.That(pillar.sprite.rect.y, Is.EqualTo(112).Or.EqualTo(128));
             }
+            Assert.AreEqual(new Rect(192, 240, 16, 16), map.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(doorwayX, doorwayTop - 1, 0)).sprite.rect);
             Assert.AreEqual(new Rect(304, 152, 16, 8), map.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(doorwayX, doorwayTop, 0)).sprite.rect,
                 "The corridor's lower cornice must end with a cap where it meets the room side.");
             var backingMap = (UnityEngine.Tilemaps.Tilemap)typeof(DungeonGrid).GetField("wallJointMap", fields).GetValue(grid);
@@ -210,19 +212,21 @@ namespace DarkLord.Tests
             var incremental = map.GetTilesBlock(bounds);
             typeof(DungeonGrid).GetMethod("RefreshAllArtTiles", fields).Invoke(grid, null);
             CollectionAssert.AreEqual(incremental, map.GetTilesBlock(bounds), "Incremental excavation must match a full repaint, including distant side-wall caps.");
-            Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlanCorridor(new Vector2Int(10, 15), new Vector2Int(10, 7), out var branch));
+            // Branch from the middle of the starting corridor so both sides form inner corners.
+            int branchX = grid.Layout.Entrance.x + 4, corridorBottom = grid.Layout.Core.y - 1;
+            Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlanCorridor(new Vector2Int(branchX, grid.Layout.Core.y), new Vector2Int(branchX, 7), out var branch));
             Finish(grid, branch);
             var corners = (UnityEngine.Tilemaps.Tilemap)typeof(DungeonGrid).GetField("cornerMap", fields).GetValue(grid);
-            var leftInner = corners.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(18, 28, 0));
-            var rightInner = corners.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(23, 28, 0));
+            var leftInner = corners.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int((branchX - 1) * 2, corridorBottom * 2, 0));
+            var rightInner = corners.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int((branchX + 1) * 2 + 1, corridorBottom * 2, 0));
             Assert.NotNull(leftInner); Assert.NotNull(rightInner);
             Assert.AreEqual(new Rect(64, 32, 16, 16), leftInner.sprite.rect);
             Assert.AreEqual(new Rect(80, 32, 16, 16), rightInner.sprite.rect);
             Assert.AreSame(wall.sprite.texture, leftInner.sprite.texture, "Inner corners must use the artist's carpet ornament instead of a generated gold corner.");
-            Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlanCorridor(new Vector2Int(4, 7), new Vector2Int(15, 7), out var lowerBranch));
+            Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlanCorridor(new Vector2Int(branchX - 6, 7), new Vector2Int(branchX + 5, 7), out var lowerBranch));
             Finish(grid, lowerBranch);
-            Assert.AreEqual(new Rect(64, 48, 16, 16), corners.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(18, 17, 0)).sprite.rect);
-            Assert.AreEqual(new Rect(80, 48, 16, 16), corners.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int(23, 17, 0)).sprite.rect);
+            Assert.AreEqual(new Rect(64, 48, 16, 16), corners.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int((branchX - 1) * 2, 17, 0)).sprite.rect);
+            Assert.AreEqual(new Rect(80, 48, 16, 16), corners.GetTile<UnityEngine.Tilemaps.Tile>(new Vector3Int((branchX + 1) * 2 + 1, 17, 0)).sprite.rect);
             Assert.AreEqual(ExpansionResult.Success, grid.Layout.TryExpand(new Vector2Int(firstWindow.x / 2, firstWindow.y / 2 + 1)));
             Assert.IsNull(lights.GetTile(firstWindow), "Removing a window's wall must remove its old floor projection.");
             var incrementalLights = lights.GetTilesBlock(bounds);
@@ -340,7 +344,7 @@ namespace DarkLord.Tests
                 Assert.AreEqual(ConstructionResult.Success, grid.Construction.CanPlan(kind, section.Center + outward * offset), "Each room needs a free expansion direction.");
             }
             Assert.AreEqual(2, grid.Construction.Sections.Count);
-            Assert.AreEqual(2, grid.Layout.Entrance.x);
+            Assert.AreEqual(grid.Layout.Core.x - 3 - DungeonConstruction.StartingCorridorLength, grid.Layout.Entrance.x);
         }
 
         [Test]
@@ -698,8 +702,9 @@ namespace DarkLord.Tests
             var end = doorway + Vector2Int.up * 2;
             Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlanCorridor(doorway, end, out var nextCorridor));
             Finish(grid, nextCorridor);
+            // The three-wide corridor brush reaches one cell past its end point, so the room starts just above it.
             Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlan(ConstructionKind.Room,
-                end + Vector2Int.up * 4, out var nextRoom));
+                end + Vector2Int.up * 5, out var nextRoom));
             Finish(grid, nextRoom);
             var objective = Actor(grid, grid.Layout.Core).GetComponent<ActorHealth>();
             var first = Actor(grid, room.Center + Vector2Int.left, true).GetComponent<ActorHealth>(); first.Configure(Faction.Dungeon, 20);

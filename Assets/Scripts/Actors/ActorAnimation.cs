@@ -41,6 +41,7 @@ namespace DarkLord.Actors
         public void SetDialogueIdle(bool active)
         {
             if (animator == null || dialogueIdle == active) return;
+            Uncull();
             if (active)
             {
                 dialogueIdlePreviousMode = animator.updateMode;
@@ -59,6 +60,7 @@ namespace DarkLord.Actors
         // A negative duration plays one cycle; zero holds until StopExpression.
         public bool PlayExpression(PlayerExpression expression, float duration = -1f, bool unscaledTime = false)
         {
+            Uncull();
             if (!isActiveAndEnabled || animator == null || !animator.isActiveAndEnabled ||
                 animator.runtimeAnimatorController == null || lastState == ActorState.Die ||
                 float.IsNaN(duration) || float.IsInfinity(duration)) return false;
@@ -99,6 +101,82 @@ namespace DarkLord.Actors
         private void Update()
         {
             if (expressionPlaying && ExpressionFinished()) StopExpression();
+            UpdateCulling();
+        }
+
+        // Offscreen culling: outside the player's view (main camera plus a margin) the Animator is paused,
+        // keeping its state. Requests made meanwhile are replayed, newest only, when the actor is seen again.
+        public const float CullMargin = 2f;
+        private static int viewFrame = -1;
+        private static bool hasView;
+        private static Rect view;
+        private bool culledKeepState, pausedAnimator;
+        private bool hasPending;
+        private ActorState pendingState;
+        private Vector2 pendingFacing;
+        private int pendingVariant;
+        public bool IsCulled { get; private set; }
+
+        // Always true without an orthographic main camera, so tests and tools never cull.
+        public static bool InPlayerView(Vector3 position) => !TryGetView(out var rect) || rect.Contains((Vector2)position);
+        private static bool TryGetView(out Rect rect)
+        {
+            if (viewFrame != Time.frameCount)
+            {
+                viewFrame = Time.frameCount;
+                var camera = Camera.main;
+                hasView = camera != null && camera.isActiveAndEnabled && camera.orthographic;
+                if (hasView)
+                {
+                    float halfHeight = camera.orthographicSize + CullMargin;
+                    float halfWidth = camera.orthographicSize * camera.aspect + CullMargin;
+                    Vector3 center = camera.transform.position;
+                    view = new Rect(center.x - halfWidth, center.y - halfHeight, halfWidth * 2, halfHeight * 2);
+                }
+            }
+            rect = view;
+            return hasView;
+        }
+
+        private void UpdateCulling()
+        {
+            bool cull = !expressionPlaying && !dialogueIdle && !InPlayerView(transform.position);
+            if (cull == IsCulled) return;
+            if (!cull) { Uncull(); return; }
+            IsCulled = true;
+            // Leave an Animator that something else switched off alone.
+            if (animator == null || !animator.enabled) return;
+            culledKeepState = animator.keepAnimatorStateOnDisable;
+            animator.keepAnimatorStateOnDisable = true;
+            animator.enabled = false;
+            pausedAnimator = true;
+        }
+
+        private void Uncull()
+        {
+            if (!IsCulled) return;
+            IsCulled = false;
+            if (pausedAnimator && animator != null)
+            {
+                animator.enabled = true;
+                animator.keepAnimatorStateOnDisable = culledKeepState;
+            }
+            pausedAnimator = false;
+            if (!hasPending) return;
+            hasPending = false;
+            Apply(pendingState, pendingFacing, pendingVariant);
+        }
+
+        // For sprite players that take over from the Animator: culling never switches it back on.
+        internal void ReleaseAnimator()
+        {
+            if (pausedAnimator && animator != null)
+            {
+                animator.enabled = true;
+                animator.keepAnimatorStateOnDisable = culledKeepState;
+            }
+            pausedAnimator = false;
+            animator = null;
         }
         private float ExpressionTime => expressionUsesUnscaledTime ? Time.unscaledTime : Time.time;
         private bool ExpressionFinished()
@@ -110,7 +188,7 @@ namespace DarkLord.Actors
             return state.fullPathHash == expressionStateId && state.normalizedTime >= 1f;
         }
 
-        private void OnDisable() { StopExpression(); SetDialogueIdle(false); }
+        private void OnDisable() { Uncull(); StopExpression(); SetDialogueIdle(false); }
 
         private void Awake()
         {
@@ -125,6 +203,11 @@ namespace DarkLord.Actors
         public void Present(ActorState state, Vector2 facing, int attackVariant = 0)
         {
             LastRequested = state; LastRequestedAt = Time.time;
+            Apply(state, facing, attackVariant);
+        }
+
+        private void Apply(ActorState state, Vector2 facing, int attackVariant)
+        {
             if (expressionPlaying)
             {
                 if (state == ActorState.Die || ExpressionFinished()) StopExpression();
@@ -132,6 +215,11 @@ namespace DarkLord.Actors
             }
             if (spriteRenderer != null && (useDirectionalParameters || Mathf.Abs(facing.x) > 0.01f))
                 spriteRenderer.flipX = Mathf.Abs(facing.x) > 0.01f && (artworkFacesRight ? facing.x < 0 : facing.x > 0);
+            if (IsCulled)
+            {
+                hasPending = true; pendingState = state; pendingFacing = facing; pendingVariant = attackVariant;
+                return;
+            }
             if (animator == null || !animator.isActiveAndEnabled || animator.runtimeAnimatorController == null) return;
             if (lastController != animator.runtimeAnimatorController)
             {

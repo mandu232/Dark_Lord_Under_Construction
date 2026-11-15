@@ -28,7 +28,13 @@ namespace DarkLord.Actors
             }
             Refresh();
         }
-        private void LateUpdate() => Refresh();
+        private ActorAnimation presentation;
+        private void LateUpdate()
+        {
+            // Offscreen minions skip the per-torch shadow pass; it eases back in once they are seen.
+            if (Application.isPlaying && minion != null && (presentation != null || minion.TryGetComponent(out presentation)) && presentation.IsCulled) return;
+            Refresh();
+        }
         private void OnDisable() { if (shadow != null) shadow.enabled = false; }
 
         public void Refresh()

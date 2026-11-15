@@ -83,6 +83,8 @@ namespace DarkLord.Minions
         public float AttackCooldownRemaining => Mathf.Max(0, nextAttack - Time.time);
         public void RestoreAttackCooldown(float remaining) => nextAttack = Time.time + Mathf.Clamp(remaining, 0, AttackInterval);
         private InvaderTactics tactics;
+        // Tactics bind themselves on Awake (they are often added at spawn), so Update never searches for them.
+        internal void BindTactics(InvaderTactics value) => tactics = value;
         public LayerMask ObstacleLayers => obstacleLayers;
         public bool HasTerrainLineOfSight(ActorHealth candidate) => candidate != null && HasLineOfSight(candidate);
 
@@ -112,6 +114,7 @@ namespace DarkLord.Minions
             health = GetComponent<ActorHealth>();
             presentation = GetComponent<ActorAnimation>();
             support = GetComponent<MinionSupport>();
+            tactics = GetComponent<InvaderTactics>();
             guardPosition = transform.position;
         }
 
@@ -180,7 +183,8 @@ namespace DarkLord.Minions
         internal int AttackersHeldAhead(InvaderDungeonRoute route)
         {
             if (tactics == null) tactics = GetComponent<InvaderTactics>();
-            if (tactics != null && tactics.IsHero) return 0;
+            // A party fights as one: it never splits its members over separate rooms.
+            if (tactics != null && tactics.IsHero || party != null) return 0;
             int ahead = 0;
             foreach (var actor in encirclingActors)
                 if (actor != this && actor.IsAlive && actor.dungeonRoute != null && actor.dungeonRoute.LockedRoom == route.LockedRoom && actor.dungeonRoute.LockOrder < route.LockOrder) ahead++;
@@ -216,33 +220,17 @@ namespace DarkLord.Minions
             if (RecoverFromBlockedRoomCell()) return;
             if (IsStunned) return;
             if (IsFlinching) return;
+            party?.Evaluate();
+            UpdateGait();
+            if (UpdateRetreat()) return;
             if (Order != MinionOrder.Return && support != null && support.TryAct())
             { damagePending = false; SetState(ActorState.Attack); return; }
-            if (tactics == null) tactics = GetComponent<InvaderTactics>();
             if (Order != MinionOrder.Return && health.Faction == Faction.Invader &&
                 tactics != null && tactics.IsArcher && TryArcherRetreat()) return;
             if (tactics != null && tactics.IsPerforming && tactics.TryAct(target)) return;
             if (State == ActorState.Attack)
             {
-                if (damagePending && Time.time >= damageAt)
-                {
-                    damagePending = false;
-                    if (ValidTarget(target) && InAttackRange(target) && HasLineOfSight(target))
-                    {
-                        if (health.Faction == Faction.Dungeon) ShowAttackEffect(target.transform.position);
-                        var augments = defenceDungeon != null ? defenceDungeon.Augments : null;
-                        bool canTrigger = augments != null && augments.CanTrigger;
-                        int damage = augments != null ? augments.MinionDamage(this, target, AttackDamage) : AttackDamage;
-                        bool applied = target.TakeDamage(damage, health, attackType);
-                        if (applied && role == MinionRole.VampireBat) health.Heal(BatLifesteal);
-                        if (applied && role == MinionRole.WebSpider && target.IsAlive)
-                        {
-                            target.GetComponent<TopDownMotor>()?.ApplySlow(WebSlow, WebSlowDuration);
-                            DarkLord.Gameplay.GameplayEffects.Show(target.transform, DarkLord.Gameplay.GameplayEffectKind.DebuffBrood, target.transform.position, follow: true, scale: DarkLord.Gameplay.TraitProcFeedback.DebuffArtScale);
-                        }
-                        if (canTrigger && applied && !target.IsAlive) augments.MinionKill(this);
-                    }
-                }
+                ResolvePendingStrike();
                 if (Time.time < stateEnds) return;
             }
 
@@ -257,8 +245,10 @@ namespace DarkLord.Minions
             // A defender physically blocking an assault becomes the immediate combat target.
             if (dungeonRoute != null)
             {
+                party?.Record(this);
                 dungeonRoute.Update(transform.position, motor.BlockedBy);
                 target = dungeonRoute.Target;
+                if (party != null && IsPartyThreat(target)) party.ReportThreat(target);
                 // A player or worker can physically obstruct a corridor as well.
                 // Deal with nearby blockers without releasing the current room gate.
                 if (ValidTarget(motor.BlockedBy) && InAttackRange(motor.BlockedBy) && AllowedRouteBlocker(motor.BlockedBy))
@@ -270,6 +260,7 @@ namespace DarkLord.Minions
                 if (target == null)
                 {
                     if (tactics != null && tactics.TryAct(null)) return;
+                    if (TryPartyTravel()) return;
                     if (dungeonRoute.HasWaypoint) MoveTo(dungeonRoute.NextWaypoint);
                     else { motor.Stop(); SetState(ActorState.Idle); }
                     return;
@@ -294,6 +285,9 @@ namespace DarkLord.Minions
             }
             Vector2 delta = (Vector2)target.transform.position - (Vector2)transform.position;
             if (tactics != null && tactics.TryAct(target)) { damagePending = false; return; }
+            // Followers stay in column instead of each running alone for the core.
+            if (target == assaultObjective && !InAttackRange(target) && TryPartyTravel()) return;
+            if (TryHoldBackline(target)) return;
             bool archer = tactics != null && tactics.IsArcher;
             if (!archer && TryEncirclePlayer()) return;
             motor.Face(delta);
@@ -321,6 +315,26 @@ namespace DarkLord.Minions
                 else { motor.Stop(); SetState(ActorState.Idle); }
             }
             else MoveTo(target.transform.position, target);
+        }
+
+        // The blow of a swing already under way lands once its windup has passed.
+        private void ResolvePendingStrike()
+        {
+            if (!damagePending || Time.time < damageAt) return;
+            damagePending = false;
+            if (!ValidTarget(target) || !InAttackRange(target) || !HasLineOfSight(target)) return;
+            if (health.Faction == Faction.Dungeon) ShowAttackEffect(target.transform.position);
+            var augments = defenceDungeon != null ? defenceDungeon.Augments : null;
+            bool canTrigger = augments != null && augments.CanTrigger;
+            int damage = augments != null ? augments.MinionDamage(this, target, AttackDamage) : AttackDamage;
+            bool applied = target.TakeDamage(damage, health, attackType);
+            if (applied && role == MinionRole.VampireBat) health.Heal(BatLifesteal);
+            if (applied && role == MinionRole.WebSpider && target.IsAlive)
+            {
+                target.GetComponent<TopDownMotor>()?.ApplySlow(WebSlow, WebSlowDuration);
+                DarkLord.Gameplay.GameplayEffects.Show(target.transform, DarkLord.Gameplay.GameplayEffectKind.DebuffBrood, target.transform.position, follow: true, scale: DarkLord.Gameplay.TraitProcFeedback.DebuffArtScale);
+            }
+            if (canTrigger && applied && !target.IsAlive) augments.MinionKill(this);
         }
 
         private bool ValidTarget(ActorHealth candidate)
@@ -503,6 +517,8 @@ namespace DarkLord.Minions
         {
             // Invaders on a dungeon route strike back instead of walking on past their attacker.
             if (dungeonRoute != null && IsHostile(source)) dungeonRoute.Engage(source);
+            // One member under attack calls the whole party onto the attacker.
+            if (party != null && IsPartyThreat(source)) party.ReportThreat(source);
             if (IsStaggerImmune)
             {
                 if (State == ActorState.Hit) { stateEnds = 0; SetState(ActorState.Idle); }

@@ -48,11 +48,13 @@ namespace DarkLord.Tests
             Assert.IsTrue(room.IsCore && room.IsComplete && corridor.IsComplete);
             Assert.AreEqual(new Vector2Int(7, 7), room.Bounds.size);
             Assert.AreEqual(3, corridor.Bounds.height);
-            Assert.GreaterOrEqual(corridor.Bounds.width, 11);
+            Assert.AreEqual(DungeonConstruction.StartingCorridorLength, corridor.Bounds.width);
             Assert.IsTrue(grid.Layout.HasEntrance);
-            Assert.AreEqual(2, grid.Layout.Entrance.x);
+            Assert.AreEqual(grid.Layout.Core.x - 3 - DungeonConstruction.StartingCorridorLength, grid.Layout.Entrance.x);
             Assert.IsTrue(grid.Construction.FindPath(grid.Layout.Entrance, grid.Layout.Core, new System.Collections.Generic.List<Vector2Int>()));
-            Assert.IsEmpty(grid.CaptureBuildings(p => p.name));
+            // The only starting building is the free summoning facility in the core room.
+            Assert.AreSame(grid.CoreRoom, grid.Construction.RoomAt(grid.RecruitmentFacilities.Single().Cell));
+            Assert.AreEqual(1, grid.CaptureBuildings(p => p.name).Length);
             Assert.AreEqual(0, grid.RemainingConstructionTiles);
             Assert.IsEmpty(grid.Inventory.Capture());
             Assert.AreEqual(1000, waves.Lord.GetComponent<CurrencyWallet>().GetCapacity(CurrencyType.Gold));
@@ -86,18 +88,20 @@ namespace DarkLord.Tests
         {
             grid.GrantDailyConstructionItems(1);
             var stacks = grid.Inventory.Capture();
-            Assert.AreEqual(2, stacks.Sum(s => s.count));
+            // Each day grants one room, one facility and one trap.
+            Assert.AreEqual(3, stacks.Sum(s => s.count));
             Assert.AreEqual(1, Catalog.Where(i => i.category == BuildCategory.Rooms).Sum(grid.Inventory.Count));
             Assert.AreEqual(1, Catalog.Where(i => i.category == BuildCategory.Buildings).Sum(grid.Inventory.Count));
+            Assert.AreEqual(1, Catalog.Where(i => i.category == BuildCategory.Traps).Sum(grid.Inventory.Count));
             grid.GrantDailyConstructionItems(1);
-            Assert.AreEqual(2, grid.Inventory.Capture().Sum(s => s.count));
+            Assert.AreEqual(3, grid.Inventory.Capture().Sum(s => s.count));
             var save = grid.CaptureSave(p => Catalog.First(i => i.prefab == p).name);
             grid.Inventory.Restore(null);
             grid.RestoreSave(save, id => Catalog.First(i => i.name == id).prefab);
             grid.GrantDailyConstructionItems(1);
-            Assert.AreEqual(2, grid.Inventory.Capture().Sum(s => s.count));
+            Assert.AreEqual(3, grid.Inventory.Capture().Sum(s => s.count));
             grid.GrantDailyConstructionItems(2);
-            Assert.AreEqual(4, grid.Inventory.Capture().Sum(s => s.count));
+            Assert.AreEqual(6, grid.Inventory.Capture().Sum(s => s.count));
         }
         [Test] public void CoreRoomAllowsAdditionalFacilitiesAndRestoresThem()
         {
@@ -129,7 +133,7 @@ namespace DarkLord.Tests
         [Test] public void FacilityPlacementConsumesOnlyOnSuccessAndCostsNoGold()
         {
             var item = Catalog.First(i => i.category == BuildCategory.Buildings);
-            Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlan(ConstructionKind.Room, grid.Layout.Core + new Vector2Int(-9, 4), out var room));
+            Assert.AreEqual(ConstructionResult.Success, grid.Construction.TryPlan(ConstructionKind.Room, grid.Layout.Core + new Vector2Int(-8, 5), out var room));
             for (int pass = 0; pass < room.Cells.Count; pass++)
                 foreach (var part in room.Cells) grid.Layout.TryExpand(part);
             Assert.IsTrue(room.IsComplete);
@@ -193,10 +197,10 @@ namespace DarkLord.Tests
             var clear = typeof(WaveDirector).GetMethod("CheckWaveCleared", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             clear.Invoke(waves, null);
             Assert.AreEqual(WaveState.RewardSelection, waves.State);
-            Assert.AreEqual(2, grid.Inventory.Capture().Sum(s => s.count));
+            Assert.AreEqual(3, grid.Inventory.Capture().Sum(s => s.count));
             Assert.AreEqual(1, grid.LastConstructionRewardDay);
             clear.Invoke(waves, null);
-            Assert.AreEqual(2, grid.Inventory.Capture().Sum(s => s.count));
+            Assert.AreEqual(3, grid.Inventory.Capture().Sum(s => s.count));
             var session = Find<GameSaveSession>();
             var saved = session.Capture();
             saved.wave.rewardItemIds = null; // Exercise legacy generic reward compatibility.
@@ -205,7 +209,7 @@ namespace DarkLord.Tests
             session.Restore(saved);
             Assert.AreEqual(0, waves.RewardChoices[1]);
             Assert.IsTrue(waves.ChooseReward(1));
-            Assert.AreEqual(2, grid.Inventory.Capture().Sum(s => s.count));
+            Assert.AreEqual(3, grid.Inventory.Capture().Sum(s => s.count));
         }
         [Test] public void FullSavePreservesInventoryAndLegacyOmissionRestoresEmpty()
         {
@@ -216,7 +220,7 @@ namespace DarkLord.Tests
             SaveSlotStore.Validate(saved);
             session.Restore(saved);
             grid.GrantDailyConstructionItems(1);
-            Assert.AreEqual(2, grid.Inventory.Capture().Sum(s => s.count));
+            Assert.AreEqual(3, grid.Inventory.Capture().Sum(s => s.count));
             saved.dungeon.constructionItems = null; saved.dungeon.lastConstructionRewardDay = 0;
             session.Restore(saved);
             Assert.IsEmpty(grid.Inventory.Capture());

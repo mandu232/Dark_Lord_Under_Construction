@@ -62,7 +62,7 @@ namespace DarkLord.UI
         {
             var ids = waves.Augments.Capture();
             var skin = Resources.Load<RewardUiSkin>("WaveRewardSkin");
-            lastAugmentText = ids.Length == 0 ? "" : "<b>계승된 전투 효과</b>\n" + string.Join(" · ", System.Array.ConvertAll(ids, id => RewardUiSkin.BuffSymbol(skin != null ? skin.Icon(id) : null) + WaveRewardCatalog.Name(id)));
+            lastAugmentText = ids.Length == 0 ? "" : "<b>계승된 전투 효과</b>\n" + string.Join(" · ", System.Array.ConvertAll(ids, id => RewardUiSkin.BuffSymbol(skin != null ? skin.Icon(id) : null) + WaveRewardCatalog.Name(id, waves.Augments.Grade(id))));
         }
         private void OnDestroy() { if (waves != null) waves.Changed -= RefreshAugments; if (recoveryButton != null) recoveryButton.onClick.RemoveListener(ToggleRecovery); }
         private void LateUpdate()
@@ -74,7 +74,7 @@ namespace DarkLord.UI
                 traitProcLabel.text=procAge<1.5f?waves.Augments.LastTrigger:"";
                 var procColor=TraitProcFeedback.ColorFor(waves.Augments.LastTriggeredId);procColor.a=Mathf.Clamp01((1.5f-procAge)*2);traitProcLabel.color=procColor;
             }
-            augmentLabel.text = lastAugmentText + (waves.Augments.Has(WaveRewardCatalog.Tribute) ? $"\n영혼 과충전 {waves.Augments.TributeCharges}/5 · 다음 혈파 +{waves.Augments.TributeCharges*10}" : "");
+            augmentLabel.text = lastAugmentText + (waves.Augments.Has(WaveRewardCatalog.Tribute) ? $"\n영혼 과충전 {waves.Augments.TributeCharges}/5 · 다음 혈파 +{waves.Augments.TributeCharges*WaveRewardCatalog.TributePerCharge(waves.Augments.Grade(WaveRewardCatalog.Tribute))}" : "");
             if (recoveryLabel != null)
             {
                 recoveryLabel.text = waves.AutoMinionRecoveryEnabled ? "자동 회복 ON  ·  클릭하여 끄기\n2초마다 혈액 1 → 체력 5 / 하수인" : "자동 회복 OFF  ·  클릭하여 켜기\n혈액을 소모하지 않습니다";

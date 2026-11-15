@@ -75,6 +75,103 @@ namespace DarkLord.Tests
             Assert.Less(motor.SlowMultiplier, 1f, "Frost marks slow what they hit");
             Assert.AreEqual(InvaderAction.Recovering, boss.Action);
         }
+        private InvaderTactics Boss(int region)
+        {
+            var boss = Enemy(InvaderRole.Charger); boss.SetRace(RegionCatalog.At(region)); boss.SetHero(true);
+            return boss;
+        }
+        private void Resolve(InvaderTactics boss, ActorHealth target, int step, params Vector2[] marks)
+        {
+            boss.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Charger, action = InvaderAction.BossSkill, hero = true,
+                skillStep = step, marks = marks, direction = Vector2.right });
+            Physics2D.SyncTransforms();
+            Assert.IsTrue(boss.TryAct(target));
+        }
+        [Test] public void EachRegionalBossSelectsItsOwnPatternInItsRotation()
+        {
+            var expected = new Dictionary<int, BossSkill> {
+                [0] = BossSkill.LeapAndWave, [1] = BossSkill.Warstomp, [2] = BossSkill.MoonVolley,
+                [3] = BossSkill.Sanctuary, [4] = BossSkill.GlacierLances, [5] = BossSkill.EruptionChase };
+            Assert.AreEqual(expected.Count, expected.Values.Distinct().Count(), "No two bosses share a pattern");
+            foreach (var pair in expected)
+            {
+                Assert.AreEqual(pair.Value, InvaderTactics.SkillFor(RegionCatalog.At(pair.Key)));
+                Assert.IsNotEmpty(InvaderTactics.SkillName(pair.Value));
+                if (pair.Key == 0) continue;
+                var boss = Boss(pair.Key);
+                Assert.AreEqual(pair.Value, boss.Skill);
+                var target = Actor(Vector3.right * 4, Faction.Dungeon);
+                Physics2D.SyncTransforms();
+                bool used = false;
+                for (int turn = 0; turn < 3 && !used; turn++)
+                {
+                    boss.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Charger, hero = true, cooldown = 0 });
+                    Assert.IsTrue(boss.TryAct(target), RegionCatalog.At(pair.Key).BossName);
+                    used = boss.Action == InvaderAction.BossSkill;
+                }
+                Assert.IsTrue(used, RegionCatalog.At(pair.Key).BossName + " uses its own pattern within three decisions");
+                Assert.IsTrue(boss.HeroArmored, "Bosses cannot be interrupted mid-pattern");
+                Object.DestroyImmediate(boss.gameObject); Object.DestroyImmediate(target.gameObject);
+            }
+        }
+        [Test] public void UrgadsShockRingsLeaveTheSpaceBehindTheWaveSafe()
+        {
+            var boss = Boss(1); Vector2 centre = boss.transform.position;
+            var near = Actor(Vector3.right * .6f, Faction.Dungeon); var far = Actor(Vector3.left * 1.8f, Faction.Dungeon);
+            Resolve(boss, near, 0, centre);
+            Assert.Less(near.CurrentHealth, 100); Assert.AreEqual(100, far.CurrentHealth);
+            Assert.AreEqual(InvaderAction.BossSkill, boss.Action); Assert.AreEqual(1, boss.SkillStep);
+            near.RestoreHealth(100, 100); near.transform.position = (Vector3)centre + Vector3.right * .6f;
+            Resolve(boss, near, 1, centre);
+            Assert.AreEqual(100, near.CurrentHealth, "The inner circle is safe once the wave has passed");
+            Assert.Less(far.CurrentHealth, 100);
+        }
+        [Test] public void SanctuaryHalvesDamageWhileChannellingThenMendsAllies()
+        {
+            var boss = Boss(3); var health = boss.GetComponent<ActorHealth>();
+            var player = Actor(Vector3.right * 2, Faction.Dungeon); var ally = Actor(Vector3.up * 2); ally.RestoreHealth(100, 50);
+            Physics2D.SyncTransforms();
+            health.TakeDamage(20, player); int normal = 100 - health.CurrentHealth;
+            health.RestoreHealth(100, 100);
+            boss.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Charger, action = InvaderAction.BossSkill, hero = true, remaining = .9f,
+                marks = new Vector2[] { boss.transform.position } });
+            health.TakeDamage(20, player); Assert.Less(100 - health.CurrentHealth, normal, "Sanctuary halves the damage he takes");
+            Resolve(boss, player, 0, boss.transform.position);
+            Assert.Less(player.CurrentHealth, 100); Assert.Greater(ally.CurrentHealth, 50, "The burst mends wounded allies");
+            Assert.AreEqual(InvaderAction.Recovering, boss.Action);
+        }
+        [Test] public void SeriliaBacksOffThenLoosesAFanOfArrows()
+        {
+            var boss = Boss(2); var target = Actor(Vector3.right * 5, Faction.Dungeon);
+            Resolve(boss, target, 0);
+            Assert.AreEqual(InvaderAction.BossSkill, boss.Action); Assert.AreEqual(1, boss.SkillStep);
+            int before = Object.FindObjectsByType<InvaderArrow>(FindObjectsSortMode.None).Length;
+            Resolve(boss, target, 1);
+            Assert.AreEqual(before + 3, Object.FindObjectsByType<InvaderArrow>(FindObjectsSortMode.None).Length);
+            Assert.AreEqual(InvaderAction.Recovering, boss.Action);
+            foreach (var arrow in Object.FindObjectsByType<InvaderArrow>(FindObjectsSortMode.None)) Object.DestroyImmediate(arrow.gameObject);
+        }
+        [Test] public void HrimsLancesEruptRowByRowAndSlow()
+        {
+            var boss = Boss(4); var target = Actor(Vector3.right * 2, Faction.Dungeon); var motor = target.gameObject.AddComponent<TopDownMotor>();
+            Vector2 at = target.transform.position, behind = at + Vector2.right * 3;
+            Resolve(boss, target, 0, at, at, at, behind, behind, behind);
+            Assert.Less(target.CurrentHealth, 100); Assert.Less(motor.SlowMultiplier, 1f);
+            Assert.AreEqual(1, boss.SkillStep); Assert.AreEqual(InvaderAction.BossSkill, boss.Action);
+        }
+        [Test] public void VarkansEruptionsChaseTheTarget()
+        {
+            var boss = Boss(5); var target = Actor(Vector3.right * 6, Faction.Dungeon);
+            Vector2 first = target.transform.position;
+            Resolve(boss, target, 0, first);
+            Assert.Less(target.CurrentHealth, 100);
+            target.transform.position += Vector3.up * 3; Physics2D.SyncTransforms();
+            boss.RestoreSave(new InvaderTacticsSaveData { role = InvaderRole.Charger, action = InvaderAction.BossSkill, hero = true, skillStep = 1,
+                marks = new[] { first }, direction = Vector2.right });
+            Assert.IsTrue(boss.TryAct(target));
+            Assert.AreEqual(2, boss.SkillStep);
+            Assert.That(Vector2.Distance(boss.CaptureSave().marks[0], target.transform.position), Is.LessThan(.01f), "The next eruption lands on the target");
+        }
         [Test] public void ShieldbearerBashesAdjacentTargetAfterTelegraph()
         {
             var shield = Enemy(InvaderRole.Shieldbearer);

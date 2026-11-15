@@ -76,9 +76,16 @@ namespace DarkLord.Gameplay
             Economy?.OnRoundStarted(CurrentWave);
             State = WaveState.Active;
             Combat?.RefillMana();
-            var formation = WaveFormation.Create(CurrentWave, EnemyCountForWave(CurrentWave), RegionForWave(CurrentWave));
-            foreach (var role in formation) { pendingRoles.Enqueue(role); pendingWaves.Enqueue(CurrentWave); }
-            pendingSpawns += formation.Length;
+            if (aliveInvaders.Count == 0 && pendingSpawns == 0) parties.Clear();
+            var formation = WaveFormation.AddReinforcements(WaveFormation.CreateParties(CurrentWave, PartyCountForWave(CurrentWave), RegionForWave(CurrentWave)),
+                CurrentWave, RetreatBonus, RegionForWave(CurrentWave));
+            RetreatBonus = 0;
+            foreach (var party in formation)
+            {
+                int id = nextPartyId++;
+                foreach (var role in party) { pendingRoles.Enqueue(role); pendingWaves.Enqueue(CurrentWave); pendingParties.Enqueue(id); }
+                pendingSpawns += party.Length;
+            }
             if (AutomaticWaves) ScheduleNextWave();
             if (spawnRoutine == null) spawnRoutine = StartCoroutine(SpawnWave());
             InvasionStarted?.Invoke(CurrentWave);
@@ -109,7 +116,8 @@ namespace DarkLord.Gameplay
         private WaveScheduleSaveData CaptureSchedule() => new WaveScheduleSaveData {
             openingInvasionScheduled = openingInvasionScheduled, remaining = nextWaveRemaining < 0 ? 120 : nextWaveRemaining, rewardWave = rewardWave,
             pendingWaves = pendingWaves.ToArray(), completedWaves = SavedCompletedWaves(), rewardQueue = waveRewardQueue.ToArray(), arrivedRegion = arrivedRegion,
-            regionOrder = regionOrder == null ? null : (int[])regionOrder.Clone()
+            regionOrder = regionOrder == null ? null : (int[])regionOrder.Clone(),
+            retreatBonus = RetreatBonus, retreatedWaves = retreatedWaves.OrderBy(n => n).ToArray()
         };
         private int[] SavedCompletedWaves()
         {
@@ -124,7 +132,9 @@ namespace DarkLord.Gameplay
             placementCheckRemaining = 0;
             regionOrder = data?.regionOrder != null && data.regionOrder.Length > 0 ? (int[])data.regionOrder.Clone() : null;
             RestoreRelocation(data != null ? data.arrivedRegion : 0);
-            completedWaves.Clear(); waveRewardQueue.Clear();
+            completedWaves.Clear(); waveRewardQueue.Clear(); retreatedWaves.Clear();
+            RetreatBonus = data != null ? Mathf.Clamp(data.retreatBonus, 0, 64) : 0;
+            if (data?.retreatedWaves != null) foreach (int n in data.retreatedWaves) retreatedWaves.Add(n);
             rewardWave = data != null ? data.rewardWave : CurrentWave;
             if (data == null)
             {

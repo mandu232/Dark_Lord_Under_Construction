@@ -25,7 +25,8 @@ namespace DarkLord.Minions
             if (!hasSoldierArt || !health.IsAlive) return;
 
             soldierRenderer.color = RageTint;
-            if (soldierFrames == null || controller.IsFlinching) return;
+            // Offscreen the pattern poses wait too; they are timed from gameplay and catch up when seen.
+            if (soldierFrames == null || controller.IsFlinching || presentation != null && presentation.IsCulled) return;
 
             float sinceImpact = Time.time - soldierImpactAt;
             if (UsesRegionalChampionArt)
@@ -70,6 +71,7 @@ namespace DarkLord.Minions
                 InvaderAction.Charging => 11,
                 InvaderAction.Judging => 10,
                 InvaderAction.Signature => ActionProgress < .4f ? 3 : 10,
+                InvaderAction.BossSkill => Race == InvaderRace.Orc ? 12 : ActionProgress < .3f ? 3 : 10,
                 InvaderAction.Roaring => ActionProgress < .35f ? 3 : 12,
                 InvaderAction.Recovering => 3,
                 _ => -1

@@ -77,7 +77,7 @@ namespace DarkLord.Player
             foreach(float offset in new[]{.3f,-.3f,.6f,-.6f})
             {
                 if(!health.IsAlive||IsFinished)yield break;
-                FireLance(transform.position+side*offset,direction,(20+waves.Economy.MagicBonus)/2,ref volleyLifeStolen);
+                FireLance(transform.position+side*offset,direction,(20+waves.Economy.MagicBonus)*WaveRewardCatalog.VolleyPercent(waves.Augments.Grade(WaveRewardCatalog.LanceVolley))/100,ref volleyLifeStolen);
                 yield return new WaitForSeconds(VolleyGap);
             }
         }

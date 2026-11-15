@@ -83,6 +83,7 @@ namespace DarkLord.Actors
         private void RegisterCollisions()
         {
             actorColliders = GetComponentsInChildren<Collider2D>();
+            bodyCacheFrame = -1;
             health = GetComponent<ActorHealth>();
             foreach (var other in ActiveMotors)
                 if (other != null && other != this) SetActorCollision(other, true);
@@ -236,23 +237,30 @@ namespace DarkLord.Actors
             return Vector2.ClampMagnitude(velocity + separation * speed, speed);
         }
 
-        private bool HasSolidBody()
+        // Every motor reads every other one each physics step, so the collider scan (and its native
+        // bounds reads) runs once per motor per step instead of once per pair.
+        private float bodyCacheTime = float.NaN;
+        private int bodyCacheFrame = -1;
+        private bool solidBody;
+        private float bodyRadius;
+        private void RefreshBody()
         {
-            if (actorColliders != null)
-                foreach (var collider in actorColliders)
-                    if (collider != null && collider.enabled && !collider.isTrigger) return true;
-            return false;
+            if (bodyCacheFrame == Time.frameCount && bodyCacheTime == Time.fixedTime) return;
+            bodyCacheFrame = Time.frameCount; bodyCacheTime = Time.fixedTime;
+            solidBody = false; bodyRadius = 0;
+            if (actorColliders == null) return;
+            foreach (var collider in actorColliders)
+                if (collider != null && collider.enabled && !collider.isTrigger)
+                {
+                    solidBody = true;
+                    var extents = collider.bounds.extents;
+                    bodyRadius = Mathf.Max(bodyRadius, extents.x, extents.y);
+                }
         }
 
-        private float BodyRadius()
-        {
-            float radius = 0;
-            if (actorColliders != null)
-                foreach (var collider in actorColliders)
-                    if (collider != null && collider.enabled && !collider.isTrigger)
-                        radius = Mathf.Max(radius, collider.bounds.extents.x, collider.bounds.extents.y);
-            return radius;
-        }
+        private bool HasSolidBody() { RefreshBody(); return solidBody; }
+
+        private float BodyRadius() { RefreshBody(); return bodyRadius; }
         private void OnDisable()
         {
             knockbackUntil = 0;

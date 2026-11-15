@@ -45,6 +45,7 @@ namespace DarkLord.Minions
             if (body == null || sheet == null || sheet.frames == null || sheet.frames.Length < needed) { enabled = false; return; }
             frames = sheet.frames;
             var animator = GetComponent<Animator>();
+            presentation?.ReleaseAnimator();
             if (animator != null) animator.enabled = false;
             body.sprite = frames[0];
             locomotionStartedAt = Time.time;
@@ -66,6 +67,8 @@ namespace DarkLord.Minions
 
         private void LateUpdate()
         {
+            // Offscreen he holds his pose; every clip is timed from gameplay, so it resumes in step.
+            if (presentation != null && presentation.IsCulled) return;
             Clip clip; int frame;
             bool facesLeft = Mathf.Abs(motor.Facing.x) > .01f ? motor.Facing.x < 0 : body.flipX;
             float impactElapsed = Time.time - impactStartedAt;

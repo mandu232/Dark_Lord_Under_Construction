@@ -12,7 +12,8 @@ namespace DarkLord.Dungeon
         [SerializeField] private Material windowLightMaterial;
         [SerializeField] private GameObject wallTorchPrefab;
         private readonly System.Collections.Generic.Dictionary<Vector2Int, GameObject> wallTorches = new System.Collections.Generic.Dictionary<Vector2Int, GameObject>();
-        private Tilemap floorMap, floorShadeMap, carpetMap, cornerMap, shadowMap, wallMap, glowMap, wallJointMap;
+        private Tilemap floorMap, floorShadeMap, carpetMap, cornerMap, shadowMap, sideShadeMap, wallMap, glowMap, wallJointMap;
+        private Tile[] sideWallShades;
         private Tile carpetFill;
         private Sprite carpetFillSprite;
         private Tile ceilingTile;
@@ -54,6 +55,8 @@ namespace DarkLord.Dungeon
             carpetMap = ArtLayer("Continuous corridor carpet", -31999);
             cornerMap = ArtLayer("Carpet inner corners", -31998);
             shadowMap = ArtLayer("Wall and pillar shadows", -31997);
+            sideShadeMap = ArtLayer("Side wall occlusion", -31997);
+            sideWallShades = MakeSideWallShades();
             wallJointMap = ArtLayer("Inner wall corner backing", -31997);
             wallMap = ArtLayer("North wall faces and brown wall tops", -31996);
             glowMap = ArtLayer("Window glow", -31995);
@@ -149,7 +152,7 @@ namespace DarkLord.Dungeon
             var detailed = new bool[width * height];
             var ceiling = ceilingTile != null ? ceilingTile : repeatingWallTile;
             floorMap.ClearAllTiles(); floorShadeMap.ClearAllTiles(); carpetMap.ClearAllTiles();
-            cornerMap.ClearAllTiles(); shadowMap.ClearAllTiles(); glowMap.ClearAllTiles(); wallJointMap.ClearAllTiles();
+            cornerMap.ClearAllTiles(); shadowMap.ClearAllTiles(); sideShadeMap.ClearAllTiles(); glowMap.ClearAllTiles(); wallJointMap.ClearAllTiles();
             // Submit ceilings in rows so a large map cannot monopolize a loading frame.
             var ceilingRow = new TileBase[width];
             for (int x = 0; x < width; x++) ceilingRow[x] = ceiling;
@@ -259,6 +262,29 @@ namespace DarkLord.Dungeon
                     float side = right ? Mathf.Clamp01((x - 10f) / 5f) * .13f : 0;
                     float lower = bottom ? Mathf.Clamp01((5f - y) / 5f) * .15f : 0;
                     texture.SetPixel(x, y, new Color(.015f, .01f, .04f, Mathf.Max(side, lower)));
+                }
+                texture.Apply();
+                var tile = ScriptableObject.CreateInstance<Tile>();
+                tile.sprite = Sprite.Create(texture, new Rect(0, 0, 16, 16), new Vector2(.5f, .5f), 16);
+                tile.colliderType = Tile.ColliderType.None;
+                result[i] = tile;
+            }
+            return result;
+        }
+        /// <summary>Ambient occlusion where the floor meets an east or west wall: left wall, right wall, both.</summary>
+        private static Tile[] MakeSideWallShades()
+        {
+            var result = new Tile[3];
+            for (int i = 0; i < result.Length; i++)
+            {
+                bool left = i != 1, right = i != 0;
+                var texture = new Texture2D(16, 16, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp };
+                for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++)
+                {
+                    // Two-pixel steps over the first eight pixels, matching the north wall foot shadow.
+                    float fromLeft = left ? Mathf.Clamp01(1 - (x / 2) / 4f) : 0;
+                    float fromRight = right ? Mathf.Clamp01(1 - ((15 - x) / 2) / 4f) : 0;
+                    texture.SetPixel(x, y, new Color(.015f, .01f, .04f, Mathf.Max(fromLeft, fromRight) * .42f));
                 }
                 texture.Apply();
                 var tile = ScriptableObject.CreateInstance<Tile>();
@@ -488,6 +514,8 @@ namespace DarkLord.Dungeon
                 ? VerticalWallEdge(p) && verticalWallPieces != null ? verticalWallPieces[1] : ceilingTile
                 : null);
             shadowMap.SetTile(position, shadow);
+            bool wallLeft = floor && !ArtFloor(p + Vector2Int.left), wallRight = floor && !ArtFloor(p + Vector2Int.right);
+            sideShadeMap.SetTile(position, wallLeft && wallRight ? sideWallShades[2] : wallLeft ? sideWallShades[0] : wallRight ? sideWallShades[1] : null);
             TileBase wall = null;
             bool litWindow = false;
             bool torch = false;
@@ -551,6 +579,9 @@ namespace DarkLord.Dungeon
                 var instance = Instantiate(wallTorchPrefab, artRoot);
                 // Native 16 PPU artwork, bottom aligned just above the floor.
                 instance.transform.localPosition = new Vector3(position.x + .5f, position.y - .5f, 0);
+                // Real light pool on the floor in front of the wall; the flame art keeps its own glow.
+                var light = DungeonLighting.AddPoint(instance.transform, "Torch light", new Vector3(0, .75f, 0), DungeonLighting.TorchColor, 1.15f, 5.5f);
+                light.gameObject.AddComponent<LightFlicker>();
                 wallTorches.Add(position, instance);
             }
         }

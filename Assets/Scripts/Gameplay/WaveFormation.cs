@@ -8,10 +8,39 @@ namespace DarkLord.Gameplay
     {
         public static InvaderRole[] Create(int wave, int count) => Create(wave, count, RegionCatalog.ForDay(wave));
 
-        public static InvaderRole[] Create(int wave, int count, RegionDefinition region)
+        // Adventurer parties: 1 party through day 3, then one more every 4 days (6 by day 20).
+        public static int BasePartyCount(int wave) => 1 + Mathf.Max(1, wave) / 4;
+        public static int PartySize(int wave) => wave >= 3 ? 4 : 3;
+
+        // Every party gets its own tank/damage/support mix; only the last party carries the region's boss.
+        public static InvaderRole[][] CreateParties(int wave, int parties, RegionDefinition region)
+        {
+            parties = Mathf.Max(1, parties);
+            var result = new InvaderRole[parties][];
+            for (int i = 0; i < parties; i++)
+                result[i] = Create(wave, PartySize(wave), region, i == parties - 1 && RegionCatalog.IsBossDay(wave), i == 0);
+            return result;
+        }
+
+        public static InvaderRole[] Create(int wave, int count, RegionDefinition region) => Create(wave, count, region, RegionCatalog.IsBossDay(wave), true);
+
+        // Word of a retreat brings extra recruits: they march at the head of the first party,
+        // ahead of its own members, so a boss still enters last.
+        public static InvaderRole[][] AddReinforcements(InvaderRole[][] parties, int wave, int extra, RegionDefinition region)
+        {
+            if (extra <= 0 || parties == null || parties.Length == 0) return parties;
+            var added = Create(wave, extra, region, false, false);
+            var first = new InvaderRole[added.Length + parties[0].Length];
+            added.CopyTo(first, 0);
+            parties[0].CopyTo(first, added.Length);
+            parties[0] = first;
+            return parties;
+        }
+
+        private static InvaderRole[] Create(int wave, int count, RegionDefinition region, bool bossLast, bool archer)
         {
             count = Mathf.Max(1, count);
-            if (region.IsHolyKingdom) return CreateHolyFormation(count, RegionCatalog.IsBossDay(wave));
+            if (region.IsHolyKingdom) return CreateHolyFormation(count, bossLast);
             // Later regions open with the roles the player has already learned to counter.
             int tier = RegionCatalog.DayInRegion(wave) + RegionCatalog.IndexForDay(wave) * 2;
             int shields = tier >= 4 || region.Race == InvaderRace.Frostkin ? Share(count, .2f, region.ShieldWeight) : 0;
@@ -40,13 +69,16 @@ namespace DarkLord.Gameplay
                 else if (healers-- > 0) result.Add(InvaderRole.Healer);
                 else result.Add(InvaderRole.Warrior);
             }
-            if (region.Race == InvaderRace.Human && tier >= 5)
+            if (archer && region.Race == InvaderRace.Human && tier >= 5)
             {
                 int reserve = result.IndexOf(InvaderRole.Warrior, result.IndexOf(InvaderRole.Warrior) + 1);
+                // A four-man party has no spare swordsman: the bow takes the charger's place in its damage line.
+                // Never the boss party's charger, which becomes the boss.
+                if (reserve < 0 && !bossLast) reserve = result.IndexOf(InvaderRole.Charger);
                 if (reserve >= 0) result[reserve] = InvaderRole.Archer;
             }
             // The region's boss enters last as a charger, so the advertised formation ends with them.
-            if (RegionCatalog.IsBossDay(wave))
+            if (bossLast)
             {
                 int boss = result.IndexOf(InvaderRole.Charger);
                 if (boss >= 0) result.RemoveAt(boss); else result.RemoveAt(result.Count - 1);

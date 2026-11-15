@@ -19,7 +19,8 @@ namespace DarkLord.Persistence
             tactics = actor.GetComponent<InvaderTactics>()?.CaptureSave(),
             role = actor.Role, attackCooldown = actor.AttackCooldownRemaining, support = actor.GetComponent<MinionSupport>()?.CaptureSave(),
             invasionWave = actor.GetComponent<DarkLord.Gameplay.WaveMember>()?.Number ?? 0,
-            augmentStatus = actor.GetComponent<AugmentStatus>()?.CaptureSave(), poise = actor.CapturePoise()
+            augmentStatus = actor.GetComponent<AugmentStatus>()?.CaptureSave(), poise = actor.CapturePoise(),
+            retreating = actor.IsRetreating
         };
     }
 }
@@ -166,7 +167,7 @@ namespace DarkLord.Gameplay
         public WaveSaveData CaptureSave() => new WaveSaveData { minionRecoveryDisabled = !AutoMinionRecoveryEnabled, number=CurrentWave, state=IsRelocating?WaveState.Preparing:State, pending=pendingSpawns, rewards=(int[])rewardChoices.Clone(),
             rewardItemIds=rewardBuildItems.Select(i => i != null ? i.name : "").ToArray(),
             pendingRoles=pendingRoles.ToArray(),
-            augments=Augments.Capture(), tributeCharges=Augments.TributeCharges, thornCooldown=Augments.ThornCooldown, schedule=CaptureSchedule(),
+            augments=Augments.Capture(), augmentGrades=Augments.CaptureGrades(), tributeCharges=Augments.TributeCharges, thornCooldown=Augments.ThornCooldown, schedule=CaptureSchedule(),
             enemies=aliveInvaders.Where(e=>e!=null && e.IsAlive).Select(e=>SaveSnapshots.Actor(e.GetComponent<MinionController>())).ToArray() };
         public void RestoreSave(WaveSaveData data)
         {
@@ -179,9 +180,11 @@ namespace DarkLord.Gameplay
             deathHandlers.Clear();
             foreach(var enemy in aliveInvaders)if(enemy!=null){enemy.gameObject.SetActive(false);Destroy(enemy.gameObject);}
             aliveInvaders.Clear();CurrentWave=data.number;State=data.state;pendingSpawns=data.pending;
-            Augments.Restore(data.augments,data.tributeCharges,data.thornCooldown);
-            pendingRoles.Clear(); pendingWaves.Clear();
+            Augments.Restore(data.augments,data.tributeCharges,data.thornCooldown,data.augmentGrades);
+            pendingRoles.Clear(); pendingWaves.Clear(); pendingParties.Clear();
             RestoreSchedule(data.schedule);
+            // shortcut: party membership is not saved, so restored invaders fight solo; save party ids if that matters.
+            for (int i = 0; i < pendingSpawns; i++) pendingParties.Enqueue(-1);
             for (int i = 0; i < pendingSpawns; i++) pendingRoles.Enqueue(data.pendingRoles != null && i < data.pendingRoles.Length ? data.pendingRoles[i] : InvaderRole.Warrior);
             for (int i = 0; i < pendingSpawns; i++) pendingWaves.Enqueue(data.schedule != null && data.schedule.pendingWaves != null && i < data.schedule.pendingWaves.Length ? data.schedule.pendingWaves[i] : CurrentWave);
             if (State == WaveState.Preparing && CurrentWave >= finalWave && pendingSpawns == 0 && data.enemies.Length == 0 && waveRewardQueue.Count == 0) State = WaveState.Victorious;
@@ -208,7 +211,8 @@ namespace DarkLord.Gameplay
                 if(enemyTactics.IsHero)MakeBoss(enemy,enemyTactics,enemyRegion);
                 enemy.GetComponent<TopDownMotor>().RestoreSlows(saved.slows);
                 if (saved.augmentStatus != null) AugmentStatus.Get(health).RestoreSave(saved.augmentStatus);
-                Action handler=()=>OnInvaderDied(health);deathHandlers.Add(health,handler);health.Died+=handler;aliveInvaders.Add(health);
+                Track(enemy);
+                if (saved.retreating) enemy.BeginRetreat(hesitate: false);
                 if(State==WaveState.Defeated)enemy.enabled=false;
             }
             if((State==WaveState.Active || State==WaveState.RewardSelection) && pendingSpawns>0)spawnRoutine=StartCoroutine(ResumeSavedWave());

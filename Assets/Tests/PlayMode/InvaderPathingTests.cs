@@ -110,6 +110,59 @@ namespace DarkLord.Tests
             Assert.AreSame(lord, route.Target, "An attacker in the corridor must be fought, not walked past.");
         }
 
+        private InvaderParty Party(DungeonGrid grid, ActorHealth objective, params InvaderRole[] roles)
+        {
+            var party = new InvaderParty();
+            for (int i = 0; i < roles.Length; i++)
+            {
+                var actor = Actor(grid, grid.Layout.Entrance, Faction.Invader, 100000);
+                actor.transform.position += new Vector3(0, (i - 1.5f) * .3f);
+                actor.GetComponent<Rigidbody2D>().position = actor.transform.position;
+                var invader = Invader(actor);
+                invader.gameObject.AddComponent<InvaderTactics>().Configure(roles[i]);
+                invader.Assault(objective, grid);
+                party.Add(invader);
+            }
+            return party;
+        }
+
+        [UnityTest]
+        public IEnumerator PartyMarchesInColumnBehindItsTank()
+        {
+            var grid = Grid();
+            var objective = Actor(grid, grid.Layout.Core, Faction.Dungeon, 100000);
+            // Entry order puts the healer first; the march order must not.
+            var party = Party(grid, objective, InvaderRole.Healer, InvaderRole.Warrior, InvaderRole.Shieldbearer, InvaderRole.Archer);
+            var tank = party.Members[2];
+            Assert.AreSame(tank, party.Leader);
+            var core = grid.CellCenter(grid.Layout.Core);
+            float deadline = Time.time + 2.5f;
+            while (Time.time < deadline) yield return null;
+            foreach (var member in party.Members)
+            {
+                Assert.LessOrEqual(Vector2.Distance(member.transform.position, tank.transform.position), 6f, "The party must stay together.");
+                if (member != tank) Assert.Greater(Vector2.Distance(member.transform.position, core), Vector2.Distance(tank.transform.position, core) - .3f, $"{member.GetComponent<InvaderTactics>().Role} overtook the tank.");
+            }
+            Assert.Greater(Vector2.Distance(party.Members[0].transform.position, core), Vector2.Distance(party.Members[1].transform.position, core),
+                "The healer walks behind the warrior.");
+        }
+
+        [UnityTest]
+        public IEnumerator PartyTurnsOnWhoeverAttacksAnyMember()
+        {
+            var grid = Grid();
+            var objective = Actor(grid, grid.Layout.Core, Faction.Dungeon, 100000);
+            var party = Party(grid, objective, InvaderRole.Shieldbearer, InvaderRole.Warrior, InvaderRole.Healer);
+            yield return null;
+            var lord = Actor(grid, grid.Layout.Entrance + Vector2Int.right * 2, Faction.Dungeon, 100000);
+            party.Members[2].Health.TakeDamage(1, lord);
+            Assert.AreSame(lord, party.Focus, "Hitting the healer must call the whole party.");
+            float deadline = Time.time + .6f;
+            while (Time.time < deadline) yield return null;
+            Assert.AreSame(lord, party.Members[0].Target);
+            Assert.AreSame(lord, party.Members[1].Target);
+        }
+
         private DungeonGrid Grid()
         {
             var go = Track(new GameObject("Pathing test grid"));

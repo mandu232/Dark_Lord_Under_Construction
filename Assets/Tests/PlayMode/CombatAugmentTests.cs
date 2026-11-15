@@ -41,6 +41,9 @@ namespace DarkLord.Tests
             yield return SceneManager.LoadSceneAsync("Assets/Scenes/InGame.unity", LoadSceneMode.Additive);
             scene = SceneManager.GetSceneByPath("Assets/Scenes/InGame.unity"); yield return null; yield return null;
             Time.timeScale = 1; waves = Find<WaveDirector>(); dungeon = Find<DungeonGrid>(); combat = waves.Combat;
+            // Manual waves: on automatic difficulties an empty Active wave clears itself next frame and the
+            // reward pause (timeScale 0) would leave scaled WaitForSeconds in these tests waiting forever.
+            waves.ConfigureRun(new NewGameOptions { difficulty = GameDifficulty.Easy });
             waves.Lord.transform.position = Center; waves.Lord.GetComponent<Rigidbody2D>().position = Center;
         }
         [UnityTearDown] public IEnumerator Cleanup()
@@ -73,7 +76,7 @@ namespace DarkLord.Tests
             slowed[0].gameObject.AddComponent<BoxCollider2D>().size = Vector2.one * .1f;
             var fast = Actor(Vector3.up); var ally = Actor(Vector3.left, true);
             Physics2D.SyncTransforms(); Assert.IsTrue(combat.TryNova());
-            CollectionAssert.AreEqual(new[]{63,83,83,83},slowed.Select(t=>t.CurrentHealth).OrderBy(h=>h).ToArray()); Assert.AreEqual(98, fast.CurrentHealth);
+            CollectionAssert.AreEqual(new[]{78,98,98,98},slowed.Select(t=>t.CurrentHealth).OrderBy(h=>h).ToArray()); Assert.AreEqual(113, fast.CurrentHealth);
             Assert.AreEqual(200, ally.CurrentHealth); Assert.AreEqual(85, combat.Mana);
         }
         [UnityTest] public IEnumerator LordMarkIsConsumedByExactlyOneRealMinionAttack()
@@ -95,7 +98,7 @@ namespace DarkLord.Tests
             for(int i=0;i<3;i++) target.TakeDamage(waves.Augments.MinionDamage(minion,target,10),guard);
             minion.enabled=true;
             Assert.AreEqual(.35f, target.GetComponent<TopDownMotor>().SlowMultiplier); Assert.AreEqual(155, target.CurrentHealth);
-            Physics2D.SyncTransforms(); Assert.IsTrue(combat.TryNova()); Assert.AreEqual(78, target.CurrentHealth);
+            Physics2D.SyncTransforms(); Assert.IsTrue(combat.TryNova()); Assert.AreEqual(93, target.CurrentHealth);
             minion.enabled=false; yield return new WaitForSeconds(3.2f);
             Assert.AreEqual(1, target.GetComponent<TopDownMotor>().SlowMultiplier);
         }
@@ -106,10 +109,10 @@ namespace DarkLord.Tests
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Dungeon/SpikeTrap.prefab");
             var node = Object.Instantiate(prefab, Center + Vector3.right, Quaternion.identity, dungeon.transform); objects.Add(node);
             Physics2D.SyncTransforms(); Assert.AreEqual(1, node.GetComponent<SpikeTrap>().TryPulse());
-            Assert.AreEqual(188, target.CurrentHealth); Assert.IsTrue(target.GetComponent<AugmentStatus>().TrapBranded);
-            target.TakeDamage(waves.Augments.MeleeDamage(target,15),waves.Lord); Assert.AreEqual(148, target.CurrentHealth);
+            Assert.AreEqual(192, target.CurrentHealth); Assert.IsTrue(target.GetComponent<AugmentStatus>().TrapBranded);
+            target.TakeDamage(waves.Augments.MeleeDamage(target,15),waves.Lord); Assert.AreEqual(152, target.CurrentHealth);
             Assert.IsFalse(target.GetComponent<AugmentStatus>().TrapBranded);
-            target.TakeDamage(waves.Augments.MeleeDamage(target,15),waves.Lord); Assert.AreEqual(133, target.CurrentHealth);
+            target.TakeDamage(waves.Augments.MeleeDamage(target,15),waves.Lord); Assert.AreEqual(137, target.CurrentHealth);
         }
         [UnityTest] public IEnumerator WardHealsAndEmpowersNearbyMinionsOnceDespiteExtraHitboxes()
         {
@@ -134,7 +137,7 @@ namespace DarkLord.Tests
         [Test] public void EffectsAreDisabledDuringPreparationPauseAndWithoutSelection()
         {
             Active(); var target = Actor(Vector3.right); target.GetComponent<TopDownMotor>().ApplySlow(.5f, 4);
-            Physics2D.SyncTransforms(); combat.TryNova(); Assert.AreEqual(158, target.CurrentHealth);
+            Physics2D.SyncTransforms(); combat.TryNova(); Assert.AreEqual(173, target.CurrentHealth);
             Active(WaveRewardCatalog.LordsHunt, WaveRewardCatalog.TrapBrand, WaveRewardCatalog.BloodNova);
             Time.timeScale = 0;
             Assert.AreEqual(25, waves.Augments.MeleeDamage(target, 25)); Assert.IsFalse(waves.Augments.NovaBonus(target));
@@ -152,11 +155,11 @@ namespace DarkLord.Tests
                 typeof(WaveDirector).GetMethod("CheckWaveCleared", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(waves, null);
                 Assert.AreEqual(3, waves.RewardChoices.Distinct().Count()); Assert.AreEqual(0, Time.timeScale);
                 Assert.AreEqual(2,waves.RewardChoices.Count(WaveRewardCatalog.IsAugment));
-                Assert.IsFalse(waves.RewardChoices.Where(WaveRewardCatalog.IsAugment).Any(selected.Contains));
+                Assert.IsTrue(waves.RewardChoices.Where(WaveRewardCatalog.IsAugment).All(waves.Augments.CanUpgrade));
                 var snapshot = JsonUtility.FromJson<WaveSaveData>(JsonUtility.ToJson(waves.CaptureSave()));
                 waves.RestoreSave(snapshot); CollectionAssert.AreEqual(snapshot.rewards, waves.RewardChoices);
                 int chosen = waves.RewardChoices[0]; Assert.IsTrue(waves.ChooseReward(0)); Assert.IsFalse(waves.ChooseReward(0));
-                if (WaveRewardCatalog.IsAugment(chosen)) selected.Add(chosen);
+                if (WaveRewardCatalog.IsAugment(chosen) && !selected.Contains(chosen)) selected.Add(chosen);
                 CollectionAssert.AreEqual(selected.OrderBy(id => id), waves.Augments.Capture());
             }
             Assert.AreEqual(WaveState.Preparing, waves.State);
@@ -184,7 +187,7 @@ namespace DarkLord.Tests
         [UnityTest] public IEnumerator CardsUseUiSpritesFitDescriptionsHoverWhilePausedAndChooseOnlyOnce()
         {
             var skin = Resources.Load<RewardUiSkin>("WaveRewardSkin"); Assert.IsNotNull(skin);
-            Assert.That(AssetDatabase.GetAssetPath(skin.cardFrame), Does.StartWith("Assets/Sprtie/UI/"));
+            Assert.That(AssetDatabase.GetAssetPath(skin.cardFrame), Does.StartWith("Assets/Sprite/UI/"));
             var ui = Find<WaveRewardPanel>();
             foreach (var choices in new[] {new[] {5,6,7}, new[] {8,9,10}})
             {
@@ -192,6 +195,10 @@ namespace DarkLord.Tests
                 foreach (var label in ui.transform.Find("Wave reward selection").GetComponentsInChildren<TMP_Text>())
                 { label.ForceMeshUpdate(); Assert.IsFalse(label.isTextOverflowing, label.name + ": " + label.text); }
             }
+            // Cards arm (and the first takes focus) a moment after appearing, so a held click cannot pick one.
+            Assert.IsFalse(ui.CanSelectReward);
+            yield return new WaitForSecondsRealtime(.5f);
+            Assert.IsTrue(ui.CanSelectReward);
             var button = ui.transform.Find("Wave reward selection").GetComponentsInChildren<UnityEngine.UI.Button>().First();
             Assert.AreSame(button.gameObject, EventSystem.current.currentSelectedGameObject);
             var hits = new List<RaycastResult>();

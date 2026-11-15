@@ -35,6 +35,17 @@ namespace DarkLord.Gameplay
         private float animationOffset;
         internal static event Action<ActorHealth, Kind, Vector3, Sprite> OrbCollected;
         public bool Collected { get; private set; }
+        public Kind Type => kind;
+        public int Amount => amount;
+        // Orbs at rest. A landing orb joins a resting one of its kind nearby, so a long fight leaves
+        // a few larger orbs rather than hundreds that each animate and test for pickup every frame.
+        internal const float MergeRadius = .75f;
+        private static readonly System.Collections.Generic.List<DeathLoot> Resting = new System.Collections.Generic.List<DeathLoot>();
+        private static readonly RaycastHit2D[] WallHits = new RaycastHit2D[16];
+        private bool settled, merged;
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetResting() => Resting.Clear();
+        private void OnDisable() => Resting.Remove(this);
 
         public static void Scatter(Vector3 position, Transform player, Transform root, WaveDirector waves = null)
         {
@@ -106,6 +117,7 @@ namespace DarkLord.Gameplay
             }
             renderer.sortingOrder = 45;
             drop.orbSprite = renderer.sprite;
+            drop.RefreshSize();
             if (effectLibrary != null && effectLibrary.material != null) renderer.sharedMaterial = effectLibrary.material;
             return drop;
         }
@@ -127,11 +139,11 @@ namespace DarkLord.Gameplay
                 return;
             }
             if (age - Time.deltaTime < scatterDuration) transform.position = destination;
+            if (!settled && Settle()) return;
             if (waves != null && waves.InCombat) return;
             float distance = Vector2.Distance(transform.position, collector.position);
             if (distance > 1.6f) return;
-            foreach (var hit in Physics2D.LinecastAll(transform.position, collector.position))
-                if (!hit.collider.isTrigger && hit.collider.GetComponentInParent<ActorHealth>() == null) return;
+            if (Walled(transform.position, collector.position)) return;
             if (kind != Kind.Experience && (wallet == null || wallet.GetAmount(Currency()) >= wallet.GetCapacity(Currency()))) return;
             absorptionTrail.emitting = true;
             transform.localScale = Vector3.one * Mathf.Lerp(.35f, 1, Mathf.InverseLerp(.2f, 1.6f, distance));
@@ -159,11 +171,48 @@ namespace DarkLord.Gameplay
             }
             Collected = true; gameObject.SetActive(false); Destroy(gameObject);
         }
+        // True when this orb merged into a neighbour and is gone.
+        private bool Settle()
+        {
+            settled = true;
+            DeathLoot nearest = null;
+            float best = MergeRadius * MergeRadius;
+            foreach (var other in Resting)
+            {
+                if (other == null || other.merged || other.Collected || other.kind != kind || other.collector != collector) continue;
+                float distance = ((Vector2)(other.transform.position - transform.position)).sqrMagnitude;
+                if (distance > best || Walled(transform.position, other.transform.position)) continue;
+                best = distance; nearest = other;
+            }
+            if (nearest == null) { Resting.Add(this); return false; }
+            nearest.amount += amount; nearest.RefreshSize();
+            amount = 0; merged = true;
+            gameObject.SetActive(false); Destroy(gameObject);
+            return true;
+        }
+
+        // A merged orb grows a little with its worth; the growth flattens so a big pile stays orb sized.
+        private void RefreshSize()
+        {
+            if (visualRenderer == null) return;
+            visualRenderer.transform.localScale = Vector3.one *
+                (VisualScale * Mathf.Min(1.75f, 1 + .25f * Mathf.Log(Mathf.Max(1, amount), 2)));
+        }
+
+        // Terrain between two points; actors and triggers never block.
+        private static bool Walled(Vector2 from, Vector2 to)
+        {
+            int count = Physics2D.Linecast(from, to, new ContactFilter2D { useTriggers = false }, WallHits);
+            for (int i = 0; i < count; i++)
+                if (!WallHits[i].collider.isTrigger && WallHits[i].collider.GetComponentInParent<ActorHealth>() == null) return true;
+            return false;
+        }
+
         // The pop where the orb is absorbed, themed for blood, bloodstone, gold or soul (same order as Kind).
         private void PlayCollectBurst() => GameplayEffects.Show(collector, GameplayEffectKind.CollectBlood + (int)kind, transform.position);
         private CurrencyType Currency() => kind == Kind.Blood ? CurrencyType.Souls : kind == Kind.Crystal ? CurrencyType.DarkCrystals : CurrencyType.Gold;
         public static LootSaveData[] Capture(Transform player) => FindObjectsByType<DeathLoot>(FindObjectsSortMode.None)
-            .Where(d => d.collector == player && !d.Collected).Select(d => new LootSaveData {
+            .Where(d => d.collector == player && !d.Collected && !d.merged).Select(d => new LootSaveData {
                 position = d.age < d.scatterDuration ? d.destination : d.transform.position, kind = (int)d.kind, amount = d.amount }).ToArray();
         public static void Restore(LootSaveData[] saved, Transform player, Transform root, WaveDirector waves = null)
         {

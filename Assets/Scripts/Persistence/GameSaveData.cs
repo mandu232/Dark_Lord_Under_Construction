@@ -101,6 +101,7 @@ namespace DarkLord.Persistence
         public MinionSupportSaveData support;
         public AugmentStatusSaveData augmentStatus;
         public EnemyPoiseSaveData poise;
+        public bool retreating;
         public bool tutorialBoss;
     }
     [Serializable] public sealed class WaveSaveData
@@ -115,6 +116,8 @@ namespace DarkLord.Persistence
         public MinionSaveData[] enemies;
         public InvaderRole[] pendingRoles;
         public int[] augments;
+        // Parallel to augments; older saves lack it and load every trait at grade 1.
+        public int[] augmentGrades;
         public WaveScheduleSaveData schedule;
     }
 
@@ -126,6 +129,8 @@ namespace DarkLord.Persistence
         public int[] pendingWaves, completedWaves, rewardQueue;
         public int arrivedRegion;
         public int[] regionOrder;
+        public int retreatBonus;
+        public int[] retreatedWaves;
     }
 
     // Files contain data and stable build-item IDs, never scene object references.
@@ -226,8 +231,16 @@ namespace DarkLord.Persistence
                 var selected = new System.Collections.Generic.HashSet<int>();
                 foreach (int id in data.wave.augments)
                     if (!WaveRewardCatalog.IsAugment(id) || !selected.Add(id)) throw new InvalidDataException("획득한 증강이 올바르지 않습니다.");
+                var grades = data.wave.augmentGrades;
+                if (grades != null && grades.Length > 0 && grades.Length != data.wave.augments.Length) throw new InvalidDataException("증강 등급 목록이 올바르지 않습니다.");
+                var maxed = new System.Collections.Generic.HashSet<int>();
+                for (int i = 0; grades != null && i < grades.Length; i++)
+                {
+                    if (!WaveRewardCatalog.IsGrade(grades[i])) throw new InvalidDataException("증강 등급이 올바르지 않습니다.");
+                    if (grades[i] == WaveRewardCatalog.MaxGrade) maxed.Add(data.wave.augments[i]);
+                }
                 if (data.wave.state == WaveState.RewardSelection)
-                    foreach (int id in data.wave.rewards) if (selected.Contains(id)) throw new InvalidDataException("이미 획득한 증강입니다.");
+                    foreach (int id in data.wave.rewards) if (maxed.Contains(id)) throw new InvalidDataException("이미 최대 등급인 증강입니다.");
             }
             if (d.lastConstructionRewardDay < 0 || d.lastConstructionRewardDay > data.wave.number)
                 throw new InvalidDataException("건설 보상 날짜가 올바르지 않습니다.");
@@ -410,6 +423,7 @@ namespace DarkLord.Persistence
             if (t != null && (!Enum.IsDefined(typeof(InvaderRole), t.role) || !Enum.IsDefined(typeof(InvaderAction), t.action) ||
                 !InRange(t.remaining, 1) || !InRange(t.cooldown, 6) || !Finite(t.direction) || !Finite(t.healPosition) ||
                 (t.action == InvaderAction.Healing && !InvaderTactics.IsHealingRole(t.role)) ||
+                (t.action == InvaderAction.BossSkill && !t.hero) || t.skillStep < 0 || t.skillStep > 4 ||
                 (t.action == InvaderAction.Aiming && (t.role != InvaderRole.Archer || t.hero || t.direction.sqrMagnitude < .5f)) ||
                 ((t.action == InvaderAction.WindingUp || t.action == InvaderAction.Charging) &&
                     (!InvaderTactics.IsChargeRole(t.role, t.hero) || t.direction.sqrMagnitude < .5f)) ||

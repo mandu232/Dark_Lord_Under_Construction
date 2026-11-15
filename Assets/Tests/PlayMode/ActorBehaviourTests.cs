@@ -60,13 +60,14 @@ namespace DarkLord.Tests
             var enemy = Actor(dungeon.CellCenter(dungeon.Layout.Core + Vector2Int.right * 2), Faction.Invader).GetComponent<ActorHealth>();
             Assert.AreEqual(MinionBehaviour.Defensive, guard.Behaviour);
             yield return new WaitForSeconds(.25f);
-            Assert.IsNull(guard.Target, "Defensive guards ignore enemies beyond their post's detection radius.");
+            // Room guards engage any enemy in their assigned room under either policy.
+            Assert.AreSame(enemy, guard.Target, "Defensive guards still defend their whole assigned room.");
             guard.SetBehaviour(MinionBehaviour.Aggressive);
             yield return new WaitForSeconds(.25f);
             Assert.AreSame(enemy, guard.Target, "Aggressive guards detect the entire assigned room.");
             guard.SetBehaviour(MinionBehaviour.Defensive);
             Assert.IsNull(guard.Target, "Switching policy discards the previous target immediately.");
-            yield return new WaitForSeconds(.25f); Assert.IsNull(guard.Target);
+            yield return new WaitForSeconds(.25f); Assert.AreSame(enemy, guard.Target, "The guard then re-acquires the enemy in its room.");
             var nearby = dungeon.CellCenter(post + Vector2Int.right);
             enemy.GetComponent<Rigidbody2D>().position = nearby; enemy.transform.position = nearby;
             Physics2D.SyncTransforms(); yield return new WaitForSeconds(.25f);
@@ -105,7 +106,7 @@ namespace DarkLord.Tests
             yield return new WaitForSeconds(0.15f);
             Assert.That(player.transform.position.x, Is.GreaterThan(0.1f));
             Assert.That(player.transform.position.y, Is.GreaterThan(0.1f));
-            Assert.That(player.GetComponent<TopDownMotor>().Velocity.magnitude, Is.EqualTo(3).Within(0.01f));
+            Assert.That(player.GetComponent<TopDownMotor>().Velocity.magnitude, Is.EqualTo(3 * 1.3f).Within(0.01f), "Walking applies PlayerMovement.WalkBoost.");
             InputSystem.QueueStateEvent(testKeyboard, new KeyboardState());
             InputSystem.Update();
             yield return new WaitForSeconds(0.1f);
@@ -253,8 +254,10 @@ namespace DarkLord.Tests
         [UnityTest]
         public IEnumerator HitInterruptsPendingAttackAndDeathStopsCommands()
         {
-            var guard = Actor(Vector2.zero, Faction.Dungeon, true).GetComponent<MinionController>();
-            var enemy = Actor(new Vector2(0.7f, 0), Faction.Invader).GetComponent<ActorHealth>();
+            // Dungeon defenders deliberately finish a committed strike when hit, so an
+            // invader attacker exercises the interrupt.
+            var guard = Actor(Vector2.zero, Faction.Invader, true).GetComponent<MinionController>();
+            var enemy = Actor(new Vector2(0.7f, 0), Faction.Dungeon).GetComponent<ActorHealth>();
             yield return null;
             guard.GetComponent<ActorHealth>().TakeDamage(1, enemy);
             Assert.That(guard.State, Is.EqualTo(ActorState.Hit));

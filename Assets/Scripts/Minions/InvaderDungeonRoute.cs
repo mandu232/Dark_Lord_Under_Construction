@@ -12,7 +12,7 @@ namespace DarkLord.Minions
         // A room can only hold so many attackers per defender; the surplus pushes past towards the core.
         public static int HoldLimit(int defenders) => Mathf.Max(2, Mathf.CeilToInt(defenders * 1.5f));
         private static int nextLockOrder;
-        private readonly HashSet<DungeonSection> bypassed = new HashSet<DungeonSection>();
+        private HashSet<DungeonSection> bypassed = new HashSet<DungeonSection>();
         // Null for tests and tools that drive a route without an invader.
         private readonly MinionController owner;
         public int LockOrder { get; private set; }
@@ -24,11 +24,14 @@ namespace DarkLord.Minions
         private readonly List<Vector2Int> candidatePath = new List<Vector2Int>();
         private readonly List<ActorHealth> defenders = new List<ActorHealth>();
         private readonly List<ResourceBuilding> buildings = new List<ResourceBuilding>();
+        // Destinations for one shared search per refresh, instead of a search per room, defender or facility.
+        private readonly HashSet<Vector2Int> treeDestinations = new HashSet<Vector2Int>();
+        private readonly List<DungeonSection> candidateRooms = new List<DungeonSection>();
         private const float EngageDuration = 3f, EngageLeash = 9f, CommitDistance = 1.5f;
         private const int EngagePathCells = 6;
         private ActorHealth engaged;
         private float engagedUntil;
-        private readonly HashSet<DungeonSection> visited = new HashSet<DungeonSection>();
+        private HashSet<DungeonSection> visited = new HashSet<DungeonSection>();
         private DungeonSection destinationRoom;
         private int waypoint, revision = -1;
         private float nextSearch;
@@ -61,6 +64,13 @@ namespace DarkLord.Minions
             if (engaged != attacker) { nextSearch = 0; engagedUntil = 0; }
             engaged = attacker;
             engagedUntil = Mathf.Max(engagedUntil, Time.time + duration);
+        }
+
+        // Party members clear rooms as one plan: a room one of them finished is finished for all.
+        internal void ShareProgress(HashSet<DungeonSection> partyVisited, HashSet<DungeonSection> partyBypassed)
+        {
+            partyVisited.UnionWith(visited); partyBypassed.UnionWith(bypassed);
+            visited = partyVisited; bypassed = partyBypassed;
         }
 
         public void Update(Vector3 position, ActorHealth blockedBy = null)
@@ -117,9 +127,12 @@ namespace DarkLord.Minions
                     // Finish the fight in hand before turning to anyone else, the lord included.
                     var committed = previousTarget != null && defenders.Contains(previousTarget) &&
                         Vector2.Distance(position, previousTarget.transform.position) <= CommitDistance ? previousTarget : null;
+                    treeDestinations.Clear();
+                    foreach (var defender in defenders) treeDestinations.Add(dungeon.WorldToCell(defender.transform.position));
+                    dungeon.BuildNpcPathTree(cell, treeDestinations, LockedRoom);
                     foreach (var defender in defenders)
                     {
-                        if (!dungeon.FindNpcPath(cell, dungeon.WorldToCell(defender.transform.position), candidatePath, LockedRoom)) continue;
+                        if (!dungeon.FindNpcTreePath(dungeon.WorldToCell(defender.transform.position), candidatePath)) continue;
                         float score = defender == committed ? -3 : defender == Player ? -2 : defender == preferred ? -1 : candidatePath.Count * DungeonGrid.CellSize + Vector2.Distance(position, defender.transform.position);
                         if (score >= best) continue;
                         best = score;
@@ -149,14 +162,22 @@ namespace DarkLord.Minions
             if (destinationRoom != null && ReachedRoomCenter(cell, destinationRoom)) visited.Add(destinationRoom);
             destinationRoom = null;
             int shortest = int.MaxValue;
+            candidateRooms.Clear(); treeDestinations.Clear();
             foreach (var room in dungeon.Construction.Sections)
+                if (room.IsComplete && DungeonConstruction.IsRoom(room.Kind) && room != dungeon.CoreRoom && !visited.Contains(room))
+                { candidateRooms.Add(room); treeDestinations.Add(room.Center); }
+            if (candidateRooms.Count > 0) dungeon.BuildNpcPathTree(cell, treeDestinations);
+            foreach (var room in candidateRooms)
             {
-                if (!room.IsComplete || !DungeonConstruction.IsRoom(room.Kind) || room == dungeon.CoreRoom || visited.Contains(room)) continue;
-                if (!dungeon.FindNpcPath(cell, room.Center, candidatePath) || candidatePath.Count >= shortest) continue;
-                shortest = candidatePath.Count;
+                if (!dungeon.FindNpcTreePath(room.Center, candidatePath)) continue;
+                // A room another party is already heading for counts as further away, so parties spread over the branches.
+                int score = candidatePath.Count + (InvaderParty.ClaimedByOther(owner?.Party, room) ? InvaderParty.ClaimPenalty : 0);
+                if (score >= shortest) continue;
+                shortest = score;
                 destinationRoom = room;
                 path.Clear(); path.AddRange(candidatePath);
             }
+            if (destinationRoom != null) owner?.Party?.Claim(destinationRoom);
             if (destinationRoom == null)
             {
                 var core = dungeon.WorldToCell(objective.transform.position);
@@ -167,10 +188,13 @@ namespace DarkLord.Minions
             }
             // Stop on entering the first guarded room, including a room passed
             // through on the way to another branch. The next refresh acquires its guards.
+            DungeonSection passedRoom = null;
             for (int i = 0; i < path.Count; i++)
             {
                 var room = dungeon.Construction.RoomAt(path[i]);
-                if (room == null || bypassed.Contains(room)) continue;
+                // Consecutive cells of a room already passed give the same answer; check each room once.
+                if (room == null || room == passedRoom || bypassed.Contains(room)) continue;
+                passedRoom = room;
                 GetDefenders(room);
                 var building = dungeon.BuildingInRoom(room, true);
                 if (defenders.Count == 0 && (building == null || building.IsRuined)) continue;
@@ -200,9 +224,12 @@ namespace DarkLord.Minions
             dungeon.GetLivingBuildingsInRoom(room, buildings);
             if (buildings.Count == 0) return false;
             int shortest = int.MaxValue;
+            treeDestinations.Clear();
+            foreach (var building in buildings) treeDestinations.Add(building.Cell);
+            dungeon.BuildNpcPathTree(cell, treeDestinations, room);
             foreach (var building in buildings)
             {
-                if (!dungeon.FindNpcPath(cell, building.Cell, candidatePath, room) || candidatePath.Count >= shortest) continue;
+                if (!dungeon.FindNpcTreePath(building.Cell, candidatePath) || candidatePath.Count >= shortest) continue;
                 shortest = candidatePath.Count;
                 Target = building.Health;
                 path.Clear(); path.AddRange(candidatePath);

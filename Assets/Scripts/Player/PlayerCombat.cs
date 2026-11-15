@@ -267,7 +267,7 @@ namespace DarkLord.Player
                 {
                     bool novaBonus = direction == Vector2.zero && type == DamageType.Magic && waves != null && waves.Augments.NovaBonus(target);
                     int finalDamage = direction != Vector2.zero && waves != null ? waves.Augments.MeleeDamage(target, damage) : damage;
-                    if (DealDamage(target, finalDamage + (novaBonus ? 35 : 0), type, impact))
+                    if (DealDamage(target, finalDamage + (novaBonus ? WaveRewardCatalog.NovaBonusDamage(waves.Augments.Grade(WaveRewardCatalog.BloodNova)) : 0), type, impact))
                     {
                         if (novaBonus) enhancedHits++;
                         TechnologyHit(target, direction != Vector2.zero, ref lifeStolen);

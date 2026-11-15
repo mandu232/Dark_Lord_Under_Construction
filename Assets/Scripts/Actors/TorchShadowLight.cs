@@ -18,7 +18,7 @@ namespace DarkLord.Actors
             foreach (var light in lights)
                 if (light != null && light.gameObject.scene == scene)
                     nearest = Mathf.Min(nearest, Vector2.Distance(feet, light.transform.position));
-            return float.IsPositiveInfinity(nearest) ? 1 : Mathf.Lerp(1.35f, .3f, Mathf.SmoothStep(0, 1, nearest / 7));
+            return float.IsPositiveInfinity(nearest) ? 1 : Mathf.Lerp(1.35f, .45f,Mathf.SmoothStep(0, 1, nearest / 7));
         }
 
         public static Vector2 Projection(Vector3 feet, UnityEngine.SceneManagement.Scene scene, Vector2 fallback)

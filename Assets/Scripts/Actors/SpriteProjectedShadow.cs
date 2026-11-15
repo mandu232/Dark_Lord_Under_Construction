@@ -17,6 +17,16 @@ namespace DarkLord.Actors
         private static readonly int GroundWorldY = Shader.PropertyToID("_GroundWorldY");
         private static readonly int ExcludeSlashEffect = Shader.PropertyToID("_ExcludeSlashEffect");
 
+        private Sprite sheetSprite;
+        private bool slashSheet;
+        private SpriteRenderer playerChecked;
+        private bool sourceIsPlayer;
+        private bool IsPlayer()
+        {
+            if (playerChecked != source) { playerChecked = source; sourceIsPlayer = source.GetComponent<DarkLord.Player.PlayerMovement>() != null; }
+            return sourceIsPlayer;
+        }
+
         private void OnEnable() => Refresh();
         private void LateUpdate() => Refresh();
 
@@ -38,10 +48,16 @@ namespace DarkLord.Actors
             shadow.sortingOrder = source.sortingOrder - 1;
             if (properties == null) properties = new MaterialPropertyBlock();
             shadow.GetPropertyBlock(properties);
-            string sheet = source.sprite != null ? source.sprite.texture.name : null;
-            properties.SetFloat(ExcludeSlashEffect, sheet == "Slash_1" || sheet == "Slash_2" ? 1f : 0f);
+            // Texture.name allocates a string, so only look again when the frame changes.
+            if (source.sprite != sheetSprite)
+            {
+                sheetSprite = source.sprite;
+                string sheet = sheetSprite != null ? sheetSprite.texture.name : null;
+                slashSheet = sheet == "Slash_1" || sheet == "Slash_2";
+            }
+            properties.SetFloat(ExcludeSlashEffect, slashSheet ? 1f : 0f);
             properties.SetFloat(GroundWorldY, transform.TransformPoint(new Vector3(0, groundLocalY, 0)).y);
-            if (Application.isPlaying && source.GetComponent<DarkLord.Player.PlayerMovement>() != null && shadow.sharedMaterial != null)
+            if (Application.isPlaying && IsPlayer() && shadow.sharedMaterial != null)
             {
                 var fallback = new Vector2(shadow.sharedMaterial.GetFloat("_Shear"), shadow.sharedMaterial.GetFloat("_Flatten"));
                 Vector3 feet = transform.TransformPoint(new Vector3(0, groundLocalY, 0));
