@@ -18,7 +18,8 @@ namespace DarkLord.Dungeon
         {
             body = target;
             // The core also throws actor shadows outward, like the torches.
-            var light = DungeonLighting.AddPoint(transform, "Core light", new Vector3(0, .5f, 0), DungeonLighting.CoreColor, 1.5f, 5.5f);
+            var light = DungeonLighting.AddPoint(transform, "Core light", new Vector3(0, .5f, 0), DungeonLighting.CoreColor, .8f, 5.5f);
+            if (!light.TryGetComponent<LightBreath>(out _)) light.gameObject.AddComponent<LightBreath>();
             if (!light.TryGetComponent<DarkLord.Actors.TorchShadowLight>(out _)) light.gameObject.AddComponent<DarkLord.Actors.TorchShadowLight>();
             var library = Resources.Load<GameplayEffectLibrary>("GameplayEffects");
             if (library == null) return;

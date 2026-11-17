@@ -35,10 +35,11 @@ Material:
     m_Floats:
     - PixelSnap: 0
     - _EnableExternalAlpha: 0
-    - _Flatten: 0.27
+    - _ExcludeSlashEffect: 0
+    - _Flatten: -0.3
     - _GroundWorldY: -0.84375
     - _GroundY: -0.84375
-    - _Shear: 0.55
+    - _Shear: 0
     - _ZWrite: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}

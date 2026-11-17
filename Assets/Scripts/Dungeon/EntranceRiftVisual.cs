@@ -26,7 +26,8 @@ namespace DarkLord.Dungeon
             var visual = marker.AddComponent<EntranceRiftVisual>();
             visual.body = renderer; visual.openClip = open; visual.isOpen = isOpen;
             visual.closedClip = Playable(closed) ? closed : open;
-            visual.glow = DungeonLighting.AddPoint(marker.transform, "Rift light", Vector3.zero, DungeonLighting.RiftColor, 1f, 3.5f);
+            visual.glow = DungeonLighting.AddPoint(marker.transform, "Rift light", Vector3.zero, DungeonLighting.RiftColor, .7f, 3.5f);
+            if (!visual.glow.TryGetComponent<LightBreath>(out _)) visual.glow.gameObject.AddComponent<LightBreath>();
             visual.Update();
             return true;
         }
@@ -37,7 +38,7 @@ namespace DarkLord.Dungeon
         {
             bool open = isOpen == null || isOpen();
             var clip = open ? openClip : closedClip;
-            if (glow != null) glow.intensity = Mathf.MoveTowards(glow.intensity, open ? 1f : .35f, Time.deltaTime * 2);
+            if (glow != null) glow.intensity = Mathf.MoveTowards(glow.intensity, open ? .7f : .25f, Time.deltaTime * 2);
             int count = clip.frames.Length;
             body.sprite = clip.frames[Mathf.FloorToInt(Mathf.Repeat(Time.time / clip.duration, 1) * count) % count];
         }

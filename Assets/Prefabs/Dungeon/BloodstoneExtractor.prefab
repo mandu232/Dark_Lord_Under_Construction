@@ -70,6 +70,7 @@ MonoBehaviour:
   buffIcon: {fileID: 0}
   recruitmentFacility: 0
   roomCapacityBonus: 0
+  buffRadius: 6
   requiredTrait: 0
   attackBonusPercent: 0
   physicalResistanceBonus: 0
@@ -567,7 +568,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 326529b7ed024b64c899b2981ee04e67, type: 2}
+  - {fileID: 2100000, guid: 6bea6b2d5cae9e2498c737aa8bbdedfd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -615,6 +616,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Actors.SpriteProjectedShadow
   source: {fileID: 1893951816351003681}
   groundLocalY: -0.875
+  feetFromSprite: 0
 --- !u!1 &4788344144157956991
 GameObject:
   m_ObjectHideFlags: 0
@@ -674,7 +676,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 326529b7ed024b64c899b2981ee04e67, type: 2}
+  - {fileID: 2100000, guid: 6bea6b2d5cae9e2498c737aa8bbdedfd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -722,6 +724,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Actors.SpriteProjectedShadow
   source: {fileID: 3019012736990193855}
   groundLocalY: -0.34375
+  feetFromSprite: 0
 --- !u!1 &6638599930866207551
 GameObject:
   m_ObjectHideFlags: 0

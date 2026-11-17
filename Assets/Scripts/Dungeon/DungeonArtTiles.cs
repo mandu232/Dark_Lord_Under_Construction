@@ -12,6 +12,7 @@ namespace DarkLord.Dungeon
         [SerializeField] private Material windowLightMaterial;
         [SerializeField] private GameObject wallTorchPrefab;
         private readonly System.Collections.Generic.Dictionary<Vector2Int, GameObject> wallTorches = new System.Collections.Generic.Dictionary<Vector2Int, GameObject>();
+        private readonly System.Collections.Generic.Dictionary<Vector2Int, GameObject> windowLights = new System.Collections.Generic.Dictionary<Vector2Int, GameObject>();
         private Tilemap floorMap, floorShadeMap, carpetMap, cornerMap, shadowMap, sideShadeMap, wallMap, glowMap, wallJointMap;
         private Tile[] sideWallShades;
         private Tile carpetFill;
@@ -34,13 +35,23 @@ namespace DarkLord.Dungeon
         public TileBase CarpetArtAt(Vector2Int cell) => carpetMap != null ? carpetMap.GetTile(ArtPosition(cell)) : null;
         public TileBase WallArtAt(Vector2Int cell) => wallMap != null ? wallMap.GetTile(ArtPosition(cell)) : null;
         public TileBase CarpetPieceAt(Vector2Int pixelCell) => carpetMap != null ? carpetMap.GetTile(new Vector3Int(pixelCell.x, pixelCell.y, 0)) : null;
-        private Tilemap ArtLayer(string name, int order)
+        private static Material wallEmission;
+        private Tilemap ArtLayer(string name, int order, string layer)
         {
             var go = new GameObject(name, typeof(Tilemap), typeof(TilemapRenderer));
             go.transform.SetParent(artRoot, false);
             var map = go.GetComponent<Tilemap>();
             map.tileAnchor = new Vector3(.5f, .5f, 0);
-            go.GetComponent<TilemapRenderer>().sortingOrder = order;
+            var renderer = go.GetComponent<TilemapRenderer>();
+            // Separate layers so torch floor pools/shadows skip walls (all art was already beneath Default).
+            renderer.sortingLayerName = layer;
+            renderer.sortingOrder = order;
+            // Emission material so the stained-glass windows stay bright under the dim wall ambient.
+            if (layer == DungeonLighting.WallLayer)
+            {
+                if (wallEmission == null) wallEmission = Resources.Load<Material>("DungeonWallEmission");
+                if (wallEmission != null) renderer.sharedMaterial = wallEmission;
+            }
             return map;
         }
         private void BuildArtTiles()
@@ -50,16 +61,16 @@ namespace DarkLord.Dungeon
             root.transform.SetParent(generated.transform, false);
             root.GetComponent<Grid>().cellSize = Vector3.one;
             artRoot = root.transform;
-            floorMap = ArtLayer("Room stone floor", -32000);
-            floorShadeMap = ArtLayer("Stone tile shading", -31999);
-            carpetMap = ArtLayer("Continuous corridor carpet", -31999);
-            cornerMap = ArtLayer("Carpet inner corners", -31998);
-            shadowMap = ArtLayer("Wall and pillar shadows", -31997);
-            sideShadeMap = ArtLayer("Side wall occlusion", -31997);
+            floorMap = ArtLayer("Room stone floor", -32000, DungeonLighting.FloorLayer);
+            floorShadeMap = ArtLayer("Stone tile shading", -31999, DungeonLighting.FloorLayer);
+            carpetMap = ArtLayer("Continuous corridor carpet", -31999, DungeonLighting.FloorLayer);
+            cornerMap = ArtLayer("Carpet inner corners", -31998, DungeonLighting.FloorLayer);
+            shadowMap = ArtLayer("Wall and pillar shadows", -31997, DungeonLighting.FloorLayer);
+            sideShadeMap = ArtLayer("Side wall occlusion", -31997, DungeonLighting.FloorLayer);
             sideWallShades = MakeSideWallShades();
-            wallJointMap = ArtLayer("Inner wall corner backing", -31997);
-            wallMap = ArtLayer("North wall faces and brown wall tops", -31996);
-            glowMap = ArtLayer("Window glow", -31995);
+            wallJointMap = ArtLayer("Inner wall corner backing", -31997, DungeonLighting.WallLayer);
+            wallMap = ArtLayer("North wall faces and brown wall tops", -31996, DungeonLighting.WallLayer);
+            glowMap = ArtLayer("Window glow", -31995, DungeonLighting.WallLayer);
             wallShadow = MakeEffectTile(false, false, false);
             pillarShadow = MakeEffectTile(false, true, false);
             pillarShadowEnd = MakeEffectTile(false, true, true);
@@ -177,6 +188,8 @@ namespace DarkLord.Dungeon
             }
             // A full redraw can remove torches outside the remaining floor footprint.
             foreach (var pair in wallTorches)
+                if (!detailed[pair.Key.y * width + pair.Key.x] && pair.Value != null) pair.Value.SetActive(false);
+            foreach (var pair in windowLights)
                 if (!detailed[pair.Key.y * width + pair.Key.x] && pair.Value != null) pair.Value.SetActive(false);
         }
         private bool ArtFloor(Vector2Int p) => p.x >= 0 && p.y >= 0 && p.x < Layout.Width * 2 && p.y < Layout.Height * 2 && Layout.IsFloor(new Vector2Int(p.x / 2, p.y / 2));
@@ -517,7 +530,7 @@ namespace DarkLord.Dungeon
             bool wallLeft = floor && !ArtFloor(p + Vector2Int.left), wallRight = floor && !ArtFloor(p + Vector2Int.right);
             sideShadeMap.SetTile(position, wallLeft && wallRight ? sideWallShades[2] : wallLeft ? sideWallShades[0] : wallRight ? sideWallShades[1] : null);
             TileBase wall = null;
-            bool litWindow = false;
+            bool litWindow = false, windowBase = false;
             bool torch = false;
             glowMap.SetTile(position, null);
             if (!floor)
@@ -552,6 +565,7 @@ namespace DarkLord.Dungeon
                     bool corridorTorch = corridor && !shortenedInterior && (Mathf.Abs(segmentStart / 5) % 2 == 0);
                     torch = depth == 1 && wallColumn == 2 && (!corridor || shortenedInterior || corridorTorch);
                     litWindow = corridor && !shortenedInterior && !corridorTorch && wallColumn == 2 && depth <= 3;
+                    windowBase = litWindow && depth == 1;
                     if (litWindow && depth == 1 && windowFloorLight != null)
                         glowMap.SetTile(new Vector3Int(foot.x, foot.y, 0), windowFloorLight);
                     if ((!corridor || shortenedInterior || corridorTorch) && roomWallPieces != null) wall = roomWallPieces[index];
@@ -562,6 +576,7 @@ namespace DarkLord.Dungeon
             }
             wallMap.SetTile(position, wall);
             RefreshWallTorch(p, torch);
+            RefreshWindowLight(p, windowBase);
             if (windowFloorLight == null && litWindow) glowMap.SetTile(position, windowGlow);
         }
         private void RefreshWallTorch(Vector2Int position, bool visible)
@@ -580,10 +595,44 @@ namespace DarkLord.Dungeon
                 // Native 16 PPU artwork, bottom aligned just above the floor.
                 instance.transform.localPosition = new Vector3(position.x + .5f, position.y - .5f, 0);
                 // Real light pool on the floor in front of the wall; the flame art keeps its own glow.
-                var light = DungeonLighting.AddPoint(instance.transform, "Torch light", new Vector3(0, .75f, 0), DungeonLighting.TorchColor, 1.15f, 5.5f);
+                var light = DungeonLighting.AddPoint(instance.transform, "Torch light", new Vector3(0, .75f, 0), DungeonLighting.TorchColor, .6f, 5.5f);
                 light.gameObject.AddComponent<LightFlicker>();
+                // Wall wash, authored in the prefab by Apply Pixel Lighting: wider than tall and centred on the flames,
+                // unlike the foreshortened floor pool below it, so wall and floor read as two planes.
+                var wall = instance.transform.Find("Wall light");
+                if (wall != null && wall.TryGetComponent(out UnityEngine.Rendering.Universal.Light2D wallLight))
+                {
+                    wallLight.lightCookieSprite = DungeonLighting.BandedCookie(3.5f, .7f);
+                    wallLight.targetSortingLayers = new[] { SortingLayer.NameToID(DungeonLighting.WallLayer) };
+                    wallLight.gameObject.AddComponent<LightFlicker>();
+                }
                 wallTorches.Add(position, instance);
             }
+        }
+        // Real light out of the stained glass: a tall red glow on the wall around the pane, so the window reads as a
+        // light source. The floor already gets the window-shaped light tile, so no round pool. p is the lowest wall cell.
+        private void RefreshWindowLight(Vector2Int position, bool visible)
+        {
+            if (windowLights.TryGetValue(position, out var existing))
+            {
+                if (visible) { if (existing != null) existing.SetActive(true); return; }
+                if (existing != null) { existing.SetActive(false); Destroy(existing); }
+                windowLights.Remove(position);
+                return;
+            }
+            if (!visible) return;
+            var window = new GameObject("Window light");
+            window.transform.SetParent(artRoot, false);
+            // Glass spans pixels 37-64 of the 80px face, i.e. 1 to 2.7 cells above this cell's bottom.
+            window.transform.localPosition = new Vector3(position.x + .5f, position.y + 1.85f, 0);
+            var glow = window.AddComponent<UnityEngine.Rendering.Universal.Light2D>();
+            glow.lightType = UnityEngine.Rendering.Universal.Light2D.LightType.Sprite;
+            glow.lightCookieSprite = DungeonLighting.BandedCookie(1.6f, 1.5f);
+            glow.color = DungeonLighting.WindowColor;
+            glow.intensity = .9f;
+            glow.shadowsEnabled = false;
+            glow.targetSortingLayers = new[] { SortingLayer.NameToID(DungeonLighting.WallLayer) };
+            windowLights.Add(position, window);
         }
         private void RefreshArtTile(Vector2Int cell)
         {

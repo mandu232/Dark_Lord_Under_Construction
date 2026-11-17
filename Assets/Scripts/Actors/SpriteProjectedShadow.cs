@@ -2,30 +2,31 @@ using UnityEngine;
 
 namespace DarkLord.Actors
 {
-    /// <summary>Copies only the current silhouette; the material projects it about the feet.</summary>
+    /// <summary>Copies only the current silhouette; the material projects it straight down from the feet (fixed, not light-driven).</summary>
     [ExecuteAlways, DefaultExecutionOrder(100), DisallowMultipleComponent]
     [RequireComponent(typeof(SpriteRenderer))]
     public sealed class SpriteProjectedShadow : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer source;
         [SerializeField] private float groundLocalY = -.84375f;
+        // Minions/enemies share a placeholder sprite in their prefab and swap sheets at runtime, so without a baked
+        // entry they fall back to the frame's tight mesh instead of a fixed height.
+        [SerializeField] private bool feetFromSprite;
+        private static readonly System.Collections.Generic.Dictionary<Sprite, float> feetCache = new System.Collections.Generic.Dictionary<Sprite, float>();
+        private static float FeetOf(Sprite sprite)
+        {
+            if (feetCache.TryGetValue(sprite, out float feet)) return feet;
+            feet = float.MaxValue;
+            foreach (var v in sprite.vertices) feet = Mathf.Min(feet, v.y);
+            return feetCache[sprite] = feet;
+        }
         private SpriteRenderer shadow;
         private MaterialPropertyBlock properties;
-        private Vector2 lightProjection;
-        private bool projectionInitialized;
-        private float lightOpacity = 1;
         private static readonly int GroundWorldY = Shader.PropertyToID("_GroundWorldY");
         private static readonly int ExcludeSlashEffect = Shader.PropertyToID("_ExcludeSlashEffect");
 
         private Sprite sheetSprite;
         private bool slashSheet;
-        private SpriteRenderer playerChecked;
-        private bool sourceIsPlayer;
-        private bool IsPlayer()
-        {
-            if (playerChecked != source) { playerChecked = source; sourceIsPlayer = source.GetComponent<DarkLord.Player.PlayerMovement>() != null; }
-            return sourceIsPlayer;
-        }
 
         private void OnEnable() => Refresh();
         private void LateUpdate() => Refresh();
@@ -56,20 +57,11 @@ namespace DarkLord.Actors
                 slashSheet = sheet == "Slash_1" || sheet == "Slash_2";
             }
             properties.SetFloat(ExcludeSlashEffect, slashSheet ? 1f : 0f);
-            properties.SetFloat(GroundWorldY, transform.TransformPoint(new Vector3(0, groundLocalY, 0)).y);
-            if (Application.isPlaying && IsPlayer() && shadow.sharedMaterial != null)
-            {
-                var fallback = new Vector2(shadow.sharedMaterial.GetFloat("_Shear"), shadow.sharedMaterial.GetFloat("_Flatten"));
-                Vector3 feet = transform.TransformPoint(new Vector3(0, groundLocalY, 0));
-                Vector2 desired = TorchShadowLight.Projection(feet, gameObject.scene, fallback);
-                float opacity = TorchShadowLight.Opacity(feet, gameObject.scene);
-                lightOpacity = projectionInitialized ? Mathf.Lerp(lightOpacity, opacity, 1 - Mathf.Exp(-8 * Time.deltaTime)) : opacity;
-                shadow.color = new Color(1, 1, 1, source.color.a * lightOpacity);
-                lightProjection = projectionInitialized ? Vector2.Lerp(lightProjection, desired, 1 - Mathf.Exp(-8 * Time.deltaTime)) : desired;
-                projectionInitialized = true;
-                properties.SetFloat("_Shear", lightProjection.x);
-                properties.SetFloat("_Flatten", lightProjection.y);
-            }
+            // Baked exact feet win for every frame (player included), so the shadow touches the feet.
+            float ground = groundLocalY;
+            if (source.sprite != null && !SpriteFeetTable.TryGet(source.sprite, out ground))
+                ground = feetFromSprite ? FeetOf(source.sprite) : groundLocalY;
+            properties.SetFloat(GroundWorldY, transform.TransformPoint(new Vector3(0, ground, 0)).y);
             shadow.SetPropertyBlock(properties);
         }
     }

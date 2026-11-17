@@ -35,10 +35,10 @@ Material:
     m_Floats:
     - _EnableExternalAlpha: 0
     - _ExcludeSlashEffect: 0
-    - _Flatten: 0.38
+    - _Flatten: -0.3
     - _GroundWorldY: -0.84375
     - _GroundY: -0.84375
-    - _Shear: 0.75
+    - _Shear: 0
     m_Colors:
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}

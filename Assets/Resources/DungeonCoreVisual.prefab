@@ -243,7 +243,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 326529b7ed024b64c899b2981ee04e67, type: 2}
+  - {fileID: 2100000, guid: 6bea6b2d5cae9e2498c737aa8bbdedfd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -291,6 +291,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: DarkLord.Runtime::DarkLord.Actors.SpriteProjectedShadow
   source: {fileID: 7298265350924786811}
   groundLocalY: -0.875
+  feetFromSprite: 0
 --- !u!1 &6523131841065456596
 GameObject:
   m_ObjectHideFlags: 0
